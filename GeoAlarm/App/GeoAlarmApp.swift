@@ -1,7 +1,8 @@
 // GeoAlarmApp.swift
-// Entry point for the GeoAlarm iOS application.
+// Entry point. Wires SwiftData ModelContainer, LocationManager, and AlarmManager.
 
-internal import SwiftUI
+import SwiftUI
+import SwiftData
 
 @main
 struct GeoAlarmApp: App {
@@ -10,15 +11,29 @@ struct GeoAlarmApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            RootView()
                 .environmentObject(locationManager)
                 .environmentObject(alarmManager)
-                .onAppear {
-                    alarmManager.locationManager = locationManager
-                    locationManager.requestAlwaysAuthorization()
-                    alarmManager.reregisterAllRegions()
-                    alarmManager.requestNotificationPermission()
-                }
         }
+        .modelContainer(for: GeoAlarm.self)
+    }
+}
+
+/// Thin wrapper that passes the SwiftData ModelContext to AlarmManager
+/// on first appear, then hands off to ContentView.
+struct RootView: View {
+    @Environment(\.modelContext) private var modelContext
+    @EnvironmentObject var locationManager: LocationManager
+    @EnvironmentObject var alarmManager: AlarmManager
+
+    var body: some View {
+        ContentView()
+            .onAppear {
+                alarmManager.setModelContext(modelContext)
+                alarmManager.locationManager = locationManager
+                locationManager.requestAlwaysAuthorization()
+                alarmManager.reregisterAllRegions()
+                alarmManager.requestNotificationPermission()
+            }
     }
 }

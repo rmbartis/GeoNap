@@ -1,27 +1,24 @@
 // AddAlarmView.swift
 // Form for creating or editing a geo-location alarm.
-// Embeds MapPickerView for coordinate selection.
 
-internal import SwiftUI
-internal import CoreLocation
+import SwiftUI
+import CoreLocation
 
 struct AddAlarmView: View {
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject var alarmManager: AlarmManager
     @StateObject private var viewModel = AlarmViewModel()
 
-    /// Pass an existing alarm to switch to Edit mode.
     var existingAlarm: GeoAlarm?
-
     private var isEditing: Bool { existingAlarm != nil }
 
     var body: some View {
         Form {
+
             // MARK: Name & Note
             Section("Alarm Details") {
                 TextField("Name (e.g. Penn Station)", text: $viewModel.name)
                     .autocorrectionDisabled()
-
                 TextField("Note (shown in notification)", text: $viewModel.note)
             }
 
@@ -41,7 +38,7 @@ struct AddAlarmView: View {
                 }
             }
 
-            // MARK: Trigger settings
+            // MARK: Trigger
             Section("Trigger") {
                 Picker("Event", selection: $viewModel.regionEvent) {
                     ForEach(RegionEvent.allCases, id: \.self) { event in
@@ -61,6 +58,29 @@ struct AddAlarmView: View {
                 }
             }
 
+            // MARK: Repeat (hysteresis)
+            Section("Schedule") {
+                Toggle(isOn: $viewModel.isRepeating) {
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text("Repeat")
+                            .font(.body)
+                        Text("Auto-resets after you leave — fires again every trip")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                }
+
+                if viewModel.isRepeating {
+                    HStack(spacing: 8) {
+                        Image(systemName: "info.circle")
+                            .foregroundColor(.blue)
+                        Text("Hysteresis: alarm won't re-trigger until you've fully exited and re-entered the region.")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                }
+            }
+
             // MARK: Validation error
             if let error = viewModel.validationError {
                 Section {
@@ -70,7 +90,7 @@ struct AddAlarmView: View {
                 }
             }
 
-            // MARK: Save button
+            // MARK: Save
             Section {
                 Button(isEditing ? "Update Alarm" : "Save Alarm") {
                     saveAlarm()
@@ -82,13 +102,10 @@ struct AddAlarmView: View {
         .navigationTitle(isEditing ? "Edit Alarm" : "New Alarm")
         .navigationBarTitleDisplayMode(.inline)
         .onAppear {
-            if let alarm = existingAlarm {
-                viewModel.load(alarm: alarm)
-            }
+            if let alarm = existingAlarm { viewModel.load(alarm: alarm) }
         }
     }
 
-    // MARK: - Save
     private func saveAlarm() {
         guard let alarm = viewModel.buildAlarm() else { return }
         if isEditing {

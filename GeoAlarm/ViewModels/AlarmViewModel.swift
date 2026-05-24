@@ -1,20 +1,20 @@
 // AlarmViewModel.swift
-// Drives the Add/Edit alarm screen.
-// Holds form state and validates before committing to AlarmManager.
+// Drives the Add/Edit alarm screen. Holds form state and validates input.
 
 import Foundation
-internal import CoreLocation
+import CoreLocation
 import Combine
 
 final class AlarmViewModel: ObservableObject {
 
-    // MARK: - Form fields (bound to the Add/Edit view)
+    // MARK: - Form fields
     @Published var name: String = ""
     @Published var note: String = ""
     @Published var latitude: Double = 0
     @Published var longitude: Double = 0
     @Published var radius: Double = 200
     @Published var regionEvent: RegionEvent = .onEntry
+    @Published var isRepeating: Bool = false
 
     // MARK: - Validation
     @Published private(set) var validationError: String?
@@ -29,28 +29,25 @@ final class AlarmViewModel: ObservableObject {
         CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
     }
 
-    // MARK: - Editing support
-
     private var editingID: UUID?
 
-    /// Populate form fields for editing an existing alarm.
+    // MARK: - Edit mode
+
     func load(alarm: GeoAlarm) {
-        editingID    = alarm.id
-        name         = alarm.name
-        note         = alarm.note
-        latitude     = alarm.latitude
-        longitude    = alarm.longitude
-        radius       = alarm.radius
-        regionEvent  = alarm.regionEvent
+        editingID   = alarm.id
+        name        = alarm.name
+        note        = alarm.note
+        latitude    = alarm.latitude
+        longitude   = alarm.longitude
+        radius      = alarm.radius
+        regionEvent = alarm.regionEvent
+        isRepeating = alarm.isRepeating
     }
 
     // MARK: - Build model
 
-    /// Validate and build a GeoAlarm from current form state.
-    /// Returns nil and sets validationError if invalid.
     func buildAlarm() -> GeoAlarm? {
         validationError = nil
-
         let trimmedName = name.trimmingCharacters(in: .whitespaces)
         guard !trimmedName.isEmpty else {
             validationError = "Please enter a name for this alarm."
@@ -64,7 +61,6 @@ final class AlarmViewModel: ObservableObject {
             validationError = "Please pick a valid location on the map."
             return nil
         }
-
         return GeoAlarm(
             id: editingID ?? UUID(),
             name: trimmedName,
@@ -73,7 +69,8 @@ final class AlarmViewModel: ObservableObject {
             radius: radius,
             regionEvent: regionEvent,
             state: .active,
-            note: note
+            note: note,
+            isRepeating: isRepeating
         )
     }
 
@@ -85,13 +82,14 @@ final class AlarmViewModel: ObservableObject {
     }
 
     func reset() {
-        editingID    = nil
-        name         = ""
-        note         = ""
-        latitude     = 0
-        longitude    = 0
-        radius       = 200
-        regionEvent  = .onEntry
+        editingID   = nil
+        name        = ""
+        note        = ""
+        latitude    = 0
+        longitude   = 0
+        radius      = 200
+        regionEvent = .onEntry
+        isRepeating = false
         validationError = nil
     }
 }
