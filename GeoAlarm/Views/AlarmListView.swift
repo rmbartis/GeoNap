@@ -1,7 +1,7 @@
 // AlarmListView.swift
-// Displays all saved geo-alarms with swipe-to-delete and toggle controls.
+// Displays all saved geo-alarms with swipe actions and repeat indicator.
 
-internal import SwiftUI
+import SwiftUI
 
 struct AlarmListView: View {
     @EnvironmentObject var alarmManager: AlarmManager
@@ -35,7 +35,6 @@ struct AlarmListView: View {
         }
     }
 
-    // MARK: - Empty state
     private var emptyState: some View {
         VStack(spacing: 16) {
             Image(systemName: "location.circle")
@@ -53,25 +52,39 @@ struct AlarmListView: View {
 }
 
 // MARK: - Alarm Row
+
 struct AlarmRowView: View {
     let alarm: GeoAlarm
 
     var body: some View {
         HStack(spacing: 12) {
-            // State indicator dot
             Circle()
                 .fill(stateColor)
                 .frame(width: 12, height: 12)
 
             VStack(alignment: .leading, spacing: 3) {
-                Text(alarm.name)
-                    .font(.body.bold())
-                    .foregroundColor(alarm.isActive ? .primary : .secondary)
+                HStack(spacing: 6) {
+                    Text(alarm.name)
+                        .font(.body.bold())
+                        .foregroundColor(alarm.isActive ? .primary : .secondary)
+
+                    // Repeat badge
+                    if alarm.isRepeating {
+                        Image(systemName: "repeat")
+                            .font(.caption2.bold())
+                            .foregroundColor(.blue)
+                    }
+                }
 
                 HStack(spacing: 6) {
-                    Label("\(Int(alarm.radius)) m", systemImage: "arrow.up.left.and.arrow.down.right")
+                    Label("\(Int(alarm.radius)) m",
+                          systemImage: "arrow.up.left.and.arrow.down.right")
                     Text("•")
                     Text(alarm.regionEvent.rawValue)
+                    if alarm.isRepeating {
+                        Text("• Repeats")
+                            .foregroundColor(.blue)
+                    }
                 }
                 .font(.caption)
                 .foregroundColor(.secondary)
@@ -82,10 +95,13 @@ struct AlarmRowView: View {
             if alarm.state == .triggered {
                 Image(systemName: "bell.badge.fill")
                     .foregroundColor(.red)
+            } else if alarm.state == .snoozed {
+                Image(systemName: "moon.zzz.fill")
+                    .foregroundColor(.orange)
             }
         }
         .padding(.vertical, 4)
-        .opacity(alarm.isActive ? 1.0 : 0.5)
+        .opacity(alarm.isActive || alarm.state == .triggered ? 1.0 : 0.5)
     }
 
     private var stateColor: Color {

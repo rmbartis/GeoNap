@@ -3,9 +3,10 @@
 // Handles region monitoring callbacks and forwards events to AlarmManager.
 
 import Foundation
-internal import CoreLocation
+import CoreLocation
 import Combine
 
+@MainActor
 /// Thin wrapper around CLLocationManager, designed to be injected via @EnvironmentObject.
 final class LocationManager: NSObject, ObservableObject {
 

@@ -2,7 +2,7 @@
 // Interactive map for picking an alarm's center coordinate.
 // Long-press to drop a pin; shows the radius circle overlay.
 
-internal import SwiftUI
+import SwiftUI
 import MapKit
 
 struct MapPickerView: View {

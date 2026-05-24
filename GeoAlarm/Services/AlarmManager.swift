@@ -1,33 +1,40 @@
 // AlarmManager.swift
 // Owns the list of GeoAlarms, coordinates region monitoring via LocationManager,
-// and fires local notifications when a region event matches an active alarm.
+// fires local notifications on region events, and persists via SwiftData.
 
 import Foundation
 import UserNotifications
-internal import CoreLocation
+import CoreLocation
+import SwiftData
 import Combine
-internal import SwiftUI
 
+@MainActor
 final class AlarmManager: ObservableObject {
 
     // MARK: - Published state
     @Published private(set) var alarms: [GeoAlarm] = []
 
     // MARK: - Dependencies
-    // Injected after init so both objects can be @StateObject in the App entry point.
+
+    /// Set by LocationManager after both @StateObjects are created.
     weak var locationManager: LocationManager? {
         didSet { bindLocationEvents() }
     }
 
-    // MARK: - Persistence
-    private let persistenceKey = "geo_alarms_v1"
+    /// Injected via setModelContext() on app launch (from RootView.onAppear).
+    private var modelContext: ModelContext?
 
     // MARK: - Init
-    init() {
+    init() {}
+
+    // MARK: - SwiftData setup
+
+    func setModelContext(_ context: ModelContext) {
+        modelContext = context
         load()
     }
 
-    // MARK: - Permission
+    // MARK: - Notification permission
 
     func requestNotificationPermission() {
         UNUserNotificationCenter.current().requestAuthorization(
@@ -44,38 +51,38 @@ final class AlarmManager: ObservableObject {
     // MARK: - CRUD
 
     func add(alarm: GeoAlarm) {
+        modelContext?.insert(alarm)
+        save()
         alarms.append(alarm)
         if alarm.isActive { startMonitoring(alarm) }
-        save()
     }
 
+    /// Call after mutating a GeoAlarm's properties directly (SwiftData tracks changes).
     func update(alarm: GeoAlarm) {
-        guard let index = alarms.firstIndex(where: { $0.id == alarm.id }) else { return }
-        let old = alarms[index]
-        alarms[index] = alarm
-
-        // Re-register region monitoring if anything changed
-        stopMonitoring(old)
-        if alarm.isActive { startMonitoring(alarm) }
         save()
+        stopMonitoring(alarm)
+        if alarm.isActive { startMonitoring(alarm) }
     }
 
     func delete(alarm: GeoAlarm) {
         stopMonitoring(alarm)
+        modelContext?.delete(alarm)
         alarms.removeAll { $0.id == alarm.id }
         save()
     }
 
     func delete(at offsets: IndexSet) {
         offsets.forEach { stopMonitoring(alarms[$0]) }
-        alarms.remove(atOffsets: offsets)
+        offsets.forEach { modelContext?.delete(alarms[$0]) }
+        for index in offsets.reversed() {
+            alarms.remove(at: index)
+        }
         save()
     }
 
     func toggleActive(_ alarm: GeoAlarm) {
-        var modified = alarm
-        modified.state = alarm.isActive ? .inactive : .active
-        update(alarm: modified)
+        alarm.state = alarm.isActive ? .inactive : .active
+        update(alarm: alarm)
     }
 
     // MARK: - Region monitoring helpers
@@ -88,7 +95,7 @@ final class AlarmManager: ObservableObject {
         locationManager?.stopMonitoring(region: alarm.clRegion)
     }
 
-    /// Re-register all active alarms (call after app launch or permission grant).
+    /// Re-register all active alarms — call on launch or after permission grant.
     func reregisterAllRegions() {
         locationManager?.stopMonitoringAll()
         alarms.filter(\.isActive).forEach { startMonitoring($0) }
@@ -97,23 +104,44 @@ final class AlarmManager: ObservableObject {
     // MARK: - Region event handling
 
     private func bindLocationEvents() {
-        locationManager?.onRegionEntered = { [weak self] regionID in
-            self?.handleRegionEvent(regionID: regionID, event: .onEntry)
+        locationManager?.onRegionEntered = { [weak self] id in
+            self?.handleRegionEvent(regionID: id, event: .onEntry)
         }
-        locationManager?.onRegionExited = { [weak self] regionID in
-            self?.handleRegionEvent(regionID: regionID, event: .onExit)
+        locationManager?.onRegionExited = { [weak self] id in
+            self?.handleRegionEvent(regionID: id, event: .onExit)
         }
     }
 
     func handleRegionEvent(regionID: String, event: RegionEvent) {
-        guard let index = alarms.firstIndex(where: {
-            $0.id.uuidString == regionID && $0.isActive && $0.regionEvent == event
-        }) else { return }
 
-        alarms[index].state = .triggered
-        alarms[index].lastTriggeredAt = Date()
-        fireNotification(for: alarms[index])
-        save()
+        // ── 1. Fire the alarm ──────────────────────────────────────────────
+        // Match an ACTIVE alarm whose trigger matches this event.
+        if let index = alarms.firstIndex(where: {
+            $0.id.uuidString == regionID && $0.isActive && $0.regionEvent == event
+        }) {
+            alarms[index].state = .triggered
+            alarms[index].lastTriggeredAt = Date()
+            fireNotification(for: alarms[index])
+            save()
+            print("🔔 Alarm triggered: \(alarms[index].name)")
+        }
+
+        // ── 2. Hysteresis reset for repeating alarms ───────────────────────
+        // A triggered, repeating alarm resets when the user crosses the
+        // boundary in the OPPOSITE direction:
+        //   onEntry alarm → resets on EXIT  (user left the station)
+        //   onExit  alarm → resets on ENTRY (user returned to the origin)
+        if let index = alarms.firstIndex(where: {
+            $0.id.uuidString == regionID &&
+            $0.state == .triggered &&
+            $0.isRepeating &&
+            $0.regionEvent != event        // opposite direction
+        }) {
+            alarms[index].state = .active
+            save()
+            startMonitoring(alarms[index])   // keep iOS monitoring the region
+            print("🔄 Repeating alarm re-armed: \(alarms[index].name)")
+        }
     }
 
     // MARK: - Local notification
@@ -124,52 +152,50 @@ final class AlarmManager: ObservableObject {
         content.body = alarm.note.isEmpty
             ? "\(alarm.regionEvent.rawValue) detected."
             : alarm.note
-        content.sound = .defaultCritical  // Plays even in Do Not Disturb
+        content.sound = .defaultCritical
+        content.userInfo = ["alarmID": alarm.id.uuidString]
+
+        // Add a "Snooze 10 min" action
         content.categoryIdentifier = "GEO_ALARM"
 
-        // Deliver immediately (the region event is our trigger)
         let request = UNNotificationRequest(
             identifier: alarm.id.uuidString,
             content: content,
-            trigger: nil   // nil = deliver right now
+            trigger: nil
         )
-
         UNUserNotificationCenter.current().add(request) { error in
             if let error = error {
-                print("❌ Notification scheduling failed: \(error.localizedDescription)")
+                print("❌ Notification failed: \(error.localizedDescription)")
             }
         }
     }
 
     // MARK: - Snooze
 
-    /// Temporarily suppress an alarm and re-arm it after `minutes` minutes.
+    /// Suppress a triggered alarm and re-arm it after `minutes` minutes.
     func snooze(_ alarm: GeoAlarm, minutes: Int = 10) {
-        guard let index = alarms.firstIndex(where: { $0.id == alarm.id }) else { return }
-        alarms[index].state = .snoozed
+        alarm.state = .snoozed
         save()
-
         DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(minutes * 60)) { [weak self] in
-            guard let self, let idx = self.alarms.firstIndex(where: { $0.id == alarm.id }),
-                  self.alarms[idx].state == .snoozed else { return }
-            self.alarms[idx].state = .active
-            self.startMonitoring(self.alarms[idx])
+            guard let self,
+                  let index = self.alarms.firstIndex(where: { $0.id == alarm.id }),
+                  self.alarms[index].state == .snoozed else { return }
+            self.alarms[index].state = .active
+            self.startMonitoring(self.alarms[index])
             self.save()
         }
     }
 
-    // MARK: - Persistence (UserDefaults — swap for CoreData/SwiftData as needed)
+    // MARK: - SwiftData persistence
 
     private func save() {
-        guard let data = try? JSONEncoder().encode(alarms) else { return }
-        UserDefaults.standard.set(data, forKey: persistenceKey)
+        try? modelContext?.save()
     }
 
     private func load() {
-        guard
-            let data = UserDefaults.standard.data(forKey: persistenceKey),
-            let saved = try? JSONDecoder().decode([GeoAlarm].self, from: data)
-        else { return }
-        alarms = saved
+        guard let context = modelContext else { return }
+        alarms = (try? context.fetch(
+            FetchDescriptor<GeoAlarm>(sortBy: [SortDescriptor(\.name)])
+        )) ?? []
     }
 }

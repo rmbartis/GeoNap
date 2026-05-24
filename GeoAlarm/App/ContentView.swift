@@ -1,8 +1,8 @@
 // ContentView.swift
 // Root navigation shell for the app.
 
-internal import SwiftUI
-internal import CoreLocation
+import SwiftUI
+import CoreLocation
 
 struct ContentView: View {
     @EnvironmentObject var locationManager: LocationManager
