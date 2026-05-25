@@ -1,0 +1,47 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Xcode
+*.xcuserstate
+xcuserdata/
+*.xccheckout
+*.xcscmblueprint
+*.moved-aside
+DerivedData/
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# Swift Package Manager
+.build/
+.swiftpm/
+Packages/
+Package.resolved
+
+# CocoaPods (if ever added)
+Pods/
+*.xcworkspace
+
+# Fastlane (if ever added)
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/**/*.png
+fastlane/test_output
+
+# Firebase / Google
+GoogleService-Info.plist
+
+# Carthage (if ever added)
+Carthage/Build/
+
+# Build output
+build/
+
+# Credentials / secrets
+*.p8
+*.p12
+*.mobileprovision
+AuthKey_*.p8
