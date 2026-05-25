@@ -120,6 +120,29 @@ when the window reopens.
                 )
 
                 helpSection(
+                    symbol: "mic",
+                    color: .indigo,
+                    title: "Siri & Shortcuts",
+                    body: """
+GeoAlarm supports Siri and the Shortcuts app — no setup required. \
+Once the app is installed, these phrases work out of the box:
+
+• "Create a GeoAlarm" — Siri will ask for a name, location, and \
+whether to trigger on arrival or departure. It geocodes the address \
+automatically and saves the alarm in the background.
+
+• "Enable my GeoAlarm" — Siri shows a list of your saved alarms. \
+Pick one and it is re-enabled immediately.
+
+• "Disable my GeoAlarm" — Same as above, but deactivates the alarm.
+
+You can also find and customise these shortcuts in the iOS Shortcuts \
+app under the GeoAlarm section. They can be added to your Home Screen, \
+used in Automations, or chained with other actions.
+"""
+                )
+
+                helpSection(
                     symbol: "hand.point.left",
                     color: .cyan,
                     title: "Managing alarms",
