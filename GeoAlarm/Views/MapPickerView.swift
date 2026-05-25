@@ -9,8 +9,8 @@ struct MapPickerView: View {
     @Binding var latitude: Double
     @Binding var longitude: Double
 
-    // Internal camera position — starts at the user's current location
-    @State private var cameraPosition: MapCameraPosition = .userLocation(fallback: .automatic)
+    // Internal camera position — starts at automatic (no spinning "finding location" state)
+    @State private var cameraPosition: MapCameraPosition = .automatic
     @State private var pinCoordinate: CLLocationCoordinate2D?
 
     var body: some View {
@@ -61,6 +61,27 @@ struct MapPickerView: View {
                     longitudinalMeters: 1000
                 ))
             }
+        }
+        // Re-centre when a search result updates the coordinates externally
+        .onChange(of: latitude) { _, newLat in
+            guard newLat != 0 else { return }
+            let coord = CLLocationCoordinate2D(latitude: newLat, longitude: longitude)
+            pinCoordinate  = coord
+            cameraPosition = .region(MKCoordinateRegion(
+                center: coord,
+                latitudinalMeters: 1000,
+                longitudinalMeters: 1000
+            ))
+        }
+        .onChange(of: longitude) { _, newLon in
+            guard newLon != 0 else { return }
+            let coord = CLLocationCoordinate2D(latitude: latitude, longitude: newLon)
+            pinCoordinate  = coord
+            cameraPosition = .region(MKCoordinateRegion(
+                center: coord,
+                latitudinalMeters: 1000,
+                longitudinalMeters: 1000
+            ))
         }
     }
 }

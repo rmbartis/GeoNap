@@ -6,6 +6,11 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		686A0FCD2FC39F2E0079F963 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = 686A0FCC2FC39F2E0079F963 /* FirebaseCore */; };
+		686A0FCF2FC39F2E0079F963 /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = 686A0FCE2FC39F2E0079F963 /* FirebaseCrashlytics */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		686A0F312FC337E50079F963 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -66,6 +71,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				686A0FCD2FC39F2E0079F963 /* FirebaseCore in Frameworks */,
+				686A0FCF2FC39F2E0079F963 /* FirebaseCrashlytics in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -116,6 +123,7 @@
 				686A0F1B2FC337E40079F963 /* Sources */,
 				686A0F1C2FC337E40079F963 /* Frameworks */,
 				686A0F1D2FC337E40079F963 /* Resources */,
+				686A0FD02FC3AADC0079F963 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -126,6 +134,8 @@
 			);
 			name = GeoAlarm;
 			packageProductDependencies = (
+				686A0FCC2FC39F2E0079F963 /* FirebaseCore */,
+				686A0FCE2FC39F2E0079F963 /* FirebaseCrashlytics */,
 			);
 			productName = GeoAlarm;
 			productReference = 686A0F1F2FC337E40079F963 /* GeoAlarm.app */;
@@ -209,6 +219,9 @@
 			);
 			mainGroup = 686A0F162FC337E40079F963;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				686A0FCB2FC39F2E0079F963 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 686A0F202FC337E40079F963 /* Products */;
 			projectDirPath = "";
@@ -244,6 +257,28 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		686A0FD02FC3AADC0079F963 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/GeoAlarm/GoogleService-Info.plist",
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [[ \"$SDKROOT\" == *\"simulator\"* ]]; then\n  echo \"Skipping Crashlytics dSYM upload for simulator build\"\n  exit 0\nfi\n\"${BUILD_DIR%Build/*}SourcePackages/checkouts/firebase-ios-sdk/Crashlytics/run\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		686A0F1B2FC337E40079F963 /* Sources */ = {
@@ -294,6 +329,7 @@
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = GeoAlarm/Info.plist;
@@ -344,6 +380,7 @@
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = GeoAlarm/Info.plist;
@@ -641,6 +678,30 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		686A0FCB2FC39F2E0079F963 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.13.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		686A0FCC2FC39F2E0079F963 /* FirebaseCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 686A0FCB2FC39F2E0079F963 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCore;
+		};
+		686A0FCE2FC39F2E0079F963 /* FirebaseCrashlytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 686A0FCB2FC39F2E0079F963 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCrashlytics;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 686A0F172FC337E40079F963 /* Project object */;
 }
