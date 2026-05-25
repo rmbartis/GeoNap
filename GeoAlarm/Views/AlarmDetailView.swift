@@ -97,6 +97,10 @@ struct AlarmDetailView: View {
                     alarmManager.toggleActive(alarm)
                 }
                 .foregroundColor(alarm.isActive ? .orange : .green)
+
+                ShareLink(item: shareURLString) {
+                    Label("Share location", systemImage: "square.and.arrow.up")
+                }
             }
         }
         .navigationTitle(alarm.name)
@@ -104,6 +108,14 @@ struct AlarmDetailView: View {
     }
 
     // MARK: - Helpers
+
+    /// Apple Maps URL string for sharing — plain String so Copy puts the URL text
+    /// directly on the clipboard regardless of share destination.
+    private var shareURLString: String {
+        let name = alarm.name
+            .addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? alarm.name
+        return "https://maps.apple.com/?ll=\(alarm.latitude),\(alarm.longitude)&q=\(name)"
+    }
 
     private var stateColor: Color {
         switch alarm.state {

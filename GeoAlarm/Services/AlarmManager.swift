@@ -87,13 +87,41 @@ final class AlarmManager: NSObject, ObservableObject {
         UNUserNotificationCenter.current().setNotificationCategories([category])
     }
 
+    // MARK: - Region limit
+
+    /// iOS caps CLLocationManager region monitoring at 20 simultaneous regions.
+    static let regionMonitoringLimit = 20
+
+    /// Number of currently active (monitored) alarms.
+    var activeAlarmCount: Int { alarms.filter(\.isActive).count }
+
+    /// True when one or two slots remain — show a caution warning.
+    var isNearRegionLimit: Bool { activeAlarmCount >= Self.regionMonitoringLimit - 2 }
+
+    /// True when all slots are full — block adding new active alarms.
+    var isAtRegionLimit: Bool  { activeAlarmCount >= Self.regionMonitoringLimit }
+
     // MARK: - CRUD
 
     func add(alarm: GeoAlarm) {
-        modelContext?.insert(alarm)
+        // If already at the iOS 20-region cap, insert as inactive so monitoring
+        // isn't attempted. The user can enable it after disabling another alarm.
+        var toInsert = alarm
+        if alarm.isActive && isAtRegionLimit {
+            toInsert = GeoAlarm(
+                id: alarm.id, name: alarm.name,
+                latitude: alarm.latitude, longitude: alarm.longitude,
+                radius: alarm.radius, regionEvent: alarm.regionEvent,
+                state: .inactive, note: alarm.note,
+                isRepeating: alarm.isRepeating,
+                hasTimeWindow: alarm.hasTimeWindow,
+                windowStart: alarm.windowStart, windowEnd: alarm.windowEnd
+            )
+        }
+        modelContext?.insert(toInsert)
         save()
-        alarms.append(alarm)
-        if alarm.isActive { startMonitoring(alarm) }
+        alarms.append(toInsert)
+        if toInsert.isActive { startMonitoring(toInsert) }
     }
 
     /// Applies all editable fields from `alarm` (built by AlarmViewModel.buildAlarm())
@@ -303,6 +331,8 @@ final class AlarmManager: NSObject, ObservableObject {
             print("❌ SwiftData save failed: \(error.localizedDescription)")
             CrashReporter.record(error, context: "SwiftData.save")
         }
+        // Push latest state to paired Apple Watch after every save.
+        WatchConnectivityManager.shared.updateWatch(with: alarms)
     }
 
     private func load() {

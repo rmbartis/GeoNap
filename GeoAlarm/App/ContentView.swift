@@ -27,6 +27,8 @@ struct ContentView: View {
                         NavigationLink(destination: AddAlarmView()) {
                             Image(systemName: "plus")
                         }
+                        .disabled(alarmManager.isAtRegionLimit)
+                        .opacity(alarmManager.isAtRegionLimit ? 0.35 : 1)
                     }
                     ToolbarItem(placement: .navigationBarTrailing) {
                         Button {

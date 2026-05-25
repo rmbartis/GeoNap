@@ -13,6 +13,17 @@ struct AlarmListView: View {
                 emptyState
             } else {
                 List {
+                    // MARK: Region limit warning
+                    if alarmManager.isAtRegionLimit {
+                        RegionLimitBanner(isFull: true)
+                            .listRowBackground(Color.red.opacity(0.08))
+                            .listRowInsets(EdgeInsets(top: 6, leading: 12, bottom: 6, trailing: 12))
+                    } else if alarmManager.isNearRegionLimit {
+                        RegionLimitBanner(isFull: false)
+                            .listRowBackground(Color.orange.opacity(0.08))
+                            .listRowInsets(EdgeInsets(top: 6, leading: 12, bottom: 6, trailing: 12))
+                    }
+
                     ForEach(alarmManager.alarms) { alarm in
                         NavigationLink(destination: AlarmDetailView(alarm: alarm)) {
                             AlarmRowView(alarm: alarm)
@@ -121,6 +132,29 @@ struct AlarmRowView: View {
         case .snoozed:   return .orange
         case .inactive:  return .gray
         }
+    }
+}
+
+// MARK: - Region Limit Banner
+
+private struct RegionLimitBanner: View {
+    let isFull: Bool
+
+    var body: some View {
+        HStack(spacing: 10) {
+            Image(systemName: isFull ? "exclamationmark.octagon.fill" : "exclamationmark.triangle.fill")
+                .foregroundColor(isFull ? .red : .orange)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(isFull ? "Alarm limit reached" : "Approaching alarm limit")
+                    .font(.caption.bold())
+                Text(isFull
+                     ? "iOS allows 20 active alarms. Disable one before adding another."
+                     : "iOS allows 20 active alarms. You're close to the limit.")
+                    .font(.caption2)
+                    .foregroundColor(.secondary)
+            }
+        }
+        .padding(.vertical, 4)
     }
 }
 

@@ -57,6 +57,11 @@ directly on the map to place or reposition the pin manually.
 3. Choose On Arrival or On Departure as the trigger.
 4. Use the Radius slider to set how close you need to be before the \
 alarm fires. A larger radius gives you more warning time.
+
+iOS allows a maximum of 20 active alarms at once (an iOS system \
+limit on background region monitoring). A warning appears in the \
+alarm list as you approach this limit, and the + button is disabled \
+when you reach it. Disable an existing alarm to free up a slot.
 """
                 )
 
@@ -111,6 +116,25 @@ next day".
 Guard condition: if the time window closes while you are still inside \
 the region, the alarm deactivates automatically so it does not fire \
 when the window reopens.
+"""
+                )
+
+                helpSection(
+                    symbol: "hand.point.left",
+                    color: .cyan,
+                    title: "Managing alarms",
+                    body: """
+Swipe right on any alarm in the list to quickly enable or disable it \
+without opening the detail view.
+
+Swipe left to delete an alarm. Deleted alarms are removed immediately \
+and their geofence stops being monitored.
+
+To edit an alarm, tap it to open the detail view, then tap Edit Alarm.
+
+To share an alarm location, open the detail view and tap Share location \
+in the Actions section. This sends an Apple Maps link to the exact \
+coordinates, which the recipient can open in Maps or any navigation app.
 """
                 )
 
