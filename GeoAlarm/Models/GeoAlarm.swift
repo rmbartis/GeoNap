@@ -27,7 +27,7 @@ enum RegionEvent: String, Codable, CaseIterable {
 @Model
 final class GeoAlarm {
 
-    @Attribute(.unique) var id: UUID = UUID()
+    var id: UUID = UUID()
     var name: String = ""
     var latitude: Double = 0
     var longitude: Double = 0
@@ -39,11 +39,21 @@ final class GeoAlarm {
 
     var note: String = ""
     var lastTriggeredAt: Date? = nil
+    var triggerCount: Int = 0
 
     /// When true, the alarm auto-resets once the user leaves the region,
     /// so it fires again on the next trip (daily commuter use case).
     /// Hysteresis is enforced by requiring a full region exit before re-arming.
     var isRepeating: Bool = false
+
+    // MARK: - Time Window
+    // Only the hour/minute components of these Dates are meaningful.
+    // When hasTimeWindow is true the alarm only fires inside [windowStart, windowEnd].
+    // Overnight spans (e.g. 22:00 → 06:00) are supported.
+
+    var hasTimeWindow: Bool = false
+    var windowStart: Date? = nil
+    var windowEnd:   Date? = nil
 
     // MARK: - Enum accessors
 
@@ -80,6 +90,33 @@ final class GeoAlarm {
         CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
     }
 
+    // MARK: - Time Window helper
+
+    /// Returns true if the alarm should fire at `date`.
+    /// Always true when hasTimeWindow is false.
+    /// Compares hour/minute only — seconds are ignored for minute-resolution windows.
+    func isWithinWindow(at date: Date = Date()) -> Bool {
+        guard hasTimeWindow, let start = windowStart, let end = windowEnd else { return true }
+        let cal = Calendar.current
+        let nowMins   = cal.component(.hour, from: date)   * 60 + cal.component(.minute, from: date)
+        let startMins = cal.component(.hour, from: start)  * 60 + cal.component(.minute, from: start)
+        let endMins   = cal.component(.hour, from: end)    * 60 + cal.component(.minute, from: end)
+
+        if startMins <= endMins {
+            // Normal span, e.g. 08:00 – 22:00
+            return nowMins >= startMins && nowMins <= endMins
+        } else {
+            // Overnight span, e.g. 22:00 – 06:00
+            return nowMins >= startMins || nowMins <= endMins
+        }
+    }
+
+    /// Formatted "HH:mm – HH:mm" string for display, using the supplied formatter.
+    func windowLabel(using format: TimeFormat) -> String? {
+        guard hasTimeWindow, let start = windowStart, let end = windowEnd else { return nil }
+        return "\(format.formatTime(start)) – \(format.formatTime(end))"
+    }
+
     // MARK: - Init
 
     init(
@@ -92,7 +129,11 @@ final class GeoAlarm {
         state: AlarmState = .active,
         note: String = "",
         lastTriggeredAt: Date? = nil,
-        isRepeating: Bool = false
+        triggerCount: Int = 0,
+        isRepeating: Bool = false,
+        hasTimeWindow: Bool = false,
+        windowStart: Date? = nil,
+        windowEnd: Date? = nil
     ) {
         self.id = id
         self.name = name
@@ -103,7 +144,11 @@ final class GeoAlarm {
         self.stateRaw = state.rawValue
         self.note = note
         self.lastTriggeredAt = lastTriggeredAt
+        self.triggerCount = triggerCount
         self.isRepeating = isRepeating
+        self.hasTimeWindow = hasTimeWindow
+        self.windowStart = windowStart
+        self.windowEnd = windowEnd
     }
 }
 

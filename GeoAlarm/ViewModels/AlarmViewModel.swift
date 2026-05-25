@@ -16,6 +16,20 @@ final class AlarmViewModel: ObservableObject {
     @Published var regionEvent: RegionEvent = .onEntry
     @Published var isRepeating: Bool = false
 
+    // MARK: - Time window
+    @Published var hasTimeWindow: Bool = false
+    @Published var windowStart: Date = AlarmViewModel.defaultWindowStart
+    @Published var windowEnd:   Date = AlarmViewModel.defaultWindowEnd
+
+    /// Default start: 08:00 today
+    static var defaultWindowStart: Date {
+        Calendar.current.date(bySettingHour: 8, minute: 0, second: 0, of: Date()) ?? Date()
+    }
+    /// Default end: 22:00 today
+    static var defaultWindowEnd: Date {
+        Calendar.current.date(bySettingHour: 22, minute: 0, second: 0, of: Date()) ?? Date()
+    }
+
     // MARK: - Validation
     @Published private(set) var validationError: String?
 
@@ -34,14 +48,17 @@ final class AlarmViewModel: ObservableObject {
     // MARK: - Edit mode
 
     func load(alarm: GeoAlarm) {
-        editingID   = alarm.id
-        name        = alarm.name
-        note        = alarm.note
-        latitude    = alarm.latitude
-        longitude   = alarm.longitude
-        radius      = alarm.radius
-        regionEvent = alarm.regionEvent
-        isRepeating = alarm.isRepeating
+        editingID     = alarm.id
+        name          = alarm.name
+        note          = alarm.note
+        latitude      = alarm.latitude
+        longitude     = alarm.longitude
+        radius        = alarm.radius
+        regionEvent   = alarm.regionEvent
+        isRepeating   = alarm.isRepeating
+        hasTimeWindow = alarm.hasTimeWindow
+        windowStart   = alarm.windowStart ?? AlarmViewModel.defaultWindowStart
+        windowEnd     = alarm.windowEnd   ?? AlarmViewModel.defaultWindowEnd
     }
 
     // MARK: - Build model
@@ -61,6 +78,17 @@ final class AlarmViewModel: ObservableObject {
             validationError = "Please pick a valid location on the map."
             return nil
         }
+        if hasTimeWindow {
+            let startMins = Calendar.current.component(.hour,   from: windowStart) * 60
+                          + Calendar.current.component(.minute, from: windowStart)
+            let endMins   = Calendar.current.component(.hour,   from: windowEnd)   * 60
+                          + Calendar.current.component(.minute, from: windowEnd)
+            if startMins == endMins {
+                validationError = "Window start and end time cannot be the same."
+                return nil
+            }
+        }
+
         return GeoAlarm(
             id: editingID ?? UUID(),
             name: trimmedName,
@@ -70,7 +98,10 @@ final class AlarmViewModel: ObservableObject {
             regionEvent: regionEvent,
             state: .active,
             note: note,
-            isRepeating: isRepeating
+            isRepeating: isRepeating,
+            hasTimeWindow: hasTimeWindow,
+            windowStart: hasTimeWindow ? windowStart : nil,
+            windowEnd:   hasTimeWindow ? windowEnd   : nil
         )
     }
 
@@ -82,14 +113,17 @@ final class AlarmViewModel: ObservableObject {
     }
 
     func reset() {
-        editingID   = nil
-        name        = ""
-        note        = ""
-        latitude    = 0
-        longitude   = 0
-        radius      = 200
-        regionEvent = .onEntry
-        isRepeating = false
+        editingID     = nil
+        name          = ""
+        note          = ""
+        latitude      = 0
+        longitude     = 0
+        radius        = 200
+        regionEvent   = .onEntry
+        isRepeating   = false
+        hasTimeWindow = false
+        windowStart   = AlarmViewModel.defaultWindowStart
+        windowEnd     = AlarmViewModel.defaultWindowEnd
         validationError = nil
     }
 }

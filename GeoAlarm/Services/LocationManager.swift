@@ -15,6 +15,11 @@ final class LocationManager: NSObject, ObservableObject {
     @Published var currentLocation: CLLocation?
     @Published var lastError: Error?
 
+    /// True when location hardware is unavailable — e.g. airplane mode with
+    /// GPS disabled.  Distinct from authorization denial: the user has granted
+    /// permission but the OS can't produce a fix right now.
+    @Published var isLocationUnavailable: Bool = false
+
     // MARK: - Internals
     private let manager: CLLocationManager
 
@@ -95,12 +100,35 @@ extension LocationManager: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         DispatchQueue.main.async {
             self.currentLocation = locations.last
+            // A fresh fix means hardware is working — clear any unavailable flag.
+            self.isLocationUnavailable = false
         }
     }
 
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        let clError = error as? CLError
+
         DispatchQueue.main.async {
             self.lastError = error
+
+            // kCLErrorLocationUnknown fires when the OS cannot determine a
+            // position — the most common cause is airplane mode with GPS off.
+            // kCLErrorDenied fires if the user revokes permission at the OS level.
+            // We surface isLocationUnavailable for these so the UI can warn.
+            switch clError?.code {
+            case .locationUnknown, .network:
+                // Only flag unavailable if we actually have permission;
+                // avoids double-warning alongside the denial banner.
+                if self.authorizationStatus == .authorizedAlways ||
+                   self.authorizationStatus == .authorizedWhenInUse {
+                    self.isLocationUnavailable = true
+                }
+                // Transient — breadcrumb only; not worth a non-fatal report.
+                CrashReporter.log("Location unavailable: \(error.localizedDescription)")
+            default:
+                // Unexpected location failure — surface in Firebase Console.
+                CrashReporter.record(error, context: "LocationManager")
+            }
         }
         print("❌ LocationManager error: \(error.localizedDescription)")
     }

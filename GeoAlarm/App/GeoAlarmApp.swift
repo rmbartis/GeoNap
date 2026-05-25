@@ -3,11 +3,19 @@
 
 import SwiftUI
 import SwiftData
+import FirebaseCore
 
 @main
 struct GeoAlarmApp: App {
     @StateObject private var locationManager = LocationManager()
     @StateObject private var alarmManager = AlarmManager()
+
+    init() {
+        // Firebase must be configured before any other Firebase call.
+        // GoogleService-Info.plist must be added to the GeoAlarm target.
+        FirebaseApp.configure()
+        CrashReporter.log("App launched")
+    }
 
     var body: some Scene {
         WindowGroup {

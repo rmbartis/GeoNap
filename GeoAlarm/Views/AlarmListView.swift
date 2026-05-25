@@ -14,7 +14,7 @@ struct AlarmListView: View {
             } else {
                 List {
                     ForEach(alarmManager.alarms) { alarm in
-                        NavigationLink(destination: AddAlarmView(existingAlarm: alarm)) {
+                        NavigationLink(destination: AlarmDetailView(alarm: alarm)) {
                             AlarmRowView(alarm: alarm)
                         }
                         .swipeActions(edge: .leading) {
@@ -56,6 +56,11 @@ struct AlarmListView: View {
 struct AlarmRowView: View {
     let alarm: GeoAlarm
 
+    @AppStorage(AppStorageKey.distanceUnit) private var distanceUnitRaw = DistanceUnit.metric.rawValue
+    @AppStorage(AppStorageKey.timeFormat)   private var timeFormatRaw   = TimeFormat.twelveHour.rawValue
+    private var distanceUnit: DistanceUnit { DistanceUnit(rawValue: distanceUnitRaw) ?? .metric }
+    private var timeFormat:   TimeFormat   { TimeFormat(rawValue: timeFormatRaw)     ?? .twelveHour }
+
     var body: some View {
         HStack(spacing: 12) {
             Circle()
@@ -63,31 +68,36 @@ struct AlarmRowView: View {
                 .frame(width: 12, height: 12)
 
             VStack(alignment: .leading, spacing: 3) {
-                HStack(spacing: 6) {
-                    Text(alarm.name)
-                        .font(.body.bold())
-                        .foregroundColor(alarm.isActive ? .primary : .secondary)
+                Text(alarm.name)
+                    .font(.body.bold())
+                    .foregroundColor(alarm.isActive ? .primary : .secondary)
 
-                    // Repeat badge
-                    if alarm.isRepeating {
-                        Image(systemName: "repeat")
-                            .font(.caption2.bold())
-                            .foregroundColor(.blue)
+                // Row 1: radius · trigger type
+                HStack(spacing: 6) {
+                    HStack(spacing: 3) {
+                        Text(distanceUnit.formatted(meters: alarm.radius))
+                        Image(systemName: "arrow.up.left.and.arrow.down.right")
                     }
-                }
-
-                HStack(spacing: 6) {
-                    Label("\(Int(alarm.radius)) m",
-                          systemImage: "arrow.up.left.and.arrow.down.right")
-                    Text("•")
+                    Text("·")
                     Text(alarm.regionEvent.rawValue)
-                    if alarm.isRepeating {
-                        Text("• Repeats")
-                            .foregroundColor(.blue)
-                    }
                 }
                 .font(.caption)
                 .foregroundColor(.secondary)
+
+                // Row 2: optional badges — only shown when at least one is set
+                if alarm.isRepeating || alarm.hasTimeWindow {
+                    HStack(spacing: 10) {
+                        if alarm.isRepeating {
+                            Image(systemName: "repeat")
+                                .foregroundColor(.blue)
+                        }
+                        if let window = alarm.windowLabel(using: timeFormat) {
+                            Text(window)
+                                .foregroundColor(.purple)
+                        }
+                    }
+                    .font(.caption)
+                }
             }
 
             Spacer()
