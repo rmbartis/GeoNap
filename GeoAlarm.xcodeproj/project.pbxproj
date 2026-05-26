@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		686A0FCD2FC39F2E0079F963 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = 686A0FCC2FC39F2E0079F963 /* FirebaseCore */; };
 		686A0FCF2FC39F2E0079F963 /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = 686A0FCE2FC39F2E0079F963 /* FirebaseCrashlytics */; };
+		686A100D2FC48EB90079F963 /* ZIPFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 686A100C2FC48EB90079F963 /* ZIPFoundation */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -73,6 +74,7 @@
 			files = (
 				686A0FCD2FC39F2E0079F963 /* FirebaseCore in Frameworks */,
 				686A0FCF2FC39F2E0079F963 /* FirebaseCrashlytics in Frameworks */,
+				686A100D2FC48EB90079F963 /* ZIPFoundation in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -99,6 +101,7 @@
 				686A0F212FC337E40079F963 /* GeoAlarm */,
 				686A0F332FC337E50079F963 /* GeoAlarmTests */,
 				686A0F3D2FC337E50079F963 /* GeoAlarmUITests */,
+				686A100B2FC48EB90079F963 /* Frameworks */,
 				686A0F202FC337E40079F963 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -111,6 +114,13 @@
 				686A0F3A2FC337E50079F963 /* GeoAlarmUITests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		686A100B2FC48EB90079F963 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -136,6 +146,7 @@
 			packageProductDependencies = (
 				686A0FCC2FC39F2E0079F963 /* FirebaseCore */,
 				686A0FCE2FC39F2E0079F963 /* FirebaseCrashlytics */,
+				686A100C2FC48EB90079F963 /* ZIPFoundation */,
 			);
 			productName = GeoAlarm;
 			productReference = 686A0F1F2FC337E40079F963 /* GeoAlarm.app */;
@@ -221,6 +232,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				686A0FCB2FC39F2E0079F963 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				686A100A2FC48E3F0079F963 /* XCRemoteSwiftPackageReference "ZIPFoundation" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 686A0F202FC337E40079F963 /* Products */;
@@ -688,6 +700,14 @@
 				minimumVersion = 12.13.0;
 			};
 		};
+		686A100A2FC48E3F0079F963 /* XCRemoteSwiftPackageReference "ZIPFoundation" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/weichsel/ZIPFoundation.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.9.20;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -700,6 +720,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 686A0FCB2FC39F2E0079F963 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseCrashlytics;
+		};
+		686A100C2FC48EB90079F963 /* ZIPFoundation */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 686A100A2FC48E3F0079F963 /* XCRemoteSwiftPackageReference "ZIPFoundation" */;
+			productName = ZIPFoundation;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

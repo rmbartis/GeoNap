@@ -9,8 +9,10 @@ struct ContentView: View {
     @EnvironmentObject var alarmManager: AlarmManager
 
     @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding = false
-    @State private var showSettings   = false
-    @State private var showMapOverview = false
+    @State private var showSettings      = false
+    @State private var showMapOverview   = false
+    @State private var showTransitAlarm  = false
+    @State private var showAddAlarm      = false
 
     var body: some View {
         NavigationStack {
@@ -22,9 +24,26 @@ struct ContentView: View {
                 .sheet(isPresented: $showMapOverview) {
                     MapOverviewView()
                 }
+                .sheet(isPresented: $showTransitAlarm) {
+                    TransitAlarmSheet()
+                }
+                .navigationDestination(isPresented: $showAddAlarm) {
+                    AddAlarmView()
+                }
                 .toolbar {
                     ToolbarItem(placement: .navigationBarTrailing) {
-                        NavigationLink(destination: AddAlarmView()) {
+                        Menu {
+                            Button {
+                                showAddAlarm = true
+                            } label: {
+                                Label("Location Alarm", systemImage: "mappin.and.ellipse")
+                            }
+                            Button {
+                                showTransitAlarm = true
+                            } label: {
+                                Label("Transit Alarm", systemImage: "tram.fill")
+                            }
+                        } label: {
                             Image(systemName: "plus")
                         }
                         .disabled(alarmManager.isAtRegionLimit)

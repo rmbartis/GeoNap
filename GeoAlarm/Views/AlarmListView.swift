@@ -96,8 +96,12 @@ struct AlarmRowView: View {
                 .foregroundColor(.secondary)
 
                 // Row 2: optional badges — only shown when at least one is set
-                if alarm.isRepeating || alarm.hasTimeWindow {
+                if alarm.isRepeating || alarm.hasTimeWindow || alarm.isTransitAlarm || !alarm.isEveryDay {
                     HStack(spacing: 10) {
+                        if alarm.isTransitAlarm, let rt = alarm.transitRouteType {
+                            Image(systemName: rt.systemImage)
+                                .foregroundColor(.teal)
+                        }
                         if alarm.isRepeating {
                             Image(systemName: "repeat")
                                 .foregroundColor(.blue)
@@ -105,6 +109,13 @@ struct AlarmRowView: View {
                         if let window = alarm.windowLabel(using: timeFormat) {
                             Text(window)
                                 .foregroundColor(.purple)
+                        }
+                        if let daysLabel = alarm.activeDaysLabel {
+                            HStack(spacing: 3) {
+                                Image(systemName: "calendar")
+                                Text(daysLabel)
+                            }
+                            .foregroundColor(.orange)
                         }
                     }
                     .font(.caption)

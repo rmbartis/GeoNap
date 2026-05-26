@@ -16,6 +16,12 @@ final class AlarmViewModel: ObservableObject {
     @Published var regionEvent: RegionEvent = .onEntry
     @Published var isRepeating: Bool = false
 
+    // MARK: - Active days (1 = Sun … 7 = Sat, matching Calendar.weekday)
+    @Published var activeDays: Set<Int> = Set(1...7)
+
+    // MARK: - Sound
+    @Published var notificationSound: NotificationSound = .default
+
     // MARK: - Time window
     @Published var hasTimeWindow: Bool = false
     @Published var windowStart: Date = AlarmViewModel.defaultWindowStart
@@ -36,8 +42,12 @@ final class AlarmViewModel: ObservableObject {
     var isValid: Bool {
         !name.trimmingCharacters(in: .whitespaces).isEmpty &&
         radius >= 50 &&
+        (latitude != 0 || longitude != 0) &&
         CLLocationCoordinate2DIsValid(CLLocationCoordinate2D(latitude: latitude, longitude: longitude))
     }
+
+    /// True once the user has explicitly picked a map location (rules out the (0,0) default).
+    var hasLocation: Bool { latitude != 0 || longitude != 0 }
 
     var coordinate: CLLocationCoordinate2D {
         CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
@@ -56,9 +66,11 @@ final class AlarmViewModel: ObservableObject {
         radius        = alarm.radius
         regionEvent   = alarm.regionEvent
         isRepeating   = alarm.isRepeating
-        hasTimeWindow = alarm.hasTimeWindow
-        windowStart   = alarm.windowStart ?? AlarmViewModel.defaultWindowStart
-        windowEnd     = alarm.windowEnd   ?? AlarmViewModel.defaultWindowEnd
+        activeDays        = alarm.activeDays
+        hasTimeWindow     = alarm.hasTimeWindow
+        windowStart       = alarm.windowStart ?? AlarmViewModel.defaultWindowStart
+        windowEnd         = alarm.windowEnd   ?? AlarmViewModel.defaultWindowEnd
+        notificationSound = alarm.notificationSound
     }
 
     // MARK: - Build model
@@ -101,7 +113,9 @@ final class AlarmViewModel: ObservableObject {
             isRepeating: isRepeating,
             hasTimeWindow: hasTimeWindow,
             windowStart: hasTimeWindow ? windowStart : nil,
-            windowEnd:   hasTimeWindow ? windowEnd   : nil
+            windowEnd:   hasTimeWindow ? windowEnd   : nil,
+            activeDays: activeDays,
+            notificationSound: notificationSound
         )
     }
 
@@ -121,9 +135,11 @@ final class AlarmViewModel: ObservableObject {
         radius        = 200
         regionEvent   = .onEntry
         isRepeating   = false
-        hasTimeWindow = false
-        windowStart   = AlarmViewModel.defaultWindowStart
-        windowEnd     = AlarmViewModel.defaultWindowEnd
+        activeDays    = Set(1...7)
+        hasTimeWindow     = false
+        windowStart       = AlarmViewModel.defaultWindowStart
+        windowEnd         = AlarmViewModel.defaultWindowEnd
+        notificationSound = .default
         validationError = nil
     }
 }

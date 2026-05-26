@@ -49,6 +49,29 @@ struct AlarmDetailView: View {
                 .listRowInsets(EdgeInsets(top: 8, leading: 8, bottom: 8, trailing: 8))
             }
 
+            // MARK: Transit Details (only for transit alarms)
+            if alarm.isTransitAlarm {
+                Section("Transit") {
+                    if let agency = alarm.transitAgencyName {
+                        LabeledContent("Agency") { Text(agency) }
+                    }
+                    if let route = alarm.transitRouteName {
+                        LabeledContent("Route") {
+                            HStack(spacing: 6) {
+                                if let rt = alarm.transitRouteType {
+                                    Image(systemName: rt.systemImage)
+                                        .foregroundColor(.teal)
+                                }
+                                Text(route)
+                            }
+                        }
+                    }
+                    if let stop = alarm.transitStopName {
+                        LabeledContent("Stop") { Text(stop) }
+                    }
+                }
+            }
+
             // MARK: Status
             Section("Status") {
                 LabeledContent("State") {
@@ -64,6 +87,9 @@ struct AlarmDetailView: View {
                 }
                 if let window = alarm.windowLabel(using: timeFormat) {
                     LabeledContent("Time window") { Text(window) }
+                }
+                if let daysLabel = alarm.activeDaysLabel {
+                    LabeledContent("Active days") { Text(daysLabel) }
                 }
             }
 

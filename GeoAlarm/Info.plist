@@ -6,5 +6,7 @@
 	<array>
 		<string>remote-notification</string>
 	</array>
+	<key>BuildTimestamp</key>
+	<string>00000000-000000</string>
 </dict>
 </plist>

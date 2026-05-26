@@ -6,6 +6,7 @@ import Foundation
 import UserNotifications
 import CoreLocation
 import SwiftData
+import CoreData
 import Combine
 
 @MainActor
@@ -32,6 +33,24 @@ final class AlarmManager: NSObject, ObservableObject {
     func setModelContext(_ context: ModelContext) {
         modelContext = context
         load()
+        observeRemoteChanges()
+    }
+
+    /// Listens for CloudKit remote-change notifications so alarms stay in sync
+    /// when another device adds, edits, or deletes an alarm via iCloud.
+    private func observeRemoteChanges() {
+        NotificationCenter.default.addObserver(
+            forName: NSNotification.Name.NSPersistentStoreRemoteChange,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            guard let self else { return }
+            Task { @MainActor in
+                self.load()
+                self.reregisterAllRegions()
+                print("☁️ iCloud sync received — alarms reloaded")
+            }
+        }
     }
 
     // MARK: - Notification identifiers
@@ -115,7 +134,9 @@ final class AlarmManager: NSObject, ObservableObject {
                 state: .inactive, note: alarm.note,
                 isRepeating: alarm.isRepeating,
                 hasTimeWindow: alarm.hasTimeWindow,
-                windowStart: alarm.windowStart, windowEnd: alarm.windowEnd
+                windowStart: alarm.windowStart, windowEnd: alarm.windowEnd,
+                activeDays: alarm.activeDays,
+                notificationSound: alarm.notificationSound
             )
         }
         modelContext?.insert(toInsert)
@@ -146,6 +167,8 @@ final class AlarmManager: NSObject, ObservableObject {
         existing.windowStart   = alarm.windowStart
         existing.windowEnd     = alarm.windowEnd
         existing.state         = alarm.state
+        existing.soundNameRaw  = alarm.soundNameRaw
+        existing.activeDaysRaw = alarm.activeDaysRaw
         save()
         if existing.isActive { startMonitoring(existing) }
     }
@@ -247,7 +270,7 @@ final class AlarmManager: NSObject, ObservableObject {
         content.body = alarm.note.isEmpty
             ? "\(alarm.regionEvent.rawValue) detected."
             : alarm.note
-        content.sound = .defaultCritical
+        content.sound = alarm.notificationSound.unSound
         content.userInfo = ["alarmID": alarm.id.uuidString]
 
         content.categoryIdentifier = NotificationCategory.geoAlarm

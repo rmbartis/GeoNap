@@ -7,10 +7,21 @@ import SwiftData
 import Foundation
 
 enum IntentModelContainer {
-    /// Returns a configured ModelContainer for use inside AppIntent.perform().
+    /// Returns a CloudKit-backed ModelContainer matching the main app's store.
+    /// Falls back to local-only if CloudKit is unavailable.
     /// @MainActor required because ModelContainer.init is main-actor isolated.
     @MainActor
     static func make() throws -> ModelContainer {
-        try ModelContainer(for: GeoAlarm.self)
+        let schema = Schema([GeoAlarm.self, GTFSFeedModel.self])
+        let cloudConfig = ModelConfiguration(
+            schema: schema,
+            isStoredInMemoryOnly: false,
+            cloudKitDatabase: .automatic
+        )
+        if let c = try? ModelContainer(for: schema, configurations: [cloudConfig]) {
+            return c
+        }
+        let localConfig = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
+        return try ModelContainer(for: schema, configurations: [localConfig])
     }
 }

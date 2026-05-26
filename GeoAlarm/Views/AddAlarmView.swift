@@ -102,9 +102,17 @@ struct AddAlarmView: View {
                 .clipShape(RoundedRectangle(cornerRadius: 10))
                 .listRowInsets(EdgeInsets(top: 8, leading: 8, bottom: 8, trailing: 8))
 
-                if viewModel.latitude != 0 || viewModel.longitude != 0 {
+                if viewModel.hasLocation {
                     LabeledContent("Latitude",  value: String(format: "%.5f", viewModel.latitude))
                     LabeledContent("Longitude", value: String(format: "%.5f", viewModel.longitude))
+                } else {
+                    HStack(spacing: 6) {
+                        Image(systemName: "mappin.slash")
+                            .foregroundColor(.secondary)
+                        Text("Search above or tap the map to set a location")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
                 }
             }
 
@@ -129,6 +137,9 @@ struct AddAlarmView: View {
                            step: distanceUnit.sliderStep)
                 }
             }
+
+            // MARK: Sound / Vibrate
+            SoundPickerSection(selection: $viewModel.notificationSound)
 
             // MARK: Repeat (hysteresis)
             Section("Schedule") {
@@ -210,6 +221,33 @@ struct AddAlarmView: View {
                 }
             }
 
+            // MARK: Active Days
+            Section("Active Days") {
+                HStack(spacing: 4) {
+                    ForEach(Array(zip(1...7, ["Su","Mo","Tu","We","Th","Fr","Sa"])), id: \.0) { weekday, label in
+                        let isOn = viewModel.activeDays.contains(weekday)
+                        Button {
+                            toggleDay(weekday)
+                        } label: {
+                            Text(label)
+                                .font(.caption2.weight(.semibold))
+                                .frame(maxWidth: .infinity, minHeight: 36)
+                                .background(isOn ? Color.accentColor : Color(.systemGray5))
+                                .foregroundColor(isOn ? .white : .secondary)
+                                .clipShape(RoundedRectangle(cornerRadius: 6))
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+                HStack(spacing: 6) {
+                    Image(systemName: viewModel.activeDays == Set(1...7) ? "checkmark.circle" : "calendar")
+                        .foregroundColor(viewModel.activeDays == Set(1...7) ? .green : .accentColor)
+                    Text(activeDaysLabel)
+                }
+                .font(.caption)
+                .foregroundColor(.secondary)
+            }
+
             // MARK: Validation error
             if let error = viewModel.validationError {
                 Section {
@@ -268,6 +306,28 @@ struct AddAlarmView: View {
         return isOvernight
             ? "Active \(durationStr) · \(startStr) → \(endStr) next day"
             : "Active \(durationStr) · \(startStr) – \(endStr)"
+    }
+
+    // MARK: - Active days helpers
+
+    private var activeDaysLabel: String {
+        let days = viewModel.activeDays
+        if days == Set(1...7) { return "Every day" }
+        let weekdays: Set<Int> = [2, 3, 4, 5, 6]
+        let weekend:  Set<Int> = [1, 7]
+        if days == weekdays { return "Weekdays only" }
+        if days == weekend  { return "Weekends only" }
+        let symbols = ["Su","Mo","Tu","We","Th","Fr","Sa"]
+        return days.sorted().map { symbols[$0 - 1] }.joined(separator: " ")
+    }
+
+    private func toggleDay(_ weekday: Int) {
+        if viewModel.activeDays.contains(weekday) {
+            guard viewModel.activeDays.count > 1 else { return }
+            viewModel.activeDays.remove(weekday)
+        } else {
+            viewModel.activeDays.insert(weekday)
+        }
     }
 
     private func saveAlarm() {

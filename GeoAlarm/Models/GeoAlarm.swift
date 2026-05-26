@@ -55,6 +55,82 @@ final class GeoAlarm {
     var windowStart: Date? = nil
     var windowEnd:   Date? = nil
 
+    // MARK: - Active Days
+    // Bitmask: bit 0 = Sunday, bit 1 = Monday, … bit 6 = Saturday
+    // (matches Calendar.Component.weekday − 1, where weekday 1 = Sunday)
+    // Default 127 = all 7 bits set = every day.
+
+    var activeDaysRaw: Int = 127   // SwiftData-friendly Int; 127 = all days
+
+    /// The set of weekday numbers (1 = Sun … 7 = Sat, matching Calendar) on which
+    /// this alarm is allowed to fire. An empty set means every day (same as 127).
+    var activeDays: Set<Int> {
+        get {
+            guard activeDaysRaw != 127 else { return Set(1...7) }
+            var days = Set<Int>()
+            for weekday in 1...7 {
+                let bit = 1 << (weekday - 1)
+                if activeDaysRaw & bit != 0 { days.insert(weekday) }
+            }
+            return days.isEmpty ? Set(1...7) : days
+        }
+        set {
+            var mask = 0
+            for weekday in newValue { mask |= 1 << (weekday - 1) }
+            activeDaysRaw = mask == 0 ? 127 : mask
+        }
+    }
+
+    /// True when all 7 days are active (default state).
+    var isEveryDay: Bool { activeDaysRaw == 127 || activeDays == Set(1...7) }
+
+    /// Short human-readable label, e.g. "Mon–Fri" or "Weekends" or "M W F".
+    var activeDaysLabel: String? {
+        guard !isEveryDay else { return nil }
+        let days = activeDays.sorted()
+        let weekdays: Set<Int> = [2, 3, 4, 5, 6]
+        let weekend:  Set<Int> = [1, 7]
+        if activeDays == weekdays { return "Weekdays" }
+        if activeDays == weekend  { return "Weekends" }
+        let symbols = ["Su","Mo","Tu","We","Th","Fr","Sa"]
+        return days.map { symbols[$0 - 1] }.joined(separator: " ")
+    }
+
+    // MARK: - Sound
+
+    /// Raw value of the chosen NotificationSound (String for SwiftData / CloudKit compatibility).
+    var soundNameRaw: String = NotificationSound.default.rawValue
+
+    var notificationSound: NotificationSound {
+        get { NotificationSound(rawValue: soundNameRaw) ?? .default }
+        set { soundNameRaw = newValue.rawValue }
+    }
+
+    // MARK: - Transit
+
+    /// True when this alarm was created from a GTFS transit stop.
+    var isTransitAlarm: Bool = false
+
+    /// Display name of the transit agency (e.g. "Amtrak").
+    var transitAgencyName: String? = nil
+
+    /// Route short/long name (e.g. "7 · Flushing Local").
+    var transitRouteName: String? = nil
+
+    /// Name of the selected stop (e.g. "Times Sq - 42 St").
+    var transitStopName: String? = nil
+
+    /// Raw GTFS route_type integer stored as string for SwiftData compatibility.
+    var transitRouteTypeRaw: String? = nil
+
+    var transitRouteType: GTFSRouteType? {
+        get {
+            guard let raw = transitRouteTypeRaw, let i = Int(raw) else { return nil }
+            return GTFSRouteType(rawInt: i)
+        }
+        set { transitRouteTypeRaw = newValue.map { String($0.rawValue) } }
+    }
+
     // MARK: - Enum accessors
 
     var regionEvent: RegionEvent {
@@ -93,17 +169,23 @@ final class GeoAlarm {
     // MARK: - Time Window helper
 
     /// Returns true if the alarm should fire at `date`.
-    /// Always true when hasTimeWindow is false.
-    /// Compares hour/minute only — seconds are ignored for minute-resolution windows.
+    /// Checks both the active-days bitmask and the optional time window.
     func isWithinWindow(at date: Date = Date()) -> Bool {
-        guard hasTimeWindow, let start = windowStart, let end = windowEnd else { return true }
         let cal = Calendar.current
+
+        // Day-of-week check (weekday: 1 = Sun … 7 = Sat)
+        if !isEveryDay {
+            let weekday = cal.component(.weekday, from: date)
+            guard activeDays.contains(weekday) else { return false }
+        }
+
+        // Time window check
+        guard hasTimeWindow, let start = windowStart, let end = windowEnd else { return true }
         let nowMins   = cal.component(.hour, from: date)   * 60 + cal.component(.minute, from: date)
         let startMins = cal.component(.hour, from: start)  * 60 + cal.component(.minute, from: start)
         let endMins   = cal.component(.hour, from: end)    * 60 + cal.component(.minute, from: end)
 
         if startMins <= endMins {
-            // Normal span, e.g. 08:00 – 22:00
             return nowMins >= startMins && nowMins <= endMins
         } else {
             // Overnight span, e.g. 22:00 – 06:00
@@ -133,7 +215,14 @@ final class GeoAlarm {
         isRepeating: Bool = false,
         hasTimeWindow: Bool = false,
         windowStart: Date? = nil,
-        windowEnd: Date? = nil
+        windowEnd: Date? = nil,
+        activeDays: Set<Int> = Set(1...7),
+        isTransitAlarm: Bool = false,
+        transitAgencyName: String? = nil,
+        transitRouteName: String? = nil,
+        transitStopName: String? = nil,
+        transitRouteType: GTFSRouteType? = nil,
+        notificationSound: NotificationSound = .default
     ) {
         self.id = id
         self.name = name
@@ -149,6 +238,13 @@ final class GeoAlarm {
         self.hasTimeWindow = hasTimeWindow
         self.windowStart = windowStart
         self.windowEnd = windowEnd
+        self.activeDays = activeDays
+        self.isTransitAlarm = isTransitAlarm
+        self.transitAgencyName = transitAgencyName
+        self.transitRouteName = transitRouteName
+        self.transitStopName = transitStopName
+        self.transitRouteTypeRaw = transitRouteType.map { String($0.rawValue) }
+        self.soundNameRaw = notificationSound.rawValue
     }
 }
 

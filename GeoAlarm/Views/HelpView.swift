@@ -46,7 +46,13 @@ meeting locations so you always know when you're getting close.
                     color: .green,
                     title: "Creating an alarm",
                     body: """
-Tap + in the top-right corner to open the new alarm form.
+Tap + in the top-right corner. A menu appears with two options:
+
+• Location Alarm — pin any address or map location (see below).
+• Transit Alarm — pick an agency, route, and stop from live schedules \
+(see the Transit Alarms section).
+
+For a Location Alarm:
 
 1. Give the alarm a name (e.g. "Penn Station") and an optional note \
 that will appear in the notification.
@@ -57,6 +63,12 @@ directly on the map to place or reposition the pin manually.
 3. Choose On Arrival or On Departure as the trigger.
 4. Use the Radius slider to set how close you need to be before the \
 alarm fires. A larger radius gives you more warning time.
+5. In the Sound / Vibrate section, pick a tone or choose Vibrate only \
+(see Alarm sound / vibrate below).
+
+The Save button is disabled until both a name has been entered and a \
+location has been pinned on the map. A hint appears in the Location \
+section if no pin has been placed yet.
 
 iOS allows a maximum of 20 active alarms at once (an iOS system \
 limit on background region monitoring). A warning appears in the \
@@ -120,6 +132,77 @@ when the window reopens.
                 )
 
                 helpSection(
+                    symbol: "tram.fill",
+                    color: .teal,
+                    title: "Transit Alarms",
+                    body: """
+Transit Alarms connect to public transit schedules so you can set an alarm \
+at an exact station stop — without typing GPS coordinates.
+
+Tap + → Transit Alarm to open the wizard:
+
+1. Agency — Choose from the built-in list of transit agencies worldwide \
+(Amtrak, BART, MBTA, CTA, GO Transit, and more), or enter any public \
+GTFS feed URL from your local authority.
+
+2. Route — Browse or search the routes operated by that agency. Each \
+route shows its type (Rail, Subway, Bus, Ferry, etc.) and the line's \
+name or number.
+
+3. Stop — All stops on that route are listed and sorted by distance from \
+your current location, so your nearest stop appears at the top. Use the \
+search bar to filter by name.
+
+4. Confirm — Review the agency, route, and stop, then set a name, radius, \
+trigger direction, sound, and whether to repeat. The Create Alarm button \
+is disabled until a name has been entered — a hint appears below the name \
+field as a reminder.
+
+The app downloads the GTFS feed the first time you select an agency and \
+caches it on your device. Subsequent selections use the local copy \
+instantly. If schedules change, re-select the agency to refresh.
+
+GTFS (General Transit Feed Specification) is a worldwide open standard \
+used by thousands of transit authorities. The built-in list covers \
+popular agencies, but any agency that publishes a public GTFS ZIP \
+feed URL can be added via "Enter custom GTFS URL".
+"""
+                )
+
+                helpSection(
+                    symbol: "bell.badge.waveform",
+                    color: .pink,
+                    title: "Alarm sound / vibrate",
+                    body: """
+Each alarm has its own sound and vibration setting, chosen in the \
+Sound / Vibrate section when creating or editing the alarm.
+
+System options (no extra files required):
+• Vibrate only — no audio; the device vibrates silently. Ideal for \
+quiet environments. Vibration must be enabled in Settings → Sounds & Haptics.
+• Default — the standard iOS notification sound.
+• Critical — plays at full volume and bypasses silent mode and \
+Do Not Disturb. Use when you cannot afford to miss the alarm.
+
+Travel-themed sounds bundled with the app:
+• Boat horn — deep, resonant foghorn. Great for ferry and harbour alarms.
+• Cable car bell — the sharp metallic clang of an SF cable car.
+• Steam train — a classic three-note steam locomotive whistle chord.
+• Sailboat bell — a mellow resonant ship's bell. Good for marina alarms.
+• Airplane landing — engine whine descending to a touchdown thud.
+• Airport chime — the familiar three-note descending pre-announcement tone.
+
+Each setting is stored with its alarm and plays every time it fires, \
+including snooze re-fires. You can change it at any time by editing \
+the alarm.
+
+Note: iOS restricts third-party apps to sounds bundled inside the app — \
+the full ringtone library in Settings → Sounds & Haptics is only \
+available to Apple's own Clock app via a private system entitlement.
+"""
+                )
+
+                helpSection(
                     symbol: "mic",
                     color: .indigo,
                     title: "Siri & Shortcuts",
@@ -139,6 +222,27 @@ Pick one and it is re-enabled immediately.
 You can also find and customise these shortcuts in the iOS Shortcuts \
 app under the GeoAlarm section. They can be added to your Home Screen, \
 used in Automations, or chained with other actions.
+"""
+                )
+
+                helpSection(
+                    symbol: "gear",
+                    color: .gray,
+                    title: "Settings",
+                    body: """
+Open Settings from the gear icon in the top-left corner of the alarm list.
+
+• Distance — switch between metric (metres / kilometres) and imperial \
+(feet / miles). Affects how radius is displayed and entered throughout \
+the app.
+• Clock — switch between 12-hour and 24-hour time. Affects time window \
+pickers and labels.
+• Help & User Guide — this guide.
+• Privacy & Location Sharing — full in-app disclosure of how location \
+data, transit feeds, and iCloud sync are handled.
+• Build — shows the build timestamp in YYYYMMDD-HHMMSS format (GMT, \
+24-hour clock). Useful when reporting a bug or confirming you are \
+running the latest version.
 """
                 )
 
