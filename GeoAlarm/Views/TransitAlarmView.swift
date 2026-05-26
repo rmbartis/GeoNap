@@ -54,6 +54,9 @@ struct TransitAlarmView: View {
     @State private var selectedStop: GTFSStop? = nil
     @State private var stopFilter:   String = ""
 
+    // Agency list — which country groups are open
+    @State private var expandedRegions: Set<String> = []
+
     // Step 4 — Alarm details
     @State private var alarmName:         String = ""
     @State private var radius:            Double = 200
@@ -96,8 +99,10 @@ struct TransitAlarmView: View {
 
     private var agencyStep: some View {
         List {
-            // Curated feeds grouped by country
+            // Curated feeds grouped by country — each country is collapsible.
+            // Groups auto-expand while a search is active.
             let regions = CuratedFeeds.regions
+            let isSearching = !agencyFilter.isEmpty
             ForEach(regions, id: \.self) { region in
                 let feeds = CuratedFeeds.all.filter {
                     $0.region.hasPrefix(region)
@@ -107,19 +112,35 @@ struct TransitAlarmView: View {
                     $0.region.localizedCaseInsensitiveContains(agencyFilter)
                 }
                 if !feeds.isEmpty {
-                    Section(header: Text(region)) {
+                    DisclosureGroup(
+                        isExpanded: Binding(
+                            get: { isSearching || expandedRegions.contains(region) },
+                            set: { open in
+                                if open { expandedRegions.insert(region) }
+                                else    { expandedRegions.remove(region) }
+                            }
+                        )
+                    ) {
                         ForEach(feeds) { feed in
                             Button {
                                 pickCuratedFeed(feed)
                             } label: {
                                 VStack(alignment: .leading, spacing: 2) {
                                     Text(feed.name).foregroundColor(.primary)
-                                    Text(feed.routeTypes)
+                                    let city = feed.region
+                                        .components(separatedBy: " · ")
+                                        .dropFirst()
+                                        .joined(separator: " · ")
+                                    Text(city.isEmpty ? feed.routeTypes : "\(city) · \(feed.routeTypes)")
                                         .font(.caption)
                                         .foregroundColor(.secondary)
                                 }
                             }
                         }
+                    } label: {
+                        Text(region)
+                            .font(.headline)
+                            .foregroundColor(.primary)
                     }
                 }
             }
@@ -161,7 +182,11 @@ struct TransitAlarmView: View {
                 set: { if !$0 { service.errorMessage = nil } }
             )
         ) {
-            Button("OK", role: .cancel) { service.errorMessage = nil }
+            Button("Try Another") { service.errorMessage = nil }
+            Button("Cancel", role: .cancel) {
+                service.errorMessage = nil
+                onCancel()
+            }
         } message: {
             Text(service.errorMessage ?? "")
         }
@@ -171,11 +196,20 @@ struct TransitAlarmView: View {
 
     private var routeStep: some View {
         let filtered = filteredRoutes
+        let agencyName = selectedFeed?.name ?? "This agency"
         return List {
             if filtered.isEmpty {
-                ContentUnavailableView("No routes found",
-                    systemImage: "tram.fill",
-                    description: Text("Try a different search term."))
+                if routeFilter.isEmpty {
+                    ContentUnavailableView(
+                        "No Routes Found",
+                        systemImage: "tram.fill",
+                        description: Text("\(agencyName) returned no routes in this feed."))
+                } else {
+                    ContentUnavailableView(
+                        "No Routes Found",
+                        systemImage: "tram.fill",
+                        description: Text("No \(agencyName) routes match '\(routeFilter)'."))
+                }
             } else {
                 ForEach(filtered) { route in
                     Button {
@@ -205,11 +239,20 @@ struct TransitAlarmView: View {
 
     private var stopStep: some View {
         let filtered = filteredStops
+        let agencyName = selectedFeed?.name ?? "This agency"
         return List {
             if filtered.isEmpty {
-                ContentUnavailableView("No stops found",
-                    systemImage: "mappin.slash",
-                    description: Text("Try a different search term."))
+                if stopFilter.isEmpty {
+                    ContentUnavailableView(
+                        "No Stops Found",
+                        systemImage: "mappin.slash",
+                        description: Text("\(agencyName) returned no stops in this feed."))
+                } else {
+                    ContentUnavailableView(
+                        "No Stops Found",
+                        systemImage: "mappin.slash",
+                        description: Text("No \(agencyName) stops match '\(stopFilter)'."))
+                }
             } else {
                 ForEach(filtered) { stop in
                     Button {
@@ -300,7 +343,9 @@ struct TransitAlarmView: View {
                 ProgressView(value: service.downloadProgress)
                     .progressViewStyle(.linear)
                     .frame(width: 220)
-                Text(service.downloadProgress < 0.9 ? "Downloading feed…" : "Parsing stops…")
+                Text(service.downloadProgress < 0.9
+                    ? "Downloading \(selectedFeed?.name ?? "feed")…"
+                    : "Parsing \(selectedFeed?.name ?? "feed") stops…")
                     .font(.subheadline)
                     .foregroundColor(.white)
                 Button("Cancel") { service.cancel() }

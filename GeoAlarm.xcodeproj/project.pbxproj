@@ -130,6 +130,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 686A0F432FC337E50079F963 /* Build configuration list for PBXNativeTarget "GeoAlarm" */;
 			buildPhases = (
+				689554102FC52E1C007CA05F /* ShellScript */,
 				686A0F1B2FC337E40079F963 /* Sources */,
 				686A0F1C2FC337E40079F963 /* Frameworks */,
 				686A0F1D2FC337E40079F963 /* Resources */,
@@ -289,6 +290,24 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "if [[ \"$SDKROOT\" == *\"simulator\"* ]]; then\n  echo \"Skipping Crashlytics dSYM upload for simulator build\"\n  exit 0\nfi\n\"${BUILD_DIR%Build/*}SourcePackages/checkouts/firebase-ios-sdk/Crashlytics/run\"\n";
+		};
+		689554102FC52E1C007CA05F /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "TIMESTAMP=$(date +\"%Y%m%d-%H%M%S\")\ncat > \"${SRCROOT}/GeoAlarm/BuildTimestamp.swift\" << EOF\n// Auto-generated — do not edit. Rebuilt on every build.\nenum Build {\n    static let timestamp = \"$TIMESTAMP\"\n}\nEOF\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

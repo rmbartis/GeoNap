@@ -27,9 +27,7 @@ struct SettingsView: View {
     //     /usr/libexec/PlistBuddy -c "Set :BuildTimestamp $TIMESTAMP" \
     //       "${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH}"
     //   Uncheck "Based on dependency analysis" so it runs on every build.
-    private var buildTimestamp: String {
-        Bundle.main.infoDictionary?["BuildTimestamp"] as? String ?? "–"
-    }
+    private var buildTimestamp: String { Build.timestamp }
 
     var body: some View {
         NavigationStack {

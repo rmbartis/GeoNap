@@ -56,7 +56,7 @@ final class GTFSService: ObservableObject {
 
     private func downloadAndParse(feed: GTFSFeedModel) async {
         guard let url = URL(string: feed.feedURL) else {
-            errorMessage = "Invalid feed URL."
+            errorMessage = "\(feed.name): Invalid feed URL."
             return
         }
 
@@ -68,19 +68,16 @@ final class GTFSService: ObservableObject {
             let zipURL = try await download(from: url)
             let extractDir = try extract(zipURL: zipURL, feedID: feed.id.uuidString)
 
-            // Persist the cache directory name back to the model
             feed.cachedDirectoryName = extractDir.lastPathComponent
             feed.lastDownloaded = Date()
-            // Caller's ModelContext will save on next cycle.
 
             await parse(from: extractDir)
 
-            // Clean up the temporary ZIP file
             try? FileManager.default.removeItem(at: zipURL)
         } catch is CancellationError {
             // User cancelled — leave progress where it is
         } catch {
-            errorMessage = "Download failed: \(error.localizedDescription)"
+            errorMessage = "\(feed.name): \(error.localizedDescription)"
         }
     }
 
@@ -103,7 +100,6 @@ final class GTFSService: ObservableObject {
                     continuation.resume(throwing: error)
                     return
                 }
-                // Reject non-2xx HTTP responses (e.g. redirect to HTML login page)
                 if let http = response as? HTTPURLResponse,
                    !(200...299).contains(http.statusCode) {
                     continuation.resume(throwing: GTFSError.httpError(http.statusCode))
@@ -113,9 +109,6 @@ final class GTFSService: ObservableObject {
                     continuation.resume(throwing: GTFSError.downloadFailed)
                     return
                 }
-                // Verify the file starts with a ZIP magic header (PK: 0x50 0x4B).
-                // Some agency URLs redirect to an HTML page with a 200 status,
-                // so we double-check the raw bytes.
                 if let fh = FileHandle(forReadingAtPath: location.path) {
                     let magic = fh.readData(ofLength: 4)
                     fh.closeFile()
@@ -135,14 +128,12 @@ final class GTFSService: ObservableObject {
                 }
             }
 
-            // Progress observation via KVO
             let observation = task.progress.observe(\.fractionCompleted) { [weak self] progress, _ in
                 Task { @MainActor [weak self] in
-                    self?.downloadProgress = progress.fractionCompleted * 0.9  // reserve last 10% for parsing
+                    self?.downloadProgress = progress.fractionCompleted * 0.9
                 }
             }
 
-            // Retain the observation for the task's lifetime
             objc_setAssociatedObject(task, &GTFSService.observationKey, observation, .OBJC_ASSOCIATION_RETAIN)
 
             self.downloadTask = task
@@ -160,16 +151,11 @@ final class GTFSService: ObservableObject {
             .appendingPathComponent("gtfs", isDirectory: true)
             .appendingPathComponent(feedID, isDirectory: true)
 
-        // Remove old extraction if present
         if FileManager.default.fileExists(atPath: cachesDir.path) {
             try FileManager.default.removeItem(at: cachesDir)
         }
         try FileManager.default.createDirectory(at: cachesDir, withIntermediateDirectories: true)
 
-        // Extract only the GTFS text files we need.
-        // Using entry-by-entry extraction avoids ZIPFoundation's invalidEntryPath
-        // error (error 13) that fires on feeds with __MACOSX metadata, absolute
-        // paths, or other non-standard ZIP structures.
         guard let archive = Archive(url: zipURL, accessMode: .read) else {
             throw GTFSError.downloadFailed
         }
@@ -177,26 +163,29 @@ final class GTFSService: ObservableObject {
         let neededFiles: Set<String> = ["routes.txt", "stops.txt", "trips.txt",
                                         "stop_times.txt", "calendar.txt"]
 
+        print("[GTFS] Archive entries:")
         for entry in archive {
             let rawPath = entry.path
+            print("[GTFS]   \(entry.type == .directory ? "DIR " : "FILE") \(rawPath)")
 
-            // Skip macOS metadata and hidden files
-            if rawPath.hasPrefix("__MACOSX") || rawPath.hasPrefix(".") { continue }
+            if rawPath.hasPrefix("__MACOSX") { continue }
             if entry.type == .directory { continue }
 
-            // Normalise to lowercase — some agencies use "Routes.txt" or "STOPS.TXT"
-            // and our neededFiles set is all-lowercase.
             let filename = (rawPath as NSString).lastPathComponent.lowercased()
+
+            if filename.hasPrefix(".") { continue }
             guard neededFiles.contains(filename) else { continue }
 
-            // Always write with the lowercase canonical name so locate() finds it.
             let destURL = cachesDir.appendingPathComponent(filename)
             if FileManager.default.fileExists(atPath: destURL.path) {
                 try? FileManager.default.removeItem(at: destURL)
             }
             _ = try archive.extract(entry, to: destURL)
+            print("[GTFS]   → extracted \(filename)")
         }
 
+        let extracted = (try? FileManager.default.contentsOfDirectory(atPath: cachesDir.path)) ?? []
+        print("[GTFS] Cache dir contains: \(extracted)")
         return cachesDir
     }
 
@@ -249,20 +238,26 @@ enum GTFSParser {
     // MARK: Routes
 
     static func parseRoutes(in dir: URL) -> [GTFSRoute] {
-        // Some feeds nest files inside a subdirectory — walk to find routes.txt
         guard let fileURL = locate("routes.txt", in: dir) else { return [] }
         guard let text = (try? String(contentsOf: fileURL, encoding: .utf8))
                        ?? (try? String(contentsOf: fileURL, encoding: .isoLatin1)) else { return [] }
 
-        let rows  = parseCSV(text)
-        guard let header = rows.first else { return [] }
-
-        let idx = columnIndex(header)
         var result: [GTFSRoute] = []
-        result.reserveCapacity(rows.count)
+        var idx: [String: Int] = [:]
+        var isHeader = true
 
-        for row in rows.dropFirst() {
-            guard row.count > 1 else { continue }
+        text.enumerateLines { line, _ in
+            guard !line.isEmpty else { return }
+            let row = parseSingleRow(line)
+            guard !row.isEmpty else { return }
+
+            if isHeader {
+                idx = columnIndex(row)
+                isHeader = false
+                return
+            }
+
+            guard row.count > 1 else { return }
 
             let routeID   = field(row, idx, "route_id")
             let shortName = field(row, idx, "route_short_name")
@@ -270,13 +265,11 @@ enum GTFSParser {
             let typeStr   = field(row, idx, "route_type")
             let colorHex  = field(row, idx, "route_color")
 
-            let routeType = GTFSRouteType(rawInt: Int(typeStr) ?? 99)
-
             result.append(GTFSRoute(
                 id:        routeID,
                 shortName: shortName,
                 longName:  longName,
-                type:      routeType,
+                type:      GTFSRouteType(rawInt: Int(typeStr) ?? 99),
                 colorHex:  colorHex.isEmpty ? nil : colorHex
             ))
         }
@@ -290,15 +283,23 @@ enum GTFSParser {
         guard let text = (try? String(contentsOf: fileURL, encoding: .utf8))
                        ?? (try? String(contentsOf: fileURL, encoding: .isoLatin1)) else { return [] }
 
-        let rows  = parseCSV(text)
-        guard let header = rows.first else { return [] }
-
-        let idx = columnIndex(header)
         var result: [GTFSStop] = []
-        result.reserveCapacity(rows.count)
+        var idx: [String: Int] = [:]
+        var isHeader = true
 
-        for row in rows.dropFirst() {
-            guard row.count > 1 else { continue }
+        text.enumerateLines { line, _ in
+            guard !line.isEmpty else { return }
+
+            let row = parseSingleRow(line)
+            guard !row.isEmpty else { return }
+
+            if isHeader {
+                idx = columnIndex(row)
+                isHeader = false
+                return
+            }
+
+            guard row.count > 1 else { return }
 
             let stopID   = field(row, idx, "stop_id")
             let stopName = field(row, idx, "stop_name")
@@ -306,10 +307,13 @@ enum GTFSParser {
             let lonStr   = field(row, idx, "stop_lon")
 
             guard
-                let lat = Double(latStr),
-                let lon = Double(lonStr),
-                lat != 0 || lon != 0
-            else { continue }
+                let lat = Double(latStr.trimmingCharacters(in: .whitespaces)),
+                let lon = Double(lonStr.trimmingCharacters(in: .whitespaces)),
+                lat.isFinite, lon.isFinite,
+                (lat != 0 || lon != 0),
+                lat >= -90,  lat <= 90,
+                lon >= -180, lon <= 180
+            else { return }
 
             result.append(GTFSStop(
                 id:        stopID,
@@ -321,14 +325,49 @@ enum GTFSParser {
         return result
     }
 
+    // MARK: - Single-row CSV parser
+
+    private static func parseSingleRow(_ line: String) -> [String] {
+        var row: [String] = []
+        var field = ""
+        var inQuotes = false
+        var i = line.startIndex
+
+        while i < line.endIndex {
+            let c = line[i]
+            if inQuotes {
+                if c == "\"" {
+                    let next = line.index(after: i)
+                    if next < line.endIndex && line[next] == "\"" {
+                        field.append("\"")
+                        i = line.index(after: next)
+                        continue
+                    } else {
+                        inQuotes = false
+                    }
+                } else {
+                    field.append(c)
+                }
+            } else {
+                switch c {
+                case "\"": inQuotes = true
+                case ",":  row.append(field); field = ""
+                case "\r": break
+                default:   field.append(c)
+                }
+            }
+            i = line.index(after: i)
+        }
+        row.append(field)
+        return row
+    }
+
     // MARK: - Helpers
 
-    /// Locate a filename inside a directory tree (handles one-level-deep nesting).
     private static func locate(_ filename: String, in dir: URL) -> URL? {
         let direct = dir.appendingPathComponent(filename)
         if FileManager.default.fileExists(atPath: direct.path) { return direct }
 
-        // Check one level of subdirectory
         if let contents = try? FileManager.default.contentsOfDirectory(
             at: dir, includingPropertiesForKeys: [.isDirectoryKey], options: .skipsHiddenFiles
         ) {
@@ -344,12 +383,9 @@ enum GTFSParser {
     }
 
     private static func columnIndex(_ header: [String]) -> [String: Int] {
-        // Build manually: skip empty keys, last-wins for duplicates.
-        // Dictionary(uniqueKeysWithValues:) crashes if any key appears twice or is "".
         var dict: [String: Int] = [:]
         dict.reserveCapacity(header.count)
         for (i, col) in header.enumerated() {
-            // Strip BOM (\u{FEFF}) that some agencies prepend to the first column
             let key = col
                 .trimmingCharacters(in: .whitespaces)
                 .trimmingCharacters(in: CharacterSet(charactersIn: "\u{FEFF}"))
@@ -364,7 +400,7 @@ enum GTFSParser {
         return row[i].trimmingCharacters(in: .whitespaces)
     }
 
-    // MARK: - RFC 4180 CSV parser
+    // MARK: - RFC 4180 CSV parser (kept for reference)
 
     static func parseCSV(_ text: String) -> [[String]] {
         var rows: [[String]] = []
@@ -380,7 +416,6 @@ enum GTFSParser {
                 if c == "\"" {
                     let next = text.index(after: i)
                     if next < text.endIndex && text[next] == "\"" {
-                        // Escaped quote
                         field.append("\"")
                         i = text.index(after: next)
                         continue
@@ -402,7 +437,6 @@ enum GTFSParser {
                     field = ""
                     rows.append(row)
                     row = []
-                    // Skip following \n
                     let next = text.index(after: i)
                     if next < text.endIndex && text[next] == "\n" {
                         i = next
@@ -419,7 +453,6 @@ enum GTFSParser {
             i = text.index(after: i)
         }
 
-        // Flush last field / row
         row.append(field)
         if row.contains(where: { !$0.isEmpty }) {
             rows.append(row)
