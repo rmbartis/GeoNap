@@ -1,0 +1,129 @@
+# .github/workflows/gtfs-tests.yml
+#
+# GeoAlarm — GTFS feed CI
+#
+# Jobs
+# ────
+# url-checks   Runs on every push + PR.
+#              Executes GTFSFeedURLTests — lightweight HEAD/range-GET checks
+#              for all 29 curated feeds.  Completes in ~60 s and requires no
+#              large downloads.
+#
+# parse-tests  Runs only on push to main, or when manually triggered.
+#              Executes GTFSParserTests — full download + parse for 4 select
+#              feeds (MARTA, BART, DB Fernverkehr, TriMet).  Takes 3–5 minutes.
+#
+# Security note
+# ─────────────
+# This workflow uses only ${{ secrets.GITHUB_TOKEN }} (the auto-generated token
+# provided by GitHub Actions).  Never commit personal access tokens or API keys
+# to this file.
+
+name: GTFS Feed Tests
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: ["**"]
+  workflow_dispatch:
+    inputs:
+      run_parse_tests:
+        description: "Run full parse tests (slow, downloads real feeds)"
+        required: false
+        default: "false"
+        type: choice
+        options: ["true", "false"]
+
+# Cancel any in-flight run for the same branch/PR when a new commit arrives.
+concurrency:
+  group: gtfs-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ──────────────────────────────────────────────────────────────────────────
+  # Job 1 — URL reachability checks (every commit)
+  # ──────────────────────────────────────────────────────────────────────────
+  url-checks:
+    name: GTFS URL Reachability
+    runs-on: macos-15
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: sudo xcode-select -s /Applications/Xcode_16.3.app/Contents/Developer
+
+      - name: Resolve Swift packages
+        run: |
+          xcodebuild -resolvePackageDependencies \
+            -project GeoAlarm.xcodeproj \
+            -scheme GeoAlarm
+
+      - name: Run URL reachability tests
+        env:
+          # Parser tests take too long for this job — skip them.
+          SKIP_PARSER_TESTS: "1"
+        run: |
+          xcodebuild test \
+            -project GeoAlarm.xcodeproj \
+            -scheme GeoAlarm \
+            -destination 'platform=iOS Simulator,name=iPhone 16' \
+            -only-testing:GeoAlarmTests/GTFSFeedURLTests \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            | xcpretty --color --report junit --output test-results-url.xml
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: url-check-results
+          path: test-results-url.xml
+          retention-days: 14
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # Job 2 — Full download + parse (main branch + manual trigger only)
+  # ──────────────────────────────────────────────────────────────────────────
+  parse-tests:
+    name: GTFS Full Parse
+    runs-on: macos-15
+    timeout-minutes: 30
+    # Run on push to main, or when manually triggered with run_parse_tests=true.
+    if: |
+      github.ref == 'refs/heads/main' ||
+      (github.event_name == 'workflow_dispatch' && inputs.run_parse_tests == 'true')
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: sudo xcode-select -s /Applications/Xcode_16.3.app/Contents/Developer
+
+      - name: Resolve Swift packages
+        run: |
+          xcodebuild -resolvePackageDependencies \
+            -project GeoAlarm.xcodeproj \
+            -scheme GeoAlarm
+
+      - name: Run full-parse tests
+        run: |
+          xcodebuild test \
+            -project GeoAlarm.xcodeproj \
+            -scheme GeoAlarm \
+            -destination 'platform=iOS Simulator,name=iPhone 16' \
+            -only-testing:GeoAlarmTests/GTFSParserTests \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            | xcpretty --color --report junit --output test-results-parse.xml
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: parse-test-results
+          path: test-results-parse.xml
+          retention-days: 14
