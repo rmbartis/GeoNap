@@ -15,6 +15,10 @@ final class AlarmManager: NSObject, ObservableObject {
     // MARK: - Published state
     @Published private(set) var alarms: [GeoAlarm] = []
 
+    /// Set when the user taps "Notify Contact" on a fired alarm notification.
+    /// ContentView observes this and presents the Messages compose sheet.
+    @Published var pendingContactMessage: ContactMessage? = nil
+
     // MARK: - Dependencies
 
     /// Set by LocationManager after both @StateObjects are created.
@@ -56,12 +60,16 @@ final class AlarmManager: NSObject, ObservableObject {
     // MARK: - Notification identifiers
 
     enum NotificationAction {
-        static let snooze10 = "SNOOZE_10"
-        static let dismiss  = "DISMISS"
+        static let snooze10       = "SNOOZE_10"
+        static let dismiss        = "DISMISS"
+        static let notifyContact  = "NOTIFY_CONTACT"
     }
 
     enum NotificationCategory {
-        static let geoAlarm = "GEO_ALARM"
+        /// Standard alarm — no contact action.
+        static let geoAlarm        = "GEO_ALARM"
+        /// Alarm with a contact set — includes "Notify Contact" action.
+        static let geoAlarmContact = "GEO_ALARM_CONTACT"
     }
 
     // MARK: - Notification permission + category setup
@@ -80,8 +88,11 @@ final class AlarmManager: NSObject, ObservableObject {
         center.requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
             if let error = error {
                 print("❌ Notification permission error: \(error.localizedDescription)")
+                DebugLogger.shared.log("Notification permission error: \(error.localizedDescription)", category: "Notifications")
             } else {
+                let msg = granted ? "Notification permission granted" : "Notification permission denied"
                 print(granted ? "✅ Notifications granted" : "⚠️ Notifications denied")
+                DebugLogger.shared.log(msg, category: "Notifications")
             }
         }
     }
@@ -90,20 +101,34 @@ final class AlarmManager: NSObject, ObservableObject {
         let snoozeAction = UNNotificationAction(
             identifier: NotificationAction.snooze10,
             title: "Snooze 10 min",
-            options: []                     // Works on Lock Screen and Apple Watch
+            options: []
         )
         let dismissAction = UNNotificationAction(
             identifier: NotificationAction.dismiss,
             title: "Dismiss",
             options: [.destructive]
         )
-        let category = UNNotificationCategory(
+        let notifyContactAction = UNNotificationAction(
+            identifier: NotificationAction.notifyContact,
+            title: "Notify Contact",
+            options: [.foreground]   // .foreground brings the app to front so we can present compose sheet
+        )
+
+        // Category without contact action (most alarms)
+        let standardCategory = UNNotificationCategory(
             identifier: NotificationCategory.geoAlarm,
             actions: [snoozeAction, dismissAction],
             intentIdentifiers: [],
             options: [.customDismissAction]
         )
-        UNUserNotificationCenter.current().setNotificationCategories([category])
+        // Category with contact action (alarms that have a contact set)
+        let contactCategory = UNNotificationCategory(
+            identifier: NotificationCategory.geoAlarmContact,
+            actions: [notifyContactAction, snoozeAction, dismissAction],
+            intentIdentifiers: [],
+            options: [.customDismissAction]
+        )
+        UNUserNotificationCenter.current().setNotificationCategories([standardCategory, contactCategory])
     }
 
     // MARK: - Region limit
@@ -138,11 +163,17 @@ final class AlarmManager: NSObject, ObservableObject {
                 activeDays: alarm.activeDays,
                 notificationSound: alarm.notificationSound
             )
+            DebugLogger.shared.log("Alarm '\(alarm.name)' inserted as INACTIVE — region monitoring limit reached (\(Self.regionMonitoringLimit))", category: "AlarmManager")
         }
         modelContext?.insert(toInsert)
         save()
         alarms.append(toInsert)
-        if toInsert.isActive { startMonitoring(toInsert) }
+        if toInsert.isActive {
+            startMonitoring(toInsert)
+            DebugLogger.shared.log("Alarm added + monitoring started: '\(toInsert.name)' radius=\(Int(toInsert.radius))m event=\(toInsert.regionEvent.rawValue) lat=\(toInsert.latitude) lon=\(toInsert.longitude)", category: "AlarmManager")
+        } else {
+            DebugLogger.shared.log("Alarm added (inactive): '\(toInsert.name)'", category: "AlarmManager")
+        }
     }
 
     /// Applies all editable fields from `alarm` (built by AlarmViewModel.buildAlarm())
@@ -174,6 +205,7 @@ final class AlarmManager: NSObject, ObservableObject {
     }
 
     func delete(alarm: GeoAlarm) {
+        DebugLogger.shared.log("Alarm deleted: '\(alarm.name)'", category: "AlarmManager")
         stopMonitoring(alarm)
         modelContext?.delete(alarm)
         alarms.removeAll { $0.id == alarm.id }
@@ -238,6 +270,7 @@ final class AlarmManager: NSObject, ObservableObject {
             alarms[index].triggerCount += 1
             CrashReporter.log("Alarm triggered: \(alarms[index].name) (\(event.rawValue))")
             CrashReporter.setKey("lastTriggeredAlarm", value: alarms[index].name)
+            DebugLogger.shared.log("🔔 Alarm TRIGGERED: '\(alarms[index].name)' event=\(event.rawValue) triggerCount=\(alarms[index].triggerCount) regionID=\(regionID)", category: "AlarmManager")
             fireNotification(for: alarms[index])
             scheduleWindowEndGuard(for: alarms[index])
             save()
@@ -258,6 +291,7 @@ final class AlarmManager: NSObject, ObservableObject {
             alarms[index].state = .active
             save()
             startMonitoring(alarms[index])   // keep iOS monitoring the region
+            DebugLogger.shared.log("🔄 Repeating alarm re-armed: '\(alarms[index].name)'", category: "AlarmManager")
             print("🔄 Repeating alarm re-armed: \(alarms[index].name)")
         }
     }
@@ -271,9 +305,21 @@ final class AlarmManager: NSObject, ObservableObject {
             ? "\(alarm.regionEvent.rawValue) detected."
             : alarm.note
         content.sound = alarm.notificationSound.unSound
-        content.userInfo = ["alarmID": alarm.id.uuidString]
 
-        content.categoryIdentifier = NotificationCategory.geoAlarm
+        // Embed enough context for action handlers to rebuild the message without
+        // needing to re-fetch the alarm from SwiftData on the background thread.
+        var userInfo: [String: Any] = ["alarmID": alarm.id.uuidString]
+        if alarm.notifyContact && !alarm.contactPhone.isEmpty {
+            userInfo["contactPhone"]   = alarm.contactPhone
+            userInfo["contactName"]    = alarm.contactName
+            userInfo["alarmName"]      = alarm.name
+            userInfo["regionEventRaw"] = alarm.regionEventRaw
+        }
+        content.userInfo = userInfo
+
+        content.categoryIdentifier = (alarm.notifyContact && !alarm.contactPhone.isEmpty)
+            ? NotificationCategory.geoAlarmContact
+            : NotificationCategory.geoAlarm
 
         let request = UNNotificationRequest(
             identifier: alarm.id.uuidString,
@@ -283,6 +329,7 @@ final class AlarmManager: NSObject, ObservableObject {
         UNUserNotificationCenter.current().add(request) { error in
             if let error = error {
                 print("❌ Notification failed: \(error.localizedDescription)")
+                DebugLogger.shared.log("Notification delivery failed: \(error.localizedDescription)", category: "AlarmManager")
             }
         }
     }
@@ -352,6 +399,7 @@ final class AlarmManager: NSObject, ObservableObject {
             try modelContext?.save()
         } catch {
             print("❌ SwiftData save failed: \(error.localizedDescription)")
+            DebugLogger.shared.log("SwiftData save FAILED: \(error.localizedDescription)", category: "AlarmManager")
             CrashReporter.record(error, context: "SwiftData.save")
         }
         // Push latest state to paired Apple Watch after every save.
@@ -394,7 +442,24 @@ extension AlarmManager: UNUserNotificationCenterDelegate {
                    let alarm = alarms.first(where: { $0.id.uuidString == id }) {
                     snooze(alarm, minutes: 10)
                     print("😴 Snoozed: \(alarm.name) for 10 min")
+                    DebugLogger.shared.log("Alarm snoozed 10 min via notification action: '\(alarm.name)'", category: "AlarmManager")
                 }
+
+            case NotificationAction.notifyContact:
+                // Build the pre-composed message from userInfo embedded at fire time.
+                let info       = response.notification.request.content.userInfo
+                let phone      = info["contactPhone"]   as? String ?? ""
+                let name       = info["alarmName"]      as? String ?? ""
+                let eventRaw   = info["regionEventRaw"] as? String ?? RegionEvent.onEntry.rawValue
+                let event      = RegionEvent(rawValue: eventRaw) ?? .onEntry
+                if !phone.isEmpty {
+                    let timeStr = DateFormatter.localizedString(from: Date(), dateStyle: .none, timeStyle: .short)
+                    let verb    = event == .onEntry ? "arrived at" : "departed from"
+                    let body    = "I \(verb) \(name) at \(timeStr)."
+                    pendingContactMessage = ContactMessage(phone: phone, body: body)
+                    DebugLogger.shared.log("Notify Contact action tapped for alarm '\(name)' → pending message prepared", category: "AlarmManager")
+                }
+
             default:
                 break   // Dismiss and default tap need no extra handling
             }

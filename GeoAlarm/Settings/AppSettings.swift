@@ -103,6 +103,12 @@ enum TimeFormat: String, CaseIterable, Identifiable {
 // MARK: - AppStorage Keys
 
 enum AppStorageKey {
-    static let distanceUnit = "distanceUnit"
-    static let timeFormat   = "timeFormat"
+    static let distanceUnit   = "distanceUnit"
+    static let timeFormat     = "timeFormat"
+    /// Whether the user has opted into debug logging.
+    /// Defaults to false — logging is completely silent until the user enables it.
+    static let debugLogging   = DebugLogger.UserDefaultsKey.debugLoggingEnabled
+    /// BCP-47 language code chosen by the user (e.g. "en", "es", "zh-Hans").
+    /// Defaults to the system language if supported, otherwise English.
+    static let appLanguage    = "appLanguage"
 }

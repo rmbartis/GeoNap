@@ -36,6 +36,7 @@ struct TransitAlarmView: View {
     var onCancel: () -> Void
 
     @EnvironmentObject var locationManager: LocationManager
+    @Environment(\.languageBundle) private var bundle
 
     // Wizard step
     @State private var step: WizardStep = .agency
@@ -78,16 +79,24 @@ struct TransitAlarmView: View {
                 case .confirm: confirmStep
                 }
             }
-            .navigationTitle(step.title)
+            .navigationTitle(Text(LocalizedStringKey(step.titleKey), bundle: bundle))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel", action: onCancel)
+                    Button {
+                        onCancel()
+                    } label: {
+                        Text("Cancel", bundle: bundle)
+                    }
                 }
                 if step != .agency {
                     ToolbarItem(placement: .navigationBarLeading) {
                         Button { goBack() } label: {
-                            Label("Back", systemImage: "chevron.left")
+                            Label {
+                                Text("Back", bundle: bundle)
+                            } icon: {
+                                Image(systemName: "chevron.left")
+                            }
                         }
                     }
                 }
@@ -151,25 +160,30 @@ struct TransitAlarmView: View {
                     TextField("https://example.com/gtfs.zip", text: $customURL)
                         .keyboardType(.URL)
                         .autocapitalization(.none)
-                    Button("Use this URL") {
+                    Button {
                         guard !customURL.isEmpty else { return }
                         let model = GTFSFeedModel(name: "Custom Feed", feedURL: customURL)
                         startDownload(feed: model)
+                    } label: {
+                        Text("Use this URL", bundle: bundle)
                     }
                     .disabled(customURL.isEmpty)
                 } else {
-                    Button("Enter custom GTFS URL…") {
+                    Button {
                         withAnimation { showCustomURL = true }
+                    } label: {
+                        Text("Enter custom GTFS URL…", bundle: bundle)
                     }
                 }
             } header: {
-                Text("Custom Agency")
+                Text("Custom Agency", bundle: bundle)
             } footer: {
-                Text("Any public GTFS ZIP feed URL from Transitland, OpenMobilityData, or your local transit authority.")
+                Text("Any public GTFS ZIP feed URL from Transitland, OpenMobilityData, or your local transit authority.", bundle: bundle)
                     .font(.caption)
             }
         }
-        .searchable(text: $agencyFilter, prompt: "Search agencies")
+        .searchable(text: $agencyFilter,
+                    prompt: NSLocalizedString("Search agencies", bundle: bundle, comment: ""))
         .overlay {
             if service.isLoading {
                 downloadOverlay
@@ -182,10 +196,16 @@ struct TransitAlarmView: View {
                 set: { if !$0 { service.errorMessage = nil } }
             )
         ) {
-            Button("Try Another") { service.errorMessage = nil }
-            Button("Cancel", role: .cancel) {
+            Button {
+                service.errorMessage = nil
+            } label: {
+                Text("Try Another", bundle: bundle)
+            }
+            Button(role: .cancel) {
                 service.errorMessage = nil
                 onCancel()
+            } label: {
+                Text("Cancel", bundle: bundle)
             }
         } message: {
             Text(service.errorMessage ?? "")
@@ -232,7 +252,8 @@ struct TransitAlarmView: View {
                 }
             }
         }
-        .searchable(text: $routeFilter, prompt: "Search routes")
+        .searchable(text: $routeFilter,
+                    prompt: NSLocalizedString("Search routes", bundle: bundle, comment: ""))
     }
 
     // MARK: - Step 3: Stop
@@ -279,7 +300,8 @@ struct TransitAlarmView: View {
                 }
             }
         }
-        .searchable(text: $stopFilter, prompt: "Search stops")
+        .searchable(text: $stopFilter,
+                    prompt: NSLocalizedString("Search stops", bundle: bundle, comment: ""))
     }
 
     // MARK: - Step 4: Confirm
@@ -287,46 +309,60 @@ struct TransitAlarmView: View {
     private var confirmStep: some View {
         Form {
             if let stop = selectedStop, let route = selectedRoute {
-                Section("Transit Details") {
-                    LabeledContent("Agency", value: selectedFeed?.name ?? "Custom")
-                    LabeledContent("Route", value: route.fullLabel)
-                    LabeledContent("Stop",  value: stop.name)
+                Section {
+                    LabeledContent(NSLocalizedString("Agency", bundle: bundle, comment: ""),
+                                   value: selectedFeed?.name ?? "Custom")
+                    LabeledContent(NSLocalizedString("Route", bundle: bundle, comment: ""),
+                                   value: route.fullLabel)
+                    LabeledContent(NSLocalizedString("Stop", bundle: bundle, comment: ""),
+                                   value: stop.name)
+                } header: {
+                    Text("Transit Details", bundle: bundle)
                 }
             }
 
-            Section("Alarm") {
-                TextField("Alarm name", text: $alarmName)
+            Section {
+                TextField(NSLocalizedString("Alarm name", bundle: bundle, comment: ""),
+                          text: $alarmName)
                 if alarmName.trimmingCharacters(in: .whitespaces).isEmpty {
                     HStack(spacing: 6) {
                         Image(systemName: "exclamationmark.circle")
                             .foregroundColor(.secondary)
-                        Text("A name is required before the alarm can be saved")
+                        Text("A name is required before the alarm can be saved", bundle: bundle)
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }
                 }
-                Picker("Trigger", selection: $regionEvent) {
-                    Text("On Arrival").tag(RegionEvent.onEntry)
-                    Text("On Departure").tag(RegionEvent.onExit)
+                Picker(selection: $regionEvent) {
+                    Text("On Arrival", bundle: bundle).tag(RegionEvent.onEntry)
+                    Text("On Departure", bundle: bundle).tag(RegionEvent.onExit)
+                } label: {
+                    Text("Trigger", bundle: bundle)
                 }
                 .pickerStyle(.segmented)
 
                 HStack {
-                    Text("Radius")
+                    Text("Radius", bundle: bundle)
                     Spacer()
                     Text("\(Int(radius)) m")
                         .foregroundColor(.secondary)
                 }
                 Slider(value: $radius, in: 50...500, step: 50)
 
-                Toggle("Repeat (re-arm after each trip)", isOn: $isRepeating)
+                Toggle(isOn: $isRepeating) {
+                    Text("Repeat (re-arm after each trip)", bundle: bundle)
+                }
+            } header: {
+                Text("Alarm", bundle: bundle)
             }
 
             SoundPickerSection(selection: $notificationSound)
 
             Section {
-                Button("Create Alarm") {
+                Button {
                     saveAlarm()
+                } label: {
+                    Text("Create Alarm", bundle: bundle)
                 }
                 .disabled(alarmName.trimmingCharacters(in: .whitespaces).isEmpty)
                 .frame(maxWidth: .infinity, alignment: .center)
@@ -348,9 +384,13 @@ struct TransitAlarmView: View {
                     : "Parsing \(selectedFeed?.name ?? "feed") stops…")
                     .font(.subheadline)
                     .foregroundColor(.white)
-                Button("Cancel") { service.cancel() }
-                    .foregroundColor(.white)
-                    .padding(.top, 4)
+                Button {
+                    service.cancel()
+                } label: {
+                    Text("Cancel", bundle: bundle)
+                }
+                .foregroundColor(.white)
+                .padding(.top, 4)
             }
             .padding(24)
             .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 16))
@@ -361,7 +401,7 @@ struct TransitAlarmView: View {
 
     private enum WizardStep {
         case agency, route, stop, confirm
-        var title: String {
+        var titleKey: String {
             switch self {
             case .agency:  return "Choose Agency"
             case .route:   return "Choose Route"

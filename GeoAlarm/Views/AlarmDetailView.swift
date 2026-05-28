@@ -9,6 +9,7 @@ struct AlarmDetailView: View {
     let alarm: GeoAlarm
 
     @EnvironmentObject var alarmManager: AlarmManager
+    @Environment(\.languageBundle) private var bundle
     @AppStorage(AppStorageKey.distanceUnit) private var distanceUnitRaw = DistanceUnit.metric.rawValue
     @AppStorage(AppStorageKey.timeFormat)   private var timeFormatRaw   = TimeFormat.twelveHour.rawValue
     private var distanceUnit: DistanceUnit { DistanceUnit(rawValue: distanceUnitRaw) ?? .metric }
@@ -51,12 +52,12 @@ struct AlarmDetailView: View {
 
             // MARK: Transit Details (only for transit alarms)
             if alarm.isTransitAlarm {
-                Section("Transit") {
+                Section {
                     if let agency = alarm.transitAgencyName {
-                        LabeledContent("Agency") { Text(agency) }
+                        LabeledContent(NSLocalizedString("Agency", bundle: bundle, comment: "")) { Text(agency) }
                     }
                     if let route = alarm.transitRouteName {
-                        LabeledContent("Route") {
+                        LabeledContent(NSLocalizedString("Route", bundle: bundle, comment: "")) {
                             HStack(spacing: 6) {
                                 if let rt = alarm.transitRouteType {
                                     Image(systemName: rt.systemImage)
@@ -67,39 +68,55 @@ struct AlarmDetailView: View {
                         }
                     }
                     if let stop = alarm.transitStopName {
-                        LabeledContent("Stop") { Text(stop) }
+                        LabeledContent(NSLocalizedString("Stop", bundle: bundle, comment: "")) { Text(stop) }
                     }
+                } header: {
+                    Text("Transit", bundle: bundle)
                 }
             }
 
             // MARK: Status
-            Section("Status") {
-                LabeledContent("State") {
+            Section {
+                LabeledContent(NSLocalizedString("State", bundle: bundle, comment: "")) {
                     HStack(spacing: 6) {
                         Circle().fill(stateColor).frame(width: 10, height: 10)
                         Text(alarm.state.rawValue.capitalized)
                     }
                 }
-                LabeledContent("Trigger") { Text(alarm.regionEvent.rawValue) }
-                LabeledContent("Radius")  { Text(distanceUnit.formatted(meters: alarm.radius)) }
+                LabeledContent(NSLocalizedString("Trigger", bundle: bundle, comment: "")) {
+                    Text(alarm.regionEvent.rawValue)
+                }
+                LabeledContent(NSLocalizedString("Radius", bundle: bundle, comment: "")) {
+                    Text(distanceUnit.formatted(meters: alarm.radius))
+                }
                 if alarm.isRepeating {
-                    LabeledContent("Repeat") { Text("On") }
+                    LabeledContent(NSLocalizedString("Repeat", bundle: bundle, comment: "")) {
+                        Text("On", bundle: bundle)
+                    }
                 }
                 if let window = alarm.windowLabel(using: timeFormat) {
-                    LabeledContent("Time window") { Text(window) }
+                    LabeledContent(NSLocalizedString("Time window", bundle: bundle, comment: "")) {
+                        Text(window)
+                    }
                 }
                 if let daysLabel = alarm.activeDaysLabel {
-                    LabeledContent("Active days") { Text(daysLabel) }
+                    LabeledContent(NSLocalizedString("Active days", bundle: bundle, comment: "")) {
+                        Text(daysLabel)
+                    }
                 }
+            } header: {
+                Text("Status", bundle: bundle)
             }
 
             // MARK: History
-            Section("History") {
-                LabeledContent("Times triggered") {
-                    Text(alarm.triggerCount == 0 ? "Never" : "\(alarm.triggerCount)")
+            Section {
+                LabeledContent(NSLocalizedString("Times triggered", bundle: bundle, comment: "")) {
+                    Text(alarm.triggerCount == 0
+                         ? NSLocalizedString("Never", bundle: bundle, comment: "")
+                         : "\(alarm.triggerCount)")
                 }
                 if let last = alarm.lastTriggeredAt {
-                    LabeledContent("Last triggered") {
+                    LabeledContent(NSLocalizedString("Last triggered", bundle: bundle, comment: "")) {
                         VStack(alignment: .trailing, spacing: 2) {
                             Text(last, style: .relative)
                                 .foregroundStyle(.secondary)
@@ -110,22 +127,36 @@ struct AlarmDetailView: View {
                     }
                 }
                 if !alarm.note.isEmpty {
-                    LabeledContent("Note") { Text(alarm.note) }
+                    LabeledContent(NSLocalizedString("Note", bundle: bundle, comment: "")) {
+                        Text(alarm.note)
+                    }
                 }
+            } header: {
+                Text("History", bundle: bundle)
             }
 
             // MARK: Actions
             Section {
-                NavigationLink("Edit Alarm") {
+                NavigationLink {
                     AddAlarmView(existingAlarm: alarm)
+                } label: {
+                    Text("Edit Alarm", bundle: bundle)
                 }
-                Button(alarm.isActive ? "Disable alarm" : "Enable alarm") {
+                Button {
                     alarmManager.toggleActive(alarm)
+                } label: {
+                    Text(alarm.isActive
+                         ? NSLocalizedString("Disable alarm", bundle: bundle, comment: "")
+                         : NSLocalizedString("Enable alarm", bundle: bundle, comment: ""))
                 }
                 .foregroundColor(alarm.isActive ? .orange : .green)
 
                 ShareLink(item: shareURLString) {
-                    Label("Share location", systemImage: "square.and.arrow.up")
+                    Label {
+                        Text("Share location", bundle: bundle)
+                    } icon: {
+                        Image(systemName: "square.and.arrow.up")
+                    }
                 }
             }
         }

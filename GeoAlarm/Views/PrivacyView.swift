@@ -5,6 +5,7 @@
 import SwiftUI
 
 struct PrivacyView: View {
+    @Environment(\.languageBundle) private var bundle
 
     var body: some View {
         ScrollView {
@@ -15,142 +16,33 @@ struct PrivacyView: View {
 
                 Divider()
 
-                // MARK: Location
-                privacySection(
-                    icon: "location.fill",
-                    iconColor: .blue,
-                    title: "Location Data",
-                    body: """
-GeoAlarm uses your device's location exclusively to monitor geofenced regions. \
-Location data is processed entirely on your device — it is never transmitted to any \
-server, stored in a database, or shared with third parties.
-
-When you create an alarm, the latitude, longitude, and radius you choose are saved \
-locally in the app's SwiftData store. This data never leaves your device unless you \
-explicitly use the Share button, which generates a standard Apple Maps link that you \
-control and can share with anyone you choose.
-
-The app requests "Always On" location permission so that iOS can wake the app in the \
-background when you enter or exit a monitored region. You can revoke this permission \
-at any time in Settings → Privacy & Security → Location Services → GeoAlarm. \
-Without "Always On" permission, alarms will only fire while the app is open.
-"""
-                )
-
+                privacySection(icon: "location.fill",      iconColor: .blue,
+                               titleKey: "Location Data",          bodyKey: "privacy.body.locationData")
                 Divider()
-
-                // MARK: On-Device Storage
-                privacySection(
-                    icon: "internaldrive.fill",
-                    iconColor: .gray,
-                    title: "On-Device Storage",
-                    body: """
-All alarm data — including names, coordinates, radii, time windows, active days, and \
-trigger history — is stored locally using SwiftData in the app's private container. \
-This data is included in standard iOS backups (iCloud Backup or iTunes/Finder backup) \
-if backups are enabled on your device.
-
-No account, login, or network connection is required to use GeoAlarm.
-"""
-                )
-
+                privacySection(icon: "internaldrive.fill", iconColor: .gray,
+                               titleKey: "On-Device Storage",      bodyKey: "privacy.body.onDeviceStorage")
                 Divider()
-
-                // MARK: iCloud Sync
-                privacySection(
-                    icon: "icloud.fill",
-                    iconColor: .cyan,
-                    title: "iCloud Sync",
-                    body: """
-GeoAlarm is designed to support iCloud sync via CloudKit so that your alarms can \
-appear on all your Apple devices signed into the same Apple ID. This feature requires \
-an active Apple Developer account and is enabled during App Store distribution.
-
-When iCloud sync is active, alarm records are stored in your personal iCloud container \
-and governed by Apple's privacy policy (apple.com/privacy). Apple does not use \
-CloudKit data for advertising. If iCloud sync is unavailable or disabled, the app \
-falls back to local-only storage automatically — no data is lost.
-
-You can disable iCloud sync at any time in Settings → [Your Name] → iCloud → \
-GeoAlarm (when listed).
-"""
-                )
-
+                privacySection(icon: "icloud.fill",        iconColor: .cyan,
+                               titleKey: "iCloud Sync",            bodyKey: "privacy.body.iCloudSync")
                 Divider()
-
-                // MARK: GTFS Transit Feeds
-                privacySection(
-                    icon: "tram.fill",
-                    iconColor: .teal,
-                    title: "Transit Feed Downloads",
-                    body: """
-The Transit Alarm feature downloads GTFS (General Transit Feed Specification) data \
-directly from public transit agency servers. These feeds contain stop names, \
-coordinates, and route information — no personal data is included.
-
-Downloaded GTFS data is cached in the app's caches directory on your device. Cached \
-files may be deleted by iOS when storage is low; the app will re-download on demand. \
-Network requests made to agency servers are subject to each agency's own privacy policy.
-
-No custom GTFS URL you enter is stored beyond the current session, and no information \
-about which agencies you browsed is transmitted anywhere.
-"""
-                )
-
+                privacySection(icon: "tram.fill",          iconColor: .teal,
+                               titleKey: "Transit Feed Downloads", bodyKey: "privacy.body.transitFeeds")
                 Divider()
-
-                // MARK: Notifications
-                privacySection(
-                    icon: "bell.fill",
-                    iconColor: .red,
-                    title: "Notifications",
-                    body: """
-GeoAlarm delivers local notifications entirely on-device using iOS's \
-UNUserNotificationCenter. Notifications are generated by the app itself when a \
-geofence event fires — they are not sent through any push notification server or \
-remote service. No notification content is transmitted off your device.
-
-You can manage notification permissions in Settings → Notifications → GeoAlarm.
-"""
-                )
-
+                privacySection(icon: "bell.fill",          iconColor: .red,
+                               titleKey: "Notifications",          bodyKey: "privacy.body.notifications")
                 Divider()
-
-                // MARK: Analytics & Crash Reporting
-                privacySection(
-                    icon: "chart.bar.fill",
-                    iconColor: .indigo,
-                    title: "Analytics & Crash Reporting",
-                    body: """
-GeoAlarm does not include any third-party analytics SDKs, advertising networks, or \
-crash reporting services. The app does not track how you use it and does not collect \
-diagnostic information beyond what iOS provides to you natively in \
-Settings → Privacy & Security → Analytics & Improvements.
-"""
-                )
-
+                privacySection(icon: "chart.bar.fill",     iconColor: .indigo,
+                               titleKey: "Analytics & Crash Reporting", bodyKey: "privacy.body.analytics")
                 Divider()
-
-                // MARK: Data Deletion
-                privacySection(
-                    icon: "trash.fill",
-                    iconColor: .orange,
-                    title: "Deleting Your Data",
-                    body: """
-You can delete individual alarms by swiping left on any alarm row, or delete all \
-data by removing the app from your device. Uninstalling GeoAlarm removes all locally \
-stored alarm records. If iCloud sync was enabled, you can also delete the app's \
-CloudKit data in Settings → [Your Name] → iCloud → Manage Account Storage → GeoAlarm.
-"""
-                )
-
+                privacySection(icon: "trash.fill",         iconColor: .orange,
+                               titleKey: "Deleting Your Data",     bodyKey: "privacy.body.dataDeletion")
                 Divider()
 
                 // MARK: Contact
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("Questions")
+                    Text("Questions", bundle: bundle)
                         .font(.headline)
-                    Text("If you have questions about privacy or data handling, you can reach the developer through the App Store support link on GeoAlarm's product page.")
+                    Text(LocalizedStringKey("privacy.body.contact"), bundle: bundle)
                         .font(.body)
                         .foregroundColor(.secondary)
                         .fixedSize(horizontal: false, vertical: true)
@@ -161,7 +53,7 @@ CloudKit data in Settings → [Your Name] → iCloud → Manage Account Storage 
             .padding(.horizontal, 20)
             .padding(.top, 16)
         }
-        .navigationTitle("Privacy & Location")
+        .navigationTitle(Text("Privacy & Location", bundle: bundle))
         .navigationBarTitleDisplayMode(.large)
     }
 
@@ -173,10 +65,10 @@ CloudKit data in Settings → [Your Name] → iCloud → Manage Account Storage 
                 Image(systemName: "lock.shield.fill")
                     .font(.title2)
                     .foregroundColor(.green)
-                Text("Your privacy matters")
+                Text("Your privacy matters", bundle: bundle)
                     .font(.title2.bold())
             }
-            Text("GeoAlarm is designed with a simple principle: your location and alarm data belong to you. This document explains exactly what information the app uses, where it stays, and what it never does.")
+            Text(LocalizedStringKey("privacy.intro"), bundle: bundle)
                 .font(.body)
                 .foregroundColor(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
@@ -188,18 +80,18 @@ CloudKit data in Settings → [Your Name] → iCloud → Manage Account Storage 
     private func privacySection(
         icon: String,
         iconColor: Color,
-        title: String,
-        body: String
+        titleKey: String,
+        bodyKey: String
     ) -> some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack(spacing: 8) {
                 Image(systemName: icon)
                     .foregroundColor(iconColor)
                     .frame(width: 22)
-                Text(title)
+                Text(LocalizedStringKey(titleKey), bundle: bundle)
                     .font(.headline)
             }
-            Text(body)
+            Text(LocalizedStringKey(bodyKey), bundle: bundle)
                 .font(.body)
                 .foregroundColor(.secondary)
                 .fixedSize(horizontal: false, vertical: true)

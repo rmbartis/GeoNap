@@ -96,14 +96,17 @@ struct SoundPickerSection: View {
     @Binding var selection: NotificationSound
     @StateObject private var player = SoundPreviewPlayer()
     @State   private var isExpanded = false
+    @Environment(\.languageBundle) private var bundle
 
     var body: some View {
-        Section("Sound / Vibrate") {
+        Section {
             if isExpanded {
                 expandedList
             } else {
                 collapsedRow
             }
+        } header: {
+            Text("Sound / Vibrate", bundle: bundle)
         }
         .onDisappear { player.stop() }
     }

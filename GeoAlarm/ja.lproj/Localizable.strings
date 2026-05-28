@@ -1,0 +1,239 @@
+/* GeoAlarm — 日本語 (ja) */
+
+"Done" = "完了";
+"Cancel" = "キャンセル";
+"OK" = "OK";
+"Save" = "保存";
+"Back" = "戻る";
+"Settings" = "設定";
+"Next" = "次へ";
+"Skip" = "スキップ";
+
+"Geo Alarms" = "ジオアラーム";
+"Location Alarm" = "位置アラーム";
+"Transit Alarm" = "交通アラーム";
+"Location access required. Enable in Settings." = "位置情報へのアクセスが必要です。設定で有効にしてください。";
+"Location signal lost" = "位置信号が失われました";
+"Alarms will resume when GPS is available." = "GPSが利用可能になるとアラームが再開します。";
+
+"Alarm Details" = "アラームの詳細";
+"Name (e.g. Penn Station)" = "名前（例：東京駅）";
+"Note (shown in notification)" = "メモ（通知に表示）";
+"Location" = "場所";
+"Search address or place…" = "住所や場所を検索…";
+"Trigger" = "トリガー";
+"Event" = "イベント";
+"Radius" = "半径";
+"Latitude" = "緯度";
+"Longitude" = "経度";
+"Search above or tap the map to set a location" = "上で検索するか、マップをタップして場所を設定";
+"Schedule" = "スケジュール";
+"Repeat" = "繰り返し";
+"Auto-resets after you leave — fires again every trip" = "エリアを出ると自動リセット — 毎回のトリップで発動";
+"Hysteresis: alarm won't re-trigger until you've fully exited and re-entered the region." = "ヒステリシス：エリアを完全に出て再進入するまで再発動しません。";
+"Active time window" = "有効時間帯";
+"Only fire within a set time range" = "指定した時間帯のみ発動";
+"From" = "開始";
+"Until" = "終了";
+"Active Days" = "有効な曜日";
+"Every day" = "毎日";
+"Weekdays only" = "平日のみ";
+"Weekends only" = "週末のみ";
+"Active all day" = "終日有効";
+"Save Alarm" = "アラームを保存";
+"Update Alarm" = "アラームを更新";
+"New Alarm" = "新しいアラーム";
+"Edit Alarm" = "アラームを編集";
+"Please enter a name for this alarm." = "アラームの名前を入力してください。";
+"Radius must be at least 50 metres." = "半径は50メートル以上必要です。";
+"Please pick a valid location on the map." = "マップで有効な場所を選択してください。";
+"Window start and end time cannot be the same." = "開始時刻と終了時刻を同じにすることはできません。";
+
+"Notify a Contact" = "連絡先に通知";
+"Send a message when this alarm fires" = "アラームが発動したときにメッセージを送信";
+"Select Contact" = "連絡先を選択";
+"No contact selected" = "連絡先が選択されていません";
+"Message preview:" = "メッセージのプレビュー：";
+"Select a contact to enable notifications" = "通知を有効にするには連絡先を選択してください";
+"When the alarm fires, a pre-composed message with your arrival time will be ready to send. You review it before it's sent." = "アラームが発動すると、到着時刻を含む定型メッセージが送信準備完了になります。送信前に確認できます。";
+
+"Units" = "単位";
+"Distance" = "距離";
+"Metric (m / km)" = "メートル法（m / km）";
+"Imperial (ft / mi)" = "ヤード・ポンド法（ft / mi）";
+"Controls how radius is displayed and entered when creating alarms." = "アラーム作成時の半径の表示と入力方法を制御します。";
+"Time" = "時刻";
+"Clock" = "時計";
+"12-hour (AM/PM)" = "12時間制（AM/PM）";
+"24-hour" = "24時間制";
+"Used when displaying and entering alarm time windows." = "アラームの時間帯を表示・入力するときに使用します。";
+"Help & User Guide" = "ヘルプとユーザーガイド";
+"Privacy & Location Sharing" = "プライバシーと位置情報共有";
+"Language" = "言語";
+"Support" = "サポート";
+"Enable Debug Log" = "デバッグログを有効にする";
+"Log file size" = "ログファイルのサイズ";
+"Share Log with Support" = "サポートとログを共有";
+"Clear Log" = "ログを削除";
+"Enable Debug Logging?" = "デバッグログを有効にしますか？";
+"Enable Logging" = "ログを有効にする";
+"Log Cleared" = "ログを削除しました";
+"The debug log has been cleared. A new session header will be written on the next log entry." = "デバッグログが削除されました。次のエントリ時に新しいセッションヘッダーが書き込まれます。";
+"About" = "このアプリについて";
+"Build" = "ビルド";
+"Preview" = "プレビュー";
+"Sample radius" = "サンプル半径";
+"Sample time" = "サンプル時刻";
+"Logging is ON. Detailed activity is being recorded to GeoAlarmDebug.log in the GeoAlarm folder in the Files app. Disable when no longer needed." = "ログ記録が有効です。詳細な活動がGeoAlarmDebug.logに記録されています。不要になったら無効にしてください。";
+"Enable to capture detailed diagnostic information when troubleshooting an issue. Logging is off by default and does not run in the background." = "問題のトラブルシューティング時に詳細な診断情報を取得するために有効にします。ログはデフォルトでオフです。";
+
+"Sleep through your commute" = "通勤中に眠れます";
+"GeoAlarm wakes you up when your device enters or leaves a location — not at a set time. Perfect for trains, buses, and long rides." = "GeoAlarmは設定した時刻ではなく、デバイスが場所に入ったり出たりしたときに起こします。電車、バス、長距離移動に最適。";
+"Set an alarm anywhere" = "どこにでもアラームを設定";
+"Drop a pin on any stop, station, or landmark. Choose how close you need to be before the alarm fires, and whether it should repeat every trip." = "任意の停留所、駅、ランドマークにピンを立てます。アラームが鳴る距離と、毎回繰り返すかを選択。";
+"Active time windows" = "有効時間帯";
+"Only want the alarm to fire during your morning commute? Set a time window and GeoAlarm will ignore the location outside those hours." = "朝の通勤時間だけアラームを鳴らしたい？時間帯を設定すると、その時間外は場所を無視します。";
+"Always On location needed" = "常時位置情報が必要です";
+"GeoAlarm monitors your position in the background so it can alert you even while your phone is locked. Your location is never shared or stored outside the app." = "GeoAlarmは画面がロックされていてもバックグラウンドで位置を監視して通知します。位置情報はアプリ外で共有・保存されません。";
+"Allow location access" = "位置情報へのアクセスを許可";
+"Not now" = "後で";
+"Choose Your Language" = "言語を選択";
+"Select the language you'd like to use in GeoAlarm. You can change this at any time in Settings." = "GeoAlarmで使用する言語を選択してください。設定でいつでも変更できます。";
+
+"Choose Agency" = "事業者を選択";
+"Choose Route" = "路線を選択";
+"Choose Stop" = "駅・停留所を選択";
+"New Transit Alarm" = "新しい交通アラーム";
+"Custom Agency" = "カスタム事業者";
+"Search agencies" = "事業者を検索";
+"Search routes" = "路線を検索";
+"Search stops" = "駅・停留所を検索";
+"Transit Details" = "交通機関の詳細";
+"Agency" = "事業者";
+"Route" = "路線";
+"Stop" = "駅・停留所";
+"Alarm" = "アラーム";
+"On Arrival" = "到着時";
+"On Departure" = "出発時";
+"Repeat (re-arm after each trip)" = "繰り返し（毎回のトリップ後に再セット）";
+"Create Alarm" = "アラームを作成";
+"No Routes Found" = "路線が見つかりません";
+"No Stops Found" = "駅・停留所が見つかりません";
+"Enter custom GTFS URL…" = "カスタムGTFS URLを入力…";
+"Use this URL" = "このURLを使用";
+"Try Another" = "別のURLを試す";
+"Any public GTFS ZIP feed URL from Transitland, OpenMobilityData, or your local transit authority." = "Transitland、OpenMobilityData、または地域の交通機関が提供する公開GTFSフィードURL。";
+"A name is required before the alarm can be saved" = "アラームを保存するには名前が必要です";
+
+"Sound / Vibrate" = "サウンド／バイブ";
+"Vibrate only" = "バイブのみ";
+"Default" = "デフォルト";
+"Critical (bypasses silent mode)" = "緊急（マナーモード無視）";
+"Boat Horn" = "船のホーン";
+"Cable Car Bell" = "ケーブルカーのベル";
+"Steam Train" = "蒸気機関車";
+"Sailboat Bell" = "帆船のベル";
+"Airplane Landing" = "航空機の着陸";
+"Airport Chime" = "空港のチャイム";
+
+"Help" = "ヘルプ";
+"What is GeoAlarm?" = "GeoAlarmとは？";
+"Typical use cases" = "主な使い方";
+"Creating an alarm" = "アラームの作成";
+"Transit Alarms" = "交通アラーム";
+"Alarm sound / vibrate" = "アラームのサウンド／バイブ";
+"Siri & Shortcuts" = "SiriとショートカットApp";
+"Reporting a problem" = "問題の報告";
+"Managing alarms" = "アラームの管理";
+"Always On location" = "常時位置情報";
+"Notifications" = "通知";
+
+// MARK: - HelpView Body Text
+"help.body.whatIsGeoAlarm" = "GeoAlarmは時刻ではなく現在地に基づいてアラームを鳴らします。旅の所要時間を予測する必要はなく、目的地にアラームを設定しておけば、到着時または出発時にアプリが通知します。\n\nバックグラウンドで静かに動作するので、停車駅を乗り過ごす心配なく、仮眠を取ったり読書したりしてリラックスできます。";
+
+"help.body.useCases" = "• 電車・地下鉄の通勤者 — 降車駅にアラームを設定。乗り過ごすことなく到着直前に起こされます。毎朝自動で。\n\n• バス通勤者 — 自宅近くのバス停に出発アラームを設定。エリアを離れると鳴り、出発を促します。\n\n• 長距離ドライブの同乗者 — 経由地にアラームを設定。地図を見続けることなく、車が近づいたら通知が届きます。\n\n• 初めての街を旅する人 — ホテル・空港・待ち合わせ場所にアラームを設定して、いつでも目的地への接近を確認できます。";
+
+"help.body.creatingAlarm" = "右上の + をタップするとメニューが表示され、2種類のアラームを選べます。\n\n• 場所アラーム — 地図上の住所や地点をピン留め。\n• 乗換アラーム — リアルタイムの時刻表から交通機関・路線・停車駅を選択。\n\n場所アラームの場合：\n\n1. アラームの名前と、通知に表示するオプションのメモを入力します。\n2. 検索バーで住所・駅・施設を検索。候補をタップしてピンを立てるか、地図を直接タップします。\n3. トリガーとして到着時または出発時を選びます。\n4. 半径スライダーでアラームが鳴るまでの距離を設定します。\n5. サウンド / バイブでトーンを選ぶか、バイブのみを選択します。\n\n名前の入力と場所のピン留めが完了するまで保存ボタンは無効です。iOSでは同時に有効化できるアラームは最大20件です。";
+
+"help.body.radius" = "半径はジオフェンス（ピンを中心とした円形の境界線）を定義します。その境界を越えると（進入または退出）、アラームが鳴ります。\n\n200mの半径は単一の駅や建物に適しています。市街地中心部や空港エリアなど広い目印には500〜1000mを使うと、到着前に準備する時間が生まれます。\n\n設定でメートル/キロメートルとフィート/マイルを切り替えられます。";
+
+"help.body.repeat" = "ワンショットアラームは一度鳴ったあと、手動で再度有効にするまでトリガー済み状態を維持します。一回限りの移動や単発のリマインダーに便利です。\n\n繰り返しアラームはエリアを離れると自動的にリセットされるため、次回同じ場所を通ったときにまた鳴ります。毎日通勤する方に最適です。";
+
+"help.body.timeWindow" = "時間帯設定によって、アラームが鳴ることのできる時間を制限できます。例えば07:00〜09:00に設定すると、朝の通勤時間帯のみトリガーされます。\n\nピッカー下の概要ラベルに時間帯の長さが表示されます（例：「2時間有効 · 7:00 AM – 9:00 AM」）。\n\n夜間をまたぐ時間帯（例：22:00〜06:00）にも対応しています。開始時刻が終了時刻より遅い場合、アラームは深夜を越えて翌朝まで有効になります。概要がオレンジ色になり「翌日」と表示されてお知らせします。";
+
+"help.body.transitAlarms" = "乗換アラームは公共交通の時刻表に接続し、GPS座標を入力しなくても特定の停車駅にアラームを設定できます。\n\n+ → 乗換アラームをタップしてウィザードを起動：\n\n1. 交通機関 — 内蔵の世界対応リスト（Amtrak・BART・MBTA・CTA・GO Transitなど）から選ぶか、公開のGTFSフィードURLを入力。\n2. 路線 — 路線を検索または一覧表示。各路線の種別（鉄道・地下鉄・バス・フェリーなど）が表示されます。\n3. 停車駅 — 現在地からの距離順に全停車駅を表示。\n4. 確認 — 交通機関・路線・停車駅を確認し、名前・半径・トリガー方向・サウンドを設定します。\n\nアプリは初回使用時にGTFSフィードをダウンロードし、ローカルにキャッシュします。";
+
+"help.body.soundVibrate" = "各アラームには独自のサウンド設定があり、作成時または編集時にサウンド / バイブで選択します。\n\nシステムオプション：\n• バイブのみ — 音なし。静かな環境に最適。\n• デフォルト — 標準のiOS通知音。\n• 緊急 — サイレントモードとおやすみモードを無視してフル音量で再生。\n\n内蔵の旅行サウンド：\n• 船のホーン · ケーブルカーのベル · 蒸気機関車 · ヨットのベル · 着陸音 · 空港チャイム\n\n各設定はアラームと一緒に保存され、鳴るたびに再生されます。";
+
+"help.body.siri" = "GeoAlarmはSiriとショートカットアプリに対応しています。設定不要で使えます。\n\n• 「GeoAlarmを作る」— Siriが名前・場所・トリガー方向を確認し、アラームを保存します。\n• 「GeoAlarmを有効にする」— Siriが保存済みアラームを表示。再度有効にするものを選びます。\n• 「GeoAlarmを無効にする」— 上記と同様ですが、アラームを無効化します。\n\niOSのショートカットアプリのGeoAlarmセクションから、これらのショートカットを見つけてカスタマイズすることもできます。";
+
+"help.body.settings" = "アラームリスト左上の歯車アイコンから設定を開きます。\n\n• 距離 — メートル法（m / km）とヤード法（ft / mi）を切り替え。\n• 時計 — 12時間表示と24時間表示を切り替え。\n• ヘルプ&ユーザーガイド — このガイド。\n• プライバシー&位置情報の共有 — 位置情報の取り扱いの全開示。\n• デバッグログを有効にする — 「問題の報告」参照。\n• ビルド — ビルドのタイムスタンプを表示。バグ報告時に役立ちます。";
+
+"help.body.reportingProblem" = "GeoAlarmが正常に動作しない場合は、詳細なログを記録するデバッグログ機能を有効にできます。\n\nログを有効にする手順：\n1. 設定 → サポートセクションを開く。\n2. デバッグログを有効にするをオンにする。\n3. ダイアログで記録内容が説明されます。ログを有効にするをタップして進む。\n4. 問題を再現する。\n5. ファイルアプリ → iPhoneの中 → GeoAlarm → GeoAlarmDebug.logを開き、サポートと共有する。\n\n記録される情報：デバイスモデル・iOSバージョン・位置情報の許可状況・リージョンイベント・アラームイベント・乗換フィードのダウンロード・エラー。自動的に送信されることはありません。";
+
+"help.body.managingAlarms" = "リスト内のアラームを右スワイプすると、詳細を開かずに素早くオン/オフを切り替えられます。\n\n左スワイプでアラームを削除できます。削除されたアラームはすぐに取り除かれ、ジオフェンスの監視も停止します。\n\nアラームを編集するには、タップして詳細画面を開き、アラームを編集をタップします。\n\nアラームの場所を共有するには、詳細画面を開いて場所を共有をタップします。正確な座標のApple Mapsリンクが送信されます。";
+
+"help.body.alwaysOnLocation" = "GeoAlarmはバックグラウンドでエリアを監視するために「常に許可」の位置情報アクセスが必要です。画面がロックされていてもアプリが閉じていても機能します。\n\nセットアップ時に「今はしない」を選んだ場合は、後でiOS設定 → プライバシーとセキュリティ → 位置情報サービス → GeoAlarmから「常に」に設定できます。\n\n「常に許可」がない場合、アラームはアプリが開いている間のみ鳴ります。";
+
+"help.body.notifications" = "アラームが鳴ると、アラーム名とメモ（設定している場合）付きの通知が届きます。通知からできること：\n\n• 10分スヌーズ — アラームを10分間抑制し、その後再度有効化します。\n• 消去 — 通知をクリア。繰り返しアラームの場合、エリアを離れるとリセットされます。\n\niOS設定 → 通知 → GeoAlarmでGeoAlarmの通知が有効になっているか確認してください。";
+
+// MARK: - PrivacyView Section Titles
+"Privacy & Location" = "プライバシーと位置情報";
+"Your privacy matters" = "あなたのプライバシーを大切に";
+"Location Data" = "位置情報データ";
+"On-Device Storage" = "端末内ストレージ";
+"iCloud Sync" = "iCloud同期";
+"Transit Feed Downloads" = "乗換フィードのダウンロード";
+"Analytics & Crash Reporting" = "分析とクラッシュレポート";
+"Deleting Your Data" = "データの削除";
+"Questions" = "ご質問";
+
+// MARK: - PrivacyView Body Text
+"privacy.intro" = "GeoAlarmはシンプルな原則に基づいて設計されています。あなたの位置情報とアラームデータはあなたのものです。このドキュメントは、アプリが使用する情報、それがどこに保存されるか、そして決して行わないことを明確に説明します。";
+
+"privacy.body.locationData" = "GeoAlarmはジオフェンスエリアを監視するためだけに端末の位置情報を使用します。位置情報データはすべて端末上で処理されます。サーバーへの送信、データベースへの保存、第三者への共有は一切行いません。\n\nアラームを作成すると、緯度・経度・半径がローカルに保存されます。明示的に共有ボタンを使用した場合を除き、このデータが端末から出ることはありません。共有ボタンは標準的なApple Mapsのリンクを生成します。\n\nアプリは「常に許可」の位置情報アクセス権を要求します。これはiOSが監視エリアへの進入・退出時にバックグラウンドでアプリを起動するために必要です。iOS設定 → プライバシーとセキュリティ → 位置情報サービス → GeoAlarmからいつでもアクセス権を取り消せます。";
+
+"privacy.body.onDeviceStorage" = "アラームデータ（名前・座標・半径・時間帯・有効曜日・トリガー履歴）はすべて、アプリのプライベートコンテナ内でSwiftDataを使用してローカルに保存されます。バックアップが有効な場合、このデータは標準のiOSバックアップ（iCloudバックアップまたはiTunes/Finder）に含まれます。\n\nGeoAlarmの使用にアカウント・ログイン・ネットワーク接続は不要です。";
+
+"privacy.body.iCloudSync" = "GeoAlarmはCloudKitを介したiCloud同期をサポートするよう設計されており、同じApple IDでサインインしているすべてのAppleデバイスにアラームを表示できます。iCloud同期が有効な場合、アラームの記録はお客様個人のiCloudコンテナに保存され、Appleのプライバシーポリシーに基づいて管理されます。AppleはCloudKitデータを広告に使用しません。\n\niCloud同期が利用できない、または無効な場合、アプリは自動的にローカルのみのストレージにフォールバックします。データが失われることはありません。設定 → [ユーザー名] → iCloud → GeoAlarmからいつでもiCloud同期を無効にできます。";
+
+"privacy.body.transitFeeds" = "乗換アラーム機能は、公共交通機関のサーバーから直接GTFSデータをダウンロードします。これらのフィードには停車駅名・座標・路線情報が含まれており、個人情報は含まれていません。\n\nダウンロードされたGTFSデータは端末のアプリキャッシュディレクトリに保存されます。ストレージが少なくなるとiOSがキャッシュファイルを削除することがありますが、アプリは必要に応じて再ダウンロードします。\n\n入力したカスタムGTFSのURLは現在のセッションを超えて保存されることはなく、閲覧した交通機関に関する情報はどこにも送信されません。";
+
+"privacy.body.notifications" = "GeoAlarmはiOSのUNUserNotificationCenterを使用して、完全にデバイス上でローカル通知を送信します。通知はジオフェンスイベント発生時にアプリ自体が生成するものであり、プッシュ通知サーバーやリモートサービスを通じて送信されることはありません。通知の内容がデバイスの外に送信されることはありません。\n\niOS設定 → 通知 → GeoAlarmで通知の設定を管理できます。";
+
+"privacy.body.analytics" = "GeoAlarmにはサードパーティの分析SDK・広告ネットワーク・クラッシュレポートサービスは一切含まれていません。アプリはユーザーの使用状況を追跡せず、iOSが設定 → プライバシーとセキュリティ → 解析と改善で標準的に提供するもの以外の診断情報を収集しません。";
+
+"privacy.body.dataDeletion" = "アラーム行を左スワイプして個別のアラームを削除できます。デバイスからアプリを削除することですべてのデータを消去できます。GeoAlarmをアンインストールするとローカルに保存されたすべてのアラーム記録が削除されます。iCloud同期が有効だった場合は、設定 → [ユーザー名] → iCloud → アカウントのストレージを管理 → GeoAlarmからアプリのCloudKitデータも削除できます。";
+
+"privacy.body.contact" = "プライバシーやデータの取り扱いについてご質問がある場合は、GeoAlarmの製品ページにあるApp Storeのサポートリンクからデベロッパーにお問い合わせください。";
+
+// MARK: - Swipe Action Labels
+"Delete" = "削除";
+"Enable" = "有効化";
+"Disable" = "無効化";
+"Map Overview" = "地図の概要";
+"No alarms to show" = "表示するアラームがありません";
+"Create an alarm first and it will appear here." = "まずアラームを作成すると、ここに表示されます。";
+"No Geo Alarms Yet" = "ジオアラームがありません";
+"Tap + to create your first alarm.
+You'll be notified when you arrive at or leave any saved location." = "+ をタップして最初のアラームを作成します。\n保存した場所に到着または出発したときに通知されます。";
+"Alarm limit reached" = "アラーム上限に達しました";
+"Approaching alarm limit" = "アラーム上限に近づいています";
+"iOS allows 20 active alarms. Disable one before adding another." = "iOSは20個のアラームまで有効化できます。追加する前に1つ無効にしてください。";
+"iOS allows 20 active alarms. You're close to the limit." = "iOSは20個のアラームまで有効化できます。上限に近づいています。";
+"Transit" = "交通機関";
+"State" = "状態";
+"Status" = "ステータス";
+"History" = "履歴";
+"Times triggered" = "作動回数";
+"Never" = "なし";
+"Last triggered" = "最終作動";
+"Note" = "メモ";
+"On" = "オン";
+"Time window" = "時間帯";
+"Active days" = "有効日";
+"Disable alarm" = "アラームを無効化";
+"Enable alarm" = "アラームを有効化";
+"Share location" = "場所を共有";
+"Alarm name" = "アラーム名";
+"Test Fire" = "テスト";

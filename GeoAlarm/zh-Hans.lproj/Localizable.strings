@@ -1,0 +1,239 @@
+/* GeoAlarm — 中文（简体）(zh-Hans) */
+
+"Done" = "完成";
+"Cancel" = "取消";
+"OK" = "好";
+"Save" = "保存";
+"Back" = "返回";
+"Settings" = "设置";
+"Next" = "下一步";
+"Skip" = "跳过";
+
+"Geo Alarms" = "地理闹钟";
+"Location Alarm" = "位置闹钟";
+"Transit Alarm" = "交通闹钟";
+"Location access required. Enable in Settings." = "需要位置访问权限，请在设置中开启。";
+"Location signal lost" = "位置信号丢失";
+"Alarms will resume when GPS is available." = "GPS 可用后闹钟将自动恢复。";
+
+"Alarm Details" = "闹钟详情";
+"Name (e.g. Penn Station)" = "名称（例如：北京站）";
+"Note (shown in notification)" = "备注（显示在通知中）";
+"Location" = "位置";
+"Search address or place…" = "搜索地址或地点…";
+"Trigger" = "触发方式";
+"Event" = "事件";
+"Radius" = "半径";
+"Latitude" = "纬度";
+"Longitude" = "经度";
+"Search above or tap the map to set a location" = "在上方搜索或点击地图以设置位置";
+"Schedule" = "计划";
+"Repeat" = "重复";
+"Auto-resets after you leave — fires again every trip" = "离开后自动重置——每次出行都会触发";
+"Hysteresis: alarm won't re-trigger until you've fully exited and re-entered the region." = "滞后机制：完全离开并重新进入区域后，闹钟才会再次触发。";
+"Active time window" = "有效时间段";
+"Only fire within a set time range" = "仅在指定时间范围内触发";
+"From" = "从";
+"Until" = "到";
+"Active Days" = "有效日期";
+"Every day" = "每天";
+"Weekdays only" = "仅工作日";
+"Weekends only" = "仅周末";
+"Active all day" = "全天有效";
+"Save Alarm" = "保存闹钟";
+"Update Alarm" = "更新闹钟";
+"New Alarm" = "新建闹钟";
+"Edit Alarm" = "编辑闹钟";
+"Please enter a name for this alarm." = "请为此闹钟输入名称。";
+"Radius must be at least 50 metres." = "半径必须至少为 50 米。";
+"Please pick a valid location on the map." = "请在地图上选择有效位置。";
+"Window start and end time cannot be the same." = "开始和结束时间不能相同。";
+
+"Notify a Contact" = "通知联系人";
+"Send a message when this alarm fires" = "闹钟触发时发送消息";
+"Select Contact" = "选择联系人";
+"No contact selected" = "未选择联系人";
+"Message preview:" = "消息预览：";
+"Select a contact to enable notifications" = "选择联系人以启用通知";
+"When the alarm fires, a pre-composed message with your arrival time will be ready to send. You review it before it's sent." = "闹钟触发时，包含您到达时间的预编写消息将准备发送。发送前可以预览。";
+
+"Units" = "单位";
+"Distance" = "距离";
+"Metric (m / km)" = "公制（米 / 千米）";
+"Imperial (ft / mi)" = "英制（英尺 / 英里）";
+"Controls how radius is displayed and entered when creating alarms." = "控制创建闹钟时半径的显示和输入方式。";
+"Time" = "时间";
+"Clock" = "时钟";
+"12-hour (AM/PM)" = "12 小时制（上午/下午）";
+"24-hour" = "24 小时制";
+"Used when displaying and entering alarm time windows." = "用于显示和输入闹钟时间段。";
+"Help & User Guide" = "帮助与使用指南";
+"Privacy & Location Sharing" = "隐私与位置共享";
+"Language" = "语言";
+"Support" = "支持";
+"Enable Debug Log" = "启用调试日志";
+"Log file size" = "日志文件大小";
+"Share Log with Support" = "与支持共享日志";
+"Clear Log" = "清除日志";
+"Enable Debug Logging?" = "启用调试日志记录？";
+"Enable Logging" = "启用日志记录";
+"Log Cleared" = "日志已清除";
+"The debug log has been cleared. A new session header will be written on the next log entry." = "调试日志已清除。下次记录时将写入新的会话标题。";
+"About" = "关于";
+"Build" = "版本";
+"Preview" = "预览";
+"Sample radius" = "示例半径";
+"Sample time" = "示例时间";
+"Logging is ON. Detailed activity is being recorded to GeoAlarmDebug.log in the GeoAlarm folder in the Files app. Disable when no longer needed." = "日志记录已开启。详细活动正在记录到文件 App GeoAlarm 文件夹中的 GeoAlarmDebug.log。不再需要时请关闭。";
+"Enable to capture detailed diagnostic information when troubleshooting an issue. Logging is off by default and does not run in the background." = "启用以在排查问题时捕获详细诊断信息。日志记录默认关闭，不会在后台运行。";
+
+"Sleep through your commute" = "通勤途中安心小睡";
+"GeoAlarm wakes you up when your device enters or leaves a location — not at a set time. Perfect for trains, buses, and long rides." = "GeoAlarm 在设备进入或离开某位置时唤醒您，而非固定时间。非常适合乘火车、公交或长途出行。";
+"Set an alarm anywhere" = "随处设置闹钟";
+"Drop a pin on any stop, station, or landmark. Choose how close you need to be before the alarm fires, and whether it should repeat every trip." = "在任意站点、车站或地标处标记。选择触发距离以及是否每次出行都重复。";
+"Active time windows" = "有效时间段";
+"Only want the alarm to fire during your morning commute? Set a time window and GeoAlarm will ignore the location outside those hours." = "只想在早晨通勤时触发？设置时间段，GeoAlarm 将忽略该时间段以外的位置。";
+"Always On location needed" = "需要始终开启位置";
+"GeoAlarm monitors your position in the background so it can alert you even while your phone is locked. Your location is never shared or stored outside the app." = "GeoAlarm 在后台监控您的位置，即使手机锁屏也能提醒您。您的位置不会在应用外共享或存储。";
+"Allow location access" = "允许访问位置";
+"Not now" = "稍后";
+"Choose Your Language" = "选择语言";
+"Select the language you'd like to use in GeoAlarm. You can change this at any time in Settings." = "选择在 GeoAlarm 中使用的语言。您可以随时在设置中更改。";
+
+"Choose Agency" = "选择运营商";
+"Choose Route" = "选择线路";
+"Choose Stop" = "选择站点";
+"New Transit Alarm" = "新建交通闹钟";
+"Custom Agency" = "自定义运营商";
+"Search agencies" = "搜索运营商";
+"Search routes" = "搜索线路";
+"Search stops" = "搜索站点";
+"Transit Details" = "交通详情";
+"Agency" = "运营商";
+"Route" = "线路";
+"Stop" = "站点";
+"Alarm" = "闹钟";
+"On Arrival" = "到达时";
+"On Departure" = "出发时";
+"Repeat (re-arm after each trip)" = "重复（每次出行后重新启用）";
+"Create Alarm" = "创建闹钟";
+"No Routes Found" = "未找到线路";
+"No Stops Found" = "未找到站点";
+"Enter custom GTFS URL…" = "输入自定义 GTFS URL…";
+"Use this URL" = "使用此 URL";
+"Try Another" = "尝试其他";
+"Any public GTFS ZIP feed URL from Transitland, OpenMobilityData, or your local transit authority." = "来自 Transitland、OpenMobilityData 或本地交通机构的任何公开 GTFS ZIP 数据源 URL。";
+"A name is required before the alarm can be saved" = "保存闹钟前需要输入名称";
+
+"Sound / Vibrate" = "声音 / 振动";
+"Vibrate only" = "仅振动";
+"Default" = "默认";
+"Critical (bypasses silent mode)" = "紧急（绕过静音模式）";
+"Boat Horn" = "船笛";
+"Cable Car Bell" = "缆车铃声";
+"Steam Train" = "蒸汽火车";
+"Sailboat Bell" = "帆船铃声";
+"Airplane Landing" = "飞机降落";
+"Airport Chime" = "机场提示音";
+
+"Help" = "帮助";
+"What is GeoAlarm?" = "GeoAlarm 是什么？";
+"Typical use cases" = "典型使用场景";
+"Creating an alarm" = "创建闹钟";
+"Transit Alarms" = "交通闹钟";
+"Alarm sound / vibrate" = "闹钟声音 / 振动";
+"Siri & Shortcuts" = "Siri 与快捷指令";
+"Reporting a problem" = "报告问题";
+"Managing alarms" = "管理闹钟";
+"Always On location" = "始终开启位置";
+"Notifications" = "通知";
+
+// MARK: - HelpView Body Text
+"help.body.whatIsGeoAlarm" = "GeoAlarm 根据您的位置而非时间来唤醒您。无需猜测旅程需要多长时间，只需在某个位置设置闹钟，让应用在您到达或离开时通知您。\n\n它在后台静默运行，因此您可以打盹、阅读或放松，无需担心错过站点。";
+
+"help.body.useCases" = "• 火车或地铁通勤者 — 在您的车站设置闹钟。入睡后在到达前被叫醒，每天早上自动执行。\n\n• 公交乘客 — 在家附近的站点设置出发闹钟。当您离开该区域时闹钟响起，提醒您出发。\n\n• 长途旅行乘客 — 在途经城市设置闹钟。无需全程盯着地图，当车辆靠近时自动收到通知。\n\n• 陌生城市的旅行者 — 在酒店、机场或会面地点设置闹钟，随时掌握接近目的地的时机。";
+
+"help.body.creatingAlarm" = "点击右上角的 +，菜单显示两个选项：\n\n• 位置闹钟 — 标记任意地址或地图位置。\n• 交通闹钟 — 从实时时刻表选择运营商、路线和站点。\n\n设置位置闹钟：\n\n1. 为闹钟起名并添加可选备注，备注将显示在通知中。\n2. 使用搜索栏查找任意地址、车站或地点。点击建议放置图钉，或直接点击地图。\n3. 选择到达时或离开时作为触发条件。\n4. 用半径滑块设置闹钟触发所需的接近距离。\n5. 在声音 / 振动中选择铃声或仅振动。\n\n未输入名称且未标记位置前，保存按钮不可用。iOS 最多允许同时启用 20 个闹钟。";
+
+"help.body.radius" = "半径定义地理围栏——围绕图钉的圆形边界。当您越过该边界（进入或离开）时，闹钟响起。\n\n200 米的半径适用于单个车站或建筑。对于较大范围的地标（如市中心或机场区域），使用 500–1000 米，以便在到达前留出更多准备时间。\n\n您可以在设置中切换米/千米和英尺/英里。";
+
+"help.body.repeat" = "单次闹钟触发一次后保持已触发状态，直到您手动重新启用。适合单次旅行或一次性提醒。\n\n重复闹钟在您离开区域后自动重置，下次经过同一位置时再次触发。非常适合每日通勤者。";
+
+"help.body.timeWindow" = "时间窗口限制闹钟允许触发的时段。例如，设置 07:00–09:00 窗口，意味着闹钟仅在早晨通勤时段触发。\n\n选择器下方的摘要标签精确显示窗口时长，例如\"有效 2 小时 · 07:00 – 09:00\"。\n\n支持跨夜窗口（如 22:00–06:00）。当开始时间晚于结束时间时，闹钟在午夜后持续到次日早晨保持激活。摘要变为橙色并显示\"次日\"以作提示。";
+
+"help.body.transitAlarms" = "交通闹钟连接公共交通时刻表，让您无需输入 GPS 坐标即可在指定站点设置闹钟。\n\n点击 + → 交通闹钟打开向导：\n\n1. 运营商 — 从内置全球列表（Amtrak、BART、MBTA、CTA、GO Transit 等）选择，或输入任意公开 GTFS 数据源 URL。\n2. 路线 — 浏览或搜索路线，每条路线显示其类型（铁路、地铁、公交、轮渡等）。\n3. 站点 — 所有站点按距当前位置的距离排序列出。\n4. 确认 — 确认运营商、路线和站点，然后设置名称、半径、触发方向和声音。\n\n应用首次使用时下载 GTFS 数据源并在本地缓存。";
+
+"help.body.soundVibrate" = "每个闹钟在创建或编辑时于声音 / 振动中单独设置声音。\n\n系统选项：\n• 仅振动 — 无声音；适合安静环境。\n• 默认 — 标准 iOS 通知声音。\n• 紧急 — 以全音量播放，绕过静音模式和勿扰模式。\n\n内置旅行音效：\n• 船用汽笛 · 缆车铃铛 · 蒸汽火车 · 帆船铃铛 · 飞机降落 · 机场提示音\n\n每项设置随闹钟一起保存，每次触发时播放。";
+
+"help.body.siri" = "GeoAlarm 支持 Siri 和快捷指令应用——无需任何设置。\n\n• \"创建 GeoAlarm\" — Siri 询问名称、位置和触发方向，然后保存闹钟。\n• \"启用我的 GeoAlarm\" — Siri 显示已保存的闹钟；选择一个重新启用。\n• \"禁用我的 GeoAlarm\" — 与上述相同，但停用闹钟。\n\n您也可以在 iOS 快捷指令应用的 GeoAlarm 栏目中找到并自定义这些快捷指令。";
+
+"help.body.settings" = "点击闹钟列表左上角的齿轮图标打开设置。\n\n• 距离 — 在公制（米 / 千米）和英制（英尺 / 英里）之间切换。\n• 时钟 — 在 12 小时和 24 小时格式之间切换。\n• 帮助与用户指南 — 本指南。\n• 隐私与位置共享 — 位置数据处理方式的完整说明。\n• 启用调试日志 — 请参阅下方\"报告问题\"。\n• 版本 — 显示构建时间戳，报告错误时有用。";
+
+"help.body.reportingProblem" = "如果 GeoAlarm 运行异常，您可以启用调试日志记录详细记录。\n\n启用日志记录的步骤：\n1. 打开设置 → 支持部分。\n2. 开启启用调试日志。\n3. 对话框解释记录内容，点击启用日志记录继续。\n4. 重现问题。\n5. 打开文件应用 → 我的 iPhone → GeoAlarm → GeoAlarmDebug.log，然后分享给支持团队。\n\n记录内容：设备型号、iOS 版本、位置权限状态、区域事件、闹钟事件、交通数据下载及错误。不会自动发送任何内容。";
+
+"help.body.managingAlarms" = "向右滑动列表中任意闹钟，无需打开详情页即可快速启用或禁用。\n\n向左滑动可删除闹钟。已删除的闹钟立即移除，其地理围栏监控也随之停止。\n\n编辑闹钟时，点击打开详情页，然后点击编辑闹钟。\n\n共享闹钟位置时，打开详情页并点击共享位置，这将发送精确坐标的 Apple 地图链接。";
+
+"help.body.alwaysOnLocation" = "GeoAlarm 需要始终开启位置权限才能在后台监控区域——即使屏幕已锁定或应用已关闭。\n\n如果设置时选择了暂不开启，可以在 iOS 设置 → 隐私与安全 → 位置服务 → GeoAlarm 中授权，将其设置为始终。\n\n没有始终开启权限，闹钟只会在应用打开时触发。";
+
+"help.body.notifications" = "闹钟触发时，您将收到包含闹钟名称和备注（如已设置）的通知。在通知中可以：\n\n• 延后 10 分钟 — 暂停闹钟 10 分钟，然后重新激活。\n• 关闭 — 清除通知。重复闹钟在您离开区域后重置。\n\n请确保在 iOS 设置 → 通知 → GeoAlarm 中已为 GeoAlarm 启用通知。";
+
+// MARK: - PrivacyView Section Titles
+"Privacy & Location" = "隐私与位置";
+"Your privacy matters" = "您的隐私至关重要";
+"Location Data" = "位置数据";
+"On-Device Storage" = "设备本地存储";
+"iCloud Sync" = "iCloud 同步";
+"Transit Feed Downloads" = "交通数据下载";
+"Analytics & Crash Reporting" = "分析与崩溃报告";
+"Deleting Your Data" = "删除您的数据";
+"Questions" = "问题";
+
+// MARK: - PrivacyView Body Text
+"privacy.intro" = "GeoAlarm 基于一个简单原则设计：您的位置和闹钟数据属于您。本文档准确说明应用使用哪些信息、这些信息存储在哪里，以及应用从不执行的操作。";
+
+"privacy.body.locationData" = "GeoAlarm 仅使用您设备的位置来监控地理围栏区域。位置数据完全在您的设备上处理——从不传输到任何服务器、存储在数据库中或与第三方共享。\n\n创建闹钟时，纬度、经度和半径保存在本地。除非您明确使用共享按钮（生成标准 Apple 地图链接），否则这些数据不会离开您的设备。\n\n应用请求\"始终\"位置权限，以便 iOS 在您进入或离开监控区域时可以在后台唤醒应用。您可以随时在 iOS 设置 → 隐私与安全 → 位置服务 → GeoAlarm 中撤销此权限。";
+
+"privacy.body.onDeviceStorage" = "所有闹钟数据——包括名称、坐标、半径、时间窗口、活跃日期和触发历史——均使用 SwiftData 存储在应用的私有容器中。如果启用了备份，这些数据将包含在标准 iOS 备份（iCloud 备份或 iTunes/Finder）中。\n\n使用 GeoAlarm 无需账号、登录或网络连接。";
+
+"privacy.body.iCloudSync" = "GeoAlarm 设计为通过 CloudKit 支持 iCloud 同步，让您的闹钟可以出现在登录同一 Apple ID 的所有 Apple 设备上。iCloud 同步激活时，闹钟记录存储在您个人的 iCloud 容器中，受 Apple 隐私政策约束。Apple 不将 CloudKit 数据用于广告。\n\n如果 iCloud 同步不可用或已禁用，应用自动回退到仅本地存储——不会丢失任何数据。您可以随时在设置 → [您的姓名] → iCloud → GeoAlarm 中禁用 iCloud 同步。";
+
+"privacy.body.transitFeeds" = "交通闹钟功能直接从公共交通机构服务器下载 GTFS 数据。这些数据源包含站点名称、坐标和路线信息——不包含任何个人数据。\n\n下载的 GTFS 数据缓存在设备上应用的缓存目录中。当存储空间不足时，iOS 可能会删除缓存文件；应用将按需重新下载。\n\n您输入的任何自定义 GTFS URL 不会在当前会话之外保存，也不会向任何地方传输您浏览了哪些机构的信息。";
+
+"privacy.body.notifications" = "GeoAlarm 使用 iOS 的 UNUserNotificationCenter 完全在设备上发送本地通知。通知由应用本身在地理围栏事件触发时生成——不通过任何推送通知服务器或远程服务发送。通知内容不会传输到您的设备之外。\n\n您可以在 iOS 设置 → 通知 → GeoAlarm 中管理通知权限。";
+
+"privacy.body.analytics" = "GeoAlarm 不包含任何第三方分析 SDK、广告网络或崩溃报告服务。应用不追踪您的使用方式，除 iOS 在设置 → 隐私与安全 → 分析与改进中原生提供的内容外，不收集任何诊断信息。";
+
+"privacy.body.dataDeletion" = "您可以向左滑动任意闹钟行来删除单个闹钟，或通过从设备中移除应用来删除所有数据。卸载 GeoAlarm 将删除所有本地存储的闹钟记录。如果启用了 iCloud 同步，您还可以在设置 → [您的姓名] → iCloud → 管理账户存储 → GeoAlarm 中删除应用的 CloudKit 数据。";
+
+"privacy.body.contact" = "如果您对隐私或数据处理有疑问，可通过 App Store 上 GeoAlarm 产品页面的支持链接联系开发者。";
+
+// MARK: - Swipe Action Labels
+"Delete" = "删除";
+"Enable" = "启用";
+"Disable" = "停用";
+"Map Overview" = "地图概览";
+"No alarms to show" = "没有可显示的闹钟";
+"Create an alarm first and it will appear here." = "先创建一个闹钟，它将显示在这里。";
+"No Geo Alarms Yet" = "还没有地理闹钟";
+"Tap + to create your first alarm.
+You'll be notified when you arrive at or leave any saved location." = "点击 + 创建您的第一个闹钟。\n到达或离开任何保存的位置时，您将收到通知。";
+"Alarm limit reached" = "已达到闹钟上限";
+"Approaching alarm limit" = "即将达到闹钟上限";
+"iOS allows 20 active alarms. Disable one before adding another." = "iOS 最多允许 20 个活跃闹钟。请先禁用一个再添加新的。";
+"iOS allows 20 active alarms. You're close to the limit." = "iOS 最多允许 20 个活跃闹钟。您即将达到上限。";
+"Transit" = "交通";
+"State" = "状态";
+"Status" = "状态";
+"History" = "历史";
+"Times triggered" = "触发次数";
+"Never" = "从未";
+"Last triggered" = "最后触发";
+"Note" = "备注";
+"On" = "开";
+"Time window" = "时间窗口";
+"Active days" = "活跃日";
+"Disable alarm" = "停用闹钟";
+"Enable alarm" = "启用闹钟";
+"Share location" = "分享位置";
+"Alarm name" = "闹钟名称";
+"Test Fire" = "测试";

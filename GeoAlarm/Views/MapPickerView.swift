@@ -8,6 +8,8 @@ import MapKit
 struct MapPickerView: View {
     @Binding var latitude: Double
     @Binding var longitude: Double
+    /// Alarm radius in metres — drives the geofence circle overlay.
+    @Binding var radius: Double
 
     // Internal camera position — starts at automatic (no spinning "finding location" state)
     @State private var cameraPosition: MapCameraPosition = .automatic
@@ -19,13 +21,17 @@ struct MapPickerView: View {
                 // Show user's current position
                 UserAnnotation()
 
-                // Dropped pin
+                // Dropped pin + radius circle
                 if let coord = pinCoordinate {
                     Annotation("", coordinate: coord) {
                         Image(systemName: "mappin.circle.fill")
                             .font(.title)
                             .foregroundStyle(.red)
                     }
+
+                    MapCircle(center: coord, radius: max(radius, 50))
+                        .foregroundStyle(.blue.opacity(0.15))
+                        .stroke(.blue.opacity(0.6), lineWidth: 1.5)
                 }
             }
             .mapControls {
@@ -89,7 +95,8 @@ struct MapPickerView: View {
 #Preview {
     MapPickerView(
         latitude: .constant(40.7580),
-        longitude: .constant(-73.9855)
+        longitude: .constant(-73.9855),
+        radius: .constant(300)
     )
     .frame(height: 300)
 }

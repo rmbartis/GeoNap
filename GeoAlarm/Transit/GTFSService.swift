@@ -32,6 +32,7 @@ final class GTFSService: ObservableObject {
         errorMessage = nil
 
         if feed.isCached, let dir = feed.cachedDirectoryURL {
+            DebugLogger.shared.log("GTFS cache hit for '\(feed.name)' — loading from \(dir.lastPathComponent)", category: "GTFS")
             await parse(from: dir)
         } else {
             await downloadAndParse(feed: feed)
@@ -41,11 +42,13 @@ final class GTFSService: ObservableObject {
     /// Force a fresh download even if data is already cached.
     func refresh(feed: GTFSFeedModel) async {
         errorMessage = nil
+        DebugLogger.shared.log("GTFS force-refresh requested for '\(feed.name)'", category: "GTFS")
         await downloadAndParse(feed: feed)
     }
 
     /// Cancel any in-flight download.
     func cancel() {
+        DebugLogger.shared.log("GTFS download cancelled by user", category: "GTFS")
         downloadTask?.cancel()
         downloadTask = nil
         isLoading = false
@@ -57,15 +60,22 @@ final class GTFSService: ObservableObject {
     private func downloadAndParse(feed: GTFSFeedModel) async {
         guard let url = URL(string: feed.feedURL) else {
             errorMessage = "\(feed.name): Invalid feed URL."
+            DebugLogger.shared.log("GTFS download FAILED: '\(feed.name)' — malformed URL: \(feed.feedURL)", category: "GTFS")
             return
         }
 
+        DebugLogger.shared.log("GTFS download START: '\(feed.name)' url=\(feed.feedURL)", category: "GTFS")
         isLoading = true
         downloadProgress = 0
         defer { isLoading = false }
 
         do {
             let zipURL = try await download(from: url)
+
+            // Log the size of the downloaded ZIP
+            let zipBytes = (try? FileManager.default.attributesOfItem(atPath: zipURL.path)[.size] as? Int64) ?? 0
+            DebugLogger.shared.log("GTFS download COMPLETE: '\(feed.name)' size=\(ByteCountFormatter.string(fromByteCount: zipBytes, countStyle: .file))", category: "GTFS")
+
             let extractDir = try extract(zipURL: zipURL, feedID: feed.id.uuidString)
 
             feed.cachedDirectoryName = extractDir.lastPathComponent
@@ -75,9 +85,10 @@ final class GTFSService: ObservableObject {
 
             try? FileManager.default.removeItem(at: zipURL)
         } catch is CancellationError {
-            // User cancelled — leave progress where it is
+            // User cancelled — already logged in cancel()
         } catch {
             errorMessage = "\(feed.name): \(error.localizedDescription)"
+            DebugLogger.shared.log("GTFS download/parse FAILED: '\(feed.name)' error='\(error.localizedDescription)' url=\(feed.feedURL)", category: "GTFS")
         }
     }
 
@@ -193,6 +204,8 @@ final class GTFSService: ObservableObject {
 
     private func parse(from dir: URL) async {
         downloadProgress = 0.9
+        DebugLogger.shared.log("GTFS parse START from directory: \(dir.lastPathComponent)", category: "GTFS")
+        let parseStart = Date()
 
         let parsedRoutes = await Task.detached(priority: .userInitiated) {
             GTFSParser.parseRoutes(in: dir)
@@ -201,6 +214,9 @@ final class GTFSService: ObservableObject {
         let parsedStops = await Task.detached(priority: .userInitiated) {
             GTFSParser.parseStops(in: dir)
         }.value
+
+        let elapsed = String(format: "%.2f", Date().timeIntervalSince(parseStart))
+        DebugLogger.shared.log("GTFS parse COMPLETE: routes=\(parsedRoutes.count) stops=\(parsedStops.count) elapsed=\(elapsed)s", category: "GTFS")
 
         routes = parsedRoutes
         stops  = parsedStops

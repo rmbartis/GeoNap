@@ -106,6 +106,19 @@ final class GeoAlarm {
         set { soundNameRaw = newValue.rawValue }
     }
 
+    // MARK: - Contact Notification
+    // When enabled, a "Notify Contact" action appears on the fired notification.
+    // Tapping it opens a pre-composed iMessage/SMS with the contact's phone number.
+
+    /// Whether to offer a contact notification when this alarm fires.
+    var notifyContact: Bool = false
+
+    /// Display name of the selected contact (for UI only — not sent in message).
+    var contactName: String = ""
+
+    /// Phone number used for the pre-composed SMS/iMessage.
+    var contactPhone: String = ""
+
     // MARK: - Transit
 
     /// True when this alarm was created from a GTFS transit stop.
@@ -217,6 +230,9 @@ final class GeoAlarm {
         windowStart: Date? = nil,
         windowEnd: Date? = nil,
         activeDays: Set<Int> = Set(1...7),
+        notifyContact: Bool = false,
+        contactName: String = "",
+        contactPhone: String = "",
         isTransitAlarm: Bool = false,
         transitAgencyName: String? = nil,
         transitRouteName: String? = nil,
@@ -239,6 +255,9 @@ final class GeoAlarm {
         self.windowStart = windowStart
         self.windowEnd = windowEnd
         self.activeDays = activeDays
+        self.notifyContact = notifyContact
+        self.contactName   = contactName
+        self.contactPhone  = contactPhone
         self.isTransitAlarm = isTransitAlarm
         self.transitAgencyName = transitAgencyName
         self.transitRouteName = transitRouteName

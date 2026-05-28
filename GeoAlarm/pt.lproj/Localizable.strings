@@ -1,0 +1,239 @@
+/* GeoAlarm — Português (pt) */
+
+"Done" = "Concluído";
+"Cancel" = "Cancelar";
+"OK" = "OK";
+"Save" = "Salvar";
+"Back" = "Voltar";
+"Settings" = "Configurações";
+"Next" = "Próximo";
+"Skip" = "Pular";
+
+"Geo Alarms" = "Alarmes Geo";
+"Location Alarm" = "Alarme de localização";
+"Transit Alarm" = "Alarme de trânsito";
+"Location access required. Enable in Settings." = "Acesso à localização necessário. Ative nas Configurações.";
+"Location signal lost" = "Sinal de localização perdido";
+"Alarms will resume when GPS is available." = "Os alarmes serão retomados quando o GPS estiver disponível.";
+
+"Alarm Details" = "Detalhes do alarme";
+"Name (e.g. Penn Station)" = "Nome (ex.: Estação da Luz)";
+"Note (shown in notification)" = "Nota (exibida na notificação)";
+"Location" = "Localização";
+"Search address or place…" = "Pesquisar endereço ou lugar…";
+"Trigger" = "Gatilho";
+"Event" = "Evento";
+"Radius" = "Raio";
+"Latitude" = "Latitude";
+"Longitude" = "Longitude";
+"Search above or tap the map to set a location" = "Pesquise acima ou toque no mapa para definir uma localização";
+"Schedule" = "Agendamento";
+"Repeat" = "Repetir";
+"Auto-resets after you leave — fires again every trip" = "Reinicia automaticamente ao sair — dispara em cada viagem";
+"Hysteresis: alarm won't re-trigger until you've fully exited and re-entered the region." = "Histerese: o alarme não será acionado novamente até você sair completamente e retornar à região.";
+"Active time window" = "Janela de tempo ativa";
+"Only fire within a set time range" = "Disparar apenas em um intervalo de tempo definido";
+"From" = "De";
+"Until" = "Até";
+"Active Days" = "Dias ativos";
+"Every day" = "Todos os dias";
+"Weekdays only" = "Somente dias úteis";
+"Weekends only" = "Somente fins de semana";
+"Active all day" = "Ativo o dia todo";
+"Save Alarm" = "Salvar alarme";
+"Update Alarm" = "Atualizar alarme";
+"New Alarm" = "Novo alarme";
+"Edit Alarm" = "Editar alarme";
+"Please enter a name for this alarm." = "Por favor, insira um nome para este alarme.";
+"Radius must be at least 50 metres." = "O raio deve ser de pelo menos 50 metros.";
+"Please pick a valid location on the map." = "Por favor, escolha uma localização válida no mapa.";
+"Window start and end time cannot be the same." = "O horário de início e fim não podem ser iguais.";
+
+"Notify a Contact" = "Notificar um contato";
+"Send a message when this alarm fires" = "Enviar uma mensagem quando este alarme disparar";
+"Select Contact" = "Selecionar contato";
+"No contact selected" = "Nenhum contato selecionado";
+"Message preview:" = "Pré-visualização da mensagem:";
+"Select a contact to enable notifications" = "Selecione um contato para ativar as notificações";
+"When the alarm fires, a pre-composed message with your arrival time will be ready to send. You review it before it's sent." = "Quando o alarme disparar, uma mensagem pré-composta com seu horário de chegada estará pronta para envio. Você revisa antes de enviar.";
+
+"Units" = "Unidades";
+"Distance" = "Distância";
+"Metric (m / km)" = "Métrico (m / km)";
+"Imperial (ft / mi)" = "Imperial (pés / milhas)";
+"Controls how radius is displayed and entered when creating alarms." = "Controla como o raio é exibido e inserido ao criar alarmes.";
+"Time" = "Hora";
+"Clock" = "Relógio";
+"12-hour (AM/PM)" = "12 horas (AM/PM)";
+"24-hour" = "24 horas";
+"Used when displaying and entering alarm time windows." = "Usado ao exibir e inserir janelas de tempo de alarme.";
+"Help & User Guide" = "Ajuda e guia do usuário";
+"Privacy & Location Sharing" = "Privacidade e compartilhamento de localização";
+"Language" = "Idioma";
+"Support" = "Suporte";
+"Enable Debug Log" = "Ativar log de depuração";
+"Log file size" = "Tamanho do arquivo de log";
+"Share Log with Support" = "Compartilhar log com suporte";
+"Clear Log" = "Limpar log";
+"Enable Debug Logging?" = "Ativar registro de depuração?";
+"Enable Logging" = "Ativar registro";
+"Log Cleared" = "Log limpo";
+"The debug log has been cleared. A new session header will be written on the next log entry." = "O log de depuração foi limpo. Um novo cabeçalho de sessão será gravado na próxima entrada.";
+"About" = "Sobre";
+"Build" = "Versão";
+"Preview" = "Pré-visualização";
+"Sample radius" = "Raio de exemplo";
+"Sample time" = "Hora de exemplo";
+"Logging is ON. Detailed activity is being recorded to GeoAlarmDebug.log in the GeoAlarm folder in the Files app. Disable when no longer needed." = "Registro ATIVADO. A atividade detalhada está sendo gravada em GeoAlarmDebug.log. Desative quando não precisar mais.";
+"Enable to capture detailed diagnostic information when troubleshooting an issue. Logging is off by default and does not run in the background." = "Ative para capturar informações de diagnóstico detalhadas ao solucionar problemas. O registro está desativado por padrão.";
+
+"Sleep through your commute" = "Durma durante o trajeto";
+"GeoAlarm wakes you up when your device enters or leaves a location — not at a set time. Perfect for trains, buses, and long rides." = "GeoAlarm te acorda quando o dispositivo entra ou sai de uma localização — não em um horário fixo. Perfeito para trens, ônibus e viagens longas.";
+"Set an alarm anywhere" = "Defina um alarme em qualquer lugar";
+"Drop a pin on any stop, station, or landmark. Choose how close you need to be before the alarm fires, and whether it should repeat every trip." = "Marque qualquer parada, estação ou ponto de referência. Escolha a distância para o disparo e se deve repetir a cada viagem.";
+"Active time windows" = "Janelas de tempo ativas";
+"Only want the alarm to fire during your morning commute? Set a time window and GeoAlarm will ignore the location outside those hours." = "Quer que o alarme dispare apenas durante o trajeto matinal? Defina uma janela de tempo e o GeoAlarm ignorará a localização fora desse horário.";
+"Always On location needed" = "Localização sempre ativa necessária";
+"GeoAlarm monitors your position in the background so it can alert you even while your phone is locked. Your location is never shared or stored outside the app." = "GeoAlarm monitora sua posição em segundo plano para alertá-lo mesmo com o telefone bloqueado. Sua localização nunca é compartilhada ou armazenada fora do app.";
+"Allow location access" = "Permitir acesso à localização";
+"Not now" = "Agora não";
+"Choose Your Language" = "Escolha seu idioma";
+"Select the language you'd like to use in GeoAlarm. You can change this at any time in Settings." = "Selecione o idioma que deseja usar no GeoAlarm. Você pode alterar a qualquer momento nas Configurações.";
+
+"Choose Agency" = "Escolher empresa";
+"Choose Route" = "Escolher linha";
+"Choose Stop" = "Escolher parada";
+"New Transit Alarm" = "Novo alarme de trânsito";
+"Custom Agency" = "Empresa personalizada";
+"Search agencies" = "Pesquisar empresas";
+"Search routes" = "Pesquisar linhas";
+"Search stops" = "Pesquisar paradas";
+"Transit Details" = "Detalhes do trânsito";
+"Agency" = "Empresa";
+"Route" = "Linha";
+"Stop" = "Parada";
+"Alarm" = "Alarme";
+"On Arrival" = "Na chegada";
+"On Departure" = "Na partida";
+"Repeat (re-arm after each trip)" = "Repetir (reativar após cada viagem)";
+"Create Alarm" = "Criar alarme";
+"No Routes Found" = "Nenhuma linha encontrada";
+"No Stops Found" = "Nenhuma parada encontrada";
+"Enter custom GTFS URL…" = "Inserir URL GTFS personalizada…";
+"Use this URL" = "Usar esta URL";
+"Try Another" = "Tentar outra";
+"Any public GTFS ZIP feed URL from Transitland, OpenMobilityData, or your local transit authority." = "Qualquer URL pública de feed GTFS ZIP do Transitland, OpenMobilityData, ou sua autoridade de trânsito local.";
+"A name is required before the alarm can be saved" = "É necessário um nome para salvar o alarme";
+
+"Sound / Vibrate" = "Som / Vibração";
+"Vibrate only" = "Somente vibração";
+"Default" = "Padrão";
+"Critical (bypasses silent mode)" = "Crítico (ignora o modo silencioso)";
+"Boat Horn" = "Buzina de barco";
+"Cable Car Bell" = "Sino de bondinho";
+"Steam Train" = "Trem a vapor";
+"Sailboat Bell" = "Sino de veleiro";
+"Airplane Landing" = "Pouso de avião";
+"Airport Chime" = "Sino de aeroporto";
+
+"Help" = "Ajuda";
+"What is GeoAlarm?" = "O que é o GeoAlarm?";
+"Typical use cases" = "Casos de uso típicos";
+"Creating an alarm" = "Criar um alarme";
+"Transit Alarms" = "Alarmes de trânsito";
+"Alarm sound / vibrate" = "Som / vibração do alarme";
+"Siri & Shortcuts" = "Siri e Atalhos";
+"Reporting a problem" = "Reportar um problema";
+"Managing alarms" = "Gerenciar alarmes";
+"Always On location" = "Localização sempre ativa";
+"Notifications" = "Notificações";
+
+// MARK: - HelpView Body Text
+"help.body.whatIsGeoAlarm" = "O GeoAlarm acorda você com base em onde você está, não no horário. Em vez de adivinhar quanto tempo a viagem vai demorar, você define um alarme numa localização e deixa o app te notificar quando chegar — ou quando sair.\n\nEle funciona silenciosamente em segundo plano, então você pode cochilar, ler ou relaxar sem se preocupar em perder sua parada.";
+
+"help.body.useCases" = "• Passageiro de trem ou metrô — Defina um alarme na sua estação. Durma e seja acordado antes de chegar, toda manhã, automaticamente.\n\n• Passageiro de ônibus — Defina um alarme de saída na parada perto de casa. O alarme dispara quando você sai da área, lembrando de partir.\n\n• Passageiro em viagem de carro — Defina um alarme numa cidade intermediária. Você será notificado quando o carro se aproximar, sem precisar monitorar o mapa a viagem toda.\n\n• Viajante numa cidade desconhecida — Defina alarmes no hotel, aeroporto ou locais de reunião para saber sempre quando está se aproximando.";
+
+"help.body.creatingAlarm" = "Toque em + no canto superior direito. Um menu aparece com duas opções:\n\n• Alarme de Localização — marque qualquer endereço ou ponto no mapa.\n• Alarme de Transporte — escolha agência, rota e parada de horários ao vivo.\n\nPara um Alarme de Localização:\n\n1. Dê um nome ao alarme e uma nota opcional que aparecerá na notificação.\n2. Use a barra de pesquisa para encontrar qualquer endereço, estação ou lugar. Toque numa sugestão para soltar um marcador, ou toque diretamente no mapa.\n3. Escolha Ao Chegar ou Ao Sair como gatilho.\n4. Use o controle de Raio para definir a proximidade necessária antes de o alarme disparar.\n5. Em Som / Vibrar, escolha um toque ou selecione Apenas Vibrar.\n\nO botão Salvar fica desativado até que um nome seja inserido e uma localização marcada. O iOS permite no máximo 20 alarmes ativos ao mesmo tempo.";
+
+"help.body.radius" = "O raio define a cerca geográfica — o limite circular ao redor do seu marcador. Quando você cruza esse limite (entrando ou saindo), o alarme dispara.\n\nUm raio de 200 m é adequado para uma única estação ou edifício. Use 500–1000 m para pontos de referência maiores, como o centro de uma cidade ou área de aeroporto, dando mais tempo para se preparar antes de chegar.\n\nVocê pode alternar entre metros/quilômetros e pés/milhas nas Configurações.";
+
+"help.body.repeat" = "Alarmes únicos disparam uma vez e ficam no estado ativado até que você os reative manualmente. Útil para uma única viagem ou lembrete avulso.\n\nAlarmes repetitivos são redefinidos automaticamente depois que você sai da região, disparando novamente na próxima vez que você passar pelo mesmo local. Perfeito para quem viaja diariamente.";
+
+"help.body.timeWindow" = "Uma janela de tempo limita quando o alarme pode disparar. Por exemplo, uma janela de 07:00–09:00 significa que o alarme só é acionado durante o horário do seu deslocamento matutino.\n\nUm rótulo resumido abaixo dos seletores mostra exatamente a duração da janela, p. ex., \"Ativo por 2 h · 7:00 – 9:00\".\n\nJanelas noturnas são suportadas (p. ex., 22:00–06:00). Quando o horário De for posterior ao Até, o alarme fica ativo pela madrugada até a manhã seguinte. O resumo fica laranja e exibe \"dia seguinte\" como lembrete.";
+
+"help.body.transitAlarms" = "Os Alarmes de Transporte se conectam a horários de transporte público para que você possa definir um alarme numa parada exata sem digitar coordenadas GPS.\n\nToque em + → Alarme de Transporte para abrir o assistente:\n\n1. Agência — escolha na lista integrada mundial (Amtrak, BART, MBTA, CTA, GO Transit e mais), ou insira qualquer URL de feed GTFS público.\n2. Rota — navegue ou pesquise rotas. Cada uma mostra seu tipo (Trem, Metrô, Ônibus, Barca, etc.).\n3. Parada — todas as paradas são listadas em ordem de distância da sua localização atual.\n4. Confirmar — revise agência, rota e parada, depois defina nome, raio, direção do gatilho e som.\n\nO app baixa o feed GTFS no primeiro uso e o armazena localmente.";
+
+"help.body.soundVibrate" = "Cada alarme tem sua própria configuração de som escolhida em Som / Vibrar ao criar ou editar.\n\nOpções do sistema:\n• Apenas Vibrar — sem áudio; ideal para ambientes silenciosos.\n• Padrão — o som padrão de notificação do iOS.\n• Crítico — toca em volume máximo, ignorando o modo silencioso e o Não Perturbe.\n\nSons de viagem incluídos:\n• Buzina de navio · Sino de bondinho · Trem a vapor · Sino de veleiro · Pouso de avião · Sinal de aeroporto\n\nCada configuração é salva com seu alarme e toca sempre que ele dispara.";
+
+"help.body.siri" = "O GeoAlarm suporta a Siri e o app Atalhos — sem necessidade de configuração.\n\n• \"Criar um GeoAlarm\" — a Siri pede nome, local e direção do gatilho e salva o alarme.\n• \"Ativar meu GeoAlarm\" — a Siri mostra seus alarmes salvos; escolha um para reativá-lo.\n• \"Desativar meu GeoAlarm\" — igual ao anterior, mas desativa o alarme.\n\nVocê também pode encontrar e personalizar esses atalhos no app iOS Atalhos na seção GeoAlarm.";
+
+"help.body.settings" = "Abra as Configurações pelo ícone de engrenagem no canto superior esquerdo da lista de alarmes.\n\n• Distância — alternar entre métrico (metros / quilômetros) e imperial (pés / milhas).\n• Relógio — alternar entre formato de 12 horas e 24 horas.\n• Ajuda e Guia do Usuário — este guia.\n• Privacidade e Compartilhamento de Localização — divulgação completa de como os dados de localização são tratados.\n\n• Ativar Log de Depuração — veja \"Reportar um problema\" abaixo.\n• Build — mostra o registro de data e hora do build. Útil ao reportar um bug.";
+
+"help.body.reportingProblem" = "Se o GeoAlarm não estiver se comportando como esperado, você pode ativar o registro de depuração para capturar um histórico detalhado.\n\nPara ativar o registro:\n1. Abra Configurações → seção Suporte.\n2. Ative Ativar Log de Depuração.\n3. Um diálogo explica o que é registrado. Toque em Ativar Registro para continuar.\n4. Reproduza o problema.\n5. Abra o app Arquivos → No Meu iPhone → GeoAlarm → GeoAlarmDebug.log e compartilhe com o suporte.\n\nO que é registrado: modelo do dispositivo, versão do iOS, status da permissão de localização, eventos de região, eventos de alarme, downloads de feed de transporte e erros. Nada é enviado automaticamente.";
+
+"help.body.managingAlarms" = "Deslize para a direita em qualquer alarme da lista para ativá-lo ou desativá-lo rapidamente sem abrir a visualização de detalhes.\n\nDeslize para a esquerda para excluir um alarme. Alarmes excluídos são removidos imediatamente e o monitoramento da cerca geográfica é interrompido.\n\nPara editar um alarme, toque nele para abrir a visualização de detalhes e depois toque em Editar Alarme.\n\nPara compartilhar a localização de um alarme, abra a visualização de detalhes e toque em Compartilhar localização. Isso envia um link do Apple Maps com as coordenadas exatas.";
+
+"help.body.alwaysOnLocation" = "O GeoAlarm precisa de acesso à localização Sempre Ativo para monitorar regiões em segundo plano — mesmo quando sua tela estiver bloqueada ou o app estiver fechado.\n\nSe você escolheu Agora não durante a configuração, pode conceder o acesso mais tarde em Ajustes do iOS → Privacidade e Segurança → Serviços de Localização → GeoAlarm. Defina como Sempre.\n\nSem o acesso Sempre Ativo, os alarmes só dispararão enquanto o app estiver aberto.";
+
+"help.body.notifications" = "Quando um alarme disparar, você receberá uma notificação com o nome do alarme e sua nota (se definida). A partir da notificação, você pode:\n\n• Soneca de 10 min — suprime o alarme por 10 minutos e depois o reativa.\n• Dispensar — limpa a notificação. Para alarmes repetitivos, o alarme é redefinido quando você sair da região.\n\nCertifique-se de que as notificações estejam ativadas para o GeoAlarm em Ajustes do iOS → Notificações → GeoAlarm.";
+
+// MARK: - PrivacyView Section Titles
+"Privacy & Location" = "Privacidade e Localização";
+"Your privacy matters" = "Sua privacidade importa";
+"Location Data" = "Dados de Localização";
+"On-Device Storage" = "Armazenamento no Dispositivo";
+"iCloud Sync" = "Sincronização iCloud";
+"Transit Feed Downloads" = "Downloads de Feed de Transporte";
+"Analytics & Crash Reporting" = "Análise e Relatório de Falhas";
+"Deleting Your Data" = "Excluindo Seus Dados";
+"Questions" = "Perguntas";
+
+// MARK: - PrivacyView Body Text
+"privacy.intro" = "O GeoAlarm foi projetado com um princípio simples: seus dados de localização e alarmes pertencem a você. Este documento explica exatamente quais informações o app usa, onde elas ficam e o que ele nunca faz.";
+
+"privacy.body.locationData" = "O GeoAlarm usa a localização do seu dispositivo exclusivamente para monitorar regiões com cerca geográfica. Os dados de localização são processados inteiramente no seu dispositivo — nunca são transmitidos a nenhum servidor, armazenados em banco de dados ou compartilhados com terceiros.\n\nQuando você cria um alarme, a latitude, longitude e raio são salvos localmente. Esses dados não saem do seu dispositivo a menos que você use explicitamente o botão Compartilhar, que gera um link padrão do Apple Maps.\n\nO app solicita permissão de localização \"Sempre\" para que o iOS possa ativar o app em segundo plano quando você entrar ou sair de uma região monitorada. Você pode revogar essa permissão a qualquer momento em Ajustes do iOS → Privacidade e Segurança → Serviços de Localização → GeoAlarm.";
+
+"privacy.body.onDeviceStorage" = "Todos os dados de alarme — incluindo nomes, coordenadas, raios, janelas de tempo, dias ativos e histórico de acionamentos — são armazenados localmente usando SwiftData no contêiner privado do app. Esses dados são incluídos nos backups padrão do iOS (iCloud Backup ou iTunes/Finder) se os backups estiverem ativados.\n\nNenhuma conta, login ou conexão de rede é necessária para usar o GeoAlarm.";
+
+"privacy.body.iCloudSync" = "O GeoAlarm foi projetado para suportar sincronização via iCloud com CloudKit, para que seus alarmes apareçam em todos os seus dispositivos Apple conectados ao mesmo ID Apple. Quando a sincronização iCloud está ativa, os registros de alarme são armazenados no seu contêiner pessoal do iCloud e regidos pela política de privacidade da Apple. A Apple não usa dados do CloudKit para publicidade.\n\nSe a sincronização iCloud estiver indisponível ou desativada, o app volta automaticamente ao armazenamento somente local — nenhum dado é perdido. Você pode desativar a sincronização iCloud a qualquer momento em Ajustes → [Seu Nome] → iCloud → GeoAlarm.";
+
+"privacy.body.transitFeeds" = "O recurso de Alarme de Transporte baixa dados GTFS diretamente dos servidores das agências de transporte público. Esses feeds contêm nomes de paradas, coordenadas e informações de rota — sem dados pessoais incluídos.\n\nOs dados GTFS baixados são armazenados em cache no diretório de cache do app no seu dispositivo. Arquivos em cache podem ser excluídos pelo iOS quando o armazenamento estiver baixo; o app fará o download novamente quando necessário.\n\nNenhuma URL GTFS personalizada que você inserir é armazenada além da sessão atual, e nenhuma informação sobre quais agências você navegou é transmitida para nenhum lugar.";
+
+"privacy.body.notifications" = "O GeoAlarm envia notificações locais inteiramente no dispositivo usando o UNUserNotificationCenter do iOS. As notificações são geradas pelo próprio app quando um evento de cerca geográfica ocorre — elas não são enviadas por nenhum servidor de notificação push ou serviço remoto. Nenhum conteúdo de notificação é transmitido fora do seu dispositivo.\n\nVocê pode gerenciar as permissões de notificação em Ajustes do iOS → Notificações → GeoAlarm.";
+
+"privacy.body.analytics" = "O GeoAlarm não inclui SDKs de análise de terceiros, redes de publicidade ou serviços de relatório de falhas. O app não rastreia como você o usa e não coleta informações de diagnóstico além do que o iOS fornece nativamente em Ajustes → Privacidade e Segurança → Análise e Melhorias.";
+
+"privacy.body.dataDeletion" = "Você pode excluir alarmes individuais deslizando para a esquerda em qualquer linha de alarme, ou excluir todos os dados removendo o app do seu dispositivo. Desinstalar o GeoAlarm remove todos os registros de alarme armazenados localmente. Se a sincronização iCloud estiver ativada, você também pode excluir os dados do CloudKit do app em Ajustes → [Seu Nome] → iCloud → Gerenciar Armazenamento da Conta → GeoAlarm.";
+
+"privacy.body.contact" = "Se você tiver dúvidas sobre privacidade ou tratamento de dados, pode entrar em contato com o desenvolvedor pelo link de suporte na App Store na página do produto GeoAlarm.";
+
+// MARK: - Swipe Action Labels
+"Delete" = "Eliminar";
+"Enable" = "Ativar";
+"Disable" = "Desativar";
+"Map Overview" = "Visão geral do mapa";
+"No alarms to show" = "Nenhum alarme para mostrar";
+"Create an alarm first and it will appear here." = "Crie um alarme primeiro e ele aparecerá aqui.";
+"No Geo Alarms Yet" = "Nenhum alarme de geo ainda";
+"Tap + to create your first alarm.
+You'll be notified when you arrive at or leave any saved location." = "Toque em + para criar seu primeiro alarme.\nVocê será notificado ao chegar ou sair de qualquer local salvo.";
+"Alarm limit reached" = "Limite de alarmes atingido";
+"Approaching alarm limit" = "Limite de alarmes se aproximando";
+"iOS allows 20 active alarms. Disable one before adding another." = "O iOS permite 20 alarmes ativos. Desative um antes de adicionar outro.";
+"iOS allows 20 active alarms. You're close to the limit." = "O iOS permite 20 alarmes ativos. Você está próximo do limite.";
+"Transit" = "Trânsito";
+"State" = "Estado";
+"Status" = "Status";
+"History" = "Histórico";
+"Times triggered" = "Vezes acionado";
+"Never" = "Nunca";
+"Last triggered" = "Último acionamento";
+"Note" = "Nota";
+"On" = "Ativado";
+"Time window" = "Janela de tempo";
+"Active days" = "Dias ativos";
+"Disable alarm" = "Desativar alarme";
+"Enable alarm" = "Ativar alarme";
+"Share location" = "Compartilhar localização";
+"Alarm name" = "Nome do alarme";
+"Test Fire" = "Teste";

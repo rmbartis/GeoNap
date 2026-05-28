@@ -1,0 +1,239 @@
+/* GeoAlarm — Tiếng Việt (vi) */
+
+"Done" = "Xong";
+"Cancel" = "Hủy";
+"OK" = "OK";
+"Save" = "Lưu";
+"Back" = "Quay lại";
+"Settings" = "Cài đặt";
+"Next" = "Tiếp theo";
+"Skip" = "Bỏ qua";
+
+"Geo Alarms" = "Báo thức Địa lý";
+"Location Alarm" = "Báo thức vị trí";
+"Transit Alarm" = "Báo thức giao thông";
+"Location access required. Enable in Settings." = "Cần quyền truy cập vị trí. Bật trong Cài đặt.";
+"Location signal lost" = "Mất tín hiệu vị trí";
+"Alarms will resume when GPS is available." = "Báo thức sẽ hoạt động lại khi GPS khả dụng.";
+
+"Alarm Details" = "Chi tiết báo thức";
+"Name (e.g. Penn Station)" = "Tên (vd: Ga Hà Nội)";
+"Note (shown in notification)" = "Ghi chú (hiển thị trong thông báo)";
+"Location" = "Vị trí";
+"Search address or place…" = "Tìm địa chỉ hoặc địa điểm…";
+"Trigger" = "Kích hoạt";
+"Event" = "Sự kiện";
+"Radius" = "Bán kính";
+"Latitude" = "Vĩ độ";
+"Longitude" = "Kinh độ";
+"Search above or tap the map to set a location" = "Tìm kiếm bên trên hoặc nhấn vào bản đồ để đặt vị trí";
+"Schedule" = "Lịch trình";
+"Repeat" = "Lặp lại";
+"Auto-resets after you leave — fires again every trip" = "Tự đặt lại khi bạn rời đi — kích hoạt mỗi chuyến đi";
+"Hysteresis: alarm won't re-trigger until you've fully exited and re-entered the region." = "Trễ: báo thức sẽ không kích hoạt lại cho đến khi bạn rời hoàn toàn và quay lại khu vực.";
+"Active time window" = "Khung thời gian hoạt động";
+"Only fire within a set time range" = "Chỉ kích hoạt trong khoảng thời gian đã đặt";
+"From" = "Từ";
+"Until" = "Đến";
+"Active Days" = "Ngày hoạt động";
+"Every day" = "Mỗi ngày";
+"Weekdays only" = "Chỉ ngày trong tuần";
+"Weekends only" = "Chỉ cuối tuần";
+"Active all day" = "Hoạt động cả ngày";
+"Save Alarm" = "Lưu báo thức";
+"Update Alarm" = "Cập nhật báo thức";
+"New Alarm" = "Báo thức mới";
+"Edit Alarm" = "Chỉnh sửa báo thức";
+"Please enter a name for this alarm." = "Vui lòng nhập tên cho báo thức này.";
+"Radius must be at least 50 metres." = "Bán kính phải ít nhất 50 mét.";
+"Please pick a valid location on the map." = "Vui lòng chọn vị trí hợp lệ trên bản đồ.";
+"Window start and end time cannot be the same." = "Thời gian bắt đầu và kết thúc không thể giống nhau.";
+
+"Notify a Contact" = "Thông báo cho liên lạc";
+"Send a message when this alarm fires" = "Gửi tin nhắn khi báo thức kích hoạt";
+"Select Contact" = "Chọn liên lạc";
+"No contact selected" = "Chưa chọn liên lạc";
+"Message preview:" = "Xem trước tin nhắn:";
+"Select a contact to enable notifications" = "Chọn liên lạc để bật thông báo";
+"When the alarm fires, a pre-composed message with your arrival time will be ready to send. You review it before it's sent." = "Khi báo thức kích hoạt, một tin nhắn soạn sẵn với thời gian đến của bạn sẽ sẵn sàng gửi. Bạn xem lại trước khi gửi.";
+
+"Units" = "Đơn vị";
+"Distance" = "Khoảng cách";
+"Metric (m / km)" = "Hệ mét (m / km)";
+"Imperial (ft / mi)" = "Hệ Anh (ft / mi)";
+"Controls how radius is displayed and entered when creating alarms." = "Kiểm soát cách hiển thị và nhập bán kính khi tạo báo thức.";
+"Time" = "Thời gian";
+"Clock" = "Đồng hồ";
+"12-hour (AM/PM)" = "12 giờ (SA/CH)";
+"24-hour" = "24 giờ";
+"Used when displaying and entering alarm time windows." = "Dùng khi hiển thị và nhập khung thời gian báo thức.";
+"Help & User Guide" = "Trợ giúp và hướng dẫn sử dụng";
+"Privacy & Location Sharing" = "Quyền riêng tư và chia sẻ vị trí";
+"Language" = "Ngôn ngữ";
+"Support" = "Hỗ trợ";
+"Enable Debug Log" = "Bật nhật ký gỡ lỗi";
+"Log file size" = "Kích thước tệp nhật ký";
+"Share Log with Support" = "Chia sẻ nhật ký với hỗ trợ";
+"Clear Log" = "Xóa nhật ký";
+"Enable Debug Logging?" = "Bật ghi nhật ký gỡ lỗi?";
+"Enable Logging" = "Bật ghi nhật ký";
+"Log Cleared" = "Đã xóa nhật ký";
+"The debug log has been cleared. A new session header will be written on the next log entry." = "Nhật ký gỡ lỗi đã được xóa. Tiêu đề phiên mới sẽ được ghi vào mục nhập tiếp theo.";
+"About" = "Giới thiệu";
+"Build" = "Phiên bản";
+"Preview" = "Xem trước";
+"Sample radius" = "Bán kính mẫu";
+"Sample time" = "Thời gian mẫu";
+"Logging is ON. Detailed activity is being recorded to GeoAlarmDebug.log in the GeoAlarm folder in the Files app. Disable when no longer needed." = "Ghi nhật ký BẬT. Hoạt động chi tiết đang được ghi vào GeoAlarmDebug.log. Tắt khi không còn cần thiết.";
+"Enable to capture detailed diagnostic information when troubleshooting an issue. Logging is off by default and does not run in the background." = "Bật để thu thập thông tin chẩn đoán chi tiết khi xử lý sự cố. Ghi nhật ký tắt theo mặc định và không chạy trong nền.";
+
+"Sleep through your commute" = "Ngủ suốt hành trình";
+"GeoAlarm wakes you up when your device enters or leaves a location — not at a set time. Perfect for trains, buses, and long rides." = "GeoAlarm đánh thức bạn khi thiết bị vào hoặc rời một vị trí — không phải theo giờ cố định. Hoàn hảo cho tàu, xe buýt và chuyến dài.";
+"Set an alarm anywhere" = "Đặt báo thức ở bất kỳ đâu";
+"Drop a pin on any stop, station, or landmark. Choose how close you need to be before the alarm fires, and whether it should repeat every trip." = "Ghim bất kỳ trạm, ga hay địa danh nào. Chọn khoảng cách để kích hoạt và có lặp lại mỗi chuyến không.";
+"Active time windows" = "Khung thời gian hoạt động";
+"Only want the alarm to fire during your morning commute? Set a time window and GeoAlarm will ignore the location outside those hours." = "Chỉ muốn báo thức kích hoạt lúc đi làm buổi sáng? Đặt khung thời gian và GeoAlarm sẽ bỏ qua vị trí ngoài giờ đó.";
+"Always On location needed" = "Cần bật vị trí liên tục";
+"GeoAlarm monitors your position in the background so it can alert you even while your phone is locked. Your location is never shared or stored outside the app." = "GeoAlarm theo dõi vị trí của bạn trong nền để cảnh báo kể cả khi điện thoại bị khóa. Vị trí của bạn không bao giờ được chia sẻ hay lưu trữ bên ngoài ứng dụng.";
+"Allow location access" = "Cho phép truy cập vị trí";
+"Not now" = "Lúc khác";
+"Choose Your Language" = "Chọn ngôn ngữ";
+"Select the language you'd like to use in GeoAlarm. You can change this at any time in Settings." = "Chọn ngôn ngữ bạn muốn dùng trong GeoAlarm. Bạn có thể thay đổi bất kỳ lúc nào trong Cài đặt.";
+
+"Choose Agency" = "Chọn đơn vị vận tải";
+"Choose Route" = "Chọn tuyến";
+"Choose Stop" = "Chọn trạm";
+"New Transit Alarm" = "Báo thức giao thông mới";
+"Custom Agency" = "Đơn vị tùy chỉnh";
+"Search agencies" = "Tìm đơn vị vận tải";
+"Search routes" = "Tìm tuyến";
+"Search stops" = "Tìm trạm";
+"Transit Details" = "Chi tiết giao thông";
+"Agency" = "Đơn vị vận tải";
+"Route" = "Tuyến";
+"Stop" = "Trạm";
+"Alarm" = "Báo thức";
+"On Arrival" = "Khi đến";
+"On Departure" = "Khi khởi hành";
+"Repeat (re-arm after each trip)" = "Lặp lại (kích hoạt lại sau mỗi chuyến)";
+"Create Alarm" = "Tạo báo thức";
+"No Routes Found" = "Không tìm thấy tuyến";
+"No Stops Found" = "Không tìm thấy trạm";
+"Enter custom GTFS URL…" = "Nhập URL GTFS tùy chỉnh…";
+"Use this URL" = "Dùng URL này";
+"Try Another" = "Thử URL khác";
+"Any public GTFS ZIP feed URL from Transitland, OpenMobilityData, or your local transit authority." = "Bất kỳ URL nguồn GTFS ZIP công khai nào từ Transitland, OpenMobilityData, hoặc cơ quan giao thông địa phương.";
+"A name is required before the alarm can be saved" = "Cần có tên trước khi lưu báo thức";
+
+"Sound / Vibrate" = "Âm thanh / Rung";
+"Vibrate only" = "Chỉ rung";
+"Default" = "Mặc định";
+"Critical (bypasses silent mode)" = "Khẩn cấp (bỏ qua chế độ im lặng)";
+"Boat Horn" = "Còi tàu";
+"Cable Car Bell" = "Chuông cáp treo";
+"Steam Train" = "Tàu hơi nước";
+"Sailboat Bell" = "Chuông thuyền buồm";
+"Airplane Landing" = "Máy bay hạ cánh";
+"Airport Chime" = "Chuông sân bay";
+
+"Help" = "Trợ giúp";
+"What is GeoAlarm?" = "GeoAlarm là gì?";
+"Typical use cases" = "Các trường hợp sử dụng thông thường";
+"Creating an alarm" = "Tạo báo thức";
+"Transit Alarms" = "Báo thức giao thông";
+"Alarm sound / vibrate" = "Âm thanh / rung báo thức";
+"Siri & Shortcuts" = "Siri và Phím tắt";
+"Reporting a problem" = "Báo cáo sự cố";
+"Managing alarms" = "Quản lý báo thức";
+"Always On location" = "Vị trí luôn bật";
+"Notifications" = "Thông báo";
+
+// MARK: - HelpView Body Text
+"help.body.whatIsGeoAlarm" = "GeoAlarm đánh thức bạn dựa trên vị trí của bạn, không phải theo giờ giấc. Thay vì đoán xem chuyến đi mất bao lâu, bạn đặt báo thức tại một vị trí và để ứng dụng thông báo khi bạn đến nơi — hoặc khi bạn rời đi.\n\nỨng dụng chạy lặng lẽ trong nền, vì vậy bạn có thể chợp mắt, đọc sách hoặc thư giãn mà không lo lỡ trạm dừng.";
+
+"help.body.useCases" = "• Hành khách tàu hỏa hoặc tàu điện ngầm — Đặt báo thức tại ga của bạn. Ngủ một giấc và được đánh thức ngay trước khi đến, mỗi buổi sáng, tự động.\n\n• Hành khách xe buýt — Đặt báo thức khởi hành tại trạm gần nhà. Báo thức sẽ kêu khi bạn rời khỏi khu vực, nhắc nhở bạn ra đi.\n\n• Hành khách đường trường — Đặt báo thức tại một thành phố trung gian. Bạn sẽ được thông báo khi xe đến gần mà không cần nhìn vào bản đồ suốt chuyến đi.\n\n• Du khách ở thành phố lạ — Đặt báo thức tại khách sạn, sân bay hoặc địa điểm họp để luôn biết khi nào bạn đang đến gần.";
+
+"help.body.creatingAlarm" = "Nhấn + ở góc trên bên phải. Một menu xuất hiện với hai lựa chọn:\n\n• Báo thức vị trí — ghim bất kỳ địa chỉ hoặc vị trí nào trên bản đồ.\n• Báo thức phương tiện — chọn cơ quan, tuyến đường và điểm dừng từ lịch trình trực tiếp.\n\nVới Báo thức vị trí:\n\n1. Đặt tên cho báo thức và ghi chú tùy chọn sẽ xuất hiện trong thông báo.\n2. Dùng thanh tìm kiếm để tìm bất kỳ địa chỉ, ga hay địa điểm nào. Nhấn vào gợi ý để thả ghim, hoặc nhấn trực tiếp lên bản đồ.\n3. Chọn Khi đến nơi hoặc Khi khởi hành làm điều kiện kích hoạt.\n4. Dùng thanh trượt Bán kính để đặt khoảng cách cần thiết trước khi báo thức kêu.\n5. Trong Âm thanh / Rung, chọn nhạc chuông hoặc chọn Chỉ rung.\n\nNút Lưu bị tắt cho đến khi nhập tên và ghim vị trí. iOS cho phép tối đa 20 báo thức đang hoạt động cùng lúc.";
+
+"help.body.radius" = "Bán kính xác định vùng địa lý — ranh giới hình tròn quanh ghim của bạn. Khi bạn vượt qua ranh giới đó (vào hoặc ra), báo thức kêu.\n\nBán kính 200 m phù hợp cho một ga hoặc tòa nhà. Dùng 500–1000 m cho các mốc rộng hơn như trung tâm thành phố hoặc khu vực sân bay, giúp bạn có thêm thời gian chuẩn bị trước khi đến.\n\nBạn có thể chuyển đổi giữa mét/kilômét và feet/dặm trong Cài đặt.";
+
+"help.body.repeat" = "Báo thức một lần kêu một lần và ở trạng thái đã kích hoạt cho đến khi bạn bật lại thủ công. Hữu ích cho một chuyến đi đơn lẻ hoặc nhắc nhở một lần.\n\nBáo thức lặp lại tự động đặt lại sau khi bạn rời vùng, vì vậy sẽ kêu lại vào lần tiếp theo bạn đi qua cùng vị trí đó. Hoàn hảo cho người đi lại hàng ngày.";
+
+"help.body.timeWindow" = "Khung thời gian giới hạn khi nào báo thức được phép kêu. Ví dụ, khung 07:00–09:00 nghĩa là báo thức chỉ kích hoạt trong giờ đi làm buổi sáng của bạn.\n\nNhãn tóm tắt bên dưới bộ chọn hiển thị chính xác khung thời gian dài bao lâu, ví dụ \"Hoạt động 2 giờ · 7:00 – 9:00\".\n\nKhung thời gian qua đêm được hỗ trợ (ví dụ 22:00–06:00). Khi giờ Từ muộn hơn Đến, báo thức hoạt động qua nửa đêm đến sáng hôm sau. Tóm tắt chuyển màu cam và hiển thị \"ngày hôm sau\" nhắc nhở.";
+
+"help.body.transitAlarms" = "Báo thức phương tiện kết nối với lịch trình giao thông công cộng để bạn có thể đặt báo thức tại một điểm dừng cụ thể mà không cần nhập tọa độ GPS.\n\nNhấn + → Báo thức phương tiện để mở trình hướng dẫn:\n\n1. Cơ quan — Chọn từ danh sách tích hợp toàn cầu (Amtrak, BART, MBTA, CTA, GO Transit và nhiều hơn), hoặc nhập bất kỳ URL nguồn GTFS công khai nào.\n2. Tuyến đường — Duyệt hoặc tìm kiếm tuyến. Mỗi tuyến hiển thị loại (Đường sắt, Tàu điện ngầm, Xe buýt, Phà, v.v.).\n3. Điểm dừng — Tất cả điểm dừng được liệt kê theo khoảng cách từ vị trí hiện tại của bạn.\n4. Xác nhận — Xem lại cơ quan, tuyến và điểm dừng, sau đó đặt tên, bán kính, hướng kích hoạt và âm thanh.\n\nỨng dụng tải nguồn GTFS khi sử dụng lần đầu và lưu vào bộ nhớ đệm cục bộ.";
+
+"help.body.soundVibrate" = "Mỗi báo thức có cài đặt âm thanh riêng được chọn trong Âm thanh / Rung khi tạo hoặc chỉnh sửa.\n\nTùy chọn hệ thống:\n• Chỉ rung — không có âm thanh; lý tưởng cho môi trường yên tĩnh.\n• Mặc định — âm thanh thông báo iOS tiêu chuẩn.\n• Khẩn cấp — phát ở âm lượng tối đa, bỏ qua chế độ im lặng và Không làm phiền.\n\nÂm thanh du lịch tích hợp:\n• Còi tàu thuyền · Chuông xe cáp · Tàu hơi nước · Chuông thuyền buồm · Máy bay hạ cánh · Chuông sân bay\n\nMỗi cài đặt được lưu cùng báo thức và phát mỗi khi nó kêu.";
+
+"help.body.siri" = "GeoAlarm hỗ trợ Siri và ứng dụng Phím tắt — không cần cài đặt.\n\n• \"Tạo GeoAlarm\" — Siri hỏi tên, vị trí và hướng kích hoạt, sau đó lưu báo thức.\n• \"Bật GeoAlarm của tôi\" — Siri hiển thị các báo thức đã lưu; chọn một để bật lại.\n• \"Tắt GeoAlarm của tôi\" — Giống như trên nhưng vô hiệu hóa báo thức.\n\nBạn cũng có thể tìm và tùy chỉnh các phím tắt này trong ứng dụng iOS Phím tắt trong phần GeoAlarm.";
+
+"help.body.settings" = "Mở Cài đặt từ biểu tượng bánh răng ở góc trên bên trái của danh sách báo thức.\n\n• Khoảng cách — chuyển đổi giữa hệ mét (mét / kilômét) và hệ đo lường (feet / dặm).\n• Đồng hồ — chuyển đổi giữa định dạng 12 giờ và 24 giờ.\n• Trợ giúp & Hướng dẫn sử dụng — hướng dẫn này.\n• Quyền riêng tư & Chia sẻ vị trí — toàn bộ thông tin về cách xử lý dữ liệu vị trí.\n• Bật nhật ký gỡ lỗi — xem \"Báo cáo sự cố\" bên dưới.\n• Bản dựng — hiển thị dấu thời gian bản dựng. Hữu ích khi báo cáo lỗi.";
+
+"help.body.reportingProblem" = "Nếu GeoAlarm không hoạt động như mong đợi, bạn có thể bật ghi nhật ký gỡ lỗi để thu thập hồ sơ chi tiết.\n\nĐể bật ghi nhật ký:\n1. Mở Cài đặt → phần Hỗ trợ.\n2. Bật Nhật ký gỡ lỗi.\n3. Hộp thoại giải thích những gì được ghi lại. Nhấn Bật ghi nhật ký để tiếp tục.\n4. Tái hiện sự cố.\n5. Mở ứng dụng Files → Trên iPhone của tôi → GeoAlarm → GeoAlarmDebug.log, sau đó chia sẻ với bộ phận hỗ trợ.\n\nNhững gì được ghi lại: kiểu thiết bị, phiên bản iOS, trạng thái quyền vị trí, sự kiện vùng, sự kiện báo thức, tải xuống nguồn phương tiện và lỗi. Không có gì được gửi tự động.";
+
+"help.body.managingAlarms" = "Vuốt sang phải trên bất kỳ báo thức nào trong danh sách để nhanh chóng bật hoặc tắt mà không cần mở chế độ xem chi tiết.\n\nVuốt sang trái để xóa báo thức. Báo thức bị xóa ngay lập tức và việc giám sát vùng địa lý của chúng dừng lại.\n\nĐể chỉnh sửa báo thức, nhấn vào để mở chế độ xem chi tiết, sau đó nhấn Chỉnh sửa báo thức.\n\nĐể chia sẻ vị trí báo thức, mở chế độ xem chi tiết và nhấn Chia sẻ vị trí. Thao tác này gửi liên kết Apple Maps đến tọa độ chính xác.";
+
+"help.body.alwaysOnLocation" = "GeoAlarm cần quyền truy cập vị trí Luôn bật để theo dõi các vùng trong nền — ngay cả khi màn hình của bạn bị khóa hoặc ứng dụng đã đóng.\n\nNếu bạn đã chọn Không phải bây giờ trong quá trình thiết lập, bạn có thể cấp quyền sau trong Cài đặt iOS → Quyền riêng tư & Bảo mật → Dịch vụ vị trí → GeoAlarm. Đặt thành Luôn luôn.\n\nKhông có quyền truy cập Luôn bật, báo thức sẽ chỉ kêu khi ứng dụng đang mở.";
+
+"help.body.notifications" = "Khi báo thức kêu, bạn sẽ nhận được thông báo với tên báo thức và ghi chú của bạn (nếu được đặt). Từ thông báo, bạn có thể:\n\n• Báo lại 10 phút — tắt báo thức trong 10 phút, sau đó kích hoạt lại.\n• Bỏ qua — xóa thông báo. Với báo thức lặp lại, báo thức đặt lại khi bạn rời vùng.\n\nĐảm bảo thông báo được bật cho GeoAlarm trong Cài đặt iOS → Thông báo → GeoAlarm.";
+
+// MARK: - PrivacyView Section Titles
+"Privacy & Location" = "Quyền riêng tư & Vị trí";
+"Your privacy matters" = "Quyền riêng tư của bạn quan trọng";
+"Location Data" = "Dữ liệu vị trí";
+"On-Device Storage" = "Lưu trữ trên thiết bị";
+"iCloud Sync" = "Đồng bộ iCloud";
+"Transit Feed Downloads" = "Tải xuống dữ liệu phương tiện";
+"Analytics & Crash Reporting" = "Phân tích & Báo cáo sự cố";
+"Deleting Your Data" = "Xóa dữ liệu của bạn";
+"Questions" = "Câu hỏi";
+
+// MARK: - PrivacyView Body Text
+"privacy.intro" = "GeoAlarm được thiết kế với một nguyên tắc đơn giản: dữ liệu vị trí và báo thức của bạn thuộc về bạn. Tài liệu này giải thích chính xác thông tin nào ứng dụng sử dụng, chúng được lưu ở đâu và những gì nó không bao giờ làm.";
+
+"privacy.body.locationData" = "GeoAlarm sử dụng vị trí thiết bị của bạn độc quyền để theo dõi các vùng địa lý. Dữ liệu vị trí được xử lý hoàn toàn trên thiết bị của bạn — không bao giờ được truyền đến bất kỳ máy chủ nào, lưu trữ trong cơ sở dữ liệu, hoặc chia sẻ với bên thứ ba.\n\nKhi bạn tạo báo thức, vĩ độ, kinh độ và bán kính được lưu cục bộ. Dữ liệu này không rời thiết bị của bạn trừ khi bạn dùng nút Chia sẻ một cách rõ ràng, tạo ra liên kết Apple Maps tiêu chuẩn.\n\nỨng dụng yêu cầu quyền vị trí \"Luôn luôn\" để iOS có thể đánh thức ứng dụng trong nền khi bạn vào hoặc ra khỏi vùng được theo dõi. Bạn có thể thu hồi quyền này bất kỳ lúc nào trong Cài đặt iOS → Quyền riêng tư & Bảo mật → Dịch vụ vị trí → GeoAlarm.";
+
+"privacy.body.onDeviceStorage" = "Tất cả dữ liệu báo thức — bao gồm tên, tọa độ, bán kính, khung thời gian, ngày hoạt động và lịch sử kích hoạt — được lưu trữ cục bộ bằng SwiftData trong vùng chứa riêng của ứng dụng. Dữ liệu này được đưa vào các bản sao lưu iOS tiêu chuẩn (iCloud Backup hoặc iTunes/Finder) nếu sao lưu được bật.\n\nKhông cần tài khoản, đăng nhập hoặc kết nối mạng để sử dụng GeoAlarm.";
+
+"privacy.body.iCloudSync" = "GeoAlarm được thiết kế để hỗ trợ đồng bộ iCloud qua CloudKit để báo thức của bạn có thể xuất hiện trên tất cả các thiết bị Apple đăng nhập cùng Apple ID. Khi đồng bộ iCloud đang hoạt động, hồ sơ báo thức được lưu trữ trong vùng chứa iCloud cá nhân của bạn và tuân theo chính sách quyền riêng tư của Apple. Apple không sử dụng dữ liệu CloudKit để quảng cáo.\n\nNếu đồng bộ iCloud không khả dụng hoặc bị tắt, ứng dụng tự động chuyển về lưu trữ chỉ cục bộ — không có dữ liệu bị mất. Bạn có thể tắt đồng bộ iCloud bất kỳ lúc nào trong Cài đặt → [Tên của bạn] → iCloud → GeoAlarm.";
+
+"privacy.body.transitFeeds" = "Tính năng Báo thức phương tiện tải xuống dữ liệu GTFS trực tiếp từ các máy chủ của cơ quan giao thông công cộng. Các nguồn này chứa tên điểm dừng, tọa độ và thông tin tuyến đường — không có dữ liệu cá nhân nào được bao gồm.\n\nDữ liệu GTFS đã tải xuống được lưu vào bộ nhớ đệm trong thư mục bộ nhớ đệm của ứng dụng trên thiết bị của bạn. Các tệp được lưu vào bộ nhớ đệm có thể bị iOS xóa khi bộ nhớ thấp; ứng dụng sẽ tải xuống lại theo yêu cầu.\n\nKhông có URL GTFS tùy chỉnh nào bạn nhập được lưu trữ ngoài phiên hiện tại, và không có thông tin nào về các cơ quan bạn đã duyệt được truyền đi bất kỳ đâu.";
+
+"privacy.body.notifications" = "GeoAlarm gửi thông báo cục bộ hoàn toàn trên thiết bị bằng UNUserNotificationCenter của iOS. Thông báo được tạo bởi chính ứng dụng khi sự kiện vùng địa lý xảy ra — chúng không được gửi qua bất kỳ máy chủ thông báo đẩy hoặc dịch vụ từ xa nào. Không có nội dung thông báo nào được truyền ra ngoài thiết bị của bạn.\n\nBạn có thể quản lý quyền thông báo trong Cài đặt iOS → Thông báo → GeoAlarm.";
+
+"privacy.body.analytics" = "GeoAlarm không bao gồm bất kỳ SDK phân tích của bên thứ ba, mạng quảng cáo hoặc dịch vụ báo cáo sự cố nào. Ứng dụng không theo dõi cách bạn sử dụng nó và không thu thập thông tin chẩn đoán ngoài những gì iOS cung cấp tự nhiên trong Cài đặt → Quyền riêng tư & Bảo mật → Phân tích & Cải tiến.";
+
+"privacy.body.dataDeletion" = "Bạn có thể xóa từng báo thức bằng cách vuốt sang trái trên bất kỳ hàng báo thức nào, hoặc xóa tất cả dữ liệu bằng cách xóa ứng dụng khỏi thiết bị. Gỡ cài đặt GeoAlarm xóa tất cả hồ sơ báo thức được lưu trữ cục bộ. Nếu đồng bộ iCloud được bật, bạn cũng có thể xóa dữ liệu CloudKit của ứng dụng trong Cài đặt → [Tên của bạn] → iCloud → Quản lý bộ nhớ tài khoản → GeoAlarm.";
+
+"privacy.body.contact" = "Nếu bạn có câu hỏi về quyền riêng tư hoặc xử lý dữ liệu, bạn có thể liên hệ với nhà phát triển qua liên kết hỗ trợ trong App Store trên trang sản phẩm GeoAlarm.";
+
+// MARK: - Swipe Action Labels
+"Delete" = "Xóa";
+"Enable" = "Bật";
+"Disable" = "Tắt";
+"Map Overview" = "Tổng quan bản đồ";
+"No alarms to show" = "Không có báo thức để hiển thị";
+"Create an alarm first and it will appear here." = "Tạo báo thức trước và nó sẽ xuất hiện ở đây.";
+"No Geo Alarms Yet" = "Chưa có báo thức Geo";
+"Tap + to create your first alarm.
+You'll be notified when you arrive at or leave any saved location." = "Nhấn + để tạo báo thức đầu tiên.\nBạn sẽ được thông báo khi đến hoặc rời khỏi bất kỳ địa điểm đã lưu nào.";
+"Alarm limit reached" = "Đã đạt giới hạn báo thức";
+"Approaching alarm limit" = "Sắp đạt giới hạn báo thức";
+"iOS allows 20 active alarms. Disable one before adding another." = "iOS cho phép 20 báo thức đang hoạt động. Tắt một báo thức trước khi thêm mới.";
+"iOS allows 20 active alarms. You're close to the limit." = "iOS cho phép 20 báo thức đang hoạt động. Bạn gần đạt giới hạn.";
+"Transit" = "Phương tiện";
+"State" = "Trạng thái";
+"Status" = "Trạng thái";
+"History" = "Lịch sử";
+"Times triggered" = "Số lần kích hoạt";
+"Never" = "Chưa bao giờ";
+"Last triggered" = "Lần kích hoạt cuối";
+"Note" = "Ghi chú";
+"On" = "Bật";
+"Time window" = "Khung thời gian";
+"Active days" = "Ngày hoạt động";
+"Disable alarm" = "Tắt báo thức";
+"Enable alarm" = "Bật báo thức";
+"Share location" = "Chia sẻ vị trí";
+"Alarm name" = "Tên báo thức";
+"Test Fire" = "Kiểm tra";

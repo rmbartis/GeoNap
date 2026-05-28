@@ -3,21 +3,24 @@
 
 import SwiftUI
 import CoreLocation
+import MessageUI
 
 struct ContentView: View {
     @EnvironmentObject var locationManager: LocationManager
     @EnvironmentObject var alarmManager: AlarmManager
+    @Environment(\.languageBundle) private var bundle
 
     @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding = false
     @State private var showSettings      = false
     @State private var showMapOverview   = false
     @State private var showTransitAlarm  = false
     @State private var showAddAlarm      = false
+    @State private var showMessageCompose = false
 
     var body: some View {
         NavigationStack {
             AlarmListView()
-                .navigationTitle("Geo Alarms")
+                .navigationTitle(Text("Geo Alarms", bundle: bundle))
                 .sheet(isPresented: $showSettings) {
                     SettingsView()
                 }
@@ -36,12 +39,20 @@ struct ContentView: View {
                             Button {
                                 showAddAlarm = true
                             } label: {
-                                Label("Location Alarm", systemImage: "mappin.and.ellipse")
+                                Label {
+                                    Text("Location Alarm", bundle: bundle)
+                                } icon: {
+                                    Image(systemName: "mappin.and.ellipse")
+                                }
                             }
                             Button {
                                 showTransitAlarm = true
                             } label: {
-                                Label("Transit Alarm", systemImage: "tram.fill")
+                                Label {
+                                    Text("Transit Alarm", bundle: bundle)
+                                } icon: {
+                                    Image(systemName: "tram.fill")
+                                }
                             }
                         } label: {
                             Image(systemName: "plus")
@@ -65,9 +76,7 @@ struct ContentView: View {
                     }
                     #if DEBUG
                     ToolbarItem(placement: .navigationBarLeading) {
-                        Button("Test Fire") {
-                            // Pick first alarm regardless of state, reset it to
-                            // active first so it can always be test-fired again.
+                        Button {
                             if let first = alarmManager.alarms.first {
                                 first.state = .active
                                 alarmManager.handleRegionEvent(
@@ -75,6 +84,8 @@ struct ContentView: View {
                                     event: first.regionEvent
                                 )
                             }
+                        } label: {
+                            Text("Test Fire", bundle: bundle)
                         }
                         .foregroundColor(.red)
                     }
@@ -97,26 +108,44 @@ struct ContentView: View {
         )) {
             OnboardingView()
         }
+        // Contact notification compose sheet — presented when the user taps
+        // "Notify Contact" on a fired alarm notification and the app comes foreground.
+        .sheet(isPresented: $showMessageCompose) {
+            if let msg = alarmManager.pendingContactMessage {
+                MessageComposeView(message: msg) {
+                    alarmManager.pendingContactMessage = nil
+                    showMessageCompose = false
+                }
+                .ignoresSafeArea()
+            }
+        }
+        .onChange(of: alarmManager.pendingContactMessage) { _, newValue in
+            if newValue != nil { showMessageCompose = true }
+        }
     }
 }
 
 // MARK: - Permission Warning Banner
 private struct LocationPermissionBanner: View {
+    @Environment(\.languageBundle) private var bundle
+
     var body: some View {
         HStack(spacing: 8) {
             Image(systemName: "location.slash.fill")
                 .foregroundColor(.white)
-            Text("Location access required. Enable in Settings.")
+            Text("Location access required. Enable in Settings.", bundle: bundle)
                 .font(.caption)
                 .foregroundColor(.white)
             Spacer()
-            Button("Settings") {
+            Button {
                 if let url = URL(string: UIApplication.openSettingsURLString) {
                     UIApplication.shared.open(url)
                 }
+            } label: {
+                Text("Settings", bundle: bundle)
+                    .font(.caption.bold())
+                    .foregroundColor(.yellow)
             }
-            .font(.caption.bold())
-            .foregroundColor(.yellow)
         }
         .padding(10)
         .background(Color.red.opacity(0.9))
@@ -128,15 +157,17 @@ private struct LocationPermissionBanner: View {
 
 // MARK: - Location Unavailable Banner (airplane mode / no GPS fix)
 private struct LocationUnavailableBanner: View {
+    @Environment(\.languageBundle) private var bundle
+
     var body: some View {
         HStack(spacing: 8) {
             Image(systemName: "airplane")
                 .foregroundColor(.white)
             VStack(alignment: .leading, spacing: 2) {
-                Text("Location signal lost")
+                Text("Location signal lost", bundle: bundle)
                     .font(.caption.bold())
                     .foregroundColor(.white)
-                Text("Alarms will resume when GPS is available.")
+                Text("Alarms will resume when GPS is available.", bundle: bundle)
                     .font(.caption2)
                     .foregroundColor(.white.opacity(0.85))
             }

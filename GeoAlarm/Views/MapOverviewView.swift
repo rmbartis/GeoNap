@@ -9,6 +9,7 @@ struct MapOverviewView: View {
 
     @EnvironmentObject var alarmManager: AlarmManager
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.languageBundle) private var bundle
 
     // Start with a wide view; user can pan/zoom freely.
     @State private var cameraPosition: MapCameraPosition = .automatic
@@ -57,11 +58,13 @@ struct MapOverviewView: View {
                     }
                 }
             }
-            .navigationTitle("Map Overview")
+            .navigationTitle(Text("Map Overview", bundle: bundle))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Done") { dismiss() }
+                    Button { dismiss() } label: {
+                        Text("Done", bundle: bundle)
+                    }
                 }
             }
         }
@@ -75,9 +78,9 @@ struct MapOverviewView: View {
             Image(systemName: "map")
                 .font(.system(size: 56))
                 .foregroundStyle(.secondary)
-            Text("No alarms to show")
+            Text("No alarms to show", bundle: bundle)
                 .font(.title3.bold())
-            Text("Create an alarm first and it will appear here.")
+            Text("Create an alarm first and it will appear here.", bundle: bundle)
                 .multilineTextAlignment(.center)
                 .foregroundStyle(.secondary)
                 .padding(.horizontal)

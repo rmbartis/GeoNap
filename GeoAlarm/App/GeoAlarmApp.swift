@@ -9,6 +9,7 @@ import FirebaseCore
 struct GeoAlarmApp: App {
     @StateObject private var locationManager = LocationManager()
     @StateObject private var alarmManager = AlarmManager()
+    @StateObject private var languageManager = LanguageManager.shared
 
     /// CloudKit-backed container with a local-only fallback.
     /// Falls back silently if the user is not signed into iCloud or if the
@@ -38,6 +39,13 @@ struct GeoAlarmApp: App {
             RootView()
                 .environmentObject(locationManager)
                 .environmentObject(alarmManager)
+                .environmentObject(languageManager)
+                // Pass the selected .lproj bundle so every Text("key", bundle: bundle)
+                // call — and LText("key") — resolves strings in the chosen language.
+                .environment(\.languageBundle, languageManager.currentBundle)
+                // Rebuild the entire view tree when language changes so all
+                // Text views re-evaluate with the new bundle.
+                .id(languageManager.currentLanguage)
         }
         .modelContainer(container)
     }

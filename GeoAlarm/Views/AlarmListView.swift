@@ -6,6 +6,7 @@ import SwiftUI
 struct AlarmListView: View {
     @EnvironmentObject var alarmManager: AlarmManager
     @EnvironmentObject var locationManager: LocationManager
+    @Environment(\.languageBundle) private var bundle
 
     var body: some View {
         Group {
@@ -28,19 +29,32 @@ struct AlarmListView: View {
                         NavigationLink(destination: AlarmDetailView(alarm: alarm)) {
                             AlarmRowView(alarm: alarm)
                         }
+                        // Leading edge: enable / disable
                         .swipeActions(edge: .leading) {
                             Button {
                                 alarmManager.toggleActive(alarm)
                             } label: {
-                                Label(
-                                    alarm.isActive ? "Disable" : "Enable",
-                                    systemImage: alarm.isActive ? "pause.circle" : "play.circle"
-                                )
+                                Label {
+                                    Text(alarm.isActive
+                                         ? NSLocalizedString("Disable", bundle: bundle, comment: "")
+                                         : NSLocalizedString("Enable", bundle: bundle, comment: ""))
+                                } icon: {
+                                    Image(systemName: alarm.isActive ? "pause.circle" : "play.circle")
+                                }
                             }
                             .tint(alarm.isActive ? .orange : .green)
                         }
+                        // Trailing edge: delete — explicit so the label uses our bundle,
+                        // not the system's current locale string.
+                        .swipeActions(edge: .trailing) {
+                            Button(role: .destructive) {
+                                alarmManager.delete(alarm: alarm)
+                            } label: {
+                                Label(NSLocalizedString("Delete", bundle: bundle, comment: ""),
+                                      systemImage: "trash")
+                            }
+                        }
                     }
-                    .onDelete { alarmManager.delete(at: $0) }
                 }
             }
         }
@@ -51,9 +65,9 @@ struct AlarmListView: View {
             Image(systemName: "location.circle")
                 .font(.system(size: 64))
                 .foregroundColor(.secondary)
-            Text("No Geo Alarms Yet")
+            Text("No Geo Alarms Yet", bundle: bundle)
                 .font(.title2.bold())
-            Text("Tap + to create your first alarm.\nYou'll be notified when you arrive at or leave any saved location.")
+            Text("Tap + to create your first alarm.\nYou'll be notified when you arrive at or leave any saved location.", bundle: bundle)
                 .multilineTextAlignment(.center)
                 .foregroundColor(.secondary)
                 .padding(.horizontal)
@@ -150,17 +164,20 @@ struct AlarmRowView: View {
 
 private struct RegionLimitBanner: View {
     let isFull: Bool
+    @Environment(\.languageBundle) private var bundle
 
     var body: some View {
         HStack(spacing: 10) {
             Image(systemName: isFull ? "exclamationmark.octagon.fill" : "exclamationmark.triangle.fill")
                 .foregroundColor(isFull ? .red : .orange)
             VStack(alignment: .leading, spacing: 2) {
-                Text(isFull ? "Alarm limit reached" : "Approaching alarm limit")
+                Text(isFull
+                     ? NSLocalizedString("Alarm limit reached", bundle: bundle, comment: "")
+                     : NSLocalizedString("Approaching alarm limit", bundle: bundle, comment: ""))
                     .font(.caption.bold())
                 Text(isFull
-                     ? "iOS allows 20 active alarms. Disable one before adding another."
-                     : "iOS allows 20 active alarms. You're close to the limit.")
+                     ? NSLocalizedString("iOS allows 20 active alarms. Disable one before adding another.", bundle: bundle, comment: "")
+                     : NSLocalizedString("iOS allows 20 active alarms. You're close to the limit.", bundle: bundle, comment: ""))
                     .font(.caption2)
                     .foregroundColor(.secondary)
             }

@@ -22,6 +22,11 @@ final class AlarmViewModel: ObservableObject {
     // MARK: - Sound
     @Published var notificationSound: NotificationSound = .default
 
+    // MARK: - Contact notification
+    @Published var notifyContact: Bool   = false
+    @Published var contactName: String   = ""
+    @Published var contactPhone: String  = ""
+
     // MARK: - Time window
     @Published var hasTimeWindow: Bool = false
     @Published var windowStart: Date = AlarmViewModel.defaultWindowStart
@@ -71,6 +76,9 @@ final class AlarmViewModel: ObservableObject {
         windowStart       = alarm.windowStart ?? AlarmViewModel.defaultWindowStart
         windowEnd         = alarm.windowEnd   ?? AlarmViewModel.defaultWindowEnd
         notificationSound = alarm.notificationSound
+        notifyContact = alarm.notifyContact
+        contactName   = alarm.contactName
+        contactPhone  = alarm.contactPhone
     }
 
     // MARK: - Build model
@@ -115,6 +123,9 @@ final class AlarmViewModel: ObservableObject {
             windowStart: hasTimeWindow ? windowStart : nil,
             windowEnd:   hasTimeWindow ? windowEnd   : nil,
             activeDays: activeDays,
+            notifyContact: notifyContact,
+            contactName: notifyContact ? contactName : "",
+            contactPhone: notifyContact ? contactPhone : "",
             notificationSound: notificationSound
         )
     }
@@ -140,6 +151,9 @@ final class AlarmViewModel: ObservableObject {
         windowStart       = AlarmViewModel.defaultWindowStart
         windowEnd         = AlarmViewModel.defaultWindowEnd
         notificationSound = .default
+        notifyContact = false
+        contactName   = ""
+        contactPhone  = ""
         validationError = nil
     }
 }

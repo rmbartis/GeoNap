@@ -4,12 +4,15 @@
 import SwiftUI
 import CoreLocation
 import MapKit
+import MessageUI
 
 struct AddAlarmView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.languageBundle) private var bundle
     @EnvironmentObject var alarmManager: AlarmManager
     @StateObject private var viewModel = AlarmViewModel()
     @StateObject private var searchService = LocationSearchService()
+    @State private var showContactPicker = false
 
     @AppStorage(AppStorageKey.distanceUnit) private var distanceUnitRaw  = DistanceUnit.metric.rawValue
     @AppStorage(AppStorageKey.timeFormat)   private var timeFormatRaw    = TimeFormat.twelveHour.rawValue
@@ -31,20 +34,22 @@ struct AddAlarmView: View {
         Form {
 
             // MARK: Name & Note
-            Section("Alarm Details") {
-                TextField("Name (e.g. Penn Station)", text: $viewModel.name)
+            Section {
+                TextField(NSLocalizedString("Name (e.g. Penn Station)", bundle: bundle, comment: ""), text: $viewModel.name)
                     .autocorrectionDisabled()
-                TextField("Note (shown in notification)", text: $viewModel.note)
+                TextField(NSLocalizedString("Note (shown in notification)", bundle: bundle, comment: ""), text: $viewModel.note)
+            } header: {
+                Text("Alarm Details", bundle: bundle)
             }
 
             // MARK: Location
-            Section("Location") {
+            Section {
 
                 // Address search field
                 HStack {
                     Image(systemName: "magnifyingglass")
                         .foregroundColor(.secondary)
-                    TextField("Search address or place…", text: $searchService.query)
+                    TextField(NSLocalizedString("Search address or place…", bundle: bundle, comment: ""), text: $searchService.query)
                         .autocorrectionDisabled()
                         .textInputAutocapitalization(.never)
                     if searchService.isSearching {
@@ -96,38 +101,45 @@ struct AddAlarmView: View {
 
                 MapPickerView(
                     latitude: $viewModel.latitude,
-                    longitude: $viewModel.longitude
+                    longitude: $viewModel.longitude,
+                    radius: $viewModel.radius
                 )
                 .frame(height: 220)
                 .clipShape(RoundedRectangle(cornerRadius: 10))
                 .listRowInsets(EdgeInsets(top: 8, leading: 8, bottom: 8, trailing: 8))
 
                 if viewModel.hasLocation {
-                    LabeledContent("Latitude",  value: String(format: "%.5f", viewModel.latitude))
-                    LabeledContent("Longitude", value: String(format: "%.5f", viewModel.longitude))
+                    LabeledContent(NSLocalizedString("Latitude", bundle: bundle, comment: ""),
+                                   value: String(format: "%.5f", viewModel.latitude))
+                    LabeledContent(NSLocalizedString("Longitude", bundle: bundle, comment: ""),
+                                   value: String(format: "%.5f", viewModel.longitude))
                 } else {
                     HStack(spacing: 6) {
                         Image(systemName: "mappin.slash")
                             .foregroundColor(.secondary)
-                        Text("Search above or tap the map to set a location")
+                        Text("Search above or tap the map to set a location", bundle: bundle)
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }
                 }
+            } header: {
+                Text("Location", bundle: bundle)
             }
 
             // MARK: Trigger
-            Section("Trigger") {
-                Picker("Event", selection: $viewModel.regionEvent) {
+            Section {
+                Picker(selection: $viewModel.regionEvent) {
                     ForEach(RegionEvent.allCases, id: \.self) { event in
                         Text(event.rawValue).tag(event)
                     }
+                } label: {
+                    Text("Event", bundle: bundle)
                 }
                 .pickerStyle(.segmented)
 
                 VStack(alignment: .leading, spacing: 4) {
                     HStack {
-                        Text("Radius")
+                        Text("Radius", bundle: bundle)
                         Spacer()
                         Text(distanceUnit.formatted(meters: viewModel.radius))
                             .foregroundColor(.secondary)
@@ -136,18 +148,20 @@ struct AddAlarmView: View {
                            in: distanceUnit.sliderRange,
                            step: distanceUnit.sliderStep)
                 }
+            } header: {
+                Text("Trigger", bundle: bundle)
             }
 
             // MARK: Sound / Vibrate
             SoundPickerSection(selection: $viewModel.notificationSound)
 
             // MARK: Repeat (hysteresis)
-            Section("Schedule") {
+            Section {
                 Toggle(isOn: $viewModel.isRepeating) {
                     VStack(alignment: .leading, spacing: 3) {
-                        Text("Repeat")
+                        Text("Repeat", bundle: bundle)
                             .font(.body)
-                        Text("Auto-resets after you leave — fires again every trip")
+                        Text("Auto-resets after you leave — fires again every trip", bundle: bundle)
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }
@@ -157,7 +171,7 @@ struct AddAlarmView: View {
                     HStack(spacing: 8) {
                         Image(systemName: "info.circle")
                             .foregroundColor(.blue)
-                        Text("Hysteresis: alarm won't re-trigger until you've fully exited and re-entered the region.")
+                        Text("Hysteresis: alarm won't re-trigger until you've fully exited and re-entered the region.", bundle: bundle)
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }
@@ -166,9 +180,9 @@ struct AddAlarmView: View {
                 // MARK: Time Window
                 Toggle(isOn: $viewModel.hasTimeWindow) {
                     VStack(alignment: .leading, spacing: 3) {
-                        Text("Active time window")
+                        Text("Active time window", bundle: bundle)
                             .font(.body)
-                        Text("Only fire within a set time range")
+                        Text("Only fire within a set time range", bundle: bundle)
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }
@@ -176,17 +190,19 @@ struct AddAlarmView: View {
 
                 if viewModel.hasTimeWindow {
                     DatePicker(
-                        "From",
                         selection: $viewModel.windowStart,
                         displayedComponents: .hourAndMinute
-                    )
+                    ) {
+                        Text("From", bundle: bundle)
+                    }
                     .datePickerStyle(.compact)
                     .environment(\.locale, timeFormat.pickerLocale)
                     DatePicker(
-                        "Until",
                         selection: $viewModel.windowEnd,
                         displayedComponents: .hourAndMinute
-                    )
+                    ) {
+                        Text("Until", bundle: bundle)
+                    }
                     .datePickerStyle(.compact)
                     .environment(\.locale, timeFormat.pickerLocale)
 
@@ -219,10 +235,12 @@ struct AddAlarmView: View {
                         }
                     }
                 }
+            } header: {
+                Text("Schedule", bundle: bundle)
             }
 
             // MARK: Active Days
-            Section("Active Days") {
+            Section {
                 HStack(spacing: 4) {
                     ForEach(Array(zip(1...7, ["Su","Mo","Tu","We","Th","Fr","Sa"])), id: \.0) { weekday, label in
                         let isOn = viewModel.activeDays.contains(weekday)
@@ -246,6 +264,90 @@ struct AddAlarmView: View {
                 }
                 .font(.caption)
                 .foregroundColor(.secondary)
+            } header: {
+                Text("Active Days", bundle: bundle)
+            }
+
+            // MARK: Notify a Contact
+            if MFMessageComposeViewController.canSendText() {
+                Section {
+                    Toggle(isOn: $viewModel.notifyContact) {
+                        VStack(alignment: .leading, spacing: 3) {
+                            Text("Notify a Contact", bundle: bundle)
+                                .font(.body)
+                            Text("Send a message when this alarm fires", bundle: bundle)
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                    }
+
+                    if viewModel.notifyContact {
+                        Button {
+                            showContactPicker = true
+                        } label: {
+                            HStack {
+                                Label {
+                                    Text(viewModel.contactName.isEmpty
+                                         ? NSLocalizedString("Select Contact", bundle: bundle, comment: "")
+                                         : viewModel.contactName)
+                                    .foregroundColor(viewModel.contactName.isEmpty ? .accentColor : .primary)
+                                } icon: {
+                                    Image(systemName: "person.crop.circle")
+                                }
+                                Spacer()
+                                if !viewModel.contactName.isEmpty {
+                                    Image(systemName: "chevron.right")
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                }
+                            }
+                        }
+                        .buttonStyle(.plain)
+
+                        if !viewModel.contactPhone.isEmpty {
+                            // Message preview
+                            let previewMsg = messagePreview(alarmName: viewModel.name.isEmpty ? "this location" : viewModel.name)
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text("Message preview:", bundle: bundle)
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                                Text(previewMsg)
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                                    .padding(8)
+                                    .background(Color(.systemGray6))
+                                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                            }
+                        }
+
+                        if viewModel.notifyContact && viewModel.contactPhone.isEmpty {
+                            HStack(spacing: 6) {
+                                Image(systemName: "exclamationmark.circle")
+                                    .foregroundColor(.secondary)
+                                Text("Select a contact to enable notifications", bundle: bundle)
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
+                        }
+                    }
+                } header: {
+                    Text("Notify a Contact", bundle: bundle)
+                } footer: {
+                    Text("When the alarm fires, a pre-composed message with your arrival time will be ready to send. You review it before it's sent.", bundle: bundle)
+                }
+                .sheet(isPresented: $showContactPicker) {
+                    ContactPickerView(
+                        onSelect: { name, phone in
+                            viewModel.contactName  = name
+                            viewModel.contactPhone = phone
+                            showContactPicker = false
+                        },
+                        onCancel: {
+                            showContactPicker = false
+                        }
+                    )
+                    .ignoresSafeArea()
+                }
             }
 
             // MARK: Validation error
@@ -259,14 +361,22 @@ struct AddAlarmView: View {
 
             // MARK: Save
             Section {
-                Button(isEditing ? "Update Alarm" : "Save Alarm") {
+                Button {
                     saveAlarm()
+                } label: {
+                    if isEditing {
+                        Text("Update Alarm", bundle: bundle)
+                    } else {
+                        Text("Save Alarm", bundle: bundle)
+                    }
                 }
                 .frame(maxWidth: .infinity)
                 .disabled(!viewModel.isValid)
             }
         }
-        .navigationTitle(isEditing ? "Edit Alarm" : "New Alarm")
+        .navigationTitle(isEditing
+            ? Text("Edit Alarm", bundle: bundle)
+            : Text("New Alarm", bundle: bundle))
         .navigationBarTitleDisplayMode(.inline)
         .onAppear {
             if let alarm = existingAlarm { viewModel.load(alarm: alarm) }
@@ -328,6 +438,12 @@ struct AddAlarmView: View {
         } else {
             viewModel.activeDays.insert(weekday)
         }
+    }
+
+    private func messagePreview(alarmName: String) -> String {
+        let timeStr = TimeFormat(rawValue: timeFormatRaw)?.formatTime(Date()) ?? ""
+        let verb = viewModel.regionEvent == .onEntry ? "arrived at" : "departed from"
+        return "I \(verb) \(alarmName) at \(timeStr)."
     }
 
     private func saveAlarm() {
