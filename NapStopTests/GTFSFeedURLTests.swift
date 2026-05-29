@@ -5,8 +5,8 @@
 // so the suite should complete in roughly 30–60 seconds.
 //
 // Run from the command line:
-//   xcodebuild test -project NapAlarm.xcodeproj \
-//     -scheme NapAlarm -destination 'platform=iOS Simulator,name=iPhone 16' \
+//   xcodebuild test -project GeoAlarm.xcodeproj \
+//     -scheme NapStop -destination 'platform=iOS Simulator,name=iPhone 16' \
 //     -only-testing:NapStopTests/GTFSFeedURLTests
 //
 // These tests require network access.  They are skipped automatically when the

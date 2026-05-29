@@ -60,18 +60,15 @@ jobs:
         run: |
           xcodebuild -resolvePackageDependencies \
             -project GeoAlarm.xcodeproj \
-            -scheme GeoAlarm
+            -scheme NapStop
 
       - name: Run URL reachability tests
-        env:
-          # Parser tests take too long for this job — skip them.
-          SKIP_PARSER_TESTS: "1"
         run: |
           xcodebuild test \
             -project GeoAlarm.xcodeproj \
-            -scheme GeoAlarm \
+            -scheme NapStop \
             -destination 'platform=iOS Simulator,name=iPhone 16' \
-            -only-testing:GeoAlarmTests/GTFSFeedURLTests \
+            -only-testing:NapStopTests/GTFSFeedURLTests \
             CODE_SIGN_IDENTITY="" \
             CODE_SIGNING_REQUIRED=NO \
             | xcpretty --color --report junit --output test-results-url.xml
@@ -107,15 +104,15 @@ jobs:
         run: |
           xcodebuild -resolvePackageDependencies \
             -project GeoAlarm.xcodeproj \
-            -scheme GeoAlarm
+            -scheme NapStop
 
       - name: Run full-parse tests
         run: |
           xcodebuild test \
             -project GeoAlarm.xcodeproj \
-            -scheme GeoAlarm \
+            -scheme NapStop \
             -destination 'platform=iOS Simulator,name=iPhone 16' \
-            -only-testing:GeoAlarmTests/GTFSParserTests \
+            -only-testing:NapStopTests/GTFSParserTests \
             CODE_SIGN_IDENTITY="" \
             CODE_SIGNING_REQUIRED=NO \
             | xcpretty --color --report junit --output test-results-parse.xml

@@ -7,8 +7,8 @@
 // from the default "Test" action by default.
 //
 // How to run selectively:
-//   xcodebuild test -project NapAlarm.xcodeproj \
-//     -scheme NapAlarm -destination 'platform=iOS Simulator,name=iPhone 16' \
+//   xcodebuild test -project GeoAlarm.xcodeproj \
+//     -scheme NapStop -destination 'platform=iOS Simulator,name=iPhone 16' \
 //     -only-testing:NapStopTests/GTFSParserTests
 //
 // Skip condition:
