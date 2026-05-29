@@ -100,11 +100,54 @@ enum TimeFormat: String, CaseIterable, Identifiable {
     }
 }
 
+// MARK: - Coordinate Format
+
+enum CoordFormat: String, CaseIterable, Identifiable {
+    case dd  = "dd"   // Decimal Degrees:          40.712800, -74.006000
+    case dms = "dms"  // Degrees Minutes Seconds:  40°42′46″N  74°00′21″W
+    case ddm = "ddm"  // Degrees Decimal Minutes:  40°42.767′N  74°00.360′W
+
+    var id: String { rawValue }
+
+    var label: String {
+        switch self {
+        case .dd:  return "DD"
+        case .dms: return "DMS"
+        case .ddm: return "DDM"
+        }
+    }
+
+    var fullLabel: String {
+        switch self {
+        case .dd:  return "Decimal Degrees (DD)"
+        case .dms: return "Deg Min Sec (DMS)"
+        case .ddm: return "Deg Decimal Min (DDM)"
+        }
+    }
+
+    var latPlaceholder: String {
+        switch self {
+        case .dd:  return "e.g. 40.712800"
+        case .dms: return "e.g. 40°42′46″N"
+        case .ddm: return "e.g. 40°42.767′N"
+        }
+    }
+
+    var lonPlaceholder: String {
+        switch self {
+        case .dd:  return "e.g. -74.006000"
+        case .dms: return "e.g. 74°00′21″W"
+        case .ddm: return "e.g. 74°00.360′W"
+        }
+    }
+}
+
 // MARK: - AppStorage Keys
 
 enum AppStorageKey {
     static let distanceUnit   = "distanceUnit"
     static let timeFormat     = "timeFormat"
+    static let coordFormat    = "coordFormat"
     /// Whether the user has opted into debug logging.
     /// Defaults to false — logging is completely silent until the user enables it.
     static let debugLogging   = DebugLogger.UserDefaultsKey.debugLoggingEnabled

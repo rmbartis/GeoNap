@@ -6,6 +6,11 @@
 	<array>
 		<string>remote-notification</string>
 	</array>
+	<key>NSUserActivityTypes</key>
+	<array>
+		<string>com.rmbartis.NapStop.viewAlarm</string>
+		<string>NSUserActivityTypeBrowsingWeb</string>
+	</array>
 	<key>BuildTimestamp</key>
 	<string>00000000-000000</string>
 </dict>

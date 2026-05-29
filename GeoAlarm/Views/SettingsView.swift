@@ -5,8 +5,9 @@ import SwiftUI
 
 struct SettingsView: View {
 
-    @AppStorage(AppStorageKey.distanceUnit)  private var distanceUnitRaw = DistanceUnit.metric.rawValue
-    @AppStorage(AppStorageKey.timeFormat)    private var timeFormatRaw   = TimeFormat.twelveHour.rawValue
+    @AppStorage(AppStorageKey.distanceUnit)  private var distanceUnitRaw  = DistanceUnit.imperial.rawValue
+    @AppStorage(AppStorageKey.timeFormat)    private var timeFormatRaw    = TimeFormat.twelveHour.rawValue
+    @AppStorage(AppStorageKey.coordFormat)   private var coordFormatRaw   = CoordFormat.dd.rawValue
     @AppStorage(AppStorageKey.debugLogging)  private var debugLoggingEnabled = false
 
     @EnvironmentObject private var languageManager: LanguageManager
@@ -22,8 +23,19 @@ struct SettingsView: View {
     // Controls the "log cleared" feedback
     @State private var showClearedBanner = false
 
+    // Info popover state — one Bool per setting row
+    @State private var infoDistance    = false
+    @State private var infoCoords      = false
+    @State private var infoClock       = false
+    @State private var infoLanguage    = false
+    @State private var infoDebugLog    = false
+
     private var distanceUnit: DistanceUnit {
-        DistanceUnit(rawValue: distanceUnitRaw) ?? .metric
+        DistanceUnit(rawValue: distanceUnitRaw) ?? .imperial
+    }
+
+    private var coordFormat: CoordFormat {
+        CoordFormat(rawValue: coordFormatRaw) ?? .dd
     }
 
     private var timeFormat: TimeFormat {
@@ -45,12 +57,31 @@ struct SettingsView: View {
                             Text(unit.label).tag(unit.rawValue)
                         }
                     } label: {
-                        Text("Distance", bundle: bundle)
+                        SettingInfoLabel(
+                            title: "Distance",
+                            isPresented: $infoDistance,
+                            helpTitle: "Distance Unit",
+                            helpBody: "Controls how the alarm radius is displayed and entered.\n\n• Metric — metres (m) and kilometres (km)\n• Imperial — feet (ft) and miles (mi)\n\nSwitching units does not change any saved alarm radii — values are always stored in metres internally."
+                        )
                     }
+
+                    Picker(selection: $coordFormatRaw) {
+                        ForEach(CoordFormat.allCases) { fmt in
+                            Text(fmt.label).tag(fmt.rawValue)
+                        }
+                    } label: {
+                        SettingInfoLabel(
+                            title: "Coordinates",
+                            isPresented: $infoCoords,
+                            helpTitle: "Coordinate Format",
+                            helpBody: "Sets how geographic coordinates are entered and displayed when creating alarms.\n\n• DD – Decimal Degrees (40.712800, -74.006000)\nStandard format used by Google Maps, Apple Maps, and most GPS apps.\n\n• DMS – Degrees Minutes Seconds (40°42′46″N)\nTraditional map format used on paper charts and military navigation.\n\n• DDM – Degrees Decimal Minutes (40°42.767′N)\nCommon on handheld Garmin GPS devices and marine/aviation equipment.\n\nDD is recommended for most users."
+                        )
+                    }
+                    .pickerStyle(.segmented)
                 } header: {
                     Text("Units", bundle: bundle)
                 } footer: {
-                    Text("Controls how radius is displayed and entered when creating alarms.", bundle: bundle)
+                    Text("DD = Decimal Degrees  ·  DMS = Degrees Minutes Seconds  ·  DDM = Degrees Decimal Minutes", bundle: bundle)
                 }
 
                 // MARK: Time
@@ -60,12 +91,17 @@ struct SettingsView: View {
                             Text(format.label).tag(format.rawValue)
                         }
                     } label: {
-                        Text("Clock", bundle: bundle)
+                        SettingInfoLabel(
+                            title: "Clock",
+                            isPresented: $infoClock,
+                            helpTitle: "Clock Format",
+                            helpBody: "Controls how times are shown in alarm time windows.\n\n• 12-hour — uses AM/PM notation (e.g. 7:30 AM, 11:45 PM)\n• 24-hour — uses military time notation (e.g. 07:30, 23:45)\n\nThis setting does not affect your iPhone's system clock — it only changes how times appear inside NapStop."
+                        )
                     }
                 } header: {
                     Text("Time", bundle: bundle)
                 } footer: {
-                    Text("Used when displaying and entering alarm time windows.", bundle: bundle)
+                    Text("Tap ⓘ next to the setting for more information.", bundle: bundle)
                 }
 
                 // MARK: Language
@@ -83,10 +119,15 @@ struct SettingsView: View {
                             .tag(lang)
                         }
                     } label: {
-                        Label {
-                            Text("Language", bundle: bundle)
-                        } icon: {
+                        HStack(spacing: 6) {
                             Image(systemName: "globe")
+                                .foregroundStyle(.blue)
+                            SettingInfoLabel(
+                                title: "Language",
+                                isPresented: $infoLanguage,
+                                helpTitle: "In-App Language",
+                                helpBody: "Changes the display language used throughout NapStop — independently of your iPhone's system language.\n\nAffects all text including menus, alarm creation, help articles, and notification messages.\n\nCurrently supported: English, Spanish, French, German, Italian, Portuguese, Arabic, Hindi, Japanese, Simplified Chinese, Russian, Thai, and Vietnamese."
+                            )
                         }
                     }
                 }
@@ -138,6 +179,17 @@ struct SettingsView: View {
                             .foregroundStyle(.secondary)
                     } label: {
                         Text("Sample time", bundle: bundle)
+                    }
+                    LabeledContent {
+                        VStack(alignment: .trailing, spacing: 2) {
+                            Text(CoordinateParser.format(latitude:  40.712800, format: coordFormat))
+                                .foregroundStyle(.secondary)
+                            Text(CoordinateParser.format(longitude: -74.006000, format: coordFormat))
+                                .foregroundStyle(.secondary)
+                        }
+                        .font(.system(.caption, design: .monospaced))
+                    } label: {
+                        Text("Sample coords", bundle: bundle)
                     }
                 } header: {
                     Text("Preview", bundle: bundle)
@@ -194,7 +246,12 @@ struct SettingsView: View {
             // Toggle — intercept the "turning on" gesture to show the confirmation dialog
             Toggle(isOn: loggingToggleBinding) {
                 Label {
-                    Text("Enable Debug Log", bundle: bundle)
+                    SettingInfoLabel(
+                        title: "Enable Debug Log",
+                        isPresented: $infoDebugLog,
+                        helpTitle: "Debug Logging",
+                        helpBody: "Records detailed diagnostic information to a private log file stored only on your device.\\n\\nWhat is logged:\\n• Location events and region crossings\\n• Alarm trigger and snooze activity\\n• Transit feed downloads\\n• Errors and warnings\\n\\nNothing is sent automatically. If support requests it, share the log via the 'Share Log with Support' button that appears below when logging is enabled.\\n\\nLogging is off by default and does not run in the background when the app is closed. Disable it again once your issue is resolved."
+                    )
                 } icon: {
                     Image(systemName: "doc.text.magnifyingglass")
                 }
@@ -286,6 +343,62 @@ private struct ShareSheet: UIViewControllerRepresentable {
     }
 
     func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
+}
+
+// MARK: - Reusable info label with popover
+
+private struct SettingInfoLabel: View {
+    let title: String
+    @Binding var isPresented: Bool
+    let helpTitle: String
+    let helpBody: String
+
+    @Environment(\.languageBundle) private var bundle
+
+    var body: some View {
+        HStack(spacing: 6) {
+            Text(NSLocalizedString(title, bundle: bundle, comment: ""))
+            Button {
+                isPresented = true
+            } label: {
+                Image(systemName: "info.circle")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            .buttonStyle(.plain)
+            .popover(isPresented: $isPresented, arrowEdge: .top) {
+                SettingHelpSheet(title: helpTitle, message: helpBody)
+                    .presentationCompactAdaptation(.popover)
+            }
+        }
+    }
+}
+
+private struct SettingHelpSheet: View {
+    let title: String
+    let message: String          // renamed from 'body' — avoids clash with SwiftUI's var body
+
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 12) {
+                HStack(spacing: 8) {
+                    Image(systemName: "info.circle.fill")
+                        .foregroundStyle(.blue)
+                        .font(.title3)
+                    Text(title)
+                        .font(.headline)
+                }
+                Text(message)
+                    .font(.callout)
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            .padding(20)
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .frame(minWidth: 280, idealWidth: 320, maxWidth: 400,
+               minHeight: 160, idealHeight: 220, maxHeight: 400)
+    }
 }
 
 #Preview {

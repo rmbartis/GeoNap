@@ -4,6 +4,7 @@
 import SwiftUI
 import SwiftData
 import FirebaseCore
+import CoreSpotlight
 
 @main
 struct NapStopApp: App {
@@ -41,11 +42,10 @@ struct NapStopApp: App {
                 .environmentObject(alarmManager)
                 .environmentObject(languageManager)
                 // Pass the selected .lproj bundle so every Text("key", bundle: bundle)
-                // call — and LText("key") — resolves strings in the chosen language.
+                // call resolves strings in the chosen language.
+                // Environment propagation is enough — no .id() needed, and using one
+                // would destroy the view tree (dismissing sheets) on every language change.
                 .environment(\.languageBundle, languageManager.currentBundle)
-                // Rebuild the entire view tree when language changes so all
-                // Text views re-evaluate with the new bundle.
-                .id(languageManager.currentLanguage)
         }
         .modelContainer(container)
     }
@@ -66,6 +66,14 @@ struct RootView: View {
                 locationManager.requestAlwaysAuthorization()
                 alarmManager.reregisterAllRegions()
                 alarmManager.requestNotificationPermission()
+            }
+            // Handle Spotlight search result taps — route to the matching alarm.
+            .onContinueUserActivity(CSSearchableItemActionType) { activity in
+                guard
+                    let idString = activity.userInfo?[CSSearchableItemActivityIdentifier] as? String,
+                    let uuid = UUID(uuidString: idString)
+                else { return }
+                alarmManager.spotlightAlarmID = uuid
             }
     }
 }

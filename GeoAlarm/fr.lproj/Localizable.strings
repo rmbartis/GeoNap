@@ -137,7 +137,7 @@
 "Airport Chime" = "Carillon d'aéroport";
 
 "Help" = "Aide";
-"What is GeoAlarm?" = "Qu'est-ce que NapStop ?";
+"What is NapStop?" = "Qu'est-ce que NapStop ?";
 "Typical use cases" = "Cas d'utilisation typiques";
 "Creating an alarm" = "Créer une alarme";
 "Transit Alarms" = "Alarmes de transport";
@@ -149,16 +149,39 @@
 "Notifications" = "Notifications";
 
 /* HelpView body text */
-"help.body.whatIsGeoAlarm" = "NapStop vous réveille en fonction de votre position, pas de l'heure. Au lieu de deviner combien de temps durera votre trajet, vous configurez une alarme à un endroit et l'app vous notifie quand vous arrivez — ou quand vous partez.\n\nElle fonctionne silencieusement en arrière-plan pour que vous puissiez somnoler, lire ou décrocher sans vous inquiéter de rater votre arrêt.";
+"help.body.whatIsNapAlarm" = "NapStop vous réveille en fonction de votre position, pas de l'heure. Au lieu de deviner combien de temps durera votre trajet, vous configurez une alarme à un endroit et l'app vous notifie quand vous arrivez — ou quand vous partez.\n\nElle fonctionne silencieusement en arrière-plan pour que vous puissiez somnoler, lire ou décrocher sans vous inquiéter de rater votre arrêt.";
 "help.body.useCases" = "• Navetteur en train ou métro — Configurez une alarme à votre station. Dormez et réveillez-vous juste avant d'arriver, chaque matin, automatiquement.\n\n• Passager de bus — Configurez une alarme de départ à votre arrêt de départ. L'alarme se déclenche quand vous quittez la zone, vous rappelant de partir.\n\n• Passager en voyage en voiture — Configurez une alarme dans une ville étape. Vous serez notifié quand la voiture approche, sans surveiller la carte tout le trajet.\n\n• Voyageur dans une ville inconnue — Configurez des alarmes à l'hôtel, à l'aéroport ou aux lieux de réunion pour toujours savoir quand vous approchez.";
-"help.body.creatingAlarm" = "Appuyez sur + dans le coin supérieur droit. Un menu apparaît avec deux options :\n\n• Alarme de lieu — épinglez n'importe quelle adresse ou lieu sur la carte.\n• Alarme de transport — choisissez agence, ligne et arrêt depuis les horaires en direct.\n\nPour une Alarme de lieu :\n\n1. Donnez un nom à l'alarme et une note optionnelle.\n2. Utilisez la barre de recherche pour trouver une adresse, station ou lieu. Appuyez sur une suggestion pour placer une épingle, ou appuyez directement sur la carte.\n3. Choisissez À l'arrivée ou Au départ comme déclencheur.\n4. Utilisez le curseur Rayon pour définir la distance.\n5. Dans Son / Vibration, choisissez une sonnerie.\n\nLe bouton Enregistrer est désactivé jusqu'à ce qu'un nom soit saisi et qu'un lieu soit épinglé. iOS permet un maximum de 20 alarmes actives simultanément.";
+"help.body.creatingAlarm" = "Appuyez sur + dans le coin supérieur droit. Un menu apparaît avec deux options :
+
+• Alarme de lieu — épinglez n'importe quelle adresse ou lieu sur la carte.
+• Alarme de transport — choisissez agence, ligne et arrêt depuis les horaires en direct.
+
+Pour une Alarme de lieu :
+
+1. Donnez un nom à l'alarme et une note optionnelle.
+2. Utilisez la barre de recherche pour trouver une adresse, station ou lieu. Appuyez sur une suggestion pour placer une épingle, ou appuyez directement sur la carte.
+3. Pour définir l'emplacement par coordonnées, appuyez sur Saisir les coordonnées. Tapez ou collez vos coordonnées GPS au format DD, DMS ou DDM, puis appuyez sur Appliquer.
+4. Choisissez À l'arrivée ou Au départ comme déclencheur.
+5. Utilisez le curseur Rayon pour définir la distance de déclenchement.
+6. Dans Son / Vibration, choisissez une sonnerie ou vibration seulement.
+
+Le bouton Enregistrer est désactivé jusqu'à ce qu'un nom soit saisi et qu'un lieu soit épinglé. iOS permet un maximum de 20 alarmes actives simultanément.";
 "help.body.radius" = "Le rayon définit la géo-clôture — la frontière circulaire autour de votre épingle. Quand vous franchissez cette frontière (en entrant ou en sortant), l'alarme se déclenche.\n\nUn rayon de 200 m convient pour une seule station ou un bâtiment. Utilisez 500–1000 m pour des points de repère plus larges comme un centre-ville ou une zone aéroportuaire.\n\nVous pouvez basculer entre mètres/kilomètres et pieds/miles dans Paramètres.";
 "help.body.repeat" = "Les alarmes à usage unique se déclenchent une fois et restent activées jusqu'à ce que vous les réactiviez manuellement. Utile pour un trajet unique.\n\nLes alarmes répétitives se réinitialisent automatiquement après que vous quittez la région, se déclenchant à nouveau lors de votre prochain passage. Parfaites pour les navetteurs quotidiens.";
 "help.body.timeWindow" = "Une fenêtre horaire limite quand une alarme peut se déclencher. Par exemple, une fenêtre de 07:00–09:00 signifie que l'alarme ne se déclenche que pendant vos heures de trajet matinal.\n\nUne étiquette de résumé sous les sélecteurs indique exactement la durée, par ex. « Active 2 hrs · 7:00 – 9:00 ».\n\nLes fenêtres de nuit sont prises en charge (par ex. 22:00–06:00). Quand De est plus tard que Jusqu'à, l'alarme est active jusqu'à minuit et le lendemain matin. Le résumé devient orange et affiche « jour suivant ».";
 "help.body.transitAlarms" = "Les alarmes de transport se connectent aux horaires de transports en commun pour configurer une alarme à un arrêt exact sans saisir de coordonnées GPS.\n\nAppuyez sur + → Alarme de transport pour ouvrir l'assistant :\n\n1. Agence — Choisissez dans la liste intégrée (SNCF, RATP, Amtrak et plus), ou saisissez n'importe quelle URL de flux GTFS public.\n2. Ligne — Parcourez ou recherchez des lignes. Chacune affiche son type (Train, Métro, Bus, Ferry, etc.).\n3. Arrêt — Tous les arrêts sont listés triés par distance depuis votre position actuelle.\n4. Confirmer — Vérifiez agence, ligne et arrêt, puis définissez le nom, le rayon, le sens de déclenchement et le son.";
 "help.body.soundVibrate" = "Chaque alarme a son propre réglage de son choisi dans Son / Vibration.\n\nOptions système :\n• Vibration uniquement — sans audio ; idéal pour les environnements silencieux.\n• Par défaut — le son de notification standard d'iOS.\n• Critique — joue à plein volume, contournant le mode silence et Ne pas déranger.\n\nSons de voyage inclus :\n• Corne de brume · Cloche de tramway · Train à vapeur · Cloche de voilier · Atterrissage d'avion · Carillon d'aéroport";
 "help.body.siri" = "NapStop prend en charge Siri et l'app Raccourcis — aucune configuration requise.\n\n• « Créer un NapStop » — Siri demande le nom, le lieu et le sens du déclencheur, puis enregistre l'alarme.\n• « Activer mon NapStop » — Siri affiche vos alarmes enregistrées ; choisissez-en une pour la réactiver.\n• « Désactiver mon NapStop » — Pareil, mais désactive l'alarme.";
-"help.body.settings" = "Ouvrez Paramètres depuis l'icône d'engrenage dans le coin supérieur gauche.\n\n• Distance — basculer entre métrique (mètres/km) et impérial (pieds/miles).\n• Horloge — basculer entre format 12 heures et 24 heures.\n• Aide et guide — ce guide.\n• Confidentialité et partage — divulgation complète sur la gestion des données de localisation.\n• Activer le journal de débogage — voir « Signaler un problème » ci-dessous.\n• Version — affiche l'horodatage de compilation.";
+"help.body.settings" = "Ouvrez Paramètres depuis l'icône d'engrenage dans le coin supérieur gauche. Appuyez sur ⓘ à côté de n'importe quel paramètre pour une explication détaillée.
+
+• Distance — basculer entre métrique (mètres / km) et impérial (pieds / miles).
+• Coordonnées — choisissez le format de coordonnées GPS : DD (Degrés Décimaux), DMS (Degrés Minutes Secondes) ou DDM (Degrés Minutes Décimales).
+• Horloge — basculer entre format 12 heures et 24 heures.
+• Langue — changer la langue d'affichage indépendamment de la langue système de votre iPhone.
+• Aide et guide — ce guide.
+• Confidentialité et partage — divulgation complète sur la gestion des données de localisation.
+• Activer le journal de débogage — voir « Signaler un problème » ci-dessous.
+• Version — affiche la version actuelle au format MajorVersion.GitBuildNumber-Date (ex. 1.247-20260529). Incluez-la lors du signalement d'un bug.";
 "help.body.reportingProblem" = "Si NapStop ne se comporte pas comme prévu, vous pouvez activer la journalisation de débogage.\n\nPour activer la journalisation :\n1. Ouvrez Paramètres → section Support.\n2. Activez Activer le journal de débogage.\n3. Une boîte de dialogue explique ce qui est enregistré. Appuyez sur Activer la journalisation.\n4. Reproduisez le problème.\n5. Ouvrez l'app Fichiers → Sur mon iPhone → NapStop → NapStopDebug.log, puis partagez-le avec le support.\n\nCe qui est enregistré : modèle de l'appareil, version iOS, statut de permission de localisation, événements de région, événements d'alarme et erreurs. Rien n'est envoyé automatiquement.";
 "help.body.managingAlarms" = "Balayez à droite sur n'importe quelle alarme pour l'activer ou la désactiver rapidement.\n\nBalayez à gauche pour supprimer une alarme. Les alarmes supprimées sont retirées immédiatement et leur géo-clôture cesse d'être surveillée.\n\nPour modifier une alarme, appuyez dessus pour ouvrir la vue de détail, puis appuyez sur Modifier l'alarme.\n\nPour partager la localisation d'une alarme, ouvrez la vue de détail et appuyez sur Partager la localisation.";
 "help.body.alwaysOnLocation" = "NapStop a besoin d'un accès de localisation Toujours pour surveiller les régions en arrière-plan — même quand votre écran est verrouillé ou que l'app est fermée.\n\nSi vous avez choisi Pas maintenant lors de la configuration, vous pouvez accorder l'accès plus tard dans Réglages iOS → Confidentialité et sécurité → Service de localisation → NapStop. Sélectionnez Toujours.\n\nSans accès Toujours, les alarmes ne se déclencheront que lorsque l'app est ouverte.";
@@ -224,3 +247,24 @@
 "day.th" = "Je";
 "day.fr" = "Ve";
 "day.sa" = "Sa";
+
+/* UI — sounds & coordinate entry */
+"sound.vibrate" = "Vibration uniquement";
+"sound.default" = "Par défaut";
+"sound.critical" = "Critique (ignore le mode silencieux)";
+"Airplane Autopilot" = "Pilote automatique";
+"Cable Car" = "Téléphérique";
+"Train Horn" = "Klaxon de train";
+"Manual Coordinates Entry" = "Saisie manuelle des coordonnées";
+"Apply Coordinates" = "Appliquer les coordonnées";
+"(Change format in Settings)" = "(Modifier le format dans Réglages)";
+"Format:" = "Format :";
+"Decimal Degrees (DD)" = "Degrés décimaux (DD)";
+"Deg Min Sec (DMS)" = "Degrés Min Sec (DMS)";
+"Deg Decimal Min (DDM)" = "Degrés Min Décimales (DDM)";
+
+/* Settings UI — missing keys */
+"Coordinates" = "Coordonnées";
+"Sample coords" = "Coordonnées exemple";
+"DD = Decimal Degrees  ·  DMS = Degrees Minutes Seconds  ·  DDM = Degrees Decimal Minutes" = "DD = Degrés décimaux  ·  DMS = Degrés Minutes Secondes  ·  DDM = Degrés Minutes Décimales";
+"Tap ⓘ next to the setting for more information." = "Appuyez sur ⓘ à côté du paramètre pour plus d'informations.";

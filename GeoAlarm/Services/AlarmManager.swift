@@ -19,6 +19,10 @@ final class AlarmManager: NSObject, ObservableObject {
     /// ContentView observes this and presents the Messages compose sheet.
     @Published var pendingContactMessage: ContactMessage? = nil
 
+    /// Set when the app is opened from a Spotlight search result.
+    /// ContentView observes this and navigates to the matching AlarmDetailView.
+    @Published var spotlightAlarmID: UUID? = nil
+
     // MARK: - Dependencies
 
     /// Set by LocationManager after both @StateObjects are created.
@@ -168,6 +172,7 @@ final class AlarmManager: NSObject, ObservableObject {
         modelContext?.insert(toInsert)
         save()
         alarms.append(toInsert)
+        SpotlightManager.shared.index(toInsert)
         if toInsert.isActive {
             startMonitoring(toInsert)
             DebugLogger.shared.log("Alarm added + monitoring started: '\(toInsert.name)' radius=\(Int(toInsert.radius))m event=\(toInsert.regionEvent.rawValue) lat=\(toInsert.latitude) lon=\(toInsert.longitude)", category: "AlarmManager")
@@ -201,12 +206,14 @@ final class AlarmManager: NSObject, ObservableObject {
         existing.soundNameRaw  = alarm.soundNameRaw
         existing.activeDaysRaw = alarm.activeDaysRaw
         save()
+        SpotlightManager.shared.index(existing)
         if existing.isActive { startMonitoring(existing) }
     }
 
     func delete(alarm: NapAlarm) {
         DebugLogger.shared.log("Alarm deleted: '\(alarm.name)'", category: "AlarmManager")
         stopMonitoring(alarm)
+        SpotlightManager.shared.deindex(alarm)
         modelContext?.delete(alarm)
         alarms.removeAll { $0.id == alarm.id }
         save()
@@ -214,6 +221,7 @@ final class AlarmManager: NSObject, ObservableObject {
 
     func delete(at offsets: IndexSet) {
         offsets.forEach { stopMonitoring(alarms[$0]) }
+        offsets.forEach { SpotlightManager.shared.deindex(alarms[$0]) }
         offsets.forEach { modelContext?.delete(alarms[$0]) }
         for index in offsets.reversed() {
             alarms.remove(at: index)
@@ -413,6 +421,8 @@ final class AlarmManager: NSObject, ObservableObject {
                 FetchDescriptor<NapAlarm>(sortBy: [SortDescriptor(\.name)])
             )
             CrashReporter.setKey("alarmCount", value: alarms.count)
+            // Rebuild Spotlight index to match current alarms on every launch.
+            SpotlightManager.shared.reindexAll(alarms)
         } catch {
             print("❌ SwiftData load failed: \(error.localizedDescription)")
             CrashReporter.record(error, context: "SwiftData.load")

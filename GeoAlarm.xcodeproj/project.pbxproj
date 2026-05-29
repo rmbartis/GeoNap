@@ -36,7 +36,7 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		686A0F422FC337E50079F963 /* Exceptions for "NapStop" folder in "NapStop" target */ = {
+		686A0F422FC337E50079F963 /* Exceptions for "GeoAlarm" folder in "NapStop" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
@@ -47,10 +47,10 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		686A0F212FC337E40079F963 /* NapStop */ = {
+		686A0F212FC337E40079F963 /* GeoAlarm */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				686A0F422FC337E50079F963 /* Exceptions for "NapStop" folder in "NapStop" target */,
+				686A0F422FC337E50079F963 /* Exceptions for "GeoAlarm" folder in "NapStop" target */,
 			);
 			path = GeoAlarm;
 			sourceTree = "<group>";
@@ -98,7 +98,7 @@
 		686A0F162FC337E40079F963 = {
 			isa = PBXGroup;
 			children = (
-				686A0F212FC337E40079F963 /* NapStop */,
+				686A0F212FC337E40079F963 /* GeoAlarm */,
 				686A0F332FC337E50079F963 /* NapStopTests */,
 				686A0F3D2FC337E50079F963 /* NapStopUITests */,
 				686A100B2FC48EB90079F963 /* Frameworks */,
@@ -141,7 +141,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				686A0F212FC337E40079F963 /* NapStop */,
+				686A0F212FC337E40079F963 /* GeoAlarm */,
 			);
 			name = NapStop;
 			packageProductDependencies = (
@@ -222,7 +222,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 686A0F1A2FC337E40079F963 /* Build configuration list for PBXProject "NapStop" */;
+			buildConfigurationList = 686A0F1A2FC337E40079F963 /* Build configuration list for PBXProject "GeoAlarm" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -319,7 +319,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "TIMESTAMP=$(date +\"%Y%m%d-%H%M%S\")\ncat > \"${SRCROOT}/GeoAlarm/BuildTimestamp.swift\" << EOF\n// Auto-generated — do not edit. Rebuilt on every build.\nenum Build {\n    static let timestamp = \"$TIMESTAMP\"\n}\nEOF\n";
+			shellScript = "MAJOR=\"${MAJOR_RELEASE:-1}\"\nDATE=$(date +\"%Y%m%d\")\nGIT_COUNT=$(git -C \"${SRCROOT}\" rev-list --count HEAD 2>/dev/null || echo \"0\")\nBUILD_STRING=\"${MAJOR}.${GIT_COUNT}-${DATE}\"\necho \"// Auto-generated -- do not edit. Rebuilt on every build.\" > \"${SRCROOT}/GeoAlarm/BuildTimestamp.swift\"\necho \"enum Build {\" >> \"${SRCROOT}/GeoAlarm/BuildTimestamp.swift\"\necho \"    static let timestamp = \\\"${BUILD_STRING}\\\"\" >> \"${SRCROOT}/GeoAlarm/BuildTimestamp.swift\"\necho \"}\" >> \"${SRCROOT}/GeoAlarm/BuildTimestamp.swift\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -376,9 +376,9 @@
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = GeoAlarm/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = NapStop;
 				INFOPLIST_KEY_LSApplicationCategoryType = "";
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "NapStop needs Always-On location access to monitor regions while the app is in the background or your phone is locked.";
-				INFOPLIST_KEY_CFBundleDisplayName = NapStop;
 				INFOPLIST_KEY_NSLocationUsageDescription = "NapStop needs Always-On location access to monitor regions while the app is in the background or your phone is locked.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "NapStop uses your location to monitor nearby regions and wake you before your stop.";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
@@ -395,6 +395,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 26.5;
+				MAJOR_RELEASE = 1;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.rmbartis.NapStop;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -428,9 +429,9 @@
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = GeoAlarm/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = NapStop;
 				INFOPLIST_KEY_LSApplicationCategoryType = "";
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "NapStop needs Always-On location access to monitor regions while the app is in the background or your phone is locked.";
-				INFOPLIST_KEY_CFBundleDisplayName = NapStop;
 				INFOPLIST_KEY_NSLocationUsageDescription = "NapStop needs Always-On location access to monitor regions while the app is in the background or your phone is locked.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "NapStop uses your location to monitor nearby regions and wake you before your stop.";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
@@ -447,6 +448,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 26.5;
+				MAJOR_RELEASE = 1;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.rmbartis.NapStop;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -686,7 +688,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		686A0F1A2FC337E40079F963 /* Build configuration list for PBXProject "NapStop" */ = {
+		686A0F1A2FC337E40079F963 /* Build configuration list for PBXProject "GeoAlarm" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				686A0F462FC337E50079F963 /* Debug */,

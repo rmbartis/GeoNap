@@ -137,7 +137,7 @@
 "Airport Chime" = "Campanilla de aeropuerto";
 
 "Help" = "Ayuda";
-"What is GeoAlarm?" = "¿Qué es NapStop?";
+"What is NapStop?" = "¿Qué es NapStop?";
 "Typical use cases" = "Casos de uso típicos";
 "Creating an alarm" = "Crear una alarma";
 "Transit Alarms" = "Alarmas de tránsito";
@@ -149,16 +149,39 @@
 "Notifications" = "Notificaciones";
 
 /* HelpView body text */
-"help.body.whatIsGeoAlarm" = "NapStop te despierta según dónde estás, no qué hora es. En lugar de adivinar cuánto tardará tu viaje, configuras una alarma en una ubicación y la app te notifica cuando llegas o cuando te vas.\n\nFunciona silenciosamente en segundo plano para que puedas dormir, leer o desconectarte sin preocuparte por perderte tu parada.";
+"help.body.whatIsNapAlarm" = "NapStop te despierta según dónde estás, no qué hora es. En lugar de adivinar cuánto tardará tu viaje, configuras una alarma en una ubicación y la app te notifica cuando llegas o cuando te vas.\n\nFunciona silenciosamente en segundo plano para que puedas dormir, leer o desconectarte sin preocuparte por perderte tu parada.";
 "help.body.useCases" = "• Viajero en tren o metro — Configura una alarma en tu estación. Quédate dormido y despiértate justo antes de llegar, cada mañana, automáticamente.\n\n• Pasajero de autobús — Configura una alarma de salida en tu parada de inicio. La alarma se activa cuando te vas del área, recordándote salir.\n\n• Pasajero en viaje por carretera — Configura una alarma en una ciudad intermedia. Recibirás una notificación cuando el coche se acerque, sin vigilar el mapa todo el viaje.\n\n• Viajero en una ciudad desconocida — Configura alarmas en el hotel, aeropuerto o lugares de reunión para saber siempre cuándo te estás acercando.";
-"help.body.creatingAlarm" = "Toca + en la esquina superior derecha. Aparece un menú con dos opciones:\n\n• Alarma de ubicación — fija cualquier dirección o ubicación en el mapa.\n• Alarma de tránsito — elige agencia, ruta y parada de los horarios en vivo.\n\nPara una Alarma de ubicación:\n\n1. Da un nombre a la alarma y una nota opcional.\n2. Usa la barra de búsqueda para encontrar cualquier dirección, estación o lugar. Toca una sugerencia para fijar un marcador, o toca directamente el mapa.\n3. Elige Al llegar o Al salir como activador.\n4. Usa el control deslizante de Radio para definir la distancia.\n5. En Sonido / Vibración, elige un tono.\n\nEl botón Guardar está desactivado hasta que hayas ingresado un nombre y fijado una ubicación. iOS permite un máximo de 20 alarmas activas a la vez.";
+"help.body.creatingAlarm" = "Toca + en la esquina superior derecha. Aparece un menú con dos opciones:
+
+• Alarma de ubicación — fija cualquier dirección o ubicación en el mapa.
+• Alarma de tránsito — elige agencia, ruta y parada de los horarios en vivo.
+
+Para una Alarma de ubicación:
+
+1. Da un nombre a la alarma y una nota opcional.
+2. Usa la barra de búsqueda para encontrar cualquier dirección, estación o lugar. Toca una sugerencia para fijar un marcador, o toca directamente el mapa.
+3. Para fijar la ubicación por coordenadas, toca Introducir coordenadas. Escribe o pega tus coordenadas GPS en formato DD, DMS o DDM y toca Aplicar para colocar el marcador.
+4. Elige Al llegar o Al salir como activador.
+5. Usa el control deslizante de Radio para definir la distancia de activación.
+6. En Sonido / Vibración, elige un tono o solo vibración.
+
+El botón Guardar está desactivado hasta que hayas ingresado un nombre y fijado una ubicación. iOS permite un máximo de 20 alarmas activas a la vez.";
 "help.body.radius" = "El radio define la geovalla — el límite circular alrededor de tu marcador. Cuando cruzas ese límite (entrando o saliendo), la alarma se activa.\n\nUn radio de 200 m es bueno para una sola estación o edificio. Usa 500–1000 m para puntos de referencia más amplios como el centro de una ciudad o un aeropuerto.\n\nPuedes cambiar entre metros/kilómetros y pies/millas en Configuración.";
 "help.body.repeat" = "Las alarmas de un solo uso se activan una vez y permanecen activadas hasta que las rehabilitas manualmente. Útil para un viaje único.\n\nLas alarmas repetitivas se reinician automáticamente después de salir de la región, activándose nuevamente en tu próximo viaje. Perfectas para viajeros diarios.";
 "help.body.timeWindow" = "Una ventana de tiempo limita cuándo se puede activar una alarma. Por ejemplo, una ventana de 07:00–09:00 significa que la alarma solo se activa durante el horario de tu viaje matutino.\n\nUna etiqueta de resumen debajo de los selectores muestra la duración exacta, p. ej. \"Activa 2 hrs · 7:00 AM – 9:00 AM\".\n\nSe admiten ventanas nocturnas (p. ej. 22:00–06:00). Cuando Desde es más tarde que Hasta, la alarma está activa hasta medianoche y hasta la mañana siguiente. El resumen se vuelve naranja y muestra \"al día siguiente\".";
 "help.body.transitAlarms" = "Las alarmas de tránsito se conectan a los horarios de transporte público para que puedas configurar una alarma en una parada exacta sin escribir coordenadas GPS.\n\nToca + → Alarma de tránsito para abrir el asistente:\n\n1. Agencia — Elige de la lista incorporada (Amtrak, BART, MBTA, CTA, GO Transit y más), o ingresa cualquier URL de feed GTFS público.\n2. Ruta — Explora o busca rutas. Cada una muestra su tipo (Tren, Metro, Autobús, Ferry, etc.).\n3. Parada — Todas las paradas se listan ordenadas por distancia desde tu ubicación actual.\n4. Confirmar — Revisa agencia, ruta y parada, luego establece nombre, radio, dirección del activador y sonido.";
 "help.body.soundVibrate" = "Cada alarma tiene su propia configuración de sonido elegida en Sonido / Vibración.\n\nOpciones del sistema:\n• Solo vibración — sin audio; ideal para ambientes silenciosos.\n• Predeterminado — el sonido de notificación estándar de iOS.\n• Crítico — suena a volumen máximo, omitiendo el modo silencio y No molestar.\n\nSonidos de viaje incluidos:\n• Sirena de barco · Campana de tranvía · Tren de vapor · Campana de velero · Aterrizaje de avión · Campanilla de aeropuerto";
 "help.body.siri" = "NapStop es compatible con Siri y la app Atajos — sin configuración adicional.\n\n• \"Crear un NapStop\" — Siri pregunta nombre, ubicación y dirección del activador, luego guarda la alarma.\n• \"Activar mi NapStop\" — Siri muestra tus alarmas guardadas; elige una para rehabilitarla.\n• \"Desactivar mi NapStop\" — Lo mismo, pero desactiva la alarma.\n\nTambién puedes encontrar y personalizar estos atajos en la app Atajos de iOS bajo la sección NapStop.";
-"help.body.settings" = "Abre Configuración desde el ícono de engranaje en la esquina superior izquierda.\n\n• Distancia — cambia entre métrico (metros/kilómetros) e imperial (pies/millas).\n• Reloj — cambia entre formato de 12 horas y 24 horas.\n• Ayuda y guía — esta guía.\n• Privacidad y uso compartido — divulgación completa sobre el manejo de datos de ubicación.\n• Habilitar registro de depuración — ver \"Reportar un problema\" más abajo.\n• Compilación — muestra la marca de tiempo de compilación.";
+"help.body.settings" = "Abre Configuración desde el ícono de engranaje en la esquina superior izquierda. Toca ⓘ junto a cualquier ajuste para una explicación detallada.
+
+• Distancia — cambia entre métrico (metros / kilómetros) e imperial (pies / millas).
+• Coordenadas — elige el formato de coordenadas GPS: DD (Grados Decimales), DMS (Grados Minutos Segundos) o DDM (Grados Minutos Decimales).
+• Reloj — cambia entre formato de 12 horas y 24 horas.
+• Idioma — cambia el idioma de visualización de forma independiente al idioma del sistema de tu iPhone.
+• Ayuda y guía — esta guía.
+• Privacidad y uso compartido — divulgación completa sobre el manejo de datos de ubicación.
+• Habilitar registro de depuración — ver \"Reportar un problema\" más abajo.
+• Compilación — muestra la versión actual en el formato MajorVersion.GitBuildNumber-Date (p. ej., 1.247-20260529). Inclúyela al reportar un error.";
 "help.body.reportingProblem" = "Si NapStop no se comporta como se espera, puedes habilitar el registro de depuración para capturar un registro detallado.\n\nPara habilitar el registro:\n1. Abre Configuración → sección Soporte.\n2. Activa Habilitar registro de depuración.\n3. Un diálogo explica qué se registra. Toca Habilitar registro para continuar.\n4. Reproduce el problema.\n5. Abre la app Archivos → En mi iPhone → NapStop → NapStopDebug.log, luego compártelo con el soporte.\n\nQué se registra: modelo del dispositivo, versión de iOS, estado del permiso de ubicación, eventos de región, eventos de alarma, descargas de feeds de tránsito y errores. Nada se envía automáticamente.";
 "help.body.managingAlarms" = "Desliza a la derecha en cualquier alarma de la lista para activarla o desactivarla rápidamente.\n\nDesliza a la izquierda para eliminar una alarma. Las alarmas eliminadas se quitan inmediatamente y su geovalla deja de monitorearse.\n\nPara editar una alarma, tócala para abrir la vista de detalles, luego toca Editar alarma.\n\nPara compartir la ubicación de una alarma, abre la vista de detalles y toca Compartir ubicación. Esto envía un enlace de Apple Maps.";
 "help.body.alwaysOnLocation" = "NapStop necesita acceso de ubicación Siempre activo para monitorear regiones en segundo plano — incluso cuando la pantalla está bloqueada o la app está cerrada.\n\nSi elegiste Ahora no durante la configuración, puedes otorgar acceso más tarde en Configuración de iOS → Privacidad y seguridad → Servicios de ubicación → NapStop. Selecciona Siempre.\n\nSin el acceso Siempre activo, las alarmas solo se activarán mientras la app esté abierta.";
@@ -224,3 +247,24 @@
 "day.th" = "Ju";
 "day.fr" = "Vi";
 "day.sa" = "Sá";
+
+/* UI — sounds & coordinate entry */
+"sound.vibrate" = "Solo vibración";
+"sound.default" = "Predeterminado";
+"sound.critical" = "Crítico (ignora el modo silencioso)";
+"Airplane Autopilot" = "Piloto automático";
+"Cable Car" = "Teleférico";
+"Train Horn" = "Bocina de tren";
+"Manual Coordinates Entry" = "Entrada manual de coordenadas";
+"Apply Coordinates" = "Aplicar coordenadas";
+"(Change format in Settings)" = "(Cambiar formato en Ajustes)";
+"Format:" = "Formato:";
+"Decimal Degrees (DD)" = "Grados decimales (DD)";
+"Deg Min Sec (DMS)" = "Grados Min Seg (DMS)";
+"Deg Decimal Min (DDM)" = "Grados Min Decimal (DDM)";
+
+/* Settings UI — missing keys */
+"Coordinates" = "Coordenadas";
+"Sample coords" = "Coordenadas de muestra";
+"DD = Decimal Degrees  ·  DMS = Degrees Minutes Seconds  ·  DDM = Degrees Decimal Minutes" = "DD = Grados decimales  ·  DMS = Grados Minutos Segundos  ·  DDM = Grados Minutos Decimales";
+"Tap ⓘ next to the setting for more information." = "Toca ⓘ junto al ajuste para más información.";

@@ -146,7 +146,7 @@
 
 /* HelpView section titles */
 "Help" = "Help";
-"What is GeoAlarm?" = "What is NapStop?";
+"What is NapStop?" = "What is NapStop?";
 "Typical use cases" = "Typical use cases";
 "Creating an alarm" = "Creating an alarm";
 "Transit Alarms" = "Transit Alarms";
@@ -158,16 +158,39 @@
 "Notifications" = "Notifications";
 
 /* HelpView body text */
-"help.body.whatIsGeoAlarm" = "NapStop wakes you up based on where you are, not what time it is. Instead of guessing how long your journey will take, you set an alarm at a location and let the app notify you when you arrive — or when you leave.\n\nIt runs silently in the background so you can nap, read, or zone out without worrying about missing your stop.";
+"help.body.whatIsNapAlarm" = "NapStop wakes you up based on where you are, not what time it is. Instead of guessing how long your journey will take, you set an alarm at a location and let the app notify you when you arrive — or when you leave.\n\nIt runs silently in the background so you can nap, read, or zone out without worrying about missing your stop.";
 "help.body.useCases" = "• Train or subway commuter — Set an alarm at your station. Doze off and get woken up just before you arrive, every morning, automatically.\n\n• Bus rider — Set a departure alarm at your home stop. The alarm fires when you leave the area, reminding you to head out.\n\n• Road trip passenger — Set an alarm at a waypoint city. You'll be notified when the car gets close, without watching the map the whole trip.\n\n• Traveller in an unfamiliar city — Set alarms at hotel, airport, or meeting locations so you always know when you're getting close.";
-"help.body.creatingAlarm" = "Tap + in the top-right corner. A menu appears with two options:\n\n• Location Alarm — pin any address or map location.\n• Transit Alarm — pick an agency, route, and stop from live schedules.\n\nFor a Location Alarm:\n\n1. Give the alarm a name and an optional note that will appear in the notification.\n2. Use the search bar to find any address, station, or place. Tap a suggestion to drop a pin, or tap the map directly.\n3. Choose On Arrival or On Departure as the trigger.\n4. Use the Radius slider to set how close you need to be before the alarm fires.\n5. In Sound / Vibrate, pick a tone or choose Vibrate only.\n\nThe Save button is disabled until a name has been entered and a location has been pinned. iOS allows a maximum of 20 active alarms at once.";
+"help.body.creatingAlarm" = "Tap + in the top-right corner. A menu appears with two options:
+
+• Location Alarm — pin any address or map location.
+• Transit Alarm — pick an agency, route, and stop from live schedules.
+
+For a Location Alarm:
+
+1. Give the alarm a name and an optional note that will appear in the notification.
+2. Use the search bar to find any address, station, or place. Tap a suggestion to drop a pin, or tap the map directly.
+3. To set the location by coordinates, tap Enter Coordinates. Type or paste your GPS coordinates in DD, DMS, or DDM format, then tap Apply to drop the pin.
+4. Choose On Arrival or On Departure as the trigger.
+5. Use the Radius slider to set how close you need to be before the alarm fires.
+6. In Sound / Vibrate, pick a tone or choose Vibrate only.
+
+The Save button is disabled until a name has been entered and a location has been pinned. iOS allows a maximum of 20 active alarms at once.";
 "help.body.radius" = "The radius defines the geofence — the circular boundary around your pin. When you cross that boundary (entering or leaving), the alarm fires.\n\nA 200 m radius is good for a single station or building. Use 500–1000 m for broader landmarks like a town centre or airport area, giving yourself more time to prepare before arrival.\n\nYou can switch between metres/kilometres and feet/miles in Settings.";
 "help.body.repeat" = "One-shot alarms fire once and stay triggered until you manually re-enable them. This is useful for a single trip or a one-off reminder.\n\nRepeating alarms automatically reset after you leave the region, so they fire again on your next trip through the same location. Perfect for daily commuters.";
 "help.body.timeWindow" = "A time window limits when an alarm is allowed to fire. For example, a window of 07:00–09:00 means the alarm only triggers during your morning commute hours.\n\nA summary label below the pickers shows exactly how long the window is, e.g. \"Active 2 hrs · 7:00 AM – 9:00 AM\".\n\nOvernight windows are supported (e.g. 22:00–06:00). When From is later than Until, the alarm is active through midnight into the next morning. The summary turns orange and shows \"next day\" as a reminder.";
 "help.body.transitAlarms" = "Transit Alarms connect to public transit schedules so you can set an alarm at an exact station stop without typing GPS coordinates.\n\nTap + → Transit Alarm to open the wizard:\n\n1. Agency — Choose from the built-in list worldwide (Amtrak, BART, MBTA, CTA, GO Transit, and more), or enter any public GTFS feed URL.\n2. Route — Browse or search routes. Each shows its type (Rail, Subway, Bus, Ferry, etc.).\n3. Stop — All stops are listed sorted by distance from your current location.\n4. Confirm — Review agency, route, and stop, then set name, radius, trigger direction, and sound.\n\nThe app downloads the GTFS feed on first use and caches it locally.";
 "help.body.soundVibrate" = "Each alarm has its own sound setting chosen in Sound / Vibrate when creating or editing.\n\nSystem options:\n• Vibrate only — no audio; ideal for quiet environments.\n• Default — the standard iOS notification sound.\n• Critical — plays at full volume, bypassing silent mode and Do Not Disturb.\n\nBundled travel sounds:\n• Boat horn · Cable car bell · Steam train · Sailboat bell · Airplane landing · Airport chime\n\nEach setting is stored with its alarm and plays every time it fires.";
 "help.body.siri" = "NapStop supports Siri and the Shortcuts app — no setup required.\n\n• \"Create a NapStop\" — Siri asks for a name, location, and trigger direction, then saves the alarm.\n• \"Enable my NapStop\" — Siri shows your saved alarms; pick one to re-enable it.\n• \"Disable my NapStop\" — Same as above, but deactivates the alarm.\n\nYou can also find and customise these in the iOS Shortcuts app under the NapStop section.";
-"help.body.settings" = "Open Settings from the gear icon in the top-left corner of the alarm list.\n\n• Distance — switch between metric (metres / kilometres) and imperial (feet / miles).\n• Clock — switch between 12-hour and 24-hour time.\n• Help & User Guide — this guide.\n• Privacy & Location Sharing — full disclosure of how location data is handled.\n• Enable Debug Log — see \"Reporting a problem\" below.\n• Build — shows the build timestamp. Useful when reporting a bug.";
+"help.body.settings" = "Open Settings from the gear icon in the top-left corner of the alarm list. Tap ⓘ next to any setting for a detailed explanation.
+
+• Distance — switch between metric (metres / kilometres) and imperial (feet / miles).
+• Coordinates — choose the GPS coordinate format: DD (Decimal Degrees), DMS (Degrees Minutes Seconds), or DDM (Degrees Decimal Minutes).
+• Clock — switch between 12-hour and 24-hour time.
+• Language — change the display language independently of your iPhone's system language.
+• Help & User Guide — this guide.
+• Privacy & Location Sharing — full disclosure of how location data is handled.
+• Enable Debug Log — see \"Reporting a problem\" below.
+• Build — shows the current version in the format MajorVersion.GitBuildNumber-Date (e.g. 1.247-20260529). Include this when reporting a bug.";
 "help.body.reportingProblem" = "If NapStop is not behaving as expected, you can enable debug logging to capture a detailed record.\n\nTo enable logging:\n1. Open Settings → Support section.\n2. Toggle Enable Debug Log ON.\n3. A dialog explains what is recorded. Tap Enable Logging to proceed.\n4. Reproduce the issue.\n5. Open Files app → On My iPhone → NapStop → NapStopDebug.log, then share it with support.\n\nWhat is recorded: device model, iOS version, location permission status, region events, alarm events, transit feed downloads, and errors. Nothing is sent automatically.";
 "help.body.managingAlarms" = "Swipe right on any alarm in the list to quickly enable or disable it without opening the detail view.\n\nSwipe left to delete an alarm. Deleted alarms are removed immediately and their geofence stops being monitored.\n\nTo edit an alarm, tap it to open the detail view, then tap Edit Alarm.\n\nTo share an alarm location, open the detail view and tap Share location. This sends an Apple Maps link to the exact coordinates.";
 "help.body.alwaysOnLocation" = "NapStop needs Always On location access to monitor regions in the background — even when your screen is locked or the app is closed.\n\nIf you chose Not now during setup, you can grant access later in iOS Settings → Privacy & Security → Location Services → NapStop. Set it to Always.\n\nWithout Always On access, alarms will only fire while the app is open.";
@@ -233,3 +256,24 @@
 "day.th" = "Th";
 "day.fr" = "Fr";
 "day.sa" = "Sa";
+
+/* UI — sounds & coordinate entry */
+"sound.vibrate" = "Vibrate Only";
+"sound.default" = "Default";
+"sound.critical" = "Critical (ignores silent mode)";
+"Airplane Autopilot" = "Airplane Autopilot";
+"Cable Car" = "Cable Car";
+"Train Horn" = "Train Horn";
+"Manual Coordinates Entry" = "Manual Coordinates Entry";
+"Apply Coordinates" = "Apply Coordinates";
+"(Change format in Settings)" = "(Change format in Settings)";
+"Format:" = "Format:";
+"Decimal Degrees (DD)" = "Decimal Degrees (DD)";
+"Deg Min Sec (DMS)" = "Deg Min Sec (DMS)";
+"Deg Decimal Min (DDM)" = "Deg Decimal Min (DDM)";
+
+/* Settings UI — missing keys */
+"Coordinates" = "Coordinates";
+"Sample coords" = "Sample coords";
+"DD = Decimal Degrees  ·  DMS = Degrees Minutes Seconds  ·  DDM = Degrees Decimal Minutes" = "DD = Decimal Degrees  ·  DMS = Degrees Minutes Seconds  ·  DDM = Degrees Decimal Minutes";
+"Tap ⓘ next to the setting for more information." = "Tap ⓘ next to the setting for more information.";

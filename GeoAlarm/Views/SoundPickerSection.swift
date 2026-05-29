@@ -119,7 +119,7 @@ struct SoundPickerSection: View {
                 .foregroundColor(iconColor(for: selection))
                 .frame(width: 26)
 
-            Text(selection.displayName)
+            Text(NSLocalizedString(selection.localizationKey, bundle: bundle, comment: ""))
                 .frame(maxWidth: .infinity, alignment: .leading)
 
             previewButton(for: selection)
@@ -143,7 +143,7 @@ struct SoundPickerSection: View {
                     .foregroundColor(iconColor(for: sound))
                     .frame(width: 26)
 
-                Text(sound.displayName)
+                Text(NSLocalizedString(sound.localizationKey, bundle: bundle, comment: ""))
                     .frame(maxWidth: .infinity, alignment: .leading)
 
                 previewButton(for: sound)

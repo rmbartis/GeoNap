@@ -14,10 +14,18 @@ struct AddAlarmView: View {
     @StateObject private var searchService = LocationSearchService()
     @State private var showContactPicker = false
 
-    @AppStorage(AppStorageKey.distanceUnit) private var distanceUnitRaw  = DistanceUnit.metric.rawValue
+    @AppStorage(AppStorageKey.distanceUnit) private var distanceUnitRaw  = DistanceUnit.imperial.rawValue
     @AppStorage(AppStorageKey.timeFormat)   private var timeFormatRaw    = TimeFormat.twelveHour.rawValue
-    private var distanceUnit: DistanceUnit { DistanceUnit(rawValue: distanceUnitRaw) ?? .metric }
+    @AppStorage(AppStorageKey.coordFormat)  private var coordFormatRaw   = CoordFormat.dd.rawValue
+    private var distanceUnit: DistanceUnit { DistanceUnit(rawValue: distanceUnitRaw) ?? .imperial }
     private var timeFormat:   TimeFormat   { TimeFormat(rawValue: timeFormatRaw)     ?? .twelveHour }
+    private var coordFormat:  CoordFormat  { CoordFormat(rawValue: coordFormatRaw)   ?? .dd }
+
+    // Manual coordinate entry state
+    @State private var coordLatEntry   = ""
+    @State private var coordLonEntry   = ""
+    @State private var coordEntryError: String? = nil
+    @State private var showCoordEntry  = false
 
     /// Slider binding in the user's chosen unit; viewModel.radius always stores metres.
     private var radiusInUnit: Binding<Double> {
@@ -108,11 +116,99 @@ struct AddAlarmView: View {
                 .clipShape(RoundedRectangle(cornerRadius: 10))
                 .listRowInsets(EdgeInsets(top: 8, leading: 8, bottom: 8, trailing: 8))
 
+                // MARK: Manual coordinate entry
+                DisclosureGroup(
+                    isExpanded: $showCoordEntry,
+                    content: {
+                        VStack(alignment: .leading, spacing: 10) {
+                            // Format display
+                            VStack(alignment: .leading, spacing: 2) {
+                                HStack(spacing: 4) {
+                                    Text("Format:", bundle: bundle)
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                    Text(NSLocalizedString(coordFormat.fullLabel, bundle: bundle, comment: ""))
+                                        .font(.caption.bold())
+                                        .foregroundColor(.accentColor)
+                                }
+                                Text("(Change format in Settings)", bundle: bundle)
+                                    .font(.caption2)
+                                    .foregroundColor(.secondary)
+                            }
+
+                            // Latitude field
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text("Latitude", bundle: bundle)
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                                TextField(coordFormat.latPlaceholder, text: $coordLatEntry)
+                                    .keyboardType(.decimalPad)
+                                    .font(.system(.body, design: .monospaced))
+                                    .autocorrectionDisabled()
+                                    .textInputAutocapitalization(.characters)
+                                    .padding(8)
+                                    .background(Color(.systemGray6))
+                                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                            }
+
+                            // Longitude field
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text("Longitude", bundle: bundle)
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                                TextField(coordFormat.lonPlaceholder, text: $coordLonEntry)
+                                    .keyboardType(.decimalPad)
+                                    .font(.system(.body, design: .monospaced))
+                                    .autocorrectionDisabled()
+                                    .textInputAutocapitalization(.characters)
+                                    .padding(8)
+                                    .background(Color(.systemGray6))
+                                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                            }
+
+                            // Error message
+                            if let err = coordEntryError {
+                                HStack(spacing: 6) {
+                                    Image(systemName: "exclamationmark.triangle.fill")
+                                        .foregroundColor(.red)
+                                        .font(.caption)
+                                    Text(err)
+                                        .font(.caption)
+                                        .foregroundColor(.red)
+                                }
+                            }
+
+                            // Apply button
+                            Button {
+                                applyCoordinates()
+                            } label: {
+                                Label {
+                                    Text("Apply Coordinates", bundle: bundle)
+                                } icon: {
+                                    Image(systemName: "checkmark.circle.fill")
+                                }
+                                .frame(maxWidth: .infinity)
+                            }
+                            .buttonStyle(.borderedProminent)
+                            .disabled(coordLatEntry.isEmpty || coordLonEntry.isEmpty)
+                        }
+                        .padding(.vertical, 6)
+                    },
+                    label: {
+                        Label {
+                            Text("Manual Coordinates Entry", bundle: bundle)
+                        } icon: {
+                            Image(systemName: "number.circle")
+                        }
+                        .font(.body)
+                    }
+                )
+
                 if viewModel.hasLocation {
                     LabeledContent(NSLocalizedString("Latitude", bundle: bundle, comment: ""),
-                                   value: String(format: "%.5f", viewModel.latitude))
+                                   value: CoordinateParser.format(latitude: viewModel.latitude, format: coordFormat))
                     LabeledContent(NSLocalizedString("Longitude", bundle: bundle, comment: ""),
-                                   value: String(format: "%.5f", viewModel.longitude))
+                                   value: CoordinateParser.format(longitude: viewModel.longitude, format: coordFormat))
                 } else {
                     HStack(spacing: 6) {
                         Image(systemName: "mappin.slash")
@@ -380,7 +476,12 @@ struct AddAlarmView: View {
             : Text("New Alarm", bundle: bundle))
         .navigationBarTitleDisplayMode(.inline)
         .onAppear {
-            if let alarm = existingAlarm { viewModel.load(alarm: alarm) }
+            if let alarm = existingAlarm {
+                viewModel.load(alarm: alarm)
+                // Pre-fill the coordinate entry fields with the alarm's location
+                coordLatEntry = CoordinateParser.format(latitude:  alarm.latitude,  format: coordFormat)
+                coordLonEntry = CoordinateParser.format(longitude: alarm.longitude, format: coordFormat)
+            }
         }
     }
 
@@ -445,6 +546,27 @@ struct AddAlarmView: View {
         let timeStr = TimeFormat(rawValue: timeFormatRaw)?.formatTime(Date()) ?? ""
         let verb = viewModel.regionEvent == .onEntry ? "arrived at" : "departed from"
         return "I \(verb) \(alarmName) at \(timeStr)."
+    }
+
+    // MARK: - Coordinate entry
+
+    private func applyCoordinates() {
+        coordEntryError = nil
+        do {
+            let coord = try CoordinateParser.parse(
+                latString: coordLatEntry,
+                lonString: coordLonEntry,
+                format: coordFormat
+            )
+            viewModel.latitude  = coord.latitude
+            viewModel.longitude = coord.longitude
+            coordEntryError = nil
+            showCoordEntry = false
+        } catch let err as CoordinateParseError {
+            coordEntryError = err.errorDescription
+        } catch {
+            coordEntryError = error.localizedDescription
+        }
     }
 
     private func saveAlarm() {

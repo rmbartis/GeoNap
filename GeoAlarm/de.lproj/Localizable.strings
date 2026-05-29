@@ -137,7 +137,7 @@
 "Airport Chime" = "Flughafen-Klang";
 
 "Help" = "Hilfe";
-"What is GeoAlarm?" = "Was ist NapStop?";
+"What is NapStop?" = "Was ist NapStop?";
 "Typical use cases" = "Typische Anwendungsfälle";
 "Creating an alarm" = "Alarm erstellen";
 "Transit Alarms" = "Transit-Alarme";
@@ -149,16 +149,39 @@
 "Notifications" = "Benachrichtigungen";
 
 /* HelpView body text */
-"help.body.whatIsGeoAlarm" = "NapStop weckt Sie basierend auf Ihrem Standort, nicht auf der Uhrzeit. Anstatt zu raten, wie lange Ihre Reise dauert, stellen Sie einen Alarm an einem Ort ein und die App benachrichtigt Sie, wenn Sie ankommen — oder wenn Sie abreisen.\n\nSie läuft still im Hintergrund, damit Sie schlafen, lesen oder abschalten können, ohne sich Gedanken zu machen, Ihre Haltestelle zu verpassen.";
+"help.body.whatIsNapAlarm" = "NapStop weckt Sie basierend auf Ihrem Standort, nicht auf der Uhrzeit. Anstatt zu raten, wie lange Ihre Reise dauert, stellen Sie einen Alarm an einem Ort ein und die App benachrichtigt Sie, wenn Sie ankommen — oder wenn Sie abreisen.\n\nSie läuft still im Hintergrund, damit Sie schlafen, lesen oder abschalten können, ohne sich Gedanken zu machen, Ihre Haltestelle zu verpassen.";
 "help.body.useCases" = "• Zug- oder U-Bahn-Pendler — Stellen Sie einen Alarm an Ihrem Bahnhof ein. Schlafen Sie ein und werden Sie kurz vor der Ankunft geweckt, jeden Morgen automatisch.\n\n• Busfahrgast — Stellen Sie einen Abfahrtsalarm an Ihrer Haltestelle ein. Der Alarm wird ausgelöst, wenn Sie das Gebiet verlassen.\n\n• Mitfahrer auf Autoreise — Stellen Sie einen Alarm in einer Zwischenstadt ein. Sie werden benachrichtigt, wenn das Auto sich nähert.\n\n• Reisender in einer unbekannten Stadt — Stellen Sie Alarme im Hotel, am Flughafen oder an Treffpunkten ein.";
-"help.body.creatingAlarm" = "Tippen Sie auf + in der oberen rechten Ecke. Ein Menü erscheint mit zwei Optionen:\n\n• Standortalarm — Pin auf beliebige Adresse oder Kartenstandort.\n• Transit-Alarm — Agentur, Route und Haltestelle aus Live-Fahrplänen wählen.\n\nFür einen Standortalarm:\n\n1. Geben Sie einen Namen und optional eine Notiz ein.\n2. Verwenden Sie die Suchleiste, um eine Adresse, Station oder Ort zu finden. Tippen Sie auf einen Vorschlag oder direkt auf die Karte.\n3. Wählen Sie Bei Ankunft oder Bei Abfahrt als Auslöser.\n4. Verwenden Sie den Radius-Schieberegler.\n5. Wählen Sie unter Ton / Vibration einen Klingelton.\n\nDie Schaltfläche Speichern ist deaktiviert, bis ein Name und ein Standort festgelegt sind. iOS erlaubt maximal 20 aktive Alarme gleichzeitig.";
+"help.body.creatingAlarm" = "Tippen Sie auf + in der oberen rechten Ecke. Ein Menü erscheint mit zwei Optionen:
+
+• Standortalarm — Pin auf beliebige Adresse oder Kartenstandort.
+• Transit-Alarm — Agentur, Route und Haltestelle aus Live-Fahrplänen wählen.
+
+Für einen Standortalarm:
+
+1. Geben Sie einen Namen und optional eine Notiz ein.
+2. Verwenden Sie die Suchleiste, um eine Adresse, Station oder Ort zu finden. Tippen Sie auf einen Vorschlag oder direkt auf die Karte.
+3. Um den Standort per Koordinaten festzulegen, tippen Sie auf Koordinaten eingeben. Geben Sie GPS-Koordinaten im Format DD, DMS oder DDM ein und tippen Sie auf Übernehmen.
+4. Wählen Sie Bei Ankunft oder Bei Abfahrt als Auslöser.
+5. Verwenden Sie den Radius-Schieberegler, um die Auslösedistanz festzulegen.
+6. Wählen Sie unter Ton / Vibration einen Klingelton oder nur Vibration.
+
+Die Schaltfläche Speichern ist deaktiviert, bis ein Name und ein Standort festgelegt sind. iOS erlaubt maximal 20 aktive Alarme gleichzeitig.";
 "help.body.radius" = "Der Radius definiert den Geofence — die kreisförmige Grenze um Ihren Pin. Wenn Sie diese Grenze überschreiten (eintreten oder verlassen), wird der Alarm ausgelöst.\n\nEin Radius von 200 m ist gut für eine einzelne Station oder ein Gebäude. Verwenden Sie 500–1000 m für größere Wahrzeichen wie ein Stadtzentrum oder Flughafenbereich.\n\nSie können in Einstellungen zwischen Metern/Kilometern und Fuß/Meilen wechseln.";
 "help.body.repeat" = "Einmalige Alarme werden einmal ausgelöst und bleiben aktiv, bis Sie sie manuell wieder aktivieren. Nützlich für eine einzelne Reise.\n\nWiederholende Alarme werden automatisch zurückgesetzt, nachdem Sie das Gebiet verlassen, und lösen beim nächsten Durchgang erneut aus. Perfekt für tägliche Pendler.";
 "help.body.timeWindow" = "Ein Zeitfenster begrenzt, wann ein Alarm ausgelöst werden darf. Zum Beispiel bedeutet ein Fenster von 07:00–09:00 Uhr, dass der Alarm nur während Ihrer morgendlichen Pendelzeiten ausgelöst wird.\n\nEine Zusammenfassungsbezeichnung unter den Auswahlfeldern zeigt die genaue Dauer, z. B. „Aktiv 2 Std. · 7:00 – 9:00 Uhr\".\n\nNächtliche Fenster werden unterstützt (z. B. 22:00–06:00 Uhr). Wenn Von später als Bis ist, ist der Alarm bis Mitternacht und bis zum nächsten Morgen aktiv.";
 "help.body.transitAlarms" = "Transit-Alarme verbinden sich mit öffentlichen Fahrplänen, damit Sie einen Alarm an einer genauen Haltestelle stellen können.\n\nTippen Sie auf + → Transit-Alarm, um den Assistenten zu öffnen:\n\n1. Agentur — Wählen Sie aus der integrierten Liste (Deutsche Bahn, BVG, Amtrak und mehr) oder geben Sie eine öffentliche GTFS-URL ein.\n2. Route — Routen durchsuchen oder suchen. Jede zeigt ihren Typ.\n3. Haltestelle — Alle Haltestellen nach Entfernung sortiert aufgelistet.\n4. Bestätigen — Agentur, Route und Haltestelle überprüfen, dann Name, Radius und Auslöserrichtung festlegen.";
 "help.body.soundVibrate" = "Jeder Alarm hat seine eigene Toneinstellung unter Ton / Vibration.\n\nSystemoptionen:\n• Nur Vibration — kein Audio; ideal für ruhige Umgebungen.\n• Standard — der Standard-iOS-Benachrichtigungston.\n• Kritisch — spielt bei voller Lautstärke ab, umgeht den Stummschaltmodus.\n\nMitgelieferte Reiseklänge:\n• Schiffshorn · Straßenbahnklingel · Dampflok · Segelbootglocke · Flugzeuglandung · Flughafen-Signalton";
 "help.body.siri" = "NapStop unterstützt Siri und die Kurzbefehle-App — keine Einrichtung erforderlich.\n\n• „Einen NapStop erstellen\" — Siri fragt nach Name, Ort und Auslöserrichtung.\n• „Meinen NapStop aktivieren\" — Siri zeigt Ihre gespeicherten Alarme.\n• „Meinen NapStop deaktivieren\" — Dasselbe, aber deaktiviert den Alarm.";
-"help.body.settings" = "Öffnen Sie Einstellungen über das Zahnradsymbol oben links.\n\n• Entfernung — zwischen metrisch (Meter/km) und imperial (Fuß/Meilen) wechseln.\n• Uhr — zwischen 12-Stunden- und 24-Stunden-Format wechseln.\n• Hilfe & Benutzerhandbuch — diese Anleitung.\n• Datenschutz & Standortfreigabe — vollständige Offenlegung zur Datenbehandlung.\n• Debug-Protokoll aktivieren — siehe „Problem melden\" unten.\n• Build — zeigt den Build-Zeitstempel.";
+"help.body.settings" = "Öffnen Sie Einstellungen über das Zahnradsymbol oben links. Tippen Sie auf ⓘ neben einer Einstellung für eine detaillierte Erklärung.
+
+• Entfernung — zwischen metrisch (Meter / km) und imperial (Fuß / Meilen) wechseln.
+• Koordinaten — GPS-Koordinatenformat wählen: DD (Dezimalgrad), DMS (Grad Minuten Sekunden) oder DDM (Grad Dezimalminuten).
+• Uhr — zwischen 12-Stunden- und 24-Stunden-Format wechseln.
+• Sprache — Anzeigesprache unabhängig von der iPhone-Systemsprache ändern.
+• Hilfe & Benutzerhandbuch — diese Anleitung.
+• Datenschutz & Standortfreigabe — vollständige Offenlegung zur Datenbehandlung.
+• Debug-Protokoll aktivieren — siehe \"Problem melden\" unten.
+• Build — zeigt die aktuelle Version im Format MajorVersion.GitBuildNumber-Date (z.B. 1.247-20260529). Bitte bei Fehlermeldungen angeben.";
 "help.body.reportingProblem" = "Wenn NapStop sich nicht wie erwartet verhält, können Sie die Debug-Protokollierung aktivieren.\n\nProtokollierung aktivieren:\n1. Einstellungen → Bereich Support öffnen.\n2. Debug-Protokoll aktivieren einschalten.\n3. Ein Dialog erklärt, was aufgezeichnet wird. Auf Protokollierung aktivieren tippen.\n4. Das Problem reproduzieren.\n5. Dateien-App → Auf meinem iPhone → NapStop → NapStopDebug.log öffnen und mit dem Support teilen.\n\nAufgezeichnet werden: Gerätemodell, iOS-Version, Standortgenehmigungsstatus, Regionereignisse, Alarmereignisse und Fehler.";
 "help.body.managingAlarms" = "Wischen Sie rechts auf einem Alarm, um ihn schnell zu aktivieren oder zu deaktivieren.\n\nWischen Sie links, um einen Alarm zu löschen. Gelöschte Alarme werden sofort entfernt.\n\nUm einen Alarm zu bearbeiten, tippen Sie darauf und dann auf Alarm bearbeiten.\n\nUm den Alarmstandort zu teilen, öffnen Sie die Detailansicht und tippen Sie auf Standort teilen.";
 "help.body.alwaysOnLocation" = "NapStop benötigt Standortzugriff Immer, um Bereiche im Hintergrund zu überwachen — auch wenn Ihr Bildschirm gesperrt oder die App geschlossen ist.\n\nWenn Sie bei der Einrichtung Nicht jetzt gewählt haben, können Sie später in iOS-Einstellungen → Datenschutz & Sicherheit → Ortungsdienste → NapStop den Zugriff gewähren. Wählen Sie Immer.\n\nOhne Immer-Zugriff lösen Alarme nur aus, wenn die App geöffnet ist.";
@@ -224,3 +247,24 @@
 "day.th" = "Do";
 "day.fr" = "Fr";
 "day.sa" = "Sa";
+
+/* UI — sounds & coordinate entry */
+"sound.vibrate" = "Nur Vibration";
+"sound.default" = "Standard";
+"sound.critical" = "Kritisch (ignoriert Lautlos)";
+"Airplane Autopilot" = "Flugzeug-Autopilot";
+"Cable Car" = "Seilbahn";
+"Train Horn" = "Zughorn";
+"Manual Coordinates Entry" = "Koordinaten manuell eingeben";
+"Apply Coordinates" = "Koordinaten übernehmen";
+"(Change format in Settings)" = "(Format in Einstellungen ändern)";
+"Format:" = "Format:";
+"Decimal Degrees (DD)" = "Dezimalgrad (DD)";
+"Deg Min Sec (DMS)" = "Grad Min Sek (DMS)";
+"Deg Decimal Min (DDM)" = "Grad Dezimalminuten (DDM)";
+
+/* Settings UI — missing keys */
+"Coordinates" = "Koordinaten";
+"Sample coords" = "Beispielkoordinaten";
+"DD = Decimal Degrees  ·  DMS = Degrees Minutes Seconds  ·  DDM = Degrees Decimal Minutes" = "DD = Dezimalgrad  ·  DMS = Grad Minuten Sekunden  ·  DDM = Grad Dezimalminuten";
+"Tap ⓘ next to the setting for more information." = "Tippen Sie auf ⓘ neben der Einstellung für mehr Informationen.";

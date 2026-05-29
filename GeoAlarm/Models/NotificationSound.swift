@@ -21,7 +21,7 @@ struct NotificationSound: Identifiable, Hashable, Codable {
     private static let systemIDs: Set<String> = ["vibrate", "default", "critical"]
     var isSystem: Bool { Self.systemIDs.contains(id) }
 
-    // MARK: - Display name
+    // MARK: - Display name (English fallback / localization key for bundled sounds)
     var displayName: String {
         switch id {
         case "vibrate":  return "Vibrate Only"
@@ -33,6 +33,18 @@ struct NotificationSound: Identifiable, Hashable, Codable {
                 .replacingOccurrences(of: "_", with: " ")
                 .replacingOccurrences(of: "-", with: " ")
                 .capitalized
+        }
+    }
+
+    /// Key used for looking up a localized display name.
+    /// System sounds use explicit keys; bundled sounds use their English display name
+    /// (which is also registered as a key in Localizable.strings).
+    var localizationKey: String {
+        switch id {
+        case "vibrate":  return "sound.vibrate"
+        case "default":  return "sound.default"
+        case "critical": return "sound.critical"
+        default:         return displayName   // e.g. "Boat Horn", "Airport Chime"
         }
     }
 

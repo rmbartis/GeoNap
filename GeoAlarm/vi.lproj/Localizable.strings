@@ -137,7 +137,7 @@
 "Airport Chime" = "Chuông sân bay";
 
 "Help" = "Trợ giúp";
-"What is GeoAlarm?" = "NapStop là gì?";
+"What is NapStop?" = "NapStop là gì?";
 "Typical use cases" = "Các trường hợp sử dụng thông thường";
 "Creating an alarm" = "Tạo báo thức";
 "Transit Alarms" = "Báo thức giao thông";
@@ -149,11 +149,25 @@
 "Notifications" = "Thông báo";
 
 // MARK: - HelpView Body Text
-"help.body.whatIsGeoAlarm" = "NapStop đánh thức bạn dựa trên vị trí của bạn, không phải theo giờ giấc. Thay vì đoán xem chuyến đi mất bao lâu, bạn đặt báo thức tại một vị trí và để ứng dụng thông báo khi bạn đến nơi — hoặc khi bạn rời đi.\n\nỨng dụng chạy lặng lẽ trong nền, vì vậy bạn có thể chợp mắt, đọc sách hoặc thư giãn mà không lo lỡ trạm dừng.";
+"help.body.whatIsNapAlarm" = "NapStop đánh thức bạn dựa trên vị trí của bạn, không phải theo giờ giấc. Thay vì đoán xem chuyến đi mất bao lâu, bạn đặt báo thức tại một vị trí và để ứng dụng thông báo khi bạn đến nơi — hoặc khi bạn rời đi.\n\nỨng dụng chạy lặng lẽ trong nền, vì vậy bạn có thể chợp mắt, đọc sách hoặc thư giãn mà không lo lỡ trạm dừng.";
 
 "help.body.useCases" = "• Hành khách tàu hỏa hoặc tàu điện ngầm — Đặt báo thức tại ga của bạn. Ngủ một giấc và được đánh thức ngay trước khi đến, mỗi buổi sáng, tự động.\n\n• Hành khách xe buýt — Đặt báo thức khởi hành tại trạm gần nhà. Báo thức sẽ kêu khi bạn rời khỏi khu vực, nhắc nhở bạn ra đi.\n\n• Hành khách đường trường — Đặt báo thức tại một thành phố trung gian. Bạn sẽ được thông báo khi xe đến gần mà không cần nhìn vào bản đồ suốt chuyến đi.\n\n• Du khách ở thành phố lạ — Đặt báo thức tại khách sạn, sân bay hoặc địa điểm họp để luôn biết khi nào bạn đang đến gần.";
 
-"help.body.creatingAlarm" = "Nhấn + ở góc trên bên phải. Một menu xuất hiện với hai lựa chọn:\n\n• Báo thức vị trí — ghim bất kỳ địa chỉ hoặc vị trí nào trên bản đồ.\n• Báo thức phương tiện — chọn cơ quan, tuyến đường và điểm dừng từ lịch trình trực tiếp.\n\nVới Báo thức vị trí:\n\n1. Đặt tên cho báo thức và ghi chú tùy chọn sẽ xuất hiện trong thông báo.\n2. Dùng thanh tìm kiếm để tìm bất kỳ địa chỉ, ga hay địa điểm nào. Nhấn vào gợi ý để thả ghim, hoặc nhấn trực tiếp lên bản đồ.\n3. Chọn Khi đến nơi hoặc Khi khởi hành làm điều kiện kích hoạt.\n4. Dùng thanh trượt Bán kính để đặt khoảng cách cần thiết trước khi báo thức kêu.\n5. Trong Âm thanh / Rung, chọn nhạc chuông hoặc chọn Chỉ rung.\n\nNút Lưu bị tắt cho đến khi nhập tên và ghim vị trí. iOS cho phép tối đa 20 báo thức đang hoạt động cùng lúc.";
+"help.body.creatingAlarm" = "Nhấn + ở góc trên bên phải. Một menu xuất hiện với hai lựa chọn:
+
+• Báo thức vị trí — ghim bất kỳ địa chỉ hoặc vị trí nào trên bản đồ.
+• Báo thức phương tiện — chọn cơ quan, tuyến đường và điểm dừng từ lịch trình trực tiếp.
+
+Với Báo thức vị trí:
+
+1. Đặt tên cho báo thức và ghi chú tùy chọn sẽ xuất hiện trong thông báo.
+2. Dùng thanh tìm kiếm để tìm bất kỳ địa chỉ, ga hay địa điểm nào. Nhấn vào gợi ý để thả ghim, hoặc nhấn trực tiếp lên bản đồ.
+3. Để đặt vị trí bằng tọa độ, nhấn Nhập tọa độ. Nhập hoặc dán tọa độ GPS theo định dạng DD, DMS hoặc DDM, rồi nhấn Áp dụng để thả ghim.
+4. Chọn Khi đến nơi hoặc Khi khởi hành làm điều kiện kích hoạt.
+5. Dùng thanh trượt Bán kính để đặt khoảng cách cần thiết trước khi báo thức kêu.
+6. Trong Âm thanh / Rung, chọn nhạc chuông hoặc chọn Chỉ rung.
+
+Nút Lưu bị tắt cho đến khi nhập tên và ghim vị trí. iOS cho phép tối đa 20 báo thức đang hoạt động cùng lúc.";
 
 "help.body.radius" = "Bán kính xác định vùng địa lý — ranh giới hình tròn quanh ghim của bạn. Khi bạn vượt qua ranh giới đó (vào hoặc ra), báo thức kêu.\n\nBán kính 200 m phù hợp cho một ga hoặc tòa nhà. Dùng 500–1000 m cho các mốc rộng hơn như trung tâm thành phố hoặc khu vực sân bay, giúp bạn có thêm thời gian chuẩn bị trước khi đến.\n\nBạn có thể chuyển đổi giữa mét/kilômét và feet/dặm trong Cài đặt.";
 
@@ -167,7 +181,16 @@
 
 "help.body.siri" = "NapStop hỗ trợ Siri và ứng dụng Phím tắt — không cần cài đặt.\n\n• \"Tạo NapStop\" — Siri hỏi tên, vị trí và hướng kích hoạt, sau đó lưu báo thức.\n• \"Bật NapStop của tôi\" — Siri hiển thị các báo thức đã lưu; chọn một để bật lại.\n• \"Tắt NapStop của tôi\" — Giống như trên nhưng vô hiệu hóa báo thức.\n\nBạn cũng có thể tìm và tùy chỉnh các phím tắt này trong ứng dụng iOS Phím tắt trong phần NapStop.";
 
-"help.body.settings" = "Mở Cài đặt từ biểu tượng bánh răng ở góc trên bên trái của danh sách báo thức.\n\n• Khoảng cách — chuyển đổi giữa hệ mét (mét / kilômét) và hệ đo lường (feet / dặm).\n• Đồng hồ — chuyển đổi giữa định dạng 12 giờ và 24 giờ.\n• Trợ giúp & Hướng dẫn sử dụng — hướng dẫn này.\n• Quyền riêng tư & Chia sẻ vị trí — toàn bộ thông tin về cách xử lý dữ liệu vị trí.\n• Bật nhật ký gỡ lỗi — xem \"Báo cáo sự cố\" bên dưới.\n• Bản dựng — hiển thị dấu thời gian bản dựng. Hữu ích khi báo cáo lỗi.";
+"help.body.settings" = "Mở Cài đặt từ biểu tượng bánh răng ở góc trên bên trái của danh sách báo thức. Nhấn ⓘ bên cạnh bất kỳ cài đặt nào để xem giải thích chi tiết.
+
+• Khoảng cách — chuyển đổi giữa hệ mét (mét / kilômét) và hệ đo lường (feet / dặm).
+• Tọa độ — chọn định dạng tọa độ GPS: DD (Độ thập phân), DMS (Độ Phút Giây) hoặc DDM (Độ Phút thập phân).
+• Đồng hồ — chuyển đổi giữa định dạng 12 giờ và 24 giờ.
+• Ngôn ngữ — thay đổi ngôn ngữ hiển thị độc lập với ngôn ngữ hệ thống của iPhone.
+• Trợ giúp & Hướng dẫn sử dụng — hướng dẫn này.
+• Quyền riêng tư & Chia sẻ vị trí — toàn bộ thông tin về cách xử lý dữ liệu vị trí.
+• Bật nhật ký gỡ lỗi — xem \"Báo cáo sự cố\" bên dưới.
+• Bản dựng — hiển thị phiên bản hiện tại theo định dạng MajorVersion.GitBuildNumber-Date (ví dụ: 1.247-20260529). Bao gồm khi báo cáo lỗi.";
 
 "help.body.reportingProblem" = "Nếu NapStop không hoạt động như mong đợi, bạn có thể bật ghi nhật ký gỡ lỗi để thu thập hồ sơ chi tiết.\n\nĐể bật ghi nhật ký:\n1. Mở Cài đặt → phần Hỗ trợ.\n2. Bật Nhật ký gỡ lỗi.\n3. Hộp thoại giải thích những gì được ghi lại. Nhấn Bật ghi nhật ký để tiếp tục.\n4. Tái hiện sự cố.\n5. Mở ứng dụng Files → Trên iPhone của tôi → NapStop → NapStopDebug.log, sau đó chia sẻ với bộ phận hỗ trợ.\n\nNhững gì được ghi lại: kiểu thiết bị, phiên bản iOS, trạng thái quyền vị trí, sự kiện vùng, sự kiện báo thức, tải xuống nguồn phương tiện và lỗi. Không có gì được gửi tự động.";
 
@@ -245,3 +268,24 @@
 "day.th" = "T5";
 "day.fr" = "T6";
 "day.sa" = "T7";
+
+/* UI — sounds & coordinate entry */
+"sound.vibrate" = "Chỉ rung";
+"sound.default" = "Mặc định";
+"sound.critical" = "Quan trọng (bỏ qua chế độ im lặng)";
+"Airplane Autopilot" = "Tự lái máy bay";
+"Cable Car" = "Cáp treo";
+"Train Horn" = "Còi tàu hỏa";
+"Manual Coordinates Entry" = "Nhập tọa độ thủ công";
+"Apply Coordinates" = "Áp dụng tọa độ";
+"(Change format in Settings)" = "(Đổi định dạng trong Cài đặt)";
+"Format:" = "Định dạng:";
+"Decimal Degrees (DD)" = "Độ thập phân (DD)";
+"Deg Min Sec (DMS)" = "Độ Phút Giây (DMS)";
+"Deg Decimal Min (DDM)" = "Độ Phút thập phân (DDM)";
+
+/* Settings UI — missing keys */
+"Coordinates" = "Tọa độ";
+"Sample coords" = "Tọa độ mẫu";
+"DD = Decimal Degrees  ·  DMS = Degrees Minutes Seconds  ·  DDM = Degrees Decimal Minutes" = "DD = Độ thập phân  ·  DMS = Độ Phút Giây  ·  DDM = Độ Phút thập phân";
+"Tap ⓘ next to the setting for more information." = "Nhấn ⓘ bên cạnh cài đặt để biết thêm thông tin.";

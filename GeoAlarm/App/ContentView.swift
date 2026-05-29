@@ -11,11 +11,12 @@ struct ContentView: View {
     @Environment(\.languageBundle) private var bundle
 
     @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding = false
-    @State private var showSettings      = false
-    @State private var showMapOverview   = false
-    @State private var showTransitAlarm  = false
-    @State private var showAddAlarm      = false
+    @State private var showSettings       = false
+    @State private var showMapOverview    = false
+    @State private var showTransitAlarm   = false
+    @State private var showAddAlarm       = false
     @State private var showMessageCompose = false
+    @State private var spotlightAlarm: NapAlarm? = nil
 
     var body: some View {
         NavigationStack {
@@ -32,6 +33,9 @@ struct ContentView: View {
                 }
                 .navigationDestination(isPresented: $showAddAlarm) {
                     AddAlarmView()
+                }
+                .navigationDestination(item: $spotlightAlarm) { alarm in
+                    AlarmDetailView(alarm: alarm)
                 }
                 .toolbar {
                     ToolbarItem(placement: .navigationBarTrailing) {
@@ -121,6 +125,13 @@ struct ContentView: View {
         }
         .onChange(of: alarmManager.pendingContactMessage) { _, newValue in
             if newValue != nil { showMessageCompose = true }
+        }
+        // Spotlight deep link: when the user taps an alarm in Spotlight search,
+        // navigate directly to its detail view.
+        .onChange(of: alarmManager.spotlightAlarmID) { _, uuid in
+            guard let uuid else { return }
+            spotlightAlarm = alarmManager.alarms.first { $0.id == uuid }
+            alarmManager.spotlightAlarmID = nil   // consume so back-navigation works
         }
     }
 }
