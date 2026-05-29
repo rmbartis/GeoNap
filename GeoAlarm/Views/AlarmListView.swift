@@ -65,7 +65,7 @@ struct AlarmListView: View {
             Image(systemName: "location.circle")
                 .font(.system(size: 64))
                 .foregroundColor(.secondary)
-            Text("No Geo Alarms Yet", bundle: bundle)
+            Text("No NapStop Alarms Yet", bundle: bundle)
                 .font(.title2.bold())
             Text("Tap + to create your first alarm.\nYou'll be notified when you arrive at or leave any saved location.", bundle: bundle)
                 .multilineTextAlignment(.center)
@@ -79,8 +79,9 @@ struct AlarmListView: View {
 // MARK: - Alarm Row
 
 struct AlarmRowView: View {
-    let alarm: GeoAlarm
+    let alarm: NapAlarm
 
+    @Environment(\.languageBundle) private var bundle
     @AppStorage(AppStorageKey.distanceUnit) private var distanceUnitRaw = DistanceUnit.metric.rawValue
     @AppStorage(AppStorageKey.timeFormat)   private var timeFormatRaw   = TimeFormat.twelveHour.rawValue
     private var distanceUnit: DistanceUnit { DistanceUnit(rawValue: distanceUnitRaw) ?? .metric }
@@ -104,7 +105,7 @@ struct AlarmRowView: View {
                         Image(systemName: "arrow.up.left.and.arrow.down.right")
                     }
                     Text("·")
-                    Text(alarm.regionEvent.rawValue)
+                    Text(NSLocalizedString(alarm.regionEvent.rawValue, bundle: bundle, comment: ""))
                 }
                 .font(.caption)
                 .foregroundColor(.secondary)
@@ -189,7 +190,7 @@ private struct RegionLimitBanner: View {
 #Preview {
     NavigationStack {
         AlarmListView()
-            .navigationTitle("Geo Alarms")
+            .navigationTitle("NapStop")
     }
     .environmentObject(AlarmManager())
     .environmentObject(LocationManager())

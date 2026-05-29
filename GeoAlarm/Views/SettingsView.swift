@@ -170,11 +170,11 @@ struct SettingsView: View {
                 }
             } message: {
                 Text("""
-                    GeoAlarm will record detailed activity — location events, alarm triggers, \
+                    NapStop will record detailed activity — location events, alarm triggers, \
                     transit feed downloads, and errors — to a log file on your device.
 
                     The file is stored at:
-                    Files → On My iPhone → GeoAlarm → GeoAlarmDebug.log
+                    Files → On My iPhone → NapStop → NapStopDebug.log
 
                     This information is not sent anywhere automatically. \
                     If support requests it, you can find and share the file using the iOS Files app.
@@ -247,7 +247,7 @@ struct SettingsView: View {
             Text("Support", bundle: bundle)
         } footer: {
             if debugLoggingEnabled {
-                Text("Logging is ON. Detailed activity is being recorded to GeoAlarmDebug.log in the GeoAlarm folder in the Files app. Disable when no longer needed.", bundle: bundle)
+                Text("Logging is ON. Detailed activity is being recorded to NapStopDebug.log in the NapStop folder in the Files app. Disable when no longer needed.", bundle: bundle)
                     .foregroundStyle(.orange)
             } else {
                 Text("Enable to capture detailed diagnostic information when troubleshooting an issue. Logging is off by default and does not run in the background.", bundle: bundle)

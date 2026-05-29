@@ -1,10 +1,10 @@
-// GeoAlarmUITests.swift
+// NapStopUITests.swift
 // UI smoke tests using XCUITest.
 // Run on the simulator; require the app to be built and running.
 
 import XCTest
 
-final class GeoAlarmUITests: XCTestCase {
+final class NapStopUITests: XCTestCase {
 
     var app: XCUIApplication!
 

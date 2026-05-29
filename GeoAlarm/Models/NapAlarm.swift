@@ -1,4 +1,4 @@
-// GeoAlarm.swift
+// NapAlarm.swift
 // Core data model — SwiftData @Model class.
 // Supports one-shot and repeating alarms with hysteresis.
 
@@ -25,7 +25,7 @@ enum RegionEvent: String, Codable, CaseIterable {
 // MARK: - Model
 
 @Model
-final class GeoAlarm {
+final class NapAlarm {
 
     var id: UUID = UUID()
     var name: String = ""
@@ -269,9 +269,9 @@ final class GeoAlarm {
 
 // MARK: - Sample data
 
-extension GeoAlarm {
-    static var preview: GeoAlarm {
-        GeoAlarm(
+extension NapAlarm {
+    static var preview: NapAlarm {
+        NapAlarm(
             name: "Times Square",
             latitude: 40.7580,
             longitude: -73.9855,
@@ -281,14 +281,14 @@ extension GeoAlarm {
         )
     }
 
-    static var samples: [GeoAlarm] {
+    static var samples: [NapAlarm] {
         [
-            GeoAlarm(name: "Home",
+            NapAlarm(name: "Home",
                      latitude: 37.7749, longitude: -122.4194, radius: 150),
-            GeoAlarm(name: "Penn Station",
+            NapAlarm(name: "Penn Station",
                      latitude: 40.7506, longitude: -73.9971,  radius: 100,
                      isRepeating: true),
-            GeoAlarm(name: "Airport",
+            NapAlarm(name: "Airport",
                      latitude: 40.6413, longitude: -73.7781,  radius: 300,
                      state: .inactive)
         ]

@@ -2,7 +2,7 @@
 // Collapsible sound / vibrate picker for alarm creation forms.
 //
 // The sound list is built dynamically from NotificationSound.all —
-// any .wav file added to GeoAlarm/Sounds in Xcode appears automatically.
+// any .wav file added to NapAlarm/Sounds in Xcode appears automatically.
 //
 // Playback:
 //   • Bundled .wav files → AVAudioPlayer (.playback category, audible over silent switch)

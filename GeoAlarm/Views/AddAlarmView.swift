@@ -27,7 +27,7 @@ struct AddAlarmView: View {
         )
     }
 
-    var existingAlarm: GeoAlarm?
+    var existingAlarm: NapAlarm?
     private var isEditing: Bool { existingAlarm != nil }
 
     var body: some View {
@@ -130,7 +130,7 @@ struct AddAlarmView: View {
             Section {
                 Picker(selection: $viewModel.regionEvent) {
                     ForEach(RegionEvent.allCases, id: \.self) { event in
-                        Text(event.rawValue).tag(event)
+                        Text(NSLocalizedString(event.rawValue, bundle: bundle, comment: "")).tag(event)
                     }
                 } label: {
                     Text("Event", bundle: bundle)
@@ -242,12 +242,13 @@ struct AddAlarmView: View {
             // MARK: Active Days
             Section {
                 HStack(spacing: 4) {
-                    ForEach(Array(zip(1...7, ["Su","Mo","Tu","We","Th","Fr","Sa"])), id: \.0) { weekday, label in
+                    let dayKeys = ["day.su", "day.mo", "day.tu", "day.we", "day.th", "day.fr", "day.sa"]
+                    ForEach(Array(zip(1...7, dayKeys)), id: \.0) { weekday, key in
                         let isOn = viewModel.activeDays.contains(weekday)
                         Button {
                             toggleDay(weekday)
                         } label: {
-                            Text(label)
+                            Text(NSLocalizedString(key, bundle: bundle, comment: ""))
                                 .font(.caption2.weight(.semibold))
                                 .frame(maxWidth: .infinity, minHeight: 36)
                                 .background(isOn ? Color.accentColor : Color(.systemGray5))
@@ -422,13 +423,13 @@ struct AddAlarmView: View {
 
     private var activeDaysLabel: String {
         let days = viewModel.activeDays
-        if days == Set(1...7) { return "Every day" }
+        if days == Set(1...7) { return NSLocalizedString("Every day", bundle: bundle, comment: "") }
         let weekdays: Set<Int> = [2, 3, 4, 5, 6]
         let weekend:  Set<Int> = [1, 7]
-        if days == weekdays { return "Weekdays only" }
-        if days == weekend  { return "Weekends only" }
-        let symbols = ["Su","Mo","Tu","We","Th","Fr","Sa"]
-        return days.sorted().map { symbols[$0 - 1] }.joined(separator: " ")
+        if days == weekdays { return NSLocalizedString("Weekdays only", bundle: bundle, comment: "") }
+        if days == weekend  { return NSLocalizedString("Weekends only", bundle: bundle, comment: "") }
+        let keys = ["day.su", "day.mo", "day.tu", "day.we", "day.th", "day.fr", "day.sa"]
+        return days.sorted().map { NSLocalizedString(keys[$0 - 1], bundle: bundle, comment: "") }.joined(separator: " ")
     }
 
     private func toggleDay(_ weekday: Int) {

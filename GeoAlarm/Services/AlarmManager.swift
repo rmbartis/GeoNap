@@ -1,5 +1,5 @@
 // AlarmManager.swift
-// Owns the list of GeoAlarms, coordinates region monitoring via LocationManager,
+// Owns the list of NapAlarms, coordinates region monitoring via LocationManager,
 // fires local notifications on region events, and persists via SwiftData.
 
 import Foundation
@@ -13,7 +13,7 @@ import Combine
 final class AlarmManager: NSObject, ObservableObject {
 
     // MARK: - Published state
-    @Published private(set) var alarms: [GeoAlarm] = []
+    @Published private(set) var alarms: [NapAlarm] = []
 
     /// Set when the user taps "Notify Contact" on a fired alarm notification.
     /// ContentView observes this and presents the Messages compose sheet.
@@ -147,12 +147,12 @@ final class AlarmManager: NSObject, ObservableObject {
 
     // MARK: - CRUD
 
-    func add(alarm: GeoAlarm) {
+    func add(alarm: NapAlarm) {
         // If already at the iOS 20-region cap, insert as inactive so monitoring
         // isn't attempted. The user can enable it after disabling another alarm.
         var toInsert = alarm
         if alarm.isActive && isAtRegionLimit {
-            toInsert = GeoAlarm(
+            toInsert = NapAlarm(
                 id: alarm.id, name: alarm.name,
                 latitude: alarm.latitude, longitude: alarm.longitude,
                 radius: alarm.radius, regionEvent: alarm.regionEvent,
@@ -180,7 +180,7 @@ final class AlarmManager: NSObject, ObservableObject {
     /// onto the existing SwiftData-managed object with the same UUID, then saves.
     /// buildAlarm() creates a new, uninserted instance — mutating the managed object
     /// in place is required for SwiftData to track and persist the changes.
-    func update(alarm: GeoAlarm) {
+    func update(alarm: NapAlarm) {
         guard let existing = alarms.first(where: { $0.id == alarm.id }) else {
             // No existing record found (shouldn't happen) — fall back to insert.
             add(alarm: alarm)
@@ -204,7 +204,7 @@ final class AlarmManager: NSObject, ObservableObject {
         if existing.isActive { startMonitoring(existing) }
     }
 
-    func delete(alarm: GeoAlarm) {
+    func delete(alarm: NapAlarm) {
         DebugLogger.shared.log("Alarm deleted: '\(alarm.name)'", category: "AlarmManager")
         stopMonitoring(alarm)
         modelContext?.delete(alarm)
@@ -221,18 +221,18 @@ final class AlarmManager: NSObject, ObservableObject {
         save()
     }
 
-    func toggleActive(_ alarm: GeoAlarm) {
+    func toggleActive(_ alarm: NapAlarm) {
         alarm.state = alarm.isActive ? .inactive : .active
         update(alarm: alarm)
     }
 
     // MARK: - Region monitoring helpers
 
-    private func startMonitoring(_ alarm: GeoAlarm) {
+    private func startMonitoring(_ alarm: NapAlarm) {
         locationManager?.startMonitoring(region: alarm.clRegion)
     }
 
-    private func stopMonitoring(_ alarm: GeoAlarm) {
+    private func stopMonitoring(_ alarm: NapAlarm) {
         locationManager?.stopMonitoring(region: alarm.clRegion)
     }
 
@@ -298,7 +298,7 @@ final class AlarmManager: NSObject, ObservableObject {
 
     // MARK: - Local notification
 
-    private func fireNotification(for alarm: GeoAlarm) {
+    private func fireNotification(for alarm: NapAlarm) {
         let content = UNMutableNotificationContent()
         content.title = "📍 \(alarm.name)"
         content.body = alarm.note.isEmpty
@@ -339,7 +339,7 @@ final class AlarmManager: NSObject, ObservableObject {
     /// Schedules a timer that fires at windowEnd.
     /// If the alarm is still active or triggered at that point (user hasn't left
     /// the region), it is automatically deactivated — satisfying the guard condition.
-    private func scheduleWindowEndGuard(for alarm: GeoAlarm) {
+    private func scheduleWindowEndGuard(for alarm: NapAlarm) {
         guard alarm.hasTimeWindow, let end = alarm.windowEnd else { return }
 
         let cal = Calendar.current
@@ -379,7 +379,7 @@ final class AlarmManager: NSObject, ObservableObject {
     // MARK: - Snooze
 
     /// Suppress a triggered alarm and re-arm it after `minutes` minutes.
-    func snooze(_ alarm: GeoAlarm, minutes: Int = 10) {
+    func snooze(_ alarm: NapAlarm, minutes: Int = 10) {
         alarm.state = .snoozed
         save()
         DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(minutes * 60)) { [weak self] in
@@ -410,7 +410,7 @@ final class AlarmManager: NSObject, ObservableObject {
         guard let context = modelContext else { return }
         do {
             alarms = try context.fetch(
-                FetchDescriptor<GeoAlarm>(sortBy: [SortDescriptor(\.name)])
+                FetchDescriptor<NapAlarm>(sortBy: [SortDescriptor(\.name)])
             )
             CrashReporter.setKey("alarmCount", value: alarms.count)
         } catch {

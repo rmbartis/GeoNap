@@ -3,7 +3,7 @@
 
 import XCTest
 import CoreLocation
-@testable import GeoAlarm
+@testable import NapAlarm
 
 @MainActor
 final class AlarmViewModelTests: XCTestCase {
@@ -110,7 +110,7 @@ final class AlarmViewModelTests: XCTestCase {
     // MARK: - load (edit mode)
 
     func test_load_populatesFields() {
-        let existing = GeoAlarm(
+        let existing = NapAlarm(
             id: UUID(),
             name: "Grand Central",
             latitude: 40.7527,
@@ -131,7 +131,7 @@ final class AlarmViewModelTests: XCTestCase {
     }
 
     func test_buildAlarm_afterLoad_preservesID() {
-        let existing = GeoAlarm.preview
+        let existing = NapAlarm.preview
         sut.load(alarm: existing)
         sut.name = existing.name
 

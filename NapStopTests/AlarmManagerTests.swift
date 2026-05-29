@@ -3,7 +3,7 @@
 // Uses a mock UserDefaults suite so tests don't pollute real app storage.
 
 import XCTest
-@testable import GeoAlarm
+@testable import NapAlarm
 
 @MainActor
 final class AlarmManagerTests: XCTestCase {
@@ -26,25 +26,25 @@ final class AlarmManagerTests: XCTestCase {
     // MARK: - Add
 
     func test_add_appendsAlarm() {
-        let alarm = GeoAlarm.preview
+        let alarm = NapAlarm.preview
         sut.add(alarm: alarm)
         XCTAssertEqual(sut.alarms.count, 1)
         XCTAssertEqual(sut.alarms.first?.id, alarm.id)
     }
 
     func test_add_multiple() {
-        GeoAlarm.samples.forEach { sut.add(alarm: $0) }
-        XCTAssertEqual(sut.alarms.count, GeoAlarm.samples.count)
+        NapAlarm.samples.forEach { sut.add(alarm: $0) }
+        XCTAssertEqual(sut.alarms.count, NapAlarm.samples.count)
     }
 
     // MARK: - Update
 
     func test_update_modifiesExistingAlarm() {
-        let alarm = GeoAlarm.preview
+        let alarm = NapAlarm.preview
         sut.add(alarm: alarm)
 
         var modified = alarm
-        modified = GeoAlarm(
+        modified = NapAlarm(
             id: alarm.id,
             name: "Updated Name",
             latitude: alarm.latitude,
@@ -59,8 +59,8 @@ final class AlarmManagerTests: XCTestCase {
     }
 
     func test_update_unknownID_doesNothing() {
-        sut.add(alarm: GeoAlarm.preview)
-        let stranger = GeoAlarm(name: "Stranger", latitude: 0, longitude: 0)
+        sut.add(alarm: NapAlarm.preview)
+        let stranger = NapAlarm(name: "Stranger", latitude: 0, longitude: 0)
         sut.update(alarm: stranger)
         XCTAssertEqual(sut.alarms.count, 1)
     }
@@ -68,30 +68,30 @@ final class AlarmManagerTests: XCTestCase {
     // MARK: - Delete
 
     func test_delete_removesAlarm() {
-        let alarm = GeoAlarm.preview
+        let alarm = NapAlarm.preview
         sut.add(alarm: alarm)
         sut.delete(alarm: alarm)
         XCTAssertTrue(sut.alarms.isEmpty)
     }
 
     func test_deleteAtOffsets() {
-        GeoAlarm.samples.forEach { sut.add(alarm: $0) }
+        NapAlarm.samples.forEach { sut.add(alarm: $0) }
         sut.delete(at: IndexSet([0]))
-        XCTAssertEqual(sut.alarms.count, GeoAlarm.samples.count - 1)
+        XCTAssertEqual(sut.alarms.count, NapAlarm.samples.count - 1)
     }
 
     // MARK: - Toggle active
 
     func test_toggleActive_disablesActiveAlarm() {
-        let alarm = GeoAlarm.preview   // starts as .active
+        let alarm = NapAlarm.preview   // starts as .active
         sut.add(alarm: alarm)
         sut.toggleActive(alarm)
         XCTAssertEqual(sut.alarms.first?.state, .inactive)
     }
 
     func test_toggleActive_enablesInactiveAlarm() {
-        var alarm = GeoAlarm.preview
-        alarm = GeoAlarm(
+        var alarm = NapAlarm.preview
+        alarm = NapAlarm(
             id: alarm.id,
             name: alarm.name,
             latitude: alarm.latitude,
@@ -106,7 +106,7 @@ final class AlarmManagerTests: XCTestCase {
     // MARK: - State: triggered via region event
 
     func test_handleRegionEntry_triggersMatchingAlarm() {
-        let alarm = GeoAlarm.preview   // .onEntry
+        let alarm = NapAlarm.preview   // .onEntry
         sut.add(alarm: alarm)
 
         // Simulate the region event callback
@@ -117,8 +117,8 @@ final class AlarmManagerTests: XCTestCase {
     }
 
     func test_handleRegionEntry_doesNotTrigger_inactiveAlarm() {
-        var alarm = GeoAlarm.preview
-        alarm = GeoAlarm(
+        var alarm = NapAlarm.preview
+        alarm = NapAlarm(
             id: alarm.id, name: alarm.name,
             latitude: alarm.latitude, longitude: alarm.longitude,
             state: .inactive
@@ -129,7 +129,7 @@ final class AlarmManagerTests: XCTestCase {
     }
 
     func test_handleRegionExit_doesNotTrigger_onEntryAlarm() {
-        let alarm = GeoAlarm.preview   // .onEntry
+        let alarm = NapAlarm.preview   // .onEntry
         sut.add(alarm: alarm)
         sut.simulateRegionExited(regionID: alarm.id.uuidString)
         XCTAssertEqual(sut.alarms.first?.state, .active)  // unchanged

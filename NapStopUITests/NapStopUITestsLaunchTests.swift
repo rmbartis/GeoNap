@@ -1,13 +1,13 @@
 //
-//  GeoAlarmUITestsLaunchTests.swift
-//  GeoAlarmUITests
+//  NapStopUITestsLaunchTests.swift
+//  NapStopUITests
 //
 //  Created by bartis on 5/24/26.
 //
 
 import XCTest
 
-final class GeoAlarmUITestsLaunchTests: XCTestCase {
+final class NapStopUITestsLaunchTests: XCTestCase {
 
     override class var runsForEachTargetApplicationUIConfiguration: Bool {
         true

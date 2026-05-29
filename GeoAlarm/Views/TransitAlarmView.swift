@@ -32,7 +32,7 @@ struct TransitAlarmSheet: View {
 
 struct TransitAlarmView: View {
 
-    var onSave:   (GeoAlarm) -> Void
+    var onSave:   (NapAlarm) -> Void
     var onCancel: () -> Void
 
     @EnvironmentObject var locationManager: LocationManager
@@ -474,7 +474,7 @@ struct TransitAlarmView: View {
 
     private func saveAlarm() {
         guard let stop = selectedStop else { return }
-        let alarm = GeoAlarm(
+        let alarm = NapAlarm(
             name: alarmName.trimmingCharacters(in: .whitespaces),
             latitude: stop.latitude,
             longitude: stop.longitude,

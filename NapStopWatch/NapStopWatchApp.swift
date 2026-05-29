@@ -1,10 +1,10 @@
-// GeoAlarmWatchApp.swift
-// Entry point for the GeoAlarmWatch watchOS target.
+// NapStopWatchApp.swift
+// Entry point for the NapAlarmWatch watchOS target.
 
 import SwiftUI
 
 @main
-struct GeoAlarmWatchApp: App {
+struct NapStopWatchApp: App {
     @StateObject private var alarmStore = WatchAlarmStore.shared
 
     var body: some Scene {

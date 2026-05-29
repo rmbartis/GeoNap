@@ -6,7 +6,7 @@ import SwiftUI
 import MapKit
 
 struct AlarmDetailView: View {
-    let alarm: GeoAlarm
+    let alarm: NapAlarm
 
     @EnvironmentObject var alarmManager: AlarmManager
     @Environment(\.languageBundle) private var bundle
@@ -84,7 +84,7 @@ struct AlarmDetailView: View {
                     }
                 }
                 LabeledContent(NSLocalizedString("Trigger", bundle: bundle, comment: "")) {
-                    Text(alarm.regionEvent.rawValue)
+                    Text(NSLocalizedString(alarm.regionEvent.rawValue, bundle: bundle, comment: ""))
                 }
                 LabeledContent(NSLocalizedString("Radius", bundle: bundle, comment: "")) {
                     Text(distanceUnit.formatted(meters: alarm.radius))
@@ -186,7 +186,7 @@ struct AlarmDetailView: View {
 
 #Preview {
     NavigationStack {
-        AlarmDetailView(alarm: GeoAlarm.preview)
+        AlarmDetailView(alarm: NapAlarm.preview)
     }
     .environmentObject(AlarmManager())
 }

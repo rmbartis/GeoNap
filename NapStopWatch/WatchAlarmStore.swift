@@ -21,7 +21,7 @@ final class WatchAlarmStore: NSObject, ObservableObject {
     // MARK: - Storage
 
     /// Use the App Group container so the widget extension can read the same data.
-    private static let suiteName = "group.com.rmbartis.GeoAlarm"
+    private static let suiteName = "group.com.rmbartis.NapAlarm"
     private static let storageKey = WatchConnectivityManager.alarmsKey
 
     private var defaults: UserDefaults {

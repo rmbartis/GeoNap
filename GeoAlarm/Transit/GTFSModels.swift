@@ -1,6 +1,6 @@
 // GTFSModels.swift
 // Lightweight value types for parsed GTFS data.
-// Only the fields GeoAlarm needs — routes and stops.
+// Only the fields NapAlarm needs — routes and stops.
 
 import SwiftUI
 import CoreLocation

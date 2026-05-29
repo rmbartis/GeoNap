@@ -102,7 +102,7 @@ private struct LanguageBundleKey: EnvironmentKey {
 
 extension EnvironmentValues {
     /// The bundle to pass to Text("key", bundle: bundle) for the current
-    /// in-app language.  Injected at the root view in GeoAlarmApp.
+    /// in-app language.  Injected at the root view in NapStopApp.
     var languageBundle: Bundle {
         get { self[LanguageBundleKey.self] }
         set { self[LanguageBundleKey.self] = newValue }

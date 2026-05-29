@@ -3,9 +3,9 @@
 // targets via WCSession applicationContext.
 //
 // ⚠️ Add this file to THREE targets in Xcode:
-//    • GeoAlarm (iOS)
-//    • GeoAlarmWatch (watchOS app)
-//    • GeoAlarmWatchWidget (watchOS complication extension)
+//    • NapAlarm (iOS)
+//    • NapAlarmWatch (watchOS app)
+//    • NapAlarmWatchWidget (watchOS complication extension)
 
 import Foundation
 

@@ -15,7 +15,7 @@ struct MapOverviewView: View {
     @State private var cameraPosition: MapCameraPosition = .automatic
 
     // Alarm selected by tapping an annotation — drives navigation.
-    @State private var selectedAlarm: GeoAlarm?
+    @State private var selectedAlarm: NapAlarm?
 
     var body: some View {
         NavigationStack {
@@ -130,7 +130,7 @@ struct MapOverviewView: View {
 
     // MARK: - Helpers
 
-    private func stateColor(_ alarm: GeoAlarm) -> Color {
+    private func stateColor(_ alarm: NapAlarm) -> Color {
         switch alarm.state {
         case .active:    return .green
         case .triggered: return .red
@@ -139,7 +139,7 @@ struct MapOverviewView: View {
         }
     }
 
-    private func stateIcon(_ alarm: GeoAlarm) -> String {
+    private func stateIcon(_ alarm: NapAlarm) -> String {
         switch alarm.state {
         case .active:    return "bell.fill"
         case .triggered: return "bell.badge.fill"

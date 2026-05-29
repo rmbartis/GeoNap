@@ -9,7 +9,7 @@
 "Next" = "Weiter";
 "Skip" = "Überspringen";
 
-"Geo Alarms" = "Geo-Alarme";
+"Geo Alarms" = "NapStop";
 "Location Alarm" = "Standort-Alarm";
 "Transit Alarm" = "Transit-Alarm";
 "Location access required. Enable in Settings." = "Standortzugriff erforderlich. In Einstellungen aktivieren.";
@@ -84,21 +84,21 @@
 "Preview" = "Vorschau";
 "Sample radius" = "Beispiel-Radius";
 "Sample time" = "Beispielzeit";
-"Logging is ON. Detailed activity is being recorded to GeoAlarmDebug.log in the GeoAlarm folder in the Files app. Disable when no longer needed." = "Protokollierung EIN. Aktivitäten werden in GeoAlarmDebug.log gespeichert. Deaktivieren, wenn nicht mehr benötigt.";
+"Logging is ON. Detailed activity is being recorded to GeoAlarmDebug.log in the GeoAlarm folder in the Files app. Disable when no longer needed." = "Protokollierung EIN. Aktivitäten werden in NapStopDebug.log gespeichert. Deaktivieren, wenn nicht mehr benötigt.";
 "Enable to capture detailed diagnostic information when troubleshooting an issue. Logging is off by default and does not run in the background." = "Aktivieren, um detaillierte Diagnoseinformationen zu erfassen. Standardmäßig deaktiviert.";
 
 "Sleep through your commute" = "Schlafen Sie während Ihrer Pendelfahrt";
-"GeoAlarm wakes you up when your device enters or leaves a location — not at a set time. Perfect for trains, buses, and long rides." = "GeoAlarm weckt Sie, wenn Ihr Gerät einen Standort betritt oder verlässt – nicht zu einer festen Zeit. Ideal für Züge, Busse und lange Fahrten.";
+"GeoAlarm wakes you up when your device enters or leaves a location — not at a set time. Perfect for trains, buses, and long rides." = "NapStop weckt Sie, wenn Ihr Gerät einen Standort betritt oder verlässt – nicht zu einer festen Zeit. Ideal für Züge, Busse und lange Fahrten.";
 "Set an alarm anywhere" = "Alarm überall setzen";
 "Drop a pin on any stop, station, or landmark. Choose how close you need to be before the alarm fires, and whether it should repeat every trip." = "Markieren Sie eine Haltestelle, einen Bahnhof oder ein Wahrzeichen. Wählen Sie, wie nah Sie sein müssen, und ob er bei jeder Fahrt wiederholt werden soll.";
 "Active time windows" = "Aktive Zeitfenster";
-"Only want the alarm to fire during your morning commute? Set a time window and GeoAlarm will ignore the location outside those hours." = "Alarm nur während der Morgenfahrt? Legen Sie ein Zeitfenster fest und GeoAlarm ignoriert den Standort außerhalb.";
+"Only want the alarm to fire during your morning commute? Set a time window and GeoAlarm will ignore the location outside those hours." = "Alarm nur während der Morgenfahrt? Legen Sie ein Zeitfenster fest und NapStop ignoriert den Standort außerhalb.";
 "Always On location needed" = "Standort immer aktiv erforderlich";
-"GeoAlarm monitors your position in the background so it can alert you even while your phone is locked. Your location is never shared or stored outside the app." = "GeoAlarm überwacht Ihre Position im Hintergrund, um Sie auch bei gesperrtem Telefon zu warnen. Ihr Standort wird nie außerhalb der App gespeichert oder geteilt.";
+"GeoAlarm monitors your position in the background so it can alert you even while your phone is locked. Your location is never shared or stored outside the app." = "NapStop überwacht Ihre Position im Hintergrund, um Sie auch bei gesperrtem Telefon zu warnen. Ihr Standort wird nie außerhalb der App gespeichert oder geteilt.";
 "Allow location access" = "Standortzugriff erlauben";
 "Not now" = "Nicht jetzt";
 "Choose Your Language" = "Sprache auswählen";
-"Select the language you'd like to use in GeoAlarm. You can change this at any time in Settings." = "Wählen Sie die gewünschte Sprache für GeoAlarm. Sie können dies jederzeit in den Einstellungen ändern.";
+"Select the language you'd like to use in GeoAlarm. You can change this at any time in Settings." = "Wählen Sie die gewünschte Sprache für NapStop. Sie können dies jederzeit in den Einstellungen ändern.";
 
 "Choose Agency" = "Verkehrsunternehmen wählen";
 "Choose Route" = "Linie wählen";
@@ -137,7 +137,7 @@
 "Airport Chime" = "Flughafen-Klang";
 
 "Help" = "Hilfe";
-"What is GeoAlarm?" = "Was ist GeoAlarm?";
+"What is GeoAlarm?" = "Was ist NapStop?";
 "Typical use cases" = "Typische Anwendungsfälle";
 "Creating an alarm" = "Alarm erstellen";
 "Transit Alarms" = "Transit-Alarme";
@@ -149,7 +149,7 @@
 "Notifications" = "Benachrichtigungen";
 
 /* HelpView body text */
-"help.body.whatIsGeoAlarm" = "GeoAlarm weckt Sie basierend auf Ihrem Standort, nicht auf der Uhrzeit. Anstatt zu raten, wie lange Ihre Reise dauert, stellen Sie einen Alarm an einem Ort ein und die App benachrichtigt Sie, wenn Sie ankommen — oder wenn Sie abreisen.\n\nSie läuft still im Hintergrund, damit Sie schlafen, lesen oder abschalten können, ohne sich Gedanken zu machen, Ihre Haltestelle zu verpassen.";
+"help.body.whatIsGeoAlarm" = "NapStop weckt Sie basierend auf Ihrem Standort, nicht auf der Uhrzeit. Anstatt zu raten, wie lange Ihre Reise dauert, stellen Sie einen Alarm an einem Ort ein und die App benachrichtigt Sie, wenn Sie ankommen — oder wenn Sie abreisen.\n\nSie läuft still im Hintergrund, damit Sie schlafen, lesen oder abschalten können, ohne sich Gedanken zu machen, Ihre Haltestelle zu verpassen.";
 "help.body.useCases" = "• Zug- oder U-Bahn-Pendler — Stellen Sie einen Alarm an Ihrem Bahnhof ein. Schlafen Sie ein und werden Sie kurz vor der Ankunft geweckt, jeden Morgen automatisch.\n\n• Busfahrgast — Stellen Sie einen Abfahrtsalarm an Ihrer Haltestelle ein. Der Alarm wird ausgelöst, wenn Sie das Gebiet verlassen.\n\n• Mitfahrer auf Autoreise — Stellen Sie einen Alarm in einer Zwischenstadt ein. Sie werden benachrichtigt, wenn das Auto sich nähert.\n\n• Reisender in einer unbekannten Stadt — Stellen Sie Alarme im Hotel, am Flughafen oder an Treffpunkten ein.";
 "help.body.creatingAlarm" = "Tippen Sie auf + in der oberen rechten Ecke. Ein Menü erscheint mit zwei Optionen:\n\n• Standortalarm — Pin auf beliebige Adresse oder Kartenstandort.\n• Transit-Alarm — Agentur, Route und Haltestelle aus Live-Fahrplänen wählen.\n\nFür einen Standortalarm:\n\n1. Geben Sie einen Namen und optional eine Notiz ein.\n2. Verwenden Sie die Suchleiste, um eine Adresse, Station oder Ort zu finden. Tippen Sie auf einen Vorschlag oder direkt auf die Karte.\n3. Wählen Sie Bei Ankunft oder Bei Abfahrt als Auslöser.\n4. Verwenden Sie den Radius-Schieberegler.\n5. Wählen Sie unter Ton / Vibration einen Klingelton.\n\nDie Schaltfläche Speichern ist deaktiviert, bis ein Name und ein Standort festgelegt sind. iOS erlaubt maximal 20 aktive Alarme gleichzeitig.";
 "help.body.radius" = "Der Radius definiert den Geofence — die kreisförmige Grenze um Ihren Pin. Wenn Sie diese Grenze überschreiten (eintreten oder verlassen), wird der Alarm ausgelöst.\n\nEin Radius von 200 m ist gut für eine einzelne Station oder ein Gebäude. Verwenden Sie 500–1000 m für größere Wahrzeichen wie ein Stadtzentrum oder Flughafenbereich.\n\nSie können in Einstellungen zwischen Metern/Kilometern und Fuß/Meilen wechseln.";
@@ -157,12 +157,12 @@
 "help.body.timeWindow" = "Ein Zeitfenster begrenzt, wann ein Alarm ausgelöst werden darf. Zum Beispiel bedeutet ein Fenster von 07:00–09:00 Uhr, dass der Alarm nur während Ihrer morgendlichen Pendelzeiten ausgelöst wird.\n\nEine Zusammenfassungsbezeichnung unter den Auswahlfeldern zeigt die genaue Dauer, z. B. „Aktiv 2 Std. · 7:00 – 9:00 Uhr\".\n\nNächtliche Fenster werden unterstützt (z. B. 22:00–06:00 Uhr). Wenn Von später als Bis ist, ist der Alarm bis Mitternacht und bis zum nächsten Morgen aktiv.";
 "help.body.transitAlarms" = "Transit-Alarme verbinden sich mit öffentlichen Fahrplänen, damit Sie einen Alarm an einer genauen Haltestelle stellen können.\n\nTippen Sie auf + → Transit-Alarm, um den Assistenten zu öffnen:\n\n1. Agentur — Wählen Sie aus der integrierten Liste (Deutsche Bahn, BVG, Amtrak und mehr) oder geben Sie eine öffentliche GTFS-URL ein.\n2. Route — Routen durchsuchen oder suchen. Jede zeigt ihren Typ.\n3. Haltestelle — Alle Haltestellen nach Entfernung sortiert aufgelistet.\n4. Bestätigen — Agentur, Route und Haltestelle überprüfen, dann Name, Radius und Auslöserrichtung festlegen.";
 "help.body.soundVibrate" = "Jeder Alarm hat seine eigene Toneinstellung unter Ton / Vibration.\n\nSystemoptionen:\n• Nur Vibration — kein Audio; ideal für ruhige Umgebungen.\n• Standard — der Standard-iOS-Benachrichtigungston.\n• Kritisch — spielt bei voller Lautstärke ab, umgeht den Stummschaltmodus.\n\nMitgelieferte Reiseklänge:\n• Schiffshorn · Straßenbahnklingel · Dampflok · Segelbootglocke · Flugzeuglandung · Flughafen-Signalton";
-"help.body.siri" = "GeoAlarm unterstützt Siri und die Kurzbefehle-App — keine Einrichtung erforderlich.\n\n• „Einen GeoAlarm erstellen\" — Siri fragt nach Name, Ort und Auslöserrichtung.\n• „Meinen GeoAlarm aktivieren\" — Siri zeigt Ihre gespeicherten Alarme.\n• „Meinen GeoAlarm deaktivieren\" — Dasselbe, aber deaktiviert den Alarm.";
+"help.body.siri" = "NapStop unterstützt Siri und die Kurzbefehle-App — keine Einrichtung erforderlich.\n\n• „Einen NapStop erstellen\" — Siri fragt nach Name, Ort und Auslöserrichtung.\n• „Meinen NapStop aktivieren\" — Siri zeigt Ihre gespeicherten Alarme.\n• „Meinen NapStop deaktivieren\" — Dasselbe, aber deaktiviert den Alarm.";
 "help.body.settings" = "Öffnen Sie Einstellungen über das Zahnradsymbol oben links.\n\n• Entfernung — zwischen metrisch (Meter/km) und imperial (Fuß/Meilen) wechseln.\n• Uhr — zwischen 12-Stunden- und 24-Stunden-Format wechseln.\n• Hilfe & Benutzerhandbuch — diese Anleitung.\n• Datenschutz & Standortfreigabe — vollständige Offenlegung zur Datenbehandlung.\n• Debug-Protokoll aktivieren — siehe „Problem melden\" unten.\n• Build — zeigt den Build-Zeitstempel.";
-"help.body.reportingProblem" = "Wenn GeoAlarm sich nicht wie erwartet verhält, können Sie die Debug-Protokollierung aktivieren.\n\nProtokollierung aktivieren:\n1. Einstellungen → Bereich Support öffnen.\n2. Debug-Protokoll aktivieren einschalten.\n3. Ein Dialog erklärt, was aufgezeichnet wird. Auf Protokollierung aktivieren tippen.\n4. Das Problem reproduzieren.\n5. Dateien-App → Auf meinem iPhone → GeoAlarm → GeoAlarmDebug.log öffnen und mit dem Support teilen.\n\nAufgezeichnet werden: Gerätemodell, iOS-Version, Standortgenehmigungsstatus, Regionereignisse, Alarmereignisse und Fehler.";
+"help.body.reportingProblem" = "Wenn NapStop sich nicht wie erwartet verhält, können Sie die Debug-Protokollierung aktivieren.\n\nProtokollierung aktivieren:\n1. Einstellungen → Bereich Support öffnen.\n2. Debug-Protokoll aktivieren einschalten.\n3. Ein Dialog erklärt, was aufgezeichnet wird. Auf Protokollierung aktivieren tippen.\n4. Das Problem reproduzieren.\n5. Dateien-App → Auf meinem iPhone → NapStop → NapStopDebug.log öffnen und mit dem Support teilen.\n\nAufgezeichnet werden: Gerätemodell, iOS-Version, Standortgenehmigungsstatus, Regionereignisse, Alarmereignisse und Fehler.";
 "help.body.managingAlarms" = "Wischen Sie rechts auf einem Alarm, um ihn schnell zu aktivieren oder zu deaktivieren.\n\nWischen Sie links, um einen Alarm zu löschen. Gelöschte Alarme werden sofort entfernt.\n\nUm einen Alarm zu bearbeiten, tippen Sie darauf und dann auf Alarm bearbeiten.\n\nUm den Alarmstandort zu teilen, öffnen Sie die Detailansicht und tippen Sie auf Standort teilen.";
-"help.body.alwaysOnLocation" = "GeoAlarm benötigt Standortzugriff Immer, um Bereiche im Hintergrund zu überwachen — auch wenn Ihr Bildschirm gesperrt oder die App geschlossen ist.\n\nWenn Sie bei der Einrichtung Nicht jetzt gewählt haben, können Sie später in iOS-Einstellungen → Datenschutz & Sicherheit → Ortungsdienste → GeoAlarm den Zugriff gewähren. Wählen Sie Immer.\n\nOhne Immer-Zugriff lösen Alarme nur aus, wenn die App geöffnet ist.";
-"help.body.notifications" = "Wenn ein Alarm ausgelöst wird, erhalten Sie eine Benachrichtigung mit dem Alarmnamen und Ihrer Notiz. Aus der Benachrichtigung können Sie:\n\n• 10 Min. wiederholen — unterdrückt den Alarm für 10 Minuten, dann reaktiviert.\n• Verwerfen — löscht die Benachrichtigung. Bei wiederholenden Alarmen wird zurückgesetzt, wenn Sie das Gebiet verlassen.\n\nStellen Sie sicher, dass Benachrichtigungen für GeoAlarm in iOS-Einstellungen → Mitteilungen → GeoAlarm aktiviert sind.";
+"help.body.alwaysOnLocation" = "NapStop benötigt Standortzugriff Immer, um Bereiche im Hintergrund zu überwachen — auch wenn Ihr Bildschirm gesperrt oder die App geschlossen ist.\n\nWenn Sie bei der Einrichtung Nicht jetzt gewählt haben, können Sie später in iOS-Einstellungen → Datenschutz & Sicherheit → Ortungsdienste → NapStop den Zugriff gewähren. Wählen Sie Immer.\n\nOhne Immer-Zugriff lösen Alarme nur aus, wenn die App geöffnet ist.";
+"help.body.notifications" = "Wenn ein Alarm ausgelöst wird, erhalten Sie eine Benachrichtigung mit dem Alarmnamen und Ihrer Notiz. Aus der Benachrichtigung können Sie:\n\n• 10 Min. wiederholen — unterdrückt den Alarm für 10 Minuten, dann reaktiviert.\n• Verwerfen — löscht die Benachrichtigung. Bei wiederholenden Alarmen wird zurückgesetzt, wenn Sie das Gebiet verlassen.\n\nStellen Sie sicher, dass Benachrichtigungen für NapStop in iOS-Einstellungen → Mitteilungen → NapStop aktiviert sind.";
 
 /* PrivacyView titles */
 "Privacy & Location" = "Datenschutz und Standort";
@@ -176,15 +176,15 @@
 "Questions" = "Fragen";
 
 /* PrivacyView body text */
-"privacy.intro" = "GeoAlarm ist nach einem einfachen Grundsatz gestaltet: Ihre Standort- und Alarmdaten gehören Ihnen. Dieses Dokument erklärt genau, welche Informationen die App verwendet, wo sie bleiben und was sie nie tut.";
-"privacy.body.locationData" = "GeoAlarm verwendet den Standort Ihres Geräts ausschließlich zur Überwachung von Geofencing-Bereichen. Standortdaten werden vollständig auf Ihrem Gerät verarbeitet — sie werden nie an einen Server übertragen, in einer Datenbank gespeichert oder mit Dritten geteilt.\n\nWenn Sie einen Alarm erstellen, werden Breiten- und Längengrad sowie Radius lokal gespeichert. Diese Daten verlassen nie Ihr Gerät, es sei denn, Sie verwenden explizit die Schaltfläche Teilen.\n\nDie App fordert den Standortzugriff „Immer\" an, damit iOS die App im Hintergrund aufwecken kann. Sie können diese Berechtigung jederzeit in Einstellungen → Datenschutz & Sicherheit → Ortungsdienste → GeoAlarm widerrufen.";
-"privacy.body.onDeviceStorage" = "Alle Alarmdaten werden lokal mit SwiftData im privaten Container der App gespeichert. Diese Daten sind in Standard-iOS-Sicherungen enthalten, wenn Sicherungen aktiviert sind.\n\nKein Konto, keine Anmeldung und keine Netzwerkverbindung sind für die Verwendung von GeoAlarm erforderlich.";
-"privacy.body.iCloudSync" = "GeoAlarm ist darauf ausgelegt, iCloud-Synchronisierung über CloudKit zu unterstützen, damit Ihre Alarme auf allen Ihren Apple-Geräten mit derselben Apple-ID erscheinen. Wenn die Synchronisierung aktiv ist, werden Datensätze in Ihrem persönlichen iCloud-Container gespeichert und unterliegen der Datenschutzrichtlinie von Apple.\n\nWenn iCloud-Synchronisierung nicht verfügbar ist, verwendet die App automatisch lokalen Speicher. Sie können die Synchronisierung in Einstellungen → [Ihr Name] → iCloud → GeoAlarm deaktivieren.";
+"privacy.intro" = "NapStop ist nach einem einfachen Grundsatz gestaltet: Ihre Standort- und Alarmdaten gehören Ihnen. Dieses Dokument erklärt genau, welche Informationen die App verwendet, wo sie bleiben und was sie nie tut.";
+"privacy.body.locationData" = "NapStop verwendet den Standort Ihres Geräts ausschließlich zur Überwachung von Geofencing-Bereichen. Standortdaten werden vollständig auf Ihrem Gerät verarbeitet — sie werden nie an einen Server übertragen, in einer Datenbank gespeichert oder mit Dritten geteilt.\n\nWenn Sie einen Alarm erstellen, werden Breiten- und Längengrad sowie Radius lokal gespeichert. Diese Daten verlassen nie Ihr Gerät, es sei denn, Sie verwenden explizit die Schaltfläche Teilen.\n\nDie App fordert den Standortzugriff „Immer\" an, damit iOS die App im Hintergrund aufwecken kann. Sie können diese Berechtigung jederzeit in Einstellungen → Datenschutz & Sicherheit → Ortungsdienste → NapStop widerrufen.";
+"privacy.body.onDeviceStorage" = "Alle Alarmdaten werden lokal mit SwiftData im privaten Container der App gespeichert. Diese Daten sind in Standard-iOS-Sicherungen enthalten, wenn Sicherungen aktiviert sind.\n\nKein Konto, keine Anmeldung und keine Netzwerkverbindung sind für die Verwendung von NapStop erforderlich.";
+"privacy.body.iCloudSync" = "NapStop ist darauf ausgelegt, iCloud-Synchronisierung über CloudKit zu unterstützen, damit Ihre Alarme auf allen Ihren Apple-Geräten mit derselben Apple-ID erscheinen. Wenn die Synchronisierung aktiv ist, werden Datensätze in Ihrem persönlichen iCloud-Container gespeichert und unterliegen der Datenschutzrichtlinie von Apple.\n\nWenn iCloud-Synchronisierung nicht verfügbar ist, verwendet die App automatisch lokalen Speicher. Sie können die Synchronisierung in Einstellungen → [Ihr Name] → iCloud → NapStop deaktivieren.";
 "privacy.body.transitFeeds" = "Die Transit-Alarm-Funktion lädt GTFS-Daten direkt von öffentlichen Transit-Agentur-Servern herunter. Diese Feeds enthalten Haltestellennamen, Koordinaten und Routeninformationen — keine persönlichen Daten.\n\nHeruntergeladene GTFS-Daten werden auf dem Gerät zwischengespeichert. Cache-Dateien können von iOS bei geringem Speicherplatz gelöscht werden.\n\nKeine benutzerdefinierte URL, die Sie eingeben, wird über die aktuelle Sitzung hinaus gespeichert.";
-"privacy.body.notifications" = "GeoAlarm liefert lokale Benachrichtigungen vollständig auf dem Gerät über UNUserNotificationCenter von iOS. Benachrichtigungen werden von der App selbst generiert — sie werden nicht über einen Push-Benachrichtigungsserver gesendet.";
-"privacy.body.analytics" = "GeoAlarm enthält keine Drittanbieter-Analyse-SDKs, Werbenetzwerke oder Absturzberichtsdienste. Die App verfolgt Ihre Nutzung nicht und sammelt keine Diagnoseinformationen über das hinaus, was iOS nativ bereitstellt.";
-"privacy.body.dataDeletion" = "Sie können einzelne Alarme löschen, indem Sie links auf eine Alarmzeile wischen, oder alle Daten löschen, indem Sie die App deinstallieren. Wenn iCloud-Synchronisierung aktiviert war, können Sie die CloudKit-Daten der App auch in Einstellungen → [Ihr Name] → iCloud → Speicher verwalten → GeoAlarm löschen.";
-"privacy.body.contact" = "Wenn Sie Fragen zum Datenschutz oder zur Datenbehandlung haben, können Sie den Entwickler über den Support-Link auf der GeoAlarm-Produktseite im App Store erreichen.";
+"privacy.body.notifications" = "NapStop liefert lokale Benachrichtigungen vollständig auf dem Gerät über UNUserNotificationCenter von iOS. Benachrichtigungen werden von der App selbst generiert — sie werden nicht über einen Push-Benachrichtigungsserver gesendet.";
+"privacy.body.analytics" = "NapStop enthält keine Drittanbieter-Analyse-SDKs, Werbenetzwerke oder Absturzberichtsdienste. Die App verfolgt Ihre Nutzung nicht und sammelt keine Diagnoseinformationen über das hinaus, was iOS nativ bereitstellt.";
+"privacy.body.dataDeletion" = "Sie können einzelne Alarme löschen, indem Sie links auf eine Alarmzeile wischen, oder alle Daten löschen, indem Sie die App deinstallieren. Wenn iCloud-Synchronisierung aktiviert war, können Sie die CloudKit-Daten der App auch in Einstellungen → [Ihr Name] → iCloud → Speicher verwalten → NapStop löschen.";
+"privacy.body.contact" = "Wenn Sie Fragen zum Datenschutz oder zur Datenbehandlung haben, können Sie den Entwickler über den Support-Link auf der NapStop-Produktseite im App Store erreichen.";
 
 // MARK: - Swipe Action Labels
 "Delete" = "Löschen";
@@ -193,9 +193,7 @@
 "Map Overview" = "Kartenübersicht";
 "No alarms to show" = "Keine Alarme vorhanden";
 "Create an alarm first and it will appear here." = "Erstelle zuerst einen Alarm und er erscheint hier.";
-"No Geo Alarms Yet" = "Noch keine Geo-Alarme";
-"Tap + to create your first alarm.
-You'll be notified when you arrive at or leave any saved location." = "Tippe auf +, um deinen ersten Alarm zu erstellen.\nDu wirst beim Erreichen oder Verlassen eines Ortes benachrichtigt.";
+"No Geo Alarms Yet" = "Noch keine NapStop-Alarme";
 "Alarm limit reached" = "Alarmlimit erreicht";
 "Approaching alarm limit" = "Alarmlimit fast erreicht";
 "iOS allows 20 active alarms. Disable one before adding another." = "iOS erlaubt 20 aktive Alarme. Deaktiviere einen, bevor du einen weiteren hinzufügst.";
@@ -216,3 +214,13 @@ You'll be notified when you arrive at or leave any saved location." = "Tippe auf
 "Share location" = "Standort teilen";
 "Alarm name" = "Alarmname";
 "Test Fire" = "Test";
+"Tap + to create your first alarm.\nYou'll be notified when you arrive at or leave any saved location." = "Tippe auf +, um deinen ersten Alarm zu erstellen.\nDu wirst beim Erreichen oder Verlassen eines Ortes benachrichtigt.";
+
+// MARK: - Day abbreviations (used in active-days row buttons)
+"day.su" = "So";
+"day.mo" = "Mo";
+"day.tu" = "Di";
+"day.we" = "Mi";
+"day.th" = "Do";
+"day.fr" = "Fr";
+"day.sa" = "Sa";

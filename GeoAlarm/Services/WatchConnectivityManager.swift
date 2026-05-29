@@ -29,7 +29,7 @@ final class WatchConnectivityManager: NSObject {
 
     /// Call whenever the alarm list changes (add / update / delete / trigger).
     /// Sends active + triggered alarms; the Watch displays the first entry.
-    func updateWatch(with alarms: [GeoAlarm]) {
+    func updateWatch(with alarms: [NapAlarm]) {
         guard WCSession.isSupported(),
               WCSession.default.activationState == .activated else { return }
 

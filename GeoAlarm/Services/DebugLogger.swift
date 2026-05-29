@@ -6,7 +6,7 @@
 //   DebugLogger.shared.log("Region entered", category: "Location")
 //
 // The log file location (visible in Files app):
-//   On My iPhone → GeoAlarm → GeoAlarmDebug.log
+//   On My iPhone → NapAlarm → NapAlarmDebug.log
 //
 // Logging is opt-in and controlled via the "Enable Debug Log" toggle in
 // Settings.  When disabled, log() is a no-op.
@@ -40,13 +40,13 @@ final class DebugLogger {
 
     // MARK: - File path
 
-    /// The URL of the log file — `Documents/GeoAlarmDebug.log`.
+    /// The URL of the log file — `Documents/NapAlarmDebug.log`.
     /// This path is shown to users in the confirmation dialog and is accessible
-    /// via the Files app: On My iPhone → GeoAlarm → GeoAlarmDebug.log
+    /// via the Files app: On My iPhone → NapAlarm → NapAlarmDebug.log
     var logFileURL: URL {
         FileManager.default
             .urls(for: .documentDirectory, in: .userDomainMask)[0]
-            .appendingPathComponent("GeoAlarmDebug.log")
+            .appendingPathComponent("NapAlarmDebug.log")
     }
 
     // MARK: - Private
@@ -118,7 +118,7 @@ final class DebugLogger {
         let bundle   = Bundle.main
         let appName  = bundle.infoDictionary?["CFBundleDisplayName"] as? String
                        ?? bundle.infoDictionary?["CFBundleName"] as? String
-                       ?? "GeoAlarm"
+                       ?? "NapAlarm"
         let version  = bundle.infoDictionary?["CFBundleShortVersionString"] as? String ?? "?"
         let build    = bundle.infoDictionary?["CFBundleVersion"] as? String ?? "?"
         let buildTS  = bundle.infoDictionary?["BuildTimestamp"] as? String ?? "?"
@@ -131,7 +131,7 @@ final class DebugLogger {
         let separator = String(repeating: "─", count: 60)
         let header = """
         \(separator)
-        GeoAlarm Debug Log — Session started \(iso.string(from: Date()))
+        NapAlarm Debug Log — Session started \(iso.string(from: Date()))
         \(separator)
         App:      \(appName) \(version) (build \(build))
         BuildTS:  \(buildTS)

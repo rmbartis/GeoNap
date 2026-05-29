@@ -62,7 +62,7 @@ final class AlarmViewModel: ObservableObject {
 
     // MARK: - Edit mode
 
-    func load(alarm: GeoAlarm) {
+    func load(alarm: NapAlarm) {
         editingID     = alarm.id
         name          = alarm.name
         note          = alarm.note
@@ -83,7 +83,7 @@ final class AlarmViewModel: ObservableObject {
 
     // MARK: - Build model
 
-    func buildAlarm() -> GeoAlarm? {
+    func buildAlarm() -> NapAlarm? {
         validationError = nil
         let trimmedName = name.trimmingCharacters(in: .whitespaces)
         guard !trimmedName.isEmpty else {
@@ -109,7 +109,7 @@ final class AlarmViewModel: ObservableObject {
             }
         }
 
-        return GeoAlarm(
+        return NapAlarm(
             id: editingID ?? UUID(),
             name: trimmedName,
             latitude: latitude,

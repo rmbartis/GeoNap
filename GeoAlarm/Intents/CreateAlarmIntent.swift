@@ -1,5 +1,5 @@
 // CreateAlarmIntent.swift
-// "Hey Siri, create a GeoAlarm" — geocodes an address and saves a new alarm.
+// "Hey Siri, create a NapAlarm" — geocodes an address and saves a new alarm.
 
 import AppIntents
 import CoreLocation
@@ -7,7 +7,7 @@ import SwiftData
 
 struct CreateAlarmIntent: AppIntent {
 
-    static var title: LocalizedStringResource = "Create GeoAlarm"
+    static var title: LocalizedStringResource = "Create NapAlarm"
     static var description = IntentDescription(
         "Creates a new location alarm that fires when you arrive at or leave a place.",
         categoryName: "Create"
@@ -55,7 +55,7 @@ struct CreateAlarmIntent: AppIntent {
         let container = try await MainActor.run { try IntentModelContainer.make() }
         let context   = ModelContext(container)
 
-        let alarm = GeoAlarm(
+        let alarm = NapAlarm(
             name: name,
             latitude:  location.coordinate.latitude,
             longitude: location.coordinate.longitude,

@@ -5,15 +5,15 @@
 // so the suite should complete in roughly 30–60 seconds.
 //
 // Run from the command line:
-//   xcodebuild test -project GeoAlarm.xcodeproj \
-//     -scheme GeoAlarm -destination 'platform=iOS Simulator,name=iPhone 16' \
-//     -only-testing:GeoAlarmTests/GTFSFeedURLTests
+//   xcodebuild test -project NapAlarm.xcodeproj \
+//     -scheme NapAlarm -destination 'platform=iOS Simulator,name=iPhone 16' \
+//     -only-testing:NapStopTests/GTFSFeedURLTests
 //
 // These tests require network access.  They are skipped automatically when the
 // CI environment variable SKIP_NETWORK_TESTS is set to "1".
 
 import XCTest
-@testable import GeoAlarm
+@testable import NapAlarm
 
 final class GTFSFeedURLTests: XCTestCase {
 

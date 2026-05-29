@@ -1,5 +1,5 @@
 // ToggleAlarmIntent.swift
-// "Hey Siri, enable/disable my Penn Station GeoAlarm"
+// "Hey Siri, enable/disable my Penn Station NapAlarm"
 
 import AppIntents
 import SwiftData
@@ -8,15 +8,15 @@ import SwiftData
 
 struct EnableAlarmIntent: AppIntent {
 
-    static var title: LocalizedStringResource = "Enable GeoAlarm"
+    static var title: LocalizedStringResource = "Enable NapAlarm"
     static var description = IntentDescription(
-        "Enables a GeoAlarm so it starts monitoring your location.",
+        "Enables a NapAlarm so it starts monitoring your location.",
         categoryName: "Edit"
     )
     static var openAppWhenRun: Bool = false
 
     @Parameter(title: "Alarm")
-    var alarm: GeoAlarmEntity
+    var alarm: NapAlarmEntity
 
     func perform() async throws -> some IntentResult & ProvidesDialog {
         try await setAlarmState(id: alarm.id, active: true)
@@ -28,15 +28,15 @@ struct EnableAlarmIntent: AppIntent {
 
 struct DisableAlarmIntent: AppIntent {
 
-    static var title: LocalizedStringResource = "Disable GeoAlarm"
+    static var title: LocalizedStringResource = "Disable NapAlarm"
     static var description = IntentDescription(
-        "Disables a GeoAlarm so it stops monitoring your location.",
+        "Disables a NapAlarm so it stops monitoring your location.",
         categoryName: "Edit"
     )
     static var openAppWhenRun: Bool = false
 
     @Parameter(title: "Alarm")
-    var alarm: GeoAlarmEntity
+    var alarm: NapAlarmEntity
 
     func perform() async throws -> some IntentResult & ProvidesDialog {
         try await setAlarmState(id: alarm.id, active: false)
@@ -49,7 +49,7 @@ struct DisableAlarmIntent: AppIntent {
 private func setAlarmState(id: UUID, active: Bool) async throws {
     let container = try await MainActor.run { try IntentModelContainer.make() }
     let context   = ModelContext(container)
-    let alarms    = try context.fetch(FetchDescriptor<GeoAlarm>())
+    let alarms    = try context.fetch(FetchDescriptor<NapAlarm>())
 
     guard let match = alarms.first(where: { $0.id == id }) else { return }
     match.state = active ? .active : .inactive

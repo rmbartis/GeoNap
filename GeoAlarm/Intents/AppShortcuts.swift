@@ -7,7 +7,7 @@
 
 import AppIntents
 
-struct GeoAlarmShortcuts: AppShortcutsProvider {
+struct NapAlarmShortcuts: AppShortcutsProvider {
 
     static var appShortcuts: [AppShortcut] {
 
@@ -19,7 +19,7 @@ struct GeoAlarmShortcuts: AppShortcutsProvider {
                 "New \(.applicationName)",
                 "Set a \(.applicationName)"
             ],
-            shortTitle: "Create GeoAlarm",
+            shortTitle: "Create NapAlarm",
             systemImageName: "location.fill"
         )
 
@@ -31,7 +31,7 @@ struct GeoAlarmShortcuts: AppShortcutsProvider {
                 "Turn on \(.applicationName)",
                 "Activate \(.applicationName)"
             ],
-            shortTitle: "Enable GeoAlarm",
+            shortTitle: "Enable NapAlarm",
             systemImageName: "play.circle.fill"
         )
 
@@ -43,7 +43,7 @@ struct GeoAlarmShortcuts: AppShortcutsProvider {
                 "Turn off \(.applicationName)",
                 "Deactivate \(.applicationName)"
             ],
-            shortTitle: "Disable GeoAlarm",
+            shortTitle: "Disable NapAlarm",
             systemImageName: "pause.circle.fill"
         )
     }

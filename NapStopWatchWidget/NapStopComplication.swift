@@ -1,5 +1,5 @@
-// GeoAlarmComplication.swift
-// WidgetKit complication for watchOS — shows the nearest active GeoAlarm.
+// NapStopComplication.swift
+// WidgetKit complication for watchOS — shows the nearest active NapAlarm.
 // Supports four complication families:
 //   • accessoryCircular    — small circle: icon + count
 //   • accessoryRectangular — wide band: name + trigger type + overflow count
@@ -11,7 +11,7 @@ import SwiftUI
 
 // MARK: - Shared storage key (must match WatchAlarmStore)
 
-private let suiteName  = "group.com.rmbartis.GeoAlarm"
+private let suiteName  = "group.com.rmbartis.NapAlarm"
 private let storageKey = "watchAlarms"      // WatchConnectivityManager.alarmsKey
 
 // MARK: - Timeline Entry
@@ -114,7 +114,7 @@ struct AlarmComplicationView: View {
                 Image(systemName: entry.isTriggered ? "bell.badge.fill" : "location.fill")
                     .font(.caption2.bold())
                     .foregroundStyle(entry.isTriggered ? .red : .green)
-                Text(entry.isTriggered ? "Alarm fired!" : "GeoAlarm")
+                Text(entry.isTriggered ? "Alarm fired!" : "NapAlarm")
                     .font(.caption2)
                     .foregroundStyle(.secondary)
             }
@@ -155,22 +155,22 @@ struct AlarmComplicationView: View {
     private var cornerView: some View {
         Image(systemName: entry.isTriggered ? "bell.badge.fill" : "location.fill")
             .foregroundStyle(entry.isTriggered ? .red : .green)
-            .widgetLabel(entry.featuredName ?? "GeoAlarm")
+            .widgetLabel(entry.featuredName ?? "NapAlarm")
     }
 }
 
 // MARK: - Widget Definition
 
 @main
-struct GeoAlarmComplication: Widget {
-    let kind = "GeoAlarmComplication"
+struct NapStopComplication: Widget {
+    let kind = "NapStopComplication"
 
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: kind, provider: AlarmProvider()) { entry in
             AlarmComplicationView(entry: entry)
                 .containerBackground(.background, for: .widget)
         }
-        .configurationDisplayName("GeoAlarm")
+        .configurationDisplayName("NapAlarm")
         .description("Shows your nearest active alarm.")
         .supportedFamilies([
             .accessoryCircular,
@@ -184,7 +184,7 @@ struct GeoAlarmComplication: Widget {
 // MARK: - Preview
 
 #Preview(as: .accessoryRectangular) {
-    GeoAlarmComplication()
+    NapStopComplication()
 } timeline: {
     AlarmEntry(date: .now, featuredName: "Penn Station", activeCount: 2, isTriggered: false)
     AlarmEntry(date: .now, featuredName: "Penn Station", activeCount: 1, isTriggered: true)

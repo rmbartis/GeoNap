@@ -7,16 +7,16 @@
 // from the default "Test" action by default.
 //
 // How to run selectively:
-//   xcodebuild test -project GeoAlarm.xcodeproj \
-//     -scheme GeoAlarm -destination 'platform=iOS Simulator,name=iPhone 16' \
-//     -only-testing:GeoAlarmTests/GTFSParserTests
+//   xcodebuild test -project NapAlarm.xcodeproj \
+//     -scheme NapAlarm -destination 'platform=iOS Simulator,name=iPhone 16' \
+//     -only-testing:NapStopTests/GTFSParserTests
 //
 // Skip condition:
 //   Set the environment variable SKIP_PARSER_TESTS=1 to skip in CI environments
 //   that want URL checks only (saves bandwidth / build time).
 
 import XCTest
-@testable import GeoAlarm
+@testable import NapAlarm
 
 // GTFSService is @MainActor so the test class must be too.
 @MainActor

@@ -11,7 +11,7 @@ struct HelpView: View {
             VStack(alignment: .leading, spacing: 28) {
 
                 helpSection(symbol: "lightbulb",   color: .yellow,
-                            titleKey: "What is GeoAlarm?",    bodyKey: "help.body.whatIsGeoAlarm")
+                            titleKey: "What is NapStop?",    bodyKey: "help.body.whatIsNapAlarm")
                 helpSection(symbol: "tram",         color: .blue,
                             titleKey: "Typical use cases",    bodyKey: "help.body.useCases")
                 helpSection(symbol: "plus.circle",  color: .green,

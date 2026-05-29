@@ -20,7 +20,7 @@ struct ContentView: View {
     var body: some View {
         NavigationStack {
             AlarmListView()
-                .navigationTitle(Text("Geo Alarms", bundle: bundle))
+                .navigationTitle(Text("NapStop", bundle: bundle))
                 .sheet(isPresented: $showSettings) {
                     SettingsView()
                 }

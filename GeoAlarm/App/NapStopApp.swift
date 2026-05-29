@@ -1,4 +1,4 @@
-// GeoAlarmApp.swift
+// NapStopApp.swift
 // Entry point. Wires SwiftData ModelContainer, LocationManager, and AlarmManager.
 
 import SwiftUI
@@ -6,7 +6,7 @@ import SwiftData
 import FirebaseCore
 
 @main
-struct GeoAlarmApp: App {
+struct NapStopApp: App {
     @StateObject private var locationManager = LocationManager()
     @StateObject private var alarmManager = AlarmManager()
     @StateObject private var languageManager = LanguageManager.shared
@@ -15,7 +15,7 @@ struct GeoAlarmApp: App {
     /// Falls back silently if the user is not signed into iCloud or if the
     /// CloudKit entitlement is missing (e.g. simulator without a paid account).
     private let container: ModelContainer = {
-        let schema = Schema([GeoAlarm.self, GTFSFeedModel.self])
+        let schema = Schema([NapAlarm.self, GTFSFeedModel.self])
         let cloudConfig = ModelConfiguration(
             schema: schema,
             isStoredInMemoryOnly: false,
