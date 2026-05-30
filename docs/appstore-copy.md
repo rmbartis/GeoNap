@@ -72,7 +72,7 @@ NapStop is a location-based alarm app. Core function: user sets a geographic ala
 1. Launch the app and tap + to create a new alarm
 2. Drop a pin on the map or enter coordinates manually
 3. Set a radius and save
-4. Lock the phone and travel toward the location — a notification fires on arrival
+4. Adjust all options associated with alarm creation and alarms using a variety of settings.
 
 **Permissions required:**
 - Location (Always) — needed for background region monitoring
