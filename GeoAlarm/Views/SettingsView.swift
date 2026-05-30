@@ -2,6 +2,7 @@
 // User-facing preferences sheet.
 
 import SwiftUI
+import ContactsUI
 
 struct SettingsView: View {
 
@@ -29,6 +30,11 @@ struct SettingsView: View {
     @State private var infoClock       = false
     @State private var infoLanguage    = false
     @State private var infoDebugLog    = false
+
+    // Auto-Notify Defaults state
+    @State private var defaultContacts: [NotifyContact]  = []
+    @State private var showContactPicker  = false
+    @State private var showManualEntry    = false
 
     private var distanceUnit: DistanceUnit {
         DistanceUnit(rawValue: distanceUnitRaw) ?? .imperial
@@ -95,7 +101,7 @@ struct SettingsView: View {
                             title: "Clock",
                             isPresented: $infoClock,
                             helpTitle: "Clock Format",
-                            helpBody: "Controls how times are shown in alarm time windows.\n\n• 12-hour — uses AM/PM notation (e.g. 7:30 AM, 11:45 PM)\n• 24-hour — uses military time notation (e.g. 07:30, 23:45)\n\nThis setting does not affect your iPhone's system clock — it only changes how times appear inside NapStop."
+                            helpBody: "Controls how times are shown in alarm time windows.\n\n• 12-hour — uses AM/PM notation (e.g. 7:30 AM, 11:45 PM)\n• 24-hour — uses military time notation (e.g. 07:30, 23:45)\n\nThis setting does not affect your iPhone's system clock — it only changes how times appear inside GeoNap."
                         )
                     }
                 } header: {
@@ -126,10 +132,39 @@ struct SettingsView: View {
                                 title: "Language",
                                 isPresented: $infoLanguage,
                                 helpTitle: "In-App Language",
-                                helpBody: "Changes the display language used throughout NapStop — independently of your iPhone's system language.\n\nAffects all text including menus, alarm creation, help articles, and notification messages.\n\nCurrently supported: English, Spanish, French, German, Italian, Portuguese, Arabic, Hindi, Japanese, Simplified Chinese, Russian, Thai, and Vietnamese."
+                                helpBody: "Changes the display language used throughout GeoNap — independently of your iPhone's system language.\n\nAffects all text including menus, alarm creation, help articles, and notification messages.\n\nCurrently supported: English, Spanish, French, German, Italian, Portuguese, Arabic, Hindi, Japanese, Simplified Chinese, Russian, Thai, and Vietnamese."
                             )
                         }
                     }
+                }
+
+                // MARK: Auto-Notify Defaults
+                Section {
+                    ForEach(defaultContacts) { contact in
+                        defaultContactRow(contact)
+                    }
+                    .onDelete { offsets in
+                        defaultContacts.remove(atOffsets: offsets)
+                        defaultContacts.saveAsGlobalDefaults()
+                    }
+
+                    Button {
+                        showContactPicker = true
+                    } label: {
+                        Label("Add from Contacts",
+                              systemImage: "person.crop.circle.badge.plus")
+                    }
+
+                    Button {
+                        showManualEntry = true
+                    } label: {
+                        Label("Add Manually", systemImage: "plus.circle")
+                    }
+                } header: {
+                    Text("Auto-Notify Defaults", bundle: bundle)
+                } footer: {
+                    Text("Contacts listed here are pre-filled when you enable Auto-Notify on a new alarm. When an alarm fires, all listed contacts are messaged automatically. You can adjust the list per-alarm.",
+                         bundle: bundle)
                 }
 
                 // MARK: Help & Legal
@@ -197,6 +232,19 @@ struct SettingsView: View {
             }
             .navigationTitle(Text("Settings", bundle: bundle))
             .navigationBarTitleDisplayMode(.inline)
+            .onAppear {
+                defaultContacts = [NotifyContact].loadGlobalDefaults()
+            }
+            .background(
+                ContactPickerView(isPresented: $showContactPicker) { contact in
+                    addDefaultContact(contact)
+                }
+            )
+            .sheet(isPresented: $showManualEntry) {
+                AddContactManuallySheet { contact in
+                    addDefaultContact(contact)
+                }
+            }
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     Button {
@@ -222,11 +270,11 @@ struct SettingsView: View {
                 }
             } message: {
                 Text("""
-                    NapStop will record detailed activity — location events, alarm triggers, \
+                    GeoNap will record detailed activity — location events, alarm triggers, \
                     transit feed downloads, and errors — to a log file on your device.
 
                     The file is stored at:
-                    Files → On My iPhone → NapStop → NapStopDebug.log
+                    Files → On My iPhone → GeoNap → GeoNapDebug.log
 
                     This information is not sent anywhere automatically. \
                     If support requests it, you can find and share the file using the iOS Files app.
@@ -237,6 +285,30 @@ struct SettingsView: View {
                 ShareSheet(items: shareItems)
             }
         }
+    }
+
+    // MARK: - Auto-Notify helpers
+
+    @ViewBuilder
+    private func defaultContactRow(_ contact: NotifyContact) -> some View {
+        HStack(spacing: 12) {
+            Image(systemName: contact.systemImage)
+                .foregroundStyle(.blue)
+                .frame(width: 20)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(contact.name)
+                    .font(.body)
+                Text(contact.value)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+        }
+    }
+
+    private func addDefaultContact(_ contact: NotifyContact) {
+        guard !defaultContacts.contains(where: { $0.value == contact.value }) else { return }
+        defaultContacts.append(contact)
+        defaultContacts.saveAsGlobalDefaults()
     }
 
     // MARK: - Debug section
@@ -304,7 +376,7 @@ struct SettingsView: View {
             Text("Support", bundle: bundle)
         } footer: {
             if debugLoggingEnabled {
-                Text("Logging is ON. Detailed activity is being recorded to NapStopDebug.log in the NapStop folder in the Files app. Disable when no longer needed.", bundle: bundle)
+                Text("Logging is ON. Detailed activity is being recorded to GeoNapDebug.log in the GeoNap folder in the Files app. Disable when no longer needed.", bundle: bundle)
                     .foregroundStyle(.orange)
             } else {
                 Text("Enable to capture detailed diagnostic information when troubleshooting an issue. Logging is off by default and does not run in the background.", bundle: bundle)

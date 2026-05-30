@@ -11,7 +11,7 @@
 "Skip" = "Skip";
 
 /* ContentView */
-"Geo Alarms" = "NapStop";
+"Geo Alarms" = "GeoNap";
 "Location Alarm" = "Location Alarm";
 "Transit Alarm" = "Transit Alarm";
 "Location access required. Enable in Settings." = "Location access required. Enable in Settings.";
@@ -89,22 +89,22 @@
 "Preview" = "Preview";
 "Sample radius" = "Sample radius";
 "Sample time" = "Sample time";
-"Logging is ON. Detailed activity is being recorded to GeoAlarmDebug.log in the GeoAlarm folder in the Files app. Disable when no longer needed." = "Logging is ON. Detailed activity is being recorded to NapStopDebug.log in the NapStop folder in the Files app. Disable when no longer needed.";
+"Logging is ON. Detailed activity is being recorded to GeoAlarmDebug.log in the GeoAlarm folder in the Files app. Disable when no longer needed." = "Logging is ON. Detailed activity is being recorded to GeoNapDebug.log in the GeoNap folder in the Files app. Disable when no longer needed.";
 "Enable to capture detailed diagnostic information when troubleshooting an issue. Logging is off by default and does not run in the background." = "Enable to capture detailed diagnostic information when troubleshooting an issue. Logging is off by default and does not run in the background.";
 
 /* OnboardingView */
 "Sleep through your commute" = "Sleep through your commute";
-"GeoAlarm wakes you up when your device enters or leaves a location — not at a set time. Perfect for trains, buses, and long rides." = "NapStop wakes you up when your device enters or leaves a location — not at a set time. Perfect for trains, buses, and long rides.";
+"GeoAlarm wakes you up when your device enters or leaves a location — not at a set time. Perfect for trains, buses, and long rides." = "GeoNap wakes you up when your device enters or leaves a location — not at a set time. Perfect for trains, buses, and long rides.";
 "Set an alarm anywhere" = "Set an alarm anywhere";
 "Drop a pin on any stop, station, or landmark. Choose how close you need to be before the alarm fires, and whether it should repeat every trip." = "Drop a pin on any stop, station, or landmark. Choose how close you need to be before the alarm fires, and whether it should repeat every trip.";
 "Active time windows" = "Active time windows";
-"Only want the alarm to fire during your morning commute? Set a time window and GeoAlarm will ignore the location outside those hours." = "Only want the alarm to fire during your morning commute? Set a time window and NapStop will ignore the location outside those hours.";
+"Only want the alarm to fire during your morning commute? Set a time window and GeoAlarm will ignore the location outside those hours." = "Only want the alarm to fire during your morning commute? Set a time window and GeoNap will ignore the location outside those hours.";
 "Always On location needed" = "Always On location needed";
-"GeoAlarm monitors your position in the background so it can alert you even while your phone is locked. Your location is never shared or stored outside the app." = "NapStop monitors your position in the background so it can alert you even while your phone is locked. Your location is never shared or stored outside the app.";
+"GeoAlarm monitors your position in the background so it can alert you even while your phone is locked. Your location is never shared or stored outside the app." = "GeoNap monitors your position in the background so it can alert you even while your phone is locked. Your location is never shared or stored outside the app.";
 "Allow location access" = "Allow location access";
 "Not now" = "Not now";
 "Choose Your Language" = "Choose Your Language";
-"Select the language you'd like to use in GeoAlarm. You can change this at any time in Settings." = "Select the language you'd like to use in NapStop. You can change this at any time in Settings.";
+"Select the language you'd like to use in GeoAlarm. You can change this at any time in Settings." = "Select the language you'd like to use in GeoNap. You can change this at any time in Settings.";
 
 /* TransitAlarmView */
 "Choose Agency" = "Choose Agency";
@@ -144,12 +144,25 @@
 "Airplane Landing" = "Airplane Landing";
 "Airport Chime" = "Airport Chime";
 
+/* Notify a Contact — Auto-Notify UI */
+"Feature Summary" = "Feature Summary";
+"Alarm list icons" = "Alarm list icons";
+"Auto-Notify" = "Auto-Notify";
+"Auto-Notify Defaults" = "Auto-Notify Defaults";
+"Add from Contacts" = "Add from Contacts";
+"Add Manually" = "Add Manually";
+"When this alarm fires, a message with your location will be sent to all listed contacts automatically." = "When this alarm fires, a message with your location will be sent to all listed contacts automatically.";
+"Contacts listed here are pre-filled when you enable Auto-Notify on a new alarm. When an alarm fires, all listed contacts are messaged automatically. You can adjust the list per-alarm." = "Contacts listed here are pre-filled when you enable Auto-Notify on a new alarm. When an alarm fires, all listed contacts are messaged automatically. You can adjust the list per-alarm.";
+
 /* HelpView section titles */
 "Help" = "Help";
-"What is NapStop?" = "What is NapStop?";
+"What is GeoNap?" = "What is GeoNap?";
 "Typical use cases" = "Typical use cases";
 "Creating an alarm" = "Creating an alarm";
 "Transit Alarms" = "Transit Alarms";
+"Feature Summary" = "Feature Summary";
+"Alarm list icons" = "Alarm list icons";
+"Auto-Notify" = "Auto-Notify";
 "Alarm sound / vibrate" = "Alarm sound / vibrate";
 "Siri & Shortcuts" = "Siri & Shortcuts";
 "Reporting a problem" = "Reporting a problem";
@@ -158,8 +171,9 @@
 "Notifications" = "Notifications";
 
 /* HelpView body text */
-"help.body.whatIsNapAlarm" = "NapStop wakes you up based on where you are, not what time it is. Instead of guessing how long your journey will take, you set an alarm at a location and let the app notify you when you arrive — or when you leave.\n\nIt runs silently in the background so you can nap, read, or zone out without worrying about missing your stop.";
-"help.body.useCases" = "• Train or subway commuter — Set an alarm at your station. Doze off and get woken up just before you arrive, every morning, automatically.\n\n• Bus rider — Set a departure alarm at your home stop. The alarm fires when you leave the area, reminding you to head out.\n\n• Road trip passenger — Set an alarm at a waypoint city. You'll be notified when the car gets close, without watching the map the whole trip.\n\n• Traveller in an unfamiliar city — Set alarms at hotel, airport, or meeting locations so you always know when you're getting close.";
+"help.body.whatIsNapAlarm" = "GeoNap wakes you up based on where you are, not what time it is. Set an alarm at any location and the app notifies you the moment you arrive — or leave — so you can relax on any journey.\n\n• Nap without worry — sleep soundly knowing GeoNap will wake you at your stop, every time.\n• Never miss your stop — no more relying on announcements in an unfamiliar language or through broken speakers.\n• Automatically notify others — let friends, family, or colleagues know the moment you arrive or depart.\n• Customizable Siri support — create alarms hands-free with your voice using Siri Shortcuts.\n• At-a-glance summaries — each alarm shows its key settings directly on the home screen.";
+"help.body.featureSummary" = "App\n\n• Map overview — see all your saved alarms plotted on a single map.\n• Alarm list — full listing of every alarm with status, badges, and trigger details at a glance.\n• Create by location or transit — pin any address on the map, or browse live transit schedules to pick an exact stop.\n• Custom transit feeds — manually enter a public GTFS feed URL to load schedules from any agency worldwide.\n• Built-in logging — enable the debug log in Settings to capture detailed activity for support reports.\n\nIndividual Alarms\n\n• Name and notes — give each alarm a name and an optional note that appears in the notification.\n• Flexible location entry — place a pin by tapping the map, searching an address, or typing coordinates (DD, DMS, or DDM).\n• Arrival or departure trigger — choose whether the alarm fires when you enter or leave the region.\n• Adjustable radius — set the geofence size with a slider; the boundary is shown live on the map.\n• Custom sounds — choose from bundled travel sounds, the system default, a critical alert, or vibrate only.\n• Scheduling — restrict an alarm to specific days of the week and a time window, with optional repeat after each trip.\n• Auto-Notify — automatically send a message to saved contacts when the alarm fires.\n\nPersonalization\n\n• Distance and time units — switch between metric and imperial, and choose 12- or 24-hour clock.\n• Coordinate format — enter and view GPS coordinates as DD, DMS, or DDM.\n• Thirteen languages — GeoNap is fully localized in English, Spanish, French, German, Italian, Portuguese, Arabic, Hindi, Japanese, Simplified Chinese, Russian, Thai, and Vietnamese.\n• Auto-Notify defaults — maintain a global contact list that pre-fills on every new alarm where Auto-Notify is enabled.";
+"help.body.useCases" = "• Train or subway commuter — Set an alarm at your station. Doze off and get woken up just before you arrive, every morning, automatically.\n\n• Bus rider — Set a departure alarm at your home stop. The alarm fires when you leave the area, reminding you to head out.\n\n• Road trip passenger — Set an alarm at a waypoint city. You'll be notified when the car gets close, without watching the map the whole trip.\n\n• Traveler in an unfamiliar city — Set alarms at hotel, airport, or meeting locations so you always know when you're getting close.";
 "help.body.creatingAlarm" = "Tap + in the top-right corner. A menu appears with two options:
 
 • Location Alarm — pin any address or map location.
@@ -173,28 +187,32 @@ For a Location Alarm:
 4. Choose On Arrival or On Departure as the trigger.
 5. Use the Radius slider to set how close you need to be before the alarm fires.
 6. In Sound / Vibrate, pick a tone or choose Vibrate only.
+7. Optionally enable Auto-Notify to automatically message saved contacts when the alarm fires.
 
 The Save button is disabled until a name has been entered and a location has been pinned. iOS allows a maximum of 20 active alarms at once.";
-"help.body.radius" = "The radius defines the geofence — the circular boundary around your pin. When you cross that boundary (entering or leaving), the alarm fires.\n\nA 200 m radius is good for a single station or building. Use 500–1000 m for broader landmarks like a town centre or airport area, giving yourself more time to prepare before arrival.\n\nYou can switch between metres/kilometres and feet/miles in Settings.";
+"help.body.radius" = "The radius defines the geofence — the circular boundary around your pin. When you cross that boundary (entering or leaving), the alarm fires.\n\nA 200 m radius is good for a single station or building. Use 500–1000 m for broader landmarks like a town center or airport area, giving yourself more time to prepare before arrival.\n\nYou can switch between meters/kilometers and feet/miles in Settings.";
 "help.body.repeat" = "One-shot alarms fire once and stay triggered until you manually re-enable them. This is useful for a single trip or a one-off reminder.\n\nRepeating alarms automatically reset after you leave the region, so they fire again on your next trip through the same location. Perfect for daily commuters.";
 "help.body.timeWindow" = "A time window limits when an alarm is allowed to fire. For example, a window of 07:00–09:00 means the alarm only triggers during your morning commute hours.\n\nA summary label below the pickers shows exactly how long the window is, e.g. \"Active 2 hrs · 7:00 AM – 9:00 AM\".\n\nOvernight windows are supported (e.g. 22:00–06:00). When From is later than Until, the alarm is active through midnight into the next morning. The summary turns orange and shows \"next day\" as a reminder.";
 "help.body.transitAlarms" = "Transit Alarms connect to public transit schedules so you can set an alarm at an exact station stop without typing GPS coordinates.\n\nTap + → Transit Alarm to open the wizard:\n\n1. Agency — Choose from the built-in list worldwide (Amtrak, BART, MBTA, CTA, GO Transit, and more), or enter any public GTFS feed URL.\n2. Route — Browse or search routes. Each shows its type (Rail, Subway, Bus, Ferry, etc.).\n3. Stop — All stops are listed sorted by distance from your current location.\n4. Confirm — Review agency, route, and stop, then set name, radius, trigger direction, and sound.\n\nThe app downloads the GTFS feed on first use and caches it locally.";
+"help.body.autoNotify" = "Auto-Notify automatically sends a text message to your saved contacts when an alarm fires — no tapping required.\n\nTo enable:\n1. When creating or editing an alarm, turn on the Auto-Notify toggle.\n2. Tap Add from Contacts to pick someone from your address book, or tap Add Manually to enter a phone number or email address.\n3. Tap Save Alarm. When the alarm fires, the Messages app opens automatically the next time you bring GeoNap to the foreground, pre-addressed and pre-filled with your arrival or departure details.\n\nGlobal defaults: In Settings → Auto-Notify Defaults, add contacts that are pre-filled on every new alarm where you enable Auto-Notify — saving you from re-entering them each time.\n\nNote: Messages are sent via the iOS Messages app. Your device must be able to send SMS or iMessage to the listed contacts.";
 "help.body.soundVibrate" = "Each alarm has its own sound setting chosen in Sound / Vibrate when creating or editing.\n\nSystem options:\n• Vibrate only — no audio; ideal for quiet environments.\n• Default — the standard iOS notification sound.\n• Critical — plays at full volume, bypassing silent mode and Do Not Disturb.\n\nBundled travel sounds:\n• Boat horn · Cable car bell · Steam train · Sailboat bell · Airplane landing · Airport chime\n\nEach setting is stored with its alarm and plays every time it fires.";
-"help.body.siri" = "NapStop supports Siri and the Shortcuts app — no setup required.\n\n• \"Create a NapStop\" — Siri asks for a name, location, and trigger direction, then saves the alarm.\n• \"Enable my NapStop\" — Siri shows your saved alarms; pick one to re-enable it.\n• \"Disable my NapStop\" — Same as above, but deactivates the alarm.\n\nYou can also find and customise these in the iOS Shortcuts app under the NapStop section.";
+"help.body.siri" = "GeoNap supports Siri and the Shortcuts app — no setup required.\n\n• \"Create a GeoNap\" — Siri asks for a name, location, and trigger direction, then saves the alarm.\n• \"Enable my GeoNap\" — Siri shows your saved alarms; pick one to re-enable it.\n• \"Disable my GeoNap\" — Same as above, but deactivates the alarm.\n\nYou can also find and customize these in the iOS Shortcuts app under the GeoNap section.";
 "help.body.settings" = "Open Settings from the gear icon in the top-left corner of the alarm list. Tap ⓘ next to any setting for a detailed explanation.
 
-• Distance — switch between metric (metres / kilometres) and imperial (feet / miles).
+• Distance — switch between metric (meters / kilometers) and imperial (feet / miles).
 • Coordinates — choose the GPS coordinate format: DD (Decimal Degrees), DMS (Degrees Minutes Seconds), or DDM (Degrees Decimal Minutes).
 • Clock — switch between 12-hour and 24-hour time.
 • Language — change the display language independently of your iPhone's system language.
+• Auto-Notify Defaults — add phone or email contacts here. Changes to this list are reflected in all existing alarms that have Auto-Notify enabled, keeping your contact list in sync automatically. You can still adjust contacts on a per-alarm basis.
 • Help & User Guide — this guide.
 • Privacy & Location Sharing — full disclosure of how location data is handled.
 • Enable Debug Log — see \"Reporting a problem\" below.
 • Build — shows the current version in the format MajorVersion.GitBuildNumber-Date (e.g. 1.247-20260529). Include this when reporting a bug.";
-"help.body.reportingProblem" = "If NapStop is not behaving as expected, you can enable debug logging to capture a detailed record.\n\nTo enable logging:\n1. Open Settings → Support section.\n2. Toggle Enable Debug Log ON.\n3. A dialog explains what is recorded. Tap Enable Logging to proceed.\n4. Reproduce the issue.\n5. Open Files app → On My iPhone → NapStop → NapStopDebug.log, then share it with support.\n\nWhat is recorded: device model, iOS version, location permission status, region events, alarm events, transit feed downloads, and errors. Nothing is sent automatically.";
+"help.body.reportingProblem" = "If GeoNap is not behaving as expected, you can enable debug logging to capture a detailed record.\n\nTo enable logging:\n1. Open Settings → Support section.\n2. Toggle Enable Debug Log ON.\n3. A dialog explains what is recorded. Tap Enable Logging to proceed.\n4. Reproduce the issue.\n5. Open Files app → On My iPhone → GeoNap → GeoNapDebug.log, then share it with support.\n\nWhat is recorded: device model, iOS version, location permission status, region events, alarm events, transit feed downloads, and errors. Nothing is sent automatically.";
+"help.body.alarmIcons" = "Each alarm row shows a status dot, optional badges, and right-side state icons.\n\nStatus dot (far left):\n• Green — active, monitoring your location.\n• Red — alarm has fired.\n• Orange — snoozed for 10 minutes.\n• Gray — disabled.\n\nMiddle badges (only shown when relevant):\n• Teal transit icon — a transit alarm. The shape reflects the route type: train, subway, bus, ferry, etc.\n• Blue repeat arrows — alarm resets automatically after each trip so it fires again next time.\n• Green megaphone — Auto-Notify is on; your saved contacts will be messaged when this alarm fires.\n• Gray bell with slash — sound is set to Vibrate Only; no audio will play.\n• Purple time range — alarm is limited to a specific active time window.\n• Orange day letters — alarm is limited to selected days of the week.\n\nRight-side icons:\n• Red bell with badge — alarm has fired and is waiting to be acknowledged or snoozed.\n• Orange moon with Zs — alarm is currently snoozed.";
 "help.body.managingAlarms" = "Swipe right on any alarm in the list to quickly enable or disable it without opening the detail view.\n\nSwipe left to delete an alarm. Deleted alarms are removed immediately and their geofence stops being monitored.\n\nTo edit an alarm, tap it to open the detail view, then tap Edit Alarm.\n\nTo share an alarm location, open the detail view and tap Share location. This sends an Apple Maps link to the exact coordinates.";
-"help.body.alwaysOnLocation" = "NapStop needs Always On location access to monitor regions in the background — even when your screen is locked or the app is closed.\n\nIf you chose Not now during setup, you can grant access later in iOS Settings → Privacy & Security → Location Services → NapStop. Set it to Always.\n\nWithout Always On access, alarms will only fire while the app is open.";
-"help.body.notifications" = "When an alarm fires you will receive a notification with the alarm name and your note (if set). From the notification you can:\n\n• Snooze 10 min — suppresses the alarm for 10 minutes, then re-arms it.\n• Dismiss — clears the notification. For repeating alarms, the alarm resets once you leave the region.\n\nMake sure notifications are enabled for NapStop in iOS Settings → Notifications → NapStop.";
+"help.body.alwaysOnLocation" = "GeoNap needs Always On location access to monitor regions in the background — even when your screen is locked or the app is closed.\n\nIf you chose Not now during setup, you can grant access later in iOS Settings → Privacy & Security → Location Services → GeoNap. Set it to Always.\n\nWithout Always On access, alarms will only fire while the app is open.";
+"help.body.notifications" = "When an alarm fires you will receive a notification with the alarm name and your note (if set). From the notification you can:\n\n• Snooze 10 min — suppresses the alarm for 10 minutes, then re-arms it.\n• Dismiss — clears the notification. For repeating alarms, the alarm resets once you leave the region.\n\nIf Auto-Notify is enabled on the alarm, the Messages app opens automatically the next time you bring GeoNap to the foreground. The message is pre-addressed to your saved contacts and pre-filled with your arrival or departure details. Tap Send to confirm.\n\nMake sure notifications are enabled for GeoNap in iOS Settings → Notifications → GeoNap.";
 
 /* PrivacyView titles */
 "Privacy & Location" = "Privacy & Location";
@@ -208,15 +226,15 @@ The Save button is disabled until a name has been entered and a location has bee
 "Questions" = "Questions";
 
 /* PrivacyView body text */
-"privacy.intro" = "NapStop is designed with a simple principle: your location and alarm data belong to you. This document explains exactly what information the app uses, where it stays, and what it never does.";
-"privacy.body.locationData" = "NapStop uses your device's location exclusively to monitor geofenced regions. Location data is processed entirely on your device — it is never transmitted to any server, stored in a database, or shared with third parties.\n\nWhen you create an alarm, the latitude, longitude, and radius are saved locally. This data never leaves your device unless you explicitly use the Share button, which generates a standard Apple Maps link.\n\nThe app requests \"Always On\" location permission so that iOS can wake the app in the background when you enter or exit a monitored region. You can revoke this permission at any time in Settings → Privacy & Security → Location Services → NapStop.";
-"privacy.body.onDeviceStorage" = "All alarm data — including names, coordinates, radii, time windows, active days, and trigger history — is stored locally using SwiftData in the app's private container. This data is included in standard iOS backups (iCloud Backup or iTunes/Finder) if backups are enabled.\n\nNo account, login, or network connection is required to use NapStop.";
-"privacy.body.iCloudSync" = "NapStop is designed to support iCloud sync via CloudKit so that your alarms can appear on all your Apple devices signed into the same Apple ID. When iCloud sync is active, alarm records are stored in your personal iCloud container and governed by Apple's privacy policy. Apple does not use CloudKit data for advertising.\n\nIf iCloud sync is unavailable or disabled, the app falls back to local-only storage automatically — no data is lost. You can disable iCloud sync at any time in Settings → [Your Name] → iCloud → NapStop.";
+"privacy.intro" = "GeoNap is designed with a simple principle: your location and alarm data belong to you. This document explains exactly what information the app uses, where it stays, and what it never does.";
+"privacy.body.locationData" = "GeoNap uses your device's location exclusively to monitor geofenced regions. Location data is processed entirely on your device — it is never transmitted to any server, stored in a database, or shared with third parties.\n\nWhen you create an alarm, the latitude, longitude, and radius are saved locally. This data never leaves your device unless you explicitly use the Share button, which generates a standard Apple Maps link.\n\nThe app requests \"Always On\" location permission so that iOS can wake the app in the background when you enter or exit a monitored region. You can revoke this permission at any time in Settings → Privacy & Security → Location Services → GeoNap.";
+"privacy.body.onDeviceStorage" = "All alarm data — including names, coordinates, radii, time windows, active days, and trigger history — is stored locally using SwiftData in the app's private container. This data is included in standard iOS backups (iCloud Backup or iTunes/Finder) if backups are enabled.\n\nNo account, login, or network connection is required to use GeoNap.";
+"privacy.body.iCloudSync" = "GeoNap is designed to support iCloud sync via CloudKit so that your alarms can appear on all your Apple devices signed into the same Apple ID. When iCloud sync is active, alarm records are stored in your personal iCloud container and governed by Apple's privacy policy. Apple does not use CloudKit data for advertising.\n\nIf iCloud sync is unavailable or disabled, the app falls back to local-only storage automatically — no data is lost. You can disable iCloud sync at any time in Settings → [Your Name] → iCloud → GeoNap.";
 "privacy.body.transitFeeds" = "The Transit Alarm feature downloads GTFS data directly from public transit agency servers. These feeds contain stop names, coordinates, and route information — no personal data is included.\n\nDownloaded GTFS data is cached in the app's caches directory on your device. Cached files may be deleted by iOS when storage is low; the app will re-download on demand.\n\nNo custom GTFS URL you enter is stored beyond the current session, and no information about which agencies you browsed is transmitted anywhere.";
-"privacy.body.notifications" = "NapStop delivers local notifications entirely on-device using iOS's UNUserNotificationCenter. Notifications are generated by the app itself when a geofence event fires — they are not sent through any push notification server or remote service. No notification content is transmitted off your device.\n\nYou can manage notification permissions in Settings → Notifications → NapStop.";
-"privacy.body.analytics" = "NapStop does not include any third-party analytics SDKs, advertising networks, or crash reporting services. The app does not track how you use it and does not collect diagnostic information beyond what iOS provides natively in Settings → Privacy & Security → Analytics & Improvements.";
-"privacy.body.dataDeletion" = "You can delete individual alarms by swiping left on any alarm row, or delete all data by removing the app from your device. Uninstalling NapStop removes all locally stored alarm records. If iCloud sync was enabled, you can also delete the app's CloudKit data in Settings → [Your Name] → iCloud → Manage Account Storage → NapStop.";
-"privacy.body.contact" = "If you have questions about privacy or data handling, you can reach the developer through the App Store support link on NapStop's product page.";
+"privacy.body.notifications" = "GeoNap delivers local notifications entirely on-device using iOS's UNUserNotificationCenter. Notifications are generated by the app itself when a geofence event fires — they are not sent through any push notification server or remote service. No notification content is transmitted off your device.\n\nYou can manage notification permissions in Settings → Notifications → GeoNap.";
+"privacy.body.analytics" = "GeoNap does not include any third-party analytics SDKs, advertising networks, or crash reporting services. The app does not track how you use it and does not collect diagnostic information beyond what iOS provides natively in Settings → Privacy & Security → Analytics & Improvements.";
+"privacy.body.dataDeletion" = "You can delete individual alarms by swiping left on any alarm row, or delete all data by removing the app from your device. Uninstalling GeoNap removes all locally stored alarm records. If iCloud sync was enabled, you can also delete the app's CloudKit data in Settings → [Your Name] → iCloud → Manage Account Storage → GeoNap.";
+"privacy.body.contact" = "If you have questions about privacy or data handling, you can reach the developer through the App Store support link on GeoNap's product page.";
 
 // MARK: - Swipe Action Labels
 "Delete" = "Delete";
@@ -225,7 +243,7 @@ The Save button is disabled until a name has been entered and a location has bee
 "Map Overview" = "Map Overview";
 "No alarms to show" = "No alarms to show";
 "Create an alarm first and it will appear here." = "Create an alarm first and it will appear here.";
-"No Geo Alarms Yet" = "No NapStop Alarms Yet";
+"No Geo Alarms Yet" = "No GeoNap Alarms Yet";
 "Alarm limit reached" = "Alarm limit reached";
 "Approaching alarm limit" = "Approaching alarm limit";
 "iOS allows 20 active alarms. Disable one before adding another." = "iOS allows 20 active alarms. Disable one before adding another.";

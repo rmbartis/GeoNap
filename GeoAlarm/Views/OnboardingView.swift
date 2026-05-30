@@ -19,7 +19,7 @@ struct OnboardingView: View {
             symbol: "zzz",
             symbolColor: .indigo,
             titleKey: "Sleep through your commute",
-            bodyKey: "NapStop wakes you up when your device enters or leaves a location — not at a set time. Perfect for trains, buses, and long rides."
+            bodyKey: "GeoNap wakes you up when your device enters or leaves a location — not at a set time. Perfect for trains, buses, and long rides."
         ),
         OnboardingPage(
             symbol: "mappin.and.ellipse",
@@ -31,13 +31,13 @@ struct OnboardingView: View {
             symbol: "clock.badge.checkmark",
             symbolColor: .teal,
             titleKey: "Active time windows",
-            bodyKey: "Only want the alarm to fire during your morning commute? Set a time window and NapStop will ignore the location outside those hours."
+            bodyKey: "Only want the alarm to fire during your morning commute? Set a time window and GeoNap will ignore the location outside those hours."
         ),
         OnboardingPage(
             symbol: "location.fill",
             symbolColor: .orange,
             titleKey: "Always On location needed",
-            bodyKey: "NapStop monitors your position in the background so it can alert you even while your phone is locked. Your location is never shared or stored outside the app."
+            bodyKey: "GeoNap monitors your position in the background so it can alert you even while your phone is locked. Your location is never shared or stored outside the app."
         )
     ]
 
@@ -120,7 +120,7 @@ struct OnboardingView: View {
                     .font(.title2.bold())
                     .multilineTextAlignment(.center)
 
-                Text("Select the language you'd like to use in NapStop. You can change this at any time in Settings.", bundle: bundle)
+                Text("Select the language you'd like to use in GeoNap. You can change this at any time in Settings.", bundle: bundle)
                     .font(.body)
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)

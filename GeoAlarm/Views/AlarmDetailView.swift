@@ -104,8 +104,41 @@ struct AlarmDetailView: View {
                         Text(daysLabel)
                     }
                 }
+                if alarm.notificationSound == .vibrate {
+                    LabeledContent(NSLocalizedString("Sound", bundle: bundle, comment: "")) {
+                        Image(systemName: "bell.slash.fill")
+                            .foregroundStyle(Color.secondary)
+                    }
+                }
             } header: {
                 Text("Status", bundle: bundle)
+            }
+
+            // MARK: Auto-Notify
+            if alarm.notifyContact {
+                Section {
+                    if alarm.notifyContactList.isEmpty {
+                        Text("No contacts saved for this alarm.", bundle: bundle)
+                            .foregroundStyle(.secondary)
+                    } else {
+                        ForEach(alarm.notifyContactList) { contact in
+                            HStack(spacing: 12) {
+                                Image(systemName: contact.systemImage)
+                                    .foregroundStyle(.green)
+                                    .frame(width: 20)
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(contact.name)
+                                        .font(.body)
+                                    Text(contact.value)
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                }
+                            }
+                        }
+                    }
+                } header: {
+                    Label("Auto-Notify", systemImage: "megaphone.fill")
+                }
             }
 
             // MARK: History

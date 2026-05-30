@@ -12,6 +12,8 @@ struct HelpView: View {
 
                 helpSection(symbol: "lightbulb",   color: .yellow,
                             titleKey: "What is NapStop?",    bodyKey: "help.body.whatIsNapAlarm")
+                helpSection(symbol: "list.star",    color: .blue,
+                            titleKey: "Feature Summary",      bodyKey: "help.body.featureSummary")
                 helpSection(symbol: "tram",         color: .blue,
                             titleKey: "Typical use cases",    bodyKey: "help.body.useCases")
                 helpSection(symbol: "plus.circle",  color: .green,
@@ -24,6 +26,8 @@ struct HelpView: View {
                             titleKey: "Active time window",   bodyKey: "help.body.timeWindow")
                 helpSection(symbol: "tram.fill",    color: .teal,
                             titleKey: "Transit Alarms",       bodyKey: "help.body.transitAlarms")
+                helpSection(symbol: "message.badge.filled.fill", color: .green,
+                            titleKey: "Auto-Notify",          bodyKey: "help.body.autoNotify")
                 helpSection(symbol: "bell.badge.waveform", color: .pink,
                             titleKey: "Alarm sound / vibrate", bodyKey: "help.body.soundVibrate")
                 helpSection(symbol: "mic",          color: .indigo,
@@ -34,6 +38,8 @@ struct HelpView: View {
                             titleKey: "Reporting a problem",  bodyKey: "help.body.reportingProblem")
                 helpSection(symbol: "hand.point.left", color: .cyan,
                             titleKey: "Managing alarms",      bodyKey: "help.body.managingAlarms")
+                helpSection(symbol: "list.bullet.rectangle", color: .indigo,
+                            titleKey: "Alarm list icons",     bodyKey: "help.body.alarmIcons")
                 helpSection(symbol: "location.fill", color: .orange,
                             titleKey: "Always On location",   bodyKey: "help.body.alwaysOnLocation")
                 helpSection(symbol: "bell.badge",   color: .red,

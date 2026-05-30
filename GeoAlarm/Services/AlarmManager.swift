@@ -112,27 +112,16 @@ final class AlarmManager: NSObject, ObservableObject {
             title: "Dismiss",
             options: [.destructive]
         )
-        let notifyContactAction = UNNotificationAction(
-            identifier: NotificationAction.notifyContact,
-            title: "Notify Contact",
-            options: [.foreground]   // .foreground brings the app to front so we can present compose sheet
-        )
 
-        // Category without contact action (most alarms)
+        // Single category for all alarms — contact messaging is triggered automatically,
+        // not via a user-facing action button.
         let standardCategory = UNNotificationCategory(
             identifier: NotificationCategory.geoAlarm,
             actions: [snoozeAction, dismissAction],
             intentIdentifiers: [],
             options: [.customDismissAction]
         )
-        // Category with contact action (alarms that have a contact set)
-        let contactCategory = UNNotificationCategory(
-            identifier: NotificationCategory.geoAlarmContact,
-            actions: [notifyContactAction, snoozeAction, dismissAction],
-            intentIdentifiers: [],
-            options: [.customDismissAction]
-        )
-        UNUserNotificationCenter.current().setNotificationCategories([standardCategory, contactCategory])
+        UNUserNotificationCenter.current().setNotificationCategories([standardCategory])
     }
 
     // MARK: - Region limit
@@ -192,19 +181,21 @@ final class AlarmManager: NSObject, ObservableObject {
             return
         }
         stopMonitoring(existing)
-        existing.name          = alarm.name
-        existing.latitude      = alarm.latitude
-        existing.longitude     = alarm.longitude
-        existing.radius        = alarm.radius
-        existing.regionEvent   = alarm.regionEvent
-        existing.note          = alarm.note
-        existing.isRepeating   = alarm.isRepeating
-        existing.hasTimeWindow = alarm.hasTimeWindow
-        existing.windowStart   = alarm.windowStart
-        existing.windowEnd     = alarm.windowEnd
-        existing.state         = alarm.state
-        existing.soundNameRaw  = alarm.soundNameRaw
-        existing.activeDaysRaw = alarm.activeDaysRaw
+        existing.name              = alarm.name
+        existing.latitude          = alarm.latitude
+        existing.longitude         = alarm.longitude
+        existing.radius            = alarm.radius
+        existing.regionEvent       = alarm.regionEvent
+        existing.note              = alarm.note
+        existing.isRepeating       = alarm.isRepeating
+        existing.hasTimeWindow     = alarm.hasTimeWindow
+        existing.windowStart       = alarm.windowStart
+        existing.windowEnd         = alarm.windowEnd
+        existing.state             = alarm.state
+        existing.soundNameRaw      = alarm.soundNameRaw
+        existing.activeDaysRaw     = alarm.activeDaysRaw
+        existing.notifyContact     = alarm.notifyContact
+        existing.notifyContactsJSON = alarm.notifyContactsJSON
         save()
         SpotlightManager.shared.index(existing)
         if existing.isActive { startMonitoring(existing) }
@@ -314,20 +305,25 @@ final class AlarmManager: NSObject, ObservableObject {
             : alarm.note
         content.sound = alarm.notificationSound.unSound
 
-        // Embed enough context for action handlers to rebuild the message without
-        // needing to re-fetch the alarm from SwiftData on the background thread.
-        var userInfo: [String: Any] = ["alarmID": alarm.id.uuidString]
-        if alarm.notifyContact && !alarm.contactPhone.isEmpty {
-            userInfo["contactPhone"]   = alarm.contactPhone
-            userInfo["contactName"]    = alarm.contactName
-            userInfo["alarmName"]      = alarm.name
-            userInfo["regionEventRaw"] = alarm.regionEventRaw
-        }
-        content.userInfo = userInfo
+        content.userInfo = ["alarmID": alarm.id.uuidString]
+        content.categoryIdentifier = NotificationCategory.geoAlarm
 
-        content.categoryIdentifier = (alarm.notifyContact && !alarm.contactPhone.isEmpty)
-            ? NotificationCategory.geoAlarmContact
-            : NotificationCategory.geoAlarm
+        // Auto-compose message to all phone contacts — no user action required.
+        // The compose sheet will open automatically when the app comes to foreground.
+        if alarm.notifyContact {
+            let phones = alarm.notifyContactList.filter { !$0.isEmail }.map { $0.value }
+            if !phones.isEmpty {
+                let timeStr   = DateFormatter.localizedString(from: Date(), dateStyle: .none, timeStyle: .short)
+                let direction = alarm.regionEvent == .onEntry ? "Arrival" : "Departure"
+                let verb      = alarm.regionEvent == .onEntry ? "arrived at" : "departed from"
+                var body      = "[\(direction)] I \(verb) \(alarm.name) at \(timeStr)."
+                if !alarm.note.isEmpty {
+                    body += " \(alarm.note)"
+                }
+                pendingContactMessage = ContactMessage(phones: phones, body: body)
+                DebugLogger.shared.log("Auto-Notify: compose queued for \(phones.count) contact(s) on alarm '\(alarm.name)' (\(direction))", category: "AlarmManager")
+            }
+        }
 
         let request = UNNotificationRequest(
             identifier: alarm.id.uuidString,
@@ -453,21 +449,6 @@ extension AlarmManager: UNUserNotificationCenterDelegate {
                     snooze(alarm, minutes: 10)
                     print("😴 Snoozed: \(alarm.name) for 10 min")
                     DebugLogger.shared.log("Alarm snoozed 10 min via notification action: '\(alarm.name)'", category: "AlarmManager")
-                }
-
-            case NotificationAction.notifyContact:
-                // Build the pre-composed message from userInfo embedded at fire time.
-                let info       = response.notification.request.content.userInfo
-                let phone      = info["contactPhone"]   as? String ?? ""
-                let name       = info["alarmName"]      as? String ?? ""
-                let eventRaw   = info["regionEventRaw"] as? String ?? RegionEvent.onEntry.rawValue
-                let event      = RegionEvent(rawValue: eventRaw) ?? .onEntry
-                if !phone.isEmpty {
-                    let timeStr = DateFormatter.localizedString(from: Date(), dateStyle: .none, timeStyle: .short)
-                    let verb    = event == .onEntry ? "arrived at" : "departed from"
-                    let body    = "I \(verb) \(name) at \(timeStr)."
-                    pendingContactMessage = ContactMessage(phone: phone, body: body)
-                    DebugLogger.shared.log("Notify Contact action tapped for alarm '\(name)' → pending message prepared", category: "AlarmManager")
                 }
 
             default:

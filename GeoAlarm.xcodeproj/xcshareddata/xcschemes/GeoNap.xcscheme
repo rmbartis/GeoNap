@@ -15,8 +15,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "686A0F1E2FC337E40079F963"
-               BuildableName = "NapStop.app"
-               BlueprintName = "NapStop"
+               BuildableName = "GeoNap.app"
+               BlueprintName = "GeoNap"
                ReferencedContainer = "container:GeoAlarm.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -35,8 +35,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "686A0F2F2FC337E50079F963"
-               BuildableName = "NapStopTests.xctest"
-               BlueprintName = "NapStopTests"
+               BuildableName = "GeoNapTests.xctest"
+               BlueprintName = "GeoNapTests"
                ReferencedContainer = "container:GeoAlarm.xcodeproj">
             </BuildableReference>
          </TestableReference>
@@ -57,8 +57,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "686A0F1E2FC337E40079F963"
-            BuildableName = "NapStop.app"
-            BlueprintName = "NapStop"
+            BuildableName = "GeoNap.app"
+            BlueprintName = "GeoNap"
             ReferencedContainer = "container:GeoAlarm.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -74,8 +74,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "686A0F1E2FC337E40079F963"
-            BuildableName = "NapStop.app"
-            BlueprintName = "NapStop"
+            BuildableName = "GeoNap.app"
+            BlueprintName = "GeoNap"
             ReferencedContainer = "container:GeoAlarm.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

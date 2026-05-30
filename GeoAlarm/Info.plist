@@ -8,7 +8,7 @@
 	</array>
 	<key>NSUserActivityTypes</key>
 	<array>
-		<string>com.rmbartis.NapStop.viewAlarm</string>
+		<string>com.rmbartis.GeoNap.viewAlarm</string>
 		<string>NSUserActivityTypeBrowsingWeb</string>
 	</array>
 	<key>BuildTimestamp</key>

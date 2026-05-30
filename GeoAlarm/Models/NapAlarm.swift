@@ -107,17 +107,25 @@ final class NapAlarm {
     }
 
     // MARK: - Contact Notification
-    // When enabled, a "Notify Contact" action appears on the fired notification.
-    // Tapping it opens a pre-composed iMessage/SMS with the contact's phone number.
+    // When enabled, a "Notify Contacts" action appears on the fired notification.
+    // Tapping it opens a pre-composed iMessage/SMS with the contact's phone number(s).
 
     /// Whether to offer a contact notification when this alarm fires.
     var notifyContact: Bool = false
 
-    /// Display name of the selected contact (for UI only — not sent in message).
+    /// Legacy single-contact fields — kept for SwiftData migration compatibility.
+    /// New code uses notifyContactsJSON / notifyContactList instead.
     var contactName: String = ""
-
-    /// Phone number used for the pre-composed SMS/iMessage.
     var contactPhone: String = ""
+
+    /// JSON-encoded [NotifyContact] array for Auto-Notify multi-contact support.
+    var notifyContactsJSON: String = ""
+
+    /// Typed accessor for the auto-notify contact list.
+    var notifyContactList: [NotifyContact] {
+        get { [NotifyContact].fromJSON(notifyContactsJSON) }
+        set { notifyContactsJSON = newValue.toJSON() }
+    }
 
     // MARK: - Transit
 
@@ -233,6 +241,7 @@ final class NapAlarm {
         notifyContact: Bool = false,
         contactName: String = "",
         contactPhone: String = "",
+        notifyContactsJSON: String = "",
         isTransitAlarm: Bool = false,
         transitAgencyName: String? = nil,
         transitRouteName: String? = nil,
@@ -255,15 +264,67 @@ final class NapAlarm {
         self.windowStart = windowStart
         self.windowEnd = windowEnd
         self.activeDays = activeDays
-        self.notifyContact = notifyContact
-        self.contactName   = contactName
-        self.contactPhone  = contactPhone
+        self.notifyContact     = notifyContact
+        self.contactName       = contactName
+        self.contactPhone      = contactPhone
+        self.notifyContactsJSON = notifyContactsJSON
         self.isTransitAlarm = isTransitAlarm
         self.transitAgencyName = transitAgencyName
         self.transitRouteName = transitRouteName
         self.transitStopName = transitStopName
         self.transitRouteTypeRaw = transitRouteType.map { String($0.rawValue) }
         self.soundNameRaw = notificationSound.rawValue
+    }
+}
+
+// MARK: - NotifyContact
+
+/// A contact entry used by the Auto-Notify feature.
+/// Stores either a phone number or an email address in `value`.
+struct NotifyContact: Codable, Identifiable, Equatable {
+    var id: UUID
+    var name: String
+    var value: String   // phone number or email address
+
+    init(id: UUID = UUID(), name: String, value: String) {
+        self.id    = id
+        self.name  = name
+        self.value = value.trimmingCharacters(in: .whitespaces)
+    }
+
+    /// True when `value` looks like an email address.
+    var isEmail: Bool { value.contains("@") }
+
+    /// SF Symbol name appropriate for the contact type.
+    var systemImage: String { isEmail ? "envelope" : "phone" }
+}
+
+extension Array where Element == NotifyContact {
+    /// Decode from a JSON string (e.g. stored in NapAlarm.notifyContactsJSON).
+    static func fromJSON(_ json: String) -> [NotifyContact] {
+        guard !json.isEmpty,
+              let data = json.data(using: .utf8),
+              let list = try? JSONDecoder().decode([NotifyContact].self, from: data)
+        else { return [] }
+        return list
+    }
+
+    /// Encode to a JSON string for persistent storage.
+    func toJSON() -> String {
+        guard let data = try? JSONEncoder().encode(self),
+              let str  = String(data: data, encoding: .utf8)
+        else { return "[]" }
+        return str
+    }
+
+    /// Load the global Auto-Notify defaults from UserDefaults.
+    static func loadGlobalDefaults() -> [NotifyContact] {
+        fromJSON(UserDefaults.standard.string(forKey: "defaultNotifyContacts") ?? "")
+    }
+
+    /// Persist the current array as the global Auto-Notify defaults.
+    func saveAsGlobalDefaults() {
+        UserDefaults.standard.set(toJSON(), forKey: "defaultNotifyContacts")
     }
 }
 

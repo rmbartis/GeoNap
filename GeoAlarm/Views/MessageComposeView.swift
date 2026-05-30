@@ -5,10 +5,12 @@
 import SwiftUI
 import MessageUI
 
-/// The data needed to open the compose sheet.
+/// The data needed to open the SMS compose sheet.
+/// `phones` may contain multiple recipients — MFMessageComposeViewController
+/// supports a pre-filled "To:" line with multiple numbers.
 struct ContactMessage: Equatable {
-    let phone: String
-    let body:  String
+    let phones: [String]
+    let body:   String
 }
 
 struct MessageComposeView: UIViewControllerRepresentable {
@@ -18,7 +20,7 @@ struct MessageComposeView: UIViewControllerRepresentable {
 
     func makeUIViewController(context: Context) -> MFMessageComposeViewController {
         let vc = MFMessageComposeViewController()
-        vc.recipients    = [message.phone]
+        vc.recipients    = message.phones
         vc.body          = message.body
         vc.messageComposeDelegate = context.coordinator
         return vc

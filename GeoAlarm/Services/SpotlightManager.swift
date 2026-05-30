@@ -11,11 +11,11 @@ final class SpotlightManager {
 
     static let shared = SpotlightManager()
 
-    /// Domain groups all NapStop alarm items — lets us delete them all at once if needed.
-    static let domainIdentifier = "com.rmbartis.NapStop.alarm"
+    /// Domain groups all GeoNap alarm items — lets us delete them all at once if needed.
+    static let domainIdentifier = "com.rmbartis.GeoNap.alarm"
 
     /// Must match NSUserActivityTypes in Info.plist.
-    static let activityType = "com.rmbartis.NapStop.viewAlarm"
+    static let activityType = "com.rmbartis.GeoNap.viewAlarm"
 
     /// UserInfo key carrying the alarm UUID string inside the NSUserActivity.
     static let alarmIDKey = "alarmID"
@@ -60,7 +60,7 @@ final class SpotlightManager {
         }
     }
 
-    /// Remove every NapStop alarm from Spotlight (e.g. on sign-out or reset).
+    /// Remove every GeoNap alarm from Spotlight (e.g. on sign-out or reset).
     func deindexAll() {
         index.deleteSearchableItems(withDomainIdentifiers: [Self.domainIdentifier]) { error in
             if let error {

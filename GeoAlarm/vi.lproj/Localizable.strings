@@ -9,7 +9,7 @@
 "Next" = "Tiếp theo";
 "Skip" = "Bỏ qua";
 
-"Geo Alarms" = "NapStop";
+"Geo Alarms" = "GeoNap";
 "Location Alarm" = "Báo thức vị trí";
 "Transit Alarm" = "Báo thức giao thông";
 "Location access required. Enable in Settings." = "Cần quyền truy cập vị trí. Bật trong Cài đặt.";
@@ -84,21 +84,21 @@
 "Preview" = "Xem trước";
 "Sample radius" = "Bán kính mẫu";
 "Sample time" = "Thời gian mẫu";
-"Logging is ON. Detailed activity is being recorded to GeoAlarmDebug.log in the GeoAlarm folder in the Files app. Disable when no longer needed." = "Ghi nhật ký BẬT. Hoạt động chi tiết đang được ghi vào NapStopDebug.log. Tắt khi không còn cần thiết.";
+"Logging is ON. Detailed activity is being recorded to GeoAlarmDebug.log in the GeoAlarm folder in the Files app. Disable when no longer needed." = "Ghi nhật ký BẬT. Hoạt động chi tiết đang được ghi vào GeoNapDebug.log. Tắt khi không còn cần thiết.";
 "Enable to capture detailed diagnostic information when troubleshooting an issue. Logging is off by default and does not run in the background." = "Bật để thu thập thông tin chẩn đoán chi tiết khi xử lý sự cố. Ghi nhật ký tắt theo mặc định và không chạy trong nền.";
 
 "Sleep through your commute" = "Ngủ suốt hành trình";
-"GeoAlarm wakes you up when your device enters or leaves a location — not at a set time. Perfect for trains, buses, and long rides." = "NapStop đánh thức bạn khi thiết bị vào hoặc rời một vị trí — không phải theo giờ cố định. Hoàn hảo cho tàu, xe buýt và chuyến dài.";
+"GeoAlarm wakes you up when your device enters or leaves a location — not at a set time. Perfect for trains, buses, and long rides." = "GeoNap đánh thức bạn khi thiết bị vào hoặc rời một vị trí — không phải theo giờ cố định. Hoàn hảo cho tàu, xe buýt và chuyến dài.";
 "Set an alarm anywhere" = "Đặt báo thức ở bất kỳ đâu";
 "Drop a pin on any stop, station, or landmark. Choose how close you need to be before the alarm fires, and whether it should repeat every trip." = "Ghim bất kỳ trạm, ga hay địa danh nào. Chọn khoảng cách để kích hoạt và có lặp lại mỗi chuyến không.";
 "Active time windows" = "Khung thời gian hoạt động";
-"Only want the alarm to fire during your morning commute? Set a time window and GeoAlarm will ignore the location outside those hours." = "Chỉ muốn báo thức kích hoạt lúc đi làm buổi sáng? Đặt khung thời gian và NapStop sẽ bỏ qua vị trí ngoài giờ đó.";
+"Only want the alarm to fire during your morning commute? Set a time window and GeoAlarm will ignore the location outside those hours." = "Chỉ muốn báo thức kích hoạt lúc đi làm buổi sáng? Đặt khung thời gian và GeoNap sẽ bỏ qua vị trí ngoài giờ đó.";
 "Always On location needed" = "Cần bật vị trí liên tục";
-"GeoAlarm monitors your position in the background so it can alert you even while your phone is locked. Your location is never shared or stored outside the app." = "NapStop theo dõi vị trí của bạn trong nền để cảnh báo kể cả khi điện thoại bị khóa. Vị trí của bạn không bao giờ được chia sẻ hay lưu trữ bên ngoài ứng dụng.";
+"GeoAlarm monitors your position in the background so it can alert you even while your phone is locked. Your location is never shared or stored outside the app." = "GeoNap theo dõi vị trí của bạn trong nền để cảnh báo kể cả khi điện thoại bị khóa. Vị trí của bạn không bao giờ được chia sẻ hay lưu trữ bên ngoài ứng dụng.";
 "Allow location access" = "Cho phép truy cập vị trí";
 "Not now" = "Lúc khác";
 "Choose Your Language" = "Chọn ngôn ngữ";
-"Select the language you'd like to use in GeoAlarm. You can change this at any time in Settings." = "Chọn ngôn ngữ bạn muốn dùng trong NapStop. Bạn có thể thay đổi bất kỳ lúc nào trong Cài đặt.";
+"Select the language you'd like to use in GeoAlarm. You can change this at any time in Settings." = "Chọn ngôn ngữ bạn muốn dùng trong GeoNap. Bạn có thể thay đổi bất kỳ lúc nào trong Cài đặt.";
 
 "Choose Agency" = "Chọn đơn vị vận tải";
 "Choose Route" = "Chọn tuyến";
@@ -137,7 +137,7 @@
 "Airport Chime" = "Chuông sân bay";
 
 "Help" = "Trợ giúp";
-"What is NapStop?" = "NapStop là gì?";
+"What is GeoNap?" = "GeoNap là gì?";
 "Typical use cases" = "Các trường hợp sử dụng thông thường";
 "Creating an alarm" = "Tạo báo thức";
 "Transit Alarms" = "Báo thức giao thông";
@@ -149,8 +149,9 @@
 "Notifications" = "Thông báo";
 
 // MARK: - HelpView Body Text
-"help.body.whatIsNapAlarm" = "NapStop đánh thức bạn dựa trên vị trí của bạn, không phải theo giờ giấc. Thay vì đoán xem chuyến đi mất bao lâu, bạn đặt báo thức tại một vị trí và để ứng dụng thông báo khi bạn đến nơi — hoặc khi bạn rời đi.\n\nỨng dụng chạy lặng lẽ trong nền, vì vậy bạn có thể chợp mắt, đọc sách hoặc thư giãn mà không lo lỡ trạm dừng.";
+"help.body.whatIsNapAlarm" = "GeoNap đánh thức bạn dựa trên vị trí, không phải giờ giấc. Đặt báo thức tại bất kỳ địa điểm nào và ứng dụng thông báo ngay khi bạn đến — hoặc rời đi — để bạn thư giãn trên mọi hành trình.\n\n• Ngủ không lo lắng — ngủ yên tâm vì GeoNap sẽ đánh thức bạn đúng điểm dừng, mọi lúc.\n• Không bao giờ lỡ điểm dừng — không còn phụ thuộc vào thông báo bằng ngôn ngữ xa lạ hay loa hỏng.\n• Tự động thông báo cho người khác — cho gia đình, bạn bè hoặc đồng nghiệp biết ngay khi bạn đến hoặc đi.\n• Hỗ trợ Siri tùy chỉnh — tạo báo thức rảnh tay bằng giọng nói qua Phím tắt Siri.\n• Tóm tắt nhanh — mỗi báo thức hiển thị các cài đặt chính ngay trên màn hình chính.";
 
+"help.body.featureSummary" = "Ứng dụng\n\n• Tổng quan bản đồ — xem tất cả báo thức đã lưu trên một bản đồ duy nhất.\n• Danh sách báo thức — liệt kê đầy đủ mọi báo thức với trạng thái, huy hiệu và chi tiết kích hoạt trong nháy mắt.\n• Tạo theo vị trí hoặc phương tiện — ghim địa chỉ trên bản đồ hoặc duyệt lịch trình trực tiếp để chọn điểm dừng chính xác.\n• Nguồn dữ liệu phương tiện tùy chỉnh — nhập thủ công URL GTFS công khai để tải lịch trình từ bất kỳ cơ quan nào trên thế giới.\n• Ghi nhật ký tích hợp — bật nhật ký gỡ lỗi trong Cài đặt để ghi lại hoạt động chi tiết cho báo cáo hỗ trợ.\n\nBáo thức cá nhân\n\n• Tên và ghi chú — đặt tên cho từng báo thức và ghi chú tùy chọn xuất hiện trong thông báo.\n• Nhập vị trí linh hoạt — đặt ghim bằng cách chạm vào bản đồ, tìm kiếm địa chỉ hoặc nhập tọa độ (DD, DMS hoặc DDM).\n• Kích hoạt khi đến hoặc đi — chọn báo thức kích hoạt khi bạn vào hay rời khỏi khu vực.\n• Bán kính có thể điều chỉnh — đặt kích thước vùng địa lý bằng thanh trượt; ranh giới hiển thị trực tiếp trên bản đồ.\n• Âm thanh tùy chỉnh — chọn từ âm thanh du lịch, mặc định hệ thống, cảnh báo nghiêm trọng hoặc chỉ rung.\n• Lên lịch — giới hạn báo thức theo ngày trong tuần và khung giờ cụ thể, với tùy chọn lặp lại sau mỗi chuyến đi.\n• Tự động thông báo — tự động gửi tin nhắn đến danh bạ đã lưu khi báo thức kích hoạt.\n\nCá nhân hóa\n\n• Đơn vị khoảng cách và thời gian — chuyển đổi giữa hệ mét và Anh, và giữa đồng hồ 12 hoặc 24 giờ.\n• Định dạng tọa độ — nhập và xem tọa độ GPS theo DD, DMS hoặc DDM.\n• Mười ba ngôn ngữ — GeoNap được bản địa hóa hoàn toàn sang tiếng Anh, Tây Ban Nha, Pháp, Đức, Ý, Bồ Đào Nha, Ả Rập, Hindi, Nhật, Trung Quốc giản thể, Nga, Thái và Việt.\n• Danh bạ mặc định Tự động thông báo — duy trì danh sách liên hệ toàn cục tự động điền vào mọi báo thức mới có Tự động thông báo được bật.";
 "help.body.useCases" = "• Hành khách tàu hỏa hoặc tàu điện ngầm — Đặt báo thức tại ga của bạn. Ngủ một giấc và được đánh thức ngay trước khi đến, mỗi buổi sáng, tự động.\n\n• Hành khách xe buýt — Đặt báo thức khởi hành tại trạm gần nhà. Báo thức sẽ kêu khi bạn rời khỏi khu vực, nhắc nhở bạn ra đi.\n\n• Hành khách đường trường — Đặt báo thức tại một thành phố trung gian. Bạn sẽ được thông báo khi xe đến gần mà không cần nhìn vào bản đồ suốt chuyến đi.\n\n• Du khách ở thành phố lạ — Đặt báo thức tại khách sạn, sân bay hoặc địa điểm họp để luôn biết khi nào bạn đang đến gần.";
 
 "help.body.creatingAlarm" = "Nhấn + ở góc trên bên phải. Một menu xuất hiện với hai lựa chọn:
@@ -166,6 +167,7 @@ Với Báo thức vị trí:
 4. Chọn Khi đến nơi hoặc Khi khởi hành làm điều kiện kích hoạt.
 5. Dùng thanh trượt Bán kính để đặt khoảng cách cần thiết trước khi báo thức kêu.
 6. Trong Âm thanh / Rung, chọn nhạc chuông hoặc chọn Chỉ rung.
+7. Tùy chọn bật Tự động thông báo để tự động nhắn tin đến các liên hệ đã lưu khi báo thức kêu.
 
 Nút Lưu bị tắt cho đến khi nhập tên và ghim vị trí. iOS cho phép tối đa 20 báo thức đang hoạt động cùng lúc.";
 
@@ -179,7 +181,7 @@ Nút Lưu bị tắt cho đến khi nhập tên và ghim vị trí. iOS cho phé
 
 "help.body.soundVibrate" = "Mỗi báo thức có cài đặt âm thanh riêng được chọn trong Âm thanh / Rung khi tạo hoặc chỉnh sửa.\n\nTùy chọn hệ thống:\n• Chỉ rung — không có âm thanh; lý tưởng cho môi trường yên tĩnh.\n• Mặc định — âm thanh thông báo iOS tiêu chuẩn.\n• Khẩn cấp — phát ở âm lượng tối đa, bỏ qua chế độ im lặng và Không làm phiền.\n\nÂm thanh du lịch tích hợp:\n• Còi tàu thuyền · Chuông xe cáp · Tàu hơi nước · Chuông thuyền buồm · Máy bay hạ cánh · Chuông sân bay\n\nMỗi cài đặt được lưu cùng báo thức và phát mỗi khi nó kêu.";
 
-"help.body.siri" = "NapStop hỗ trợ Siri và ứng dụng Phím tắt — không cần cài đặt.\n\n• \"Tạo NapStop\" — Siri hỏi tên, vị trí và hướng kích hoạt, sau đó lưu báo thức.\n• \"Bật NapStop của tôi\" — Siri hiển thị các báo thức đã lưu; chọn một để bật lại.\n• \"Tắt NapStop của tôi\" — Giống như trên nhưng vô hiệu hóa báo thức.\n\nBạn cũng có thể tìm và tùy chỉnh các phím tắt này trong ứng dụng iOS Phím tắt trong phần NapStop.";
+"help.body.siri" = "GeoNap hỗ trợ Siri và ứng dụng Phím tắt — không cần cài đặt.\n\n• \"Tạo GeoNap\" — Siri hỏi tên, vị trí và hướng kích hoạt, sau đó lưu báo thức.\n• \"Bật GeoNap của tôi\" — Siri hiển thị các báo thức đã lưu; chọn một để bật lại.\n• \"Tắt GeoNap của tôi\" — Giống như trên nhưng vô hiệu hóa báo thức.\n\nBạn cũng có thể tìm và tùy chỉnh các phím tắt này trong ứng dụng iOS Phím tắt trong phần GeoNap.";
 
 "help.body.settings" = "Mở Cài đặt từ biểu tượng bánh răng ở góc trên bên trái của danh sách báo thức. Nhấn ⓘ bên cạnh bất kỳ cài đặt nào để xem giải thích chi tiết.
 
@@ -187,18 +189,20 @@ Nút Lưu bị tắt cho đến khi nhập tên và ghim vị trí. iOS cho phé
 • Tọa độ — chọn định dạng tọa độ GPS: DD (Độ thập phân), DMS (Độ Phút Giây) hoặc DDM (Độ Phút thập phân).
 • Đồng hồ — chuyển đổi giữa định dạng 12 giờ và 24 giờ.
 • Ngôn ngữ — thay đổi ngôn ngữ hiển thị độc lập với ngôn ngữ hệ thống của iPhone.
+• Mặc định tự động thông báo — thêm liên hệ điện thoại hoặc email tại đây. Các thay đổi trong danh sách này sẽ tự động được phản ánh vào tất cả báo thức hiện có đã bật Tự động thông báo. Bạn vẫn có thể điều chỉnh danh bạ cho từng báo thức.
 • Trợ giúp & Hướng dẫn sử dụng — hướng dẫn này.
 • Quyền riêng tư & Chia sẻ vị trí — toàn bộ thông tin về cách xử lý dữ liệu vị trí.
 • Bật nhật ký gỡ lỗi — xem \"Báo cáo sự cố\" bên dưới.
 • Bản dựng — hiển thị phiên bản hiện tại theo định dạng MajorVersion.GitBuildNumber-Date (ví dụ: 1.247-20260529). Bao gồm khi báo cáo lỗi.";
 
-"help.body.reportingProblem" = "Nếu NapStop không hoạt động như mong đợi, bạn có thể bật ghi nhật ký gỡ lỗi để thu thập hồ sơ chi tiết.\n\nĐể bật ghi nhật ký:\n1. Mở Cài đặt → phần Hỗ trợ.\n2. Bật Nhật ký gỡ lỗi.\n3. Hộp thoại giải thích những gì được ghi lại. Nhấn Bật ghi nhật ký để tiếp tục.\n4. Tái hiện sự cố.\n5. Mở ứng dụng Files → Trên iPhone của tôi → NapStop → NapStopDebug.log, sau đó chia sẻ với bộ phận hỗ trợ.\n\nNhững gì được ghi lại: kiểu thiết bị, phiên bản iOS, trạng thái quyền vị trí, sự kiện vùng, sự kiện báo thức, tải xuống nguồn phương tiện và lỗi. Không có gì được gửi tự động.";
+"help.body.reportingProblem" = "Nếu GeoNap không hoạt động như mong đợi, bạn có thể bật ghi nhật ký gỡ lỗi để thu thập hồ sơ chi tiết.\n\nĐể bật ghi nhật ký:\n1. Mở Cài đặt → phần Hỗ trợ.\n2. Bật Nhật ký gỡ lỗi.\n3. Hộp thoại giải thích những gì được ghi lại. Nhấn Bật ghi nhật ký để tiếp tục.\n4. Tái hiện sự cố.\n5. Mở ứng dụng Files → Trên iPhone của tôi → GeoNap → GeoNapDebug.log, sau đó chia sẻ với bộ phận hỗ trợ.\n\nNhững gì được ghi lại: kiểu thiết bị, phiên bản iOS, trạng thái quyền vị trí, sự kiện vùng, sự kiện báo thức, tải xuống nguồn phương tiện và lỗi. Không có gì được gửi tự động.";
 
+"help.body.alarmIcons" = "Mỗi hàng báo thức hiển thị một chấm trạng thái, huy hiệu tùy chọn và biểu tượng trạng thái bên phải.\n\nChấm trạng thái (ngoài cùng bên trái):\n• Xanh lá — đang hoạt động, theo dõi vị trí của bạn.\n• Đỏ — báo thức đã kích hoạt.\n• Cam — đang tạm hoãn 10 phút.\n• Xám — đã tắt.\n\nHuy hiệu ở giữa (chỉ hiển thị khi phù hợp):\n• Biểu tượng phương tiện màu mòng két — báo thức phương tiện. Hình dạng phản ánh loại tuyến: tàu, tàu điện ngầm, xe buýt, phà, v.v.\n• Mũi tên lặp lại màu xanh dương — báo thức tự đặt lại sau mỗi chuyến đi.\n• Loa khuếch đại màu xanh lá — Tự động thông báo bật; các liên hệ sẽ nhận tin nhắn khi báo thức kích hoạt.\n• Chuông xám có gạch chéo — âm thanh được đặt thành Chỉ rung, không phát âm thanh.\n• Khoảng thời gian màu tím — báo thức chỉ hoạt động trong khung giờ cụ thể.\n• Chữ ngày màu cam — báo thức chỉ hoạt động vào các ngày được chọn trong tuần.\n\nBiểu tượng bên phải:\n• Chuông đỏ có huy hiệu — báo thức đã kích hoạt và đang chờ xác nhận hoặc tạm hoãn.\n• Mặt trăng cam có chữ Z — báo thức đang trong trạng thái tạm hoãn.";
 "help.body.managingAlarms" = "Vuốt sang phải trên bất kỳ báo thức nào trong danh sách để nhanh chóng bật hoặc tắt mà không cần mở chế độ xem chi tiết.\n\nVuốt sang trái để xóa báo thức. Báo thức bị xóa ngay lập tức và việc giám sát vùng địa lý của chúng dừng lại.\n\nĐể chỉnh sửa báo thức, nhấn vào để mở chế độ xem chi tiết, sau đó nhấn Chỉnh sửa báo thức.\n\nĐể chia sẻ vị trí báo thức, mở chế độ xem chi tiết và nhấn Chia sẻ vị trí. Thao tác này gửi liên kết Apple Maps đến tọa độ chính xác.";
 
-"help.body.alwaysOnLocation" = "NapStop cần quyền truy cập vị trí Luôn bật để theo dõi các vùng trong nền — ngay cả khi màn hình của bạn bị khóa hoặc ứng dụng đã đóng.\n\nNếu bạn đã chọn Không phải bây giờ trong quá trình thiết lập, bạn có thể cấp quyền sau trong Cài đặt iOS → Quyền riêng tư & Bảo mật → Dịch vụ vị trí → NapStop. Đặt thành Luôn luôn.\n\nKhông có quyền truy cập Luôn bật, báo thức sẽ chỉ kêu khi ứng dụng đang mở.";
+"help.body.alwaysOnLocation" = "GeoNap cần quyền truy cập vị trí Luôn bật để theo dõi các vùng trong nền — ngay cả khi màn hình của bạn bị khóa hoặc ứng dụng đã đóng.\n\nNếu bạn đã chọn Không phải bây giờ trong quá trình thiết lập, bạn có thể cấp quyền sau trong Cài đặt iOS → Quyền riêng tư & Bảo mật → Dịch vụ vị trí → GeoNap. Đặt thành Luôn luôn.\n\nKhông có quyền truy cập Luôn bật, báo thức sẽ chỉ kêu khi ứng dụng đang mở.";
 
-"help.body.notifications" = "Khi báo thức kêu, bạn sẽ nhận được thông báo với tên báo thức và ghi chú của bạn (nếu được đặt). Từ thông báo, bạn có thể:\n\n• Báo lại 10 phút — tắt báo thức trong 10 phút, sau đó kích hoạt lại.\n• Bỏ qua — xóa thông báo. Với báo thức lặp lại, báo thức đặt lại khi bạn rời vùng.\n\nĐảm bảo thông báo được bật cho NapStop trong Cài đặt iOS → Thông báo → NapStop.";
+"help.body.notifications" = "Khi báo thức kêu, bạn sẽ nhận được thông báo với tên báo thức và ghi chú của bạn (nếu được đặt). Từ thông báo, bạn có thể:\n\n• Báo lại 10 phút — tắt báo thức trong 10 phút, sau đó kích hoạt lại.\n• Bỏ qua — xóa thông báo. Với báo thức lặp lại, báo thức đặt lại khi bạn rời vùng.\n\nNếu Tự động thông báo được bật trên báo thức, ứng dụng Tin nhắn sẽ tự động mở lần tiếp theo bạn đưa GeoNap lên nền trước. Tin nhắn đã được điền sẵn người nhận và thông tin đến hoặc đi. Nhấn Gửi để xác nhận.\n\nĐảm bảo thông báo được bật cho GeoNap trong Cài đặt iOS → Thông báo → GeoNap.";
 
 // MARK: - PrivacyView Section Titles
 "Privacy & Location" = "Quyền riêng tư & Vị trí";
@@ -212,23 +216,23 @@ Nút Lưu bị tắt cho đến khi nhập tên và ghim vị trí. iOS cho phé
 "Questions" = "Câu hỏi";
 
 // MARK: - PrivacyView Body Text
-"privacy.intro" = "NapStop được thiết kế với một nguyên tắc đơn giản: dữ liệu vị trí và báo thức của bạn thuộc về bạn. Tài liệu này giải thích chính xác thông tin nào ứng dụng sử dụng, chúng được lưu ở đâu và những gì nó không bao giờ làm.";
+"privacy.intro" = "GeoNap được thiết kế với một nguyên tắc đơn giản: dữ liệu vị trí và báo thức của bạn thuộc về bạn. Tài liệu này giải thích chính xác thông tin nào ứng dụng sử dụng, chúng được lưu ở đâu và những gì nó không bao giờ làm.";
 
-"privacy.body.locationData" = "NapStop sử dụng vị trí thiết bị của bạn độc quyền để theo dõi các vùng địa lý. Dữ liệu vị trí được xử lý hoàn toàn trên thiết bị của bạn — không bao giờ được truyền đến bất kỳ máy chủ nào, lưu trữ trong cơ sở dữ liệu, hoặc chia sẻ với bên thứ ba.\n\nKhi bạn tạo báo thức, vĩ độ, kinh độ và bán kính được lưu cục bộ. Dữ liệu này không rời thiết bị của bạn trừ khi bạn dùng nút Chia sẻ một cách rõ ràng, tạo ra liên kết Apple Maps tiêu chuẩn.\n\nỨng dụng yêu cầu quyền vị trí \"Luôn luôn\" để iOS có thể đánh thức ứng dụng trong nền khi bạn vào hoặc ra khỏi vùng được theo dõi. Bạn có thể thu hồi quyền này bất kỳ lúc nào trong Cài đặt iOS → Quyền riêng tư & Bảo mật → Dịch vụ vị trí → NapStop.";
+"privacy.body.locationData" = "GeoNap sử dụng vị trí thiết bị của bạn độc quyền để theo dõi các vùng địa lý. Dữ liệu vị trí được xử lý hoàn toàn trên thiết bị của bạn — không bao giờ được truyền đến bất kỳ máy chủ nào, lưu trữ trong cơ sở dữ liệu, hoặc chia sẻ với bên thứ ba.\n\nKhi bạn tạo báo thức, vĩ độ, kinh độ và bán kính được lưu cục bộ. Dữ liệu này không rời thiết bị của bạn trừ khi bạn dùng nút Chia sẻ một cách rõ ràng, tạo ra liên kết Apple Maps tiêu chuẩn.\n\nỨng dụng yêu cầu quyền vị trí \"Luôn luôn\" để iOS có thể đánh thức ứng dụng trong nền khi bạn vào hoặc ra khỏi vùng được theo dõi. Bạn có thể thu hồi quyền này bất kỳ lúc nào trong Cài đặt iOS → Quyền riêng tư & Bảo mật → Dịch vụ vị trí → GeoNap.";
 
-"privacy.body.onDeviceStorage" = "Tất cả dữ liệu báo thức — bao gồm tên, tọa độ, bán kính, khung thời gian, ngày hoạt động và lịch sử kích hoạt — được lưu trữ cục bộ bằng SwiftData trong vùng chứa riêng của ứng dụng. Dữ liệu này được đưa vào các bản sao lưu iOS tiêu chuẩn (iCloud Backup hoặc iTunes/Finder) nếu sao lưu được bật.\n\nKhông cần tài khoản, đăng nhập hoặc kết nối mạng để sử dụng NapStop.";
+"privacy.body.onDeviceStorage" = "Tất cả dữ liệu báo thức — bao gồm tên, tọa độ, bán kính, khung thời gian, ngày hoạt động và lịch sử kích hoạt — được lưu trữ cục bộ bằng SwiftData trong vùng chứa riêng của ứng dụng. Dữ liệu này được đưa vào các bản sao lưu iOS tiêu chuẩn (iCloud Backup hoặc iTunes/Finder) nếu sao lưu được bật.\n\nKhông cần tài khoản, đăng nhập hoặc kết nối mạng để sử dụng GeoNap.";
 
-"privacy.body.iCloudSync" = "NapStop được thiết kế để hỗ trợ đồng bộ iCloud qua CloudKit để báo thức của bạn có thể xuất hiện trên tất cả các thiết bị Apple đăng nhập cùng Apple ID. Khi đồng bộ iCloud đang hoạt động, hồ sơ báo thức được lưu trữ trong vùng chứa iCloud cá nhân của bạn và tuân theo chính sách quyền riêng tư của Apple. Apple không sử dụng dữ liệu CloudKit để quảng cáo.\n\nNếu đồng bộ iCloud không khả dụng hoặc bị tắt, ứng dụng tự động chuyển về lưu trữ chỉ cục bộ — không có dữ liệu bị mất. Bạn có thể tắt đồng bộ iCloud bất kỳ lúc nào trong Cài đặt → [Tên của bạn] → iCloud → NapStop.";
+"privacy.body.iCloudSync" = "GeoNap được thiết kế để hỗ trợ đồng bộ iCloud qua CloudKit để báo thức của bạn có thể xuất hiện trên tất cả các thiết bị Apple đăng nhập cùng Apple ID. Khi đồng bộ iCloud đang hoạt động, hồ sơ báo thức được lưu trữ trong vùng chứa iCloud cá nhân của bạn và tuân theo chính sách quyền riêng tư của Apple. Apple không sử dụng dữ liệu CloudKit để quảng cáo.\n\nNếu đồng bộ iCloud không khả dụng hoặc bị tắt, ứng dụng tự động chuyển về lưu trữ chỉ cục bộ — không có dữ liệu bị mất. Bạn có thể tắt đồng bộ iCloud bất kỳ lúc nào trong Cài đặt → [Tên của bạn] → iCloud → GeoNap.";
 
 "privacy.body.transitFeeds" = "Tính năng Báo thức phương tiện tải xuống dữ liệu GTFS trực tiếp từ các máy chủ của cơ quan giao thông công cộng. Các nguồn này chứa tên điểm dừng, tọa độ và thông tin tuyến đường — không có dữ liệu cá nhân nào được bao gồm.\n\nDữ liệu GTFS đã tải xuống được lưu vào bộ nhớ đệm trong thư mục bộ nhớ đệm của ứng dụng trên thiết bị của bạn. Các tệp được lưu vào bộ nhớ đệm có thể bị iOS xóa khi bộ nhớ thấp; ứng dụng sẽ tải xuống lại theo yêu cầu.\n\nKhông có URL GTFS tùy chỉnh nào bạn nhập được lưu trữ ngoài phiên hiện tại, và không có thông tin nào về các cơ quan bạn đã duyệt được truyền đi bất kỳ đâu.";
 
-"privacy.body.notifications" = "NapStop gửi thông báo cục bộ hoàn toàn trên thiết bị bằng UNUserNotificationCenter của iOS. Thông báo được tạo bởi chính ứng dụng khi sự kiện vùng địa lý xảy ra — chúng không được gửi qua bất kỳ máy chủ thông báo đẩy hoặc dịch vụ từ xa nào. Không có nội dung thông báo nào được truyền ra ngoài thiết bị của bạn.\n\nBạn có thể quản lý quyền thông báo trong Cài đặt iOS → Thông báo → NapStop.";
+"privacy.body.notifications" = "GeoNap gửi thông báo cục bộ hoàn toàn trên thiết bị bằng UNUserNotificationCenter của iOS. Thông báo được tạo bởi chính ứng dụng khi sự kiện vùng địa lý xảy ra — chúng không được gửi qua bất kỳ máy chủ thông báo đẩy hoặc dịch vụ từ xa nào. Không có nội dung thông báo nào được truyền ra ngoài thiết bị của bạn.\n\nBạn có thể quản lý quyền thông báo trong Cài đặt iOS → Thông báo → GeoNap.";
 
-"privacy.body.analytics" = "NapStop không bao gồm bất kỳ SDK phân tích của bên thứ ba, mạng quảng cáo hoặc dịch vụ báo cáo sự cố nào. Ứng dụng không theo dõi cách bạn sử dụng nó và không thu thập thông tin chẩn đoán ngoài những gì iOS cung cấp tự nhiên trong Cài đặt → Quyền riêng tư & Bảo mật → Phân tích & Cải tiến.";
+"privacy.body.analytics" = "GeoNap không bao gồm bất kỳ SDK phân tích của bên thứ ba, mạng quảng cáo hoặc dịch vụ báo cáo sự cố nào. Ứng dụng không theo dõi cách bạn sử dụng nó và không thu thập thông tin chẩn đoán ngoài những gì iOS cung cấp tự nhiên trong Cài đặt → Quyền riêng tư & Bảo mật → Phân tích & Cải tiến.";
 
-"privacy.body.dataDeletion" = "Bạn có thể xóa từng báo thức bằng cách vuốt sang trái trên bất kỳ hàng báo thức nào, hoặc xóa tất cả dữ liệu bằng cách xóa ứng dụng khỏi thiết bị. Gỡ cài đặt NapStop xóa tất cả hồ sơ báo thức được lưu trữ cục bộ. Nếu đồng bộ iCloud được bật, bạn cũng có thể xóa dữ liệu CloudKit của ứng dụng trong Cài đặt → [Tên của bạn] → iCloud → Quản lý bộ nhớ tài khoản → NapStop.";
+"privacy.body.dataDeletion" = "Bạn có thể xóa từng báo thức bằng cách vuốt sang trái trên bất kỳ hàng báo thức nào, hoặc xóa tất cả dữ liệu bằng cách xóa ứng dụng khỏi thiết bị. Gỡ cài đặt GeoNap xóa tất cả hồ sơ báo thức được lưu trữ cục bộ. Nếu đồng bộ iCloud được bật, bạn cũng có thể xóa dữ liệu CloudKit của ứng dụng trong Cài đặt → [Tên của bạn] → iCloud → Quản lý bộ nhớ tài khoản → GeoNap.";
 
-"privacy.body.contact" = "Nếu bạn có câu hỏi về quyền riêng tư hoặc xử lý dữ liệu, bạn có thể liên hệ với nhà phát triển qua liên kết hỗ trợ trong App Store trên trang sản phẩm NapStop.";
+"privacy.body.contact" = "Nếu bạn có câu hỏi về quyền riêng tư hoặc xử lý dữ liệu, bạn có thể liên hệ với nhà phát triển qua liên kết hỗ trợ trong App Store trên trang sản phẩm GeoNap.";
 
 // MARK: - Swipe Action Labels
 "Delete" = "Xóa";
@@ -237,7 +241,7 @@ Nút Lưu bị tắt cho đến khi nhập tên và ghim vị trí. iOS cho phé
 "Map Overview" = "Tổng quan bản đồ";
 "No alarms to show" = "Không có báo thức để hiển thị";
 "Create an alarm first and it will appear here." = "Tạo báo thức trước và nó sẽ xuất hiện ở đây.";
-"No Geo Alarms Yet" = "Chưa có cảnh báo NapStop nào";
+"No Geo Alarms Yet" = "Chưa có cảnh báo GeoNap nào";
 "Alarm limit reached" = "Đã đạt giới hạn báo thức";
 "Approaching alarm limit" = "Sắp đạt giới hạn báo thức";
 "iOS allows 20 active alarms. Disable one before adding another." = "iOS cho phép 20 báo thức đang hoạt động. Tắt một báo thức trước khi thêm mới.";
@@ -289,3 +293,16 @@ Nút Lưu bị tắt cho đến khi nhập tên và ghim vị trí. iOS cho phé
 "Sample coords" = "Tọa độ mẫu";
 "DD = Decimal Degrees  ·  DMS = Degrees Minutes Seconds  ·  DDM = Degrees Decimal Minutes" = "DD = Độ thập phân  ·  DMS = Độ Phút Giây  ·  DDM = Độ Phút thập phân";
 "Tap ⓘ next to the setting for more information." = "Nhấn ⓘ bên cạnh cài đặt để biết thêm thông tin.";
+
+/* Auto-Notify UI */
+"Feature Summary" = "Tóm tắt tính năng";
+"Alarm list icons" = "Biểu tượng danh sách báo thức";
+"Auto-Notify" = "Tự động thông báo";
+"Auto-Notify Defaults" = "Mặc định tự động thông báo";
+"Add from Contacts" = "Thêm từ Danh bạ";
+"Add Manually" = "Thêm thủ công";
+"When this alarm fires, a message with your location will be sent to all listed contacts automatically." = "Khi báo thức này kích hoạt, một tin nhắn với vị trí của bạn sẽ được gửi tự động đến tất cả các liên hệ được liệt kê.";
+"Contacts listed here are pre-filled when you enable Auto-Notify on a new alarm. When an alarm fires, all listed contacts are messaged automatically. You can adjust the list per-alarm." = "Các liên hệ được liệt kê ở đây được điền sẵn khi bạn bật Tự động thông báo trên báo thức mới. Khi báo thức kích hoạt, tất cả các liên hệ được liệt kê sẽ được nhắn tin tự động. Bạn có thể điều chỉnh danh sách theo từng báo thức.";
+
+/* HelpView — Auto-Notify section */
+"help.body.autoNotify" = "Tự động thông báo tự động gửi tin nhắn văn bản đến các liên hệ đã lưu khi báo thức kích hoạt — không cần nhấn gì.\n\nĐể bật:\n1. Khi tạo hoặc chỉnh sửa báo thức, bật nút Tự động thông báo.\n2. Nhấn Thêm từ Danh bạ để chọn người từ sổ địa chỉ, hoặc nhấn Thêm thủ công để nhập số điện thoại hoặc địa chỉ email.\n3. Nhấn Lưu báo thức. Khi báo thức kích hoạt, ứng dụng Tin nhắn sẽ tự động mở lần tiếp theo bạn đưa GeoNap lên nền trước, đã điền sẵn người nhận và thông tin đến hoặc đi của bạn.\n\nMặc định toàn cầu: Trong Cài đặt → Mặc định tự động thông báo, thêm các liên hệ sẽ được điền sẵn vào mỗi báo thức mới khi bạn bật Tự động thông báo.\n\nLưu ý: Tin nhắn được gửi qua ứng dụng Tin nhắn iOS. Thiết bị của bạn phải có khả năng gửi SMS hoặc iMessage đến các liên hệ được liệt kê.";

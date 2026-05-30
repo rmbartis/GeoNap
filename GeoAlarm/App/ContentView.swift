@@ -21,7 +21,7 @@ struct ContentView: View {
     var body: some View {
         NavigationStack {
             AlarmListView()
-                .navigationTitle(Text("NapStop", bundle: bundle))
+                .navigationTitle(Text("GeoNap", bundle: bundle))
                 .sheet(isPresented: $showSettings) {
                     SettingsView()
                 }
@@ -78,22 +78,6 @@ struct ContentView: View {
                             Image(systemName: "gearshape")
                         }
                     }
-                    #if DEBUG
-                    ToolbarItem(placement: .navigationBarLeading) {
-                        Button {
-                            if let first = alarmManager.alarms.first {
-                                first.state = .active
-                                alarmManager.handleRegionEvent(
-                                    regionID: first.id.uuidString,
-                                    event: first.regionEvent
-                                )
-                            }
-                        } label: {
-                            Text("Test Fire", bundle: bundle)
-                        }
-                        .foregroundColor(.red)
-                    }
-                    #endif
                 }
             // Banner sits below the nav bar, pushing list content down.
             // safeAreaInset keeps toolbar buttons fully accessible.

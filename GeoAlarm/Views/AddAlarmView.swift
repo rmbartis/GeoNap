@@ -4,7 +4,6 @@
 import SwiftUI
 import CoreLocation
 import MapKit
-import MessageUI
 
 struct AddAlarmView: View {
     @Environment(\.dismiss) private var dismiss
@@ -12,7 +11,8 @@ struct AddAlarmView: View {
     @EnvironmentObject var alarmManager: AlarmManager
     @StateObject private var viewModel = AlarmViewModel()
     @StateObject private var searchService = LocationSearchService()
-    @State private var showContactPicker = false
+    @State private var showContactPicker  = false
+    @State private var showManualEntry    = false
 
     @AppStorage(AppStorageKey.distanceUnit) private var distanceUnitRaw  = DistanceUnit.imperial.rawValue
     @AppStorage(AppStorageKey.timeFormat)   private var timeFormatRaw    = TimeFormat.twelveHour.rawValue
@@ -365,86 +365,63 @@ struct AddAlarmView: View {
                 Text("Active Days", bundle: bundle)
             }
 
-            // MARK: Notify a Contact
-            if MFMessageComposeViewController.canSendText() {
-                Section {
-                    Toggle(isOn: $viewModel.notifyContact) {
+            // MARK: Auto-Notify Contacts
+            Section {
+                Toggle(isOn: $viewModel.notifyContact) {
+                    Label {
                         VStack(alignment: .leading, spacing: 3) {
-                            Text("Notify a Contact", bundle: bundle)
+                            Text("Auto-Notify", bundle: bundle)
                                 .font(.body)
-                            Text("Send a message when this alarm fires", bundle: bundle)
+                            Text("Share your location when this alarm fires",
+                                 bundle: bundle)
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                    } icon: {
+                        Image(systemName: "bell.badge")
+                    }
+                }
+
+                if viewModel.notifyContact {
+                    // Existing contacts — swipe to delete
+                    ForEach(viewModel.notifyContactList) { contact in
+                        contactRow(contact)
+                    }
+                    .onDelete { offsets in
+                        viewModel.notifyContactList.remove(atOffsets: offsets)
+                    }
+
+                    // Add from Contacts app
+                    Button {
+                        showContactPicker = true
+                    } label: {
+                        Label("Add from Contacts",
+                              systemImage: "person.crop.circle.badge.plus")
+                    }
+
+                    // Add manually
+                    Button {
+                        showManualEntry = true
+                    } label: {
+                        Label("Add Manually", systemImage: "plus.circle")
+                    }
+
+                    if viewModel.notifyContact && viewModel.notifyContactList.isEmpty {
+                        HStack(spacing: 6) {
+                            Image(systemName: "exclamationmark.circle")
+                                .foregroundColor(.orange)
+                            Text("Add at least one contact to enable Auto-Notify.",
+                                 bundle: bundle)
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                         }
                     }
-
-                    if viewModel.notifyContact {
-                        Button {
-                            showContactPicker = true
-                        } label: {
-                            HStack {
-                                Label {
-                                    Text(viewModel.contactName.isEmpty
-                                         ? NSLocalizedString("Select Contact", bundle: bundle, comment: "")
-                                         : viewModel.contactName)
-                                    .foregroundColor(viewModel.contactName.isEmpty ? .accentColor : .primary)
-                                } icon: {
-                                    Image(systemName: "person.crop.circle")
-                                }
-                                Spacer()
-                                if !viewModel.contactName.isEmpty {
-                                    Image(systemName: "chevron.right")
-                                        .font(.caption)
-                                        .foregroundColor(.secondary)
-                                }
-                            }
-                        }
-                        .buttonStyle(.plain)
-
-                        if !viewModel.contactPhone.isEmpty {
-                            // Message preview
-                            let previewMsg = messagePreview(alarmName: viewModel.name.isEmpty ? "this location" : viewModel.name)
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text("Message preview:", bundle: bundle)
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
-                                Text(previewMsg)
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
-                                    .padding(8)
-                                    .background(Color(.systemGray6))
-                                    .clipShape(RoundedRectangle(cornerRadius: 8))
-                            }
-                        }
-
-                        if viewModel.notifyContact && viewModel.contactPhone.isEmpty {
-                            HStack(spacing: 6) {
-                                Image(systemName: "exclamationmark.circle")
-                                    .foregroundColor(.secondary)
-                                Text("Select a contact to enable notifications", bundle: bundle)
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
-                            }
-                        }
-                    }
-                } header: {
-                    Text("Notify a Contact", bundle: bundle)
-                } footer: {
-                    Text("When the alarm fires, a pre-composed message with your arrival time will be ready to send. You review it before it's sent.", bundle: bundle)
                 }
-                .sheet(isPresented: $showContactPicker) {
-                    ContactPickerView(
-                        onSelect: { name, phone in
-                            viewModel.contactName  = name
-                            viewModel.contactPhone = phone
-                            showContactPicker = false
-                        },
-                        onCancel: {
-                            showContactPicker = false
-                        }
-                    )
-                    .ignoresSafeArea()
-                }
+            } header: {
+                Text("Auto-Notify", bundle: bundle)
+            } footer: {
+                Text("When this alarm fires, a message with your location will be sent to all listed contacts automatically.",
+                     bundle: bundle)
             }
 
             // MARK: Validation error
@@ -475,6 +452,16 @@ struct AddAlarmView: View {
             ? Text("Edit Alarm", bundle: bundle)
             : Text("New Alarm", bundle: bundle))
         .navigationBarTitleDisplayMode(.inline)
+        .background(
+            ContactPickerView(isPresented: $showContactPicker) { contact in
+                addContact(contact)
+            }
+        )
+        .sheet(isPresented: $showManualEntry) {
+            AddContactManuallySheet { contact in
+                addContact(contact)
+            }
+        }
         .onAppear {
             if let alarm = existingAlarm {
                 viewModel.load(alarm: alarm)
@@ -483,6 +470,29 @@ struct AddAlarmView: View {
                 coordLonEntry = CoordinateParser.format(longitude: alarm.longitude, format: coordFormat)
             }
         }
+    }
+
+    // MARK: - Contact helpers
+
+    @ViewBuilder
+    private func contactRow(_ contact: NotifyContact) -> some View {
+        HStack(spacing: 12) {
+            Image(systemName: contact.systemImage)
+                .foregroundStyle(.blue)
+                .frame(width: 20)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(contact.name)
+                    .font(.body)
+                Text(contact.value)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+        }
+    }
+
+    private func addContact(_ contact: NotifyContact) {
+        guard !viewModel.notifyContactList.contains(where: { $0.value == contact.value }) else { return }
+        viewModel.notifyContactList.append(contact)
     }
 
     // MARK: - Time window summary
@@ -542,12 +552,6 @@ struct AddAlarmView: View {
         }
     }
 
-    private func messagePreview(alarmName: String) -> String {
-        let timeStr = TimeFormat(rawValue: timeFormatRaw)?.formatTime(Date()) ?? ""
-        let verb = viewModel.regionEvent == .onEntry ? "arrived at" : "departed from"
-        return "I \(verb) \(alarmName) at \(timeStr)."
-    }
-
     // MARK: - Coordinate entry
 
     private func applyCoordinates() {
@@ -586,4 +590,104 @@ struct AddAlarmView: View {
     }
     .environmentObject(AlarmManager())
     .environmentObject(LocationManager())
+}
+
+// MARK: - AddContactManuallySheet
+
+/// Sheet for typing in a contact name and phone number or email address.
+struct AddContactManuallySheet: View {
+
+    var onAdd: (NotifyContact) -> Void
+    @Environment(\.dismiss) private var dismiss
+
+    @State private var name  = ""
+    @State private var value = ""
+
+    // MARK: - Validation
+
+    private var trimmedValue: String { value.trimmingCharacters(in: .whitespaces) }
+
+    /// True when the value field contains a valid phone or email.
+    private var isValueValid: Bool {
+        guard !trimmedValue.isEmpty else { return false }
+        return trimmedValue.contains("@") ? isValidEmail(trimmedValue) : isValidPhone(trimmedValue)
+    }
+
+    private var isValid: Bool {
+        !name.trimmingCharacters(in: .whitespaces).isEmpty && isValueValid
+    }
+
+    /// Inline error shown while the user types — nil when empty or valid.
+    private var valueError: String? {
+        guard !trimmedValue.isEmpty, !isValueValid else { return nil }
+        if trimmedValue.contains("@") {
+            return "Invalid email — must be in the form name@example.com"
+        } else {
+            return "Invalid phone — use digits, spaces, dashes, parentheses, or a leading +"
+        }
+    }
+
+    // MARK: - Body
+
+    var body: some View {
+        NavigationStack {
+            Form {
+                Section {
+                    TextField("Name", text: $name)
+                        .textContentType(.name)
+                        .autocorrectionDisabled()
+                    TextField("Phone or email", text: $value)
+                        .keyboardType(.emailAddress)
+                        .autocorrectionDisabled()
+                        .textInputAutocapitalization(.never)
+                } footer: {
+                    if let error = valueError {
+                        Label(error, systemImage: "exclamationmark.circle")
+                            .font(.caption)
+                            .foregroundStyle(.red)
+                    } else {
+                        Text("Phone (e.g. +1 555-1234) or email (e.g. name@example.com).")
+                            .font(.caption)
+                    }
+                }
+            }
+            .navigationTitle("Add Contact")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") { dismiss() }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Add") {
+                        onAdd(NotifyContact(
+                            name:  name.trimmingCharacters(in: .whitespaces),
+                            value: trimmedValue
+                        ))
+                        dismiss()
+                    }
+                    .disabled(!isValid)
+                }
+            }
+        }
+    }
+
+    // MARK: - Validators
+
+    /// Phone: optional leading +, then digits/spaces/dashes/parentheses/dots,
+    /// with at least 7 digits total (covers most national + international formats).
+    private func isValidPhone(_ s: String) -> Bool {
+        let allowed = CharacterSet(charactersIn: "+0123456789 ()-.")
+        guard s.unicodeScalars.allSatisfy({ allowed.contains($0) }) else { return false }
+        let digitCount = s.filter(\.isNumber).count
+        return digitCount >= 7
+    }
+
+    /// Email: local@domain.tld — basic structural check, not RFC 5322 exhaustive.
+    private func isValidEmail(_ s: String) -> Bool {
+        let parts = s.split(separator: "@", maxSplits: 1, omittingEmptySubsequences: false)
+        guard parts.count == 2 else { return false }
+        let local  = String(parts[0])
+        let domain = String(parts[1])
+        return !local.isEmpty && domain.contains(".") && !domain.hasPrefix(".") && !domain.hasSuffix(".")
+    }
 }

@@ -22,10 +22,25 @@ final class AlarmViewModel: ObservableObject {
     // MARK: - Sound
     @Published var notificationSound: NotificationSound = .default
 
-    // MARK: - Contact notification
-    @Published var notifyContact: Bool   = false
-    @Published var contactName: String   = ""
-    @Published var contactPhone: String  = ""
+    // MARK: - Auto-Notify contacts
+
+    /// Suppresses the `notifyContact` didSet during load/reset so we don't
+    /// overwrite per-alarm contacts with global defaults.
+    private var suppressAutoNotifyDidSet = false
+
+    /// When toggled ON for the first time on a new alarm, pre-populates the
+    /// contact list from the global defaults saved in Settings.
+    @Published var notifyContact: Bool = false {
+        didSet {
+            guard !suppressAutoNotifyDidSet else { return }
+            if notifyContact && notifyContactList.isEmpty {
+                notifyContactList = [NotifyContact].loadGlobalDefaults()
+            }
+        }
+    }
+
+    /// Per-alarm contact list (phone numbers and/or email addresses).
+    @Published var notifyContactList: [NotifyContact] = []
 
     // MARK: - Time window
     @Published var hasTimeWindow: Bool = false
@@ -63,22 +78,26 @@ final class AlarmViewModel: ObservableObject {
     // MARK: - Edit mode
 
     func load(alarm: NapAlarm) {
-        editingID     = alarm.id
-        name          = alarm.name
-        note          = alarm.note
-        latitude      = alarm.latitude
-        longitude     = alarm.longitude
-        radius        = alarm.radius
-        regionEvent   = alarm.regionEvent
-        isRepeating   = alarm.isRepeating
+        // Suppress didSet so the existing per-alarm contact list is not
+        // overwritten with global defaults while loading.
+        suppressAutoNotifyDidSet = true
+        defer { suppressAutoNotifyDidSet = false }
+
+        editingID         = alarm.id
+        name              = alarm.name
+        note              = alarm.note
+        latitude          = alarm.latitude
+        longitude         = alarm.longitude
+        radius            = alarm.radius
+        regionEvent       = alarm.regionEvent
+        isRepeating       = alarm.isRepeating
         activeDays        = alarm.activeDays
         hasTimeWindow     = alarm.hasTimeWindow
         windowStart       = alarm.windowStart ?? AlarmViewModel.defaultWindowStart
         windowEnd         = alarm.windowEnd   ?? AlarmViewModel.defaultWindowEnd
         notificationSound = alarm.notificationSound
-        notifyContact = alarm.notifyContact
-        contactName   = alarm.contactName
-        contactPhone  = alarm.contactPhone
+        notifyContact     = alarm.notifyContact
+        notifyContactList = alarm.notifyContactList
     }
 
     // MARK: - Build model
@@ -124,8 +143,7 @@ final class AlarmViewModel: ObservableObject {
             windowEnd:   hasTimeWindow ? windowEnd   : nil,
             activeDays: activeDays,
             notifyContact: notifyContact,
-            contactName: notifyContact ? contactName : "",
-            contactPhone: notifyContact ? contactPhone : "",
+            notifyContactsJSON: notifyContact ? notifyContactList.toJSON() : "",
             notificationSound: notificationSound
         )
     }
@@ -138,22 +156,24 @@ final class AlarmViewModel: ObservableObject {
     }
 
     func reset() {
-        editingID     = nil
-        name          = ""
-        note          = ""
-        latitude      = 0
-        longitude     = 0
-        radius        = 200
-        regionEvent   = .onEntry
-        isRepeating   = false
-        activeDays    = Set(1...7)
+        suppressAutoNotifyDidSet = true
+        defer { suppressAutoNotifyDidSet = false }
+
+        editingID         = nil
+        name              = ""
+        note              = ""
+        latitude          = 0
+        longitude         = 0
+        radius            = 200
+        regionEvent       = .onEntry
+        isRepeating       = false
+        activeDays        = Set(1...7)
         hasTimeWindow     = false
         windowStart       = AlarmViewModel.defaultWindowStart
         windowEnd         = AlarmViewModel.defaultWindowEnd
         notificationSound = .default
-        notifyContact = false
-        contactName   = ""
-        contactPhone  = ""
-        validationError = nil
+        notifyContact     = false
+        notifyContactList = []
+        validationError   = nil
     }
 }

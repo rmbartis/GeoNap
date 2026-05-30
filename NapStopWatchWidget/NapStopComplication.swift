@@ -163,7 +163,7 @@ struct AlarmComplicationView: View {
 
 @main
 struct NapStopComplication: Widget {
-    let kind = "NapStopComplication"
+    let kind = "GeoNapComplication"
 
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: kind, provider: AlarmProvider()) { entry in

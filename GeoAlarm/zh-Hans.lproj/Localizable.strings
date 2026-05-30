@@ -9,7 +9,7 @@
 "Next" = "下一步";
 "Skip" = "跳过";
 
-"Geo Alarms" = "NapStop";
+"Geo Alarms" = "GeoNap";
 "Location Alarm" = "位置闹钟";
 "Transit Alarm" = "交通闹钟";
 "Location access required. Enable in Settings." = "需要位置访问权限，请在设置中开启。";
@@ -84,21 +84,21 @@
 "Preview" = "预览";
 "Sample radius" = "示例半径";
 "Sample time" = "示例时间";
-"Logging is ON. Detailed activity is being recorded to GeoAlarmDebug.log in the GeoAlarm folder in the Files app. Disable when no longer needed." = "日志记录已开启。详细活动正在记录到文件 App NapStop 文件夹中的 NapStopDebug.log。不再需要时请关闭。";
+"Logging is ON. Detailed activity is being recorded to GeoAlarmDebug.log in the GeoAlarm folder in the Files app. Disable when no longer needed." = "日志记录已开启。详细活动正在记录到文件 App GeoNap 文件夹中的 GeoNapDebug.log。不再需要时请关闭。";
 "Enable to capture detailed diagnostic information when troubleshooting an issue. Logging is off by default and does not run in the background." = "启用以在排查问题时捕获详细诊断信息。日志记录默认关闭，不会在后台运行。";
 
 "Sleep through your commute" = "通勤途中安心小睡";
-"GeoAlarm wakes you up when your device enters or leaves a location — not at a set time. Perfect for trains, buses, and long rides." = "NapStop 在设备进入或离开某位置时唤醒您，而非固定时间。非常适合乘火车、公交或长途出行。";
+"GeoAlarm wakes you up when your device enters or leaves a location — not at a set time. Perfect for trains, buses, and long rides." = "GeoNap 在设备进入或离开某位置时唤醒您，而非固定时间。非常适合乘火车、公交或长途出行。";
 "Set an alarm anywhere" = "随处设置闹钟";
 "Drop a pin on any stop, station, or landmark. Choose how close you need to be before the alarm fires, and whether it should repeat every trip." = "在任意站点、车站或地标处标记。选择触发距离以及是否每次出行都重复。";
 "Active time windows" = "有效时间段";
-"Only want the alarm to fire during your morning commute? Set a time window and GeoAlarm will ignore the location outside those hours." = "只想在早晨通勤时触发？设置时间段，NapStop 将忽略该时间段以外的位置。";
+"Only want the alarm to fire during your morning commute? Set a time window and GeoAlarm will ignore the location outside those hours." = "只想在早晨通勤时触发？设置时间段，GeoNap 将忽略该时间段以外的位置。";
 "Always On location needed" = "需要始终开启位置";
-"GeoAlarm monitors your position in the background so it can alert you even while your phone is locked. Your location is never shared or stored outside the app." = "NapStop 在后台监控您的位置，即使手机锁屏也能提醒您。您的位置不会在应用外共享或存储。";
+"GeoAlarm monitors your position in the background so it can alert you even while your phone is locked. Your location is never shared or stored outside the app." = "GeoNap 在后台监控您的位置，即使手机锁屏也能提醒您。您的位置不会在应用外共享或存储。";
 "Allow location access" = "允许访问位置";
 "Not now" = "稍后";
 "Choose Your Language" = "选择语言";
-"Select the language you'd like to use in GeoAlarm. You can change this at any time in Settings." = "选择在 NapStop 中使用的语言。您可以随时在设置中更改。";
+"Select the language you'd like to use in GeoAlarm. You can change this at any time in Settings." = "选择在 GeoNap 中使用的语言。您可以随时在设置中更改。";
 
 "Choose Agency" = "选择运营商";
 "Choose Route" = "选择线路";
@@ -137,7 +137,7 @@
 "Airport Chime" = "机场提示音";
 
 "Help" = "帮助";
-"What is NapStop?" = "NapStop 是什么？";
+"What is GeoNap?" = "GeoNap 是什么？";
 "Typical use cases" = "典型使用场景";
 "Creating an alarm" = "创建闹钟";
 "Transit Alarms" = "交通闹钟";
@@ -149,8 +149,9 @@
 "Notifications" = "通知";
 
 // MARK: - HelpView Body Text
-"help.body.whatIsNapAlarm" = "NapStop 根据您的位置而非时间来唤醒您。无需猜测旅程需要多长时间，只需在某个位置设置闹钟，让应用在您到达或离开时通知您。\n\n它在后台静默运行，因此您可以打盹、阅读或放松，无需担心错过站点。";
+"help.body.whatIsNapAlarm" = "GeoNap 根据您的位置而非时间叫醒您。在任意地点设置闹钟，到达或离开时立即收到通知，让您在任何旅途中都能放松。\n\n• 安心小憩 — 放心入睡，GeoNap 将在您的站点准时叫醒您。\n• 再不错过站点 — 不再依赖听不懂的语言广播或破损的扬声器。\n• 自动通知他人 — 在到达或离开的瞬间告知家人、朋友或同事。\n• 可自定义的 Siri 支持 — 使用 Siri 快捷指令通过语音免提创建闹钟。\n• 一目了然的摘要 — 每个闹钟的关键设置直接显示在主屏幕上。";
 
+"help.body.featureSummary" = "应用\n\n• 地图概览 — 在一张地图上查看所有已保存的闹钟。\n• 闹钟列表 — 一目了然地显示每个闹钟的状态、徽章和触发详情。\n• 按位置或交通创建 — 在地图上标记地址，或浏览实时时刻表选择精确站点。\n• 自定义交通数据源 — 手动输入公共 GTFS 数据源链接，加载全球任意运营商的时刻表。\n• 内置日志 — 在设置中启用调试日志，捕获详细活动以供支持报告使用。\n\n单个闹钟\n\n• 名称和备注 — 为每个闹钟设置名称和可选备注，备注将显示在通知中。\n• 灵活的位置输入 — 点击地图标记、搜索地址或手动输入坐标（DD、DMS 或 DDM）。\n• 到达或离开触发 — 选择闹钟在进入还是离开区域时触发。\n• 可调整半径 — 用滑块设置地理围栏大小，边界实时显示在地图上。\n• 自定义声音 — 从内置旅行音效、系统默认、紧急提示或纯振动中选择。\n• 排程 — 将闹钟限制在特定的星期几和时间窗口，可选择每次行程后重复。\n• 自动通知 — 闹钟触发时自动向保存的联系人发送消息。\n\n个性化设置\n\n• 距离和时间单位 — 在公制与英制、12 小时与 24 小时之间切换。\n• 坐标格式 — 以 DD、DMS 或 DDM 格式输入和查看 GPS 坐标。\n• 十三种语言 — GeoNap 完全支持英语、西班牙语、法语、德语、意大利语、葡萄牙语、阿拉伯语、印地语、日语、简体中文、俄语、泰语和越南语。\n• 自动通知默认联系人 — 维护一个全局联系人列表，在启用自动通知的每个新闹钟中自动预填。";
 "help.body.useCases" = "• 火车或地铁通勤者 — 在您的车站设置闹钟。入睡后在到达前被叫醒，每天早上自动执行。\n\n• 公交乘客 — 在家附近的站点设置出发闹钟。当您离开该区域时闹钟响起，提醒您出发。\n\n• 长途旅行乘客 — 在途经城市设置闹钟。无需全程盯着地图，当车辆靠近时自动收到通知。\n\n• 陌生城市的旅行者 — 在酒店、机场或会面地点设置闹钟，随时掌握接近目的地的时机。";
 
 "help.body.creatingAlarm" = "点击右上角的 +，菜单显示两个选项：
@@ -166,6 +167,7 @@
 4. 选择到达时或离开时作为触发条件。
 5. 用半径滑块设置闹钟触发所需的接近距离。
 6. 在声音 / 振动中选择铃声或仅振动。
+7. 可选择启用自动通知，闹钟触发时自动向已保存的联系人发送消息。
 
 未输入名称且未标记位置前，保存按钮不可用。iOS 最多允许同时启用 20 个闹钟。";
 
@@ -179,7 +181,7 @@
 
 "help.body.soundVibrate" = "每个闹钟在创建或编辑时于声音 / 振动中单独设置声音。\n\n系统选项：\n• 仅振动 — 无声音；适合安静环境。\n• 默认 — 标准 iOS 通知声音。\n• 紧急 — 以全音量播放，绕过静音模式和勿扰模式。\n\n内置旅行音效：\n• 船用汽笛 · 缆车铃铛 · 蒸汽火车 · 帆船铃铛 · 飞机降落 · 机场提示音\n\n每项设置随闹钟一起保存，每次触发时播放。";
 
-"help.body.siri" = "NapStop 支持 Siri 和快捷指令应用——无需任何设置。\n\n• \"创建 NapStop\" — Siri 询问名称、位置和触发方向，然后保存闹钟。\n• \"启用我的 NapStop\" — Siri 显示已保存的闹钟；选择一个重新启用。\n• \"禁用我的 NapStop\" — 与上述相同，但停用闹钟。\n\n您也可以在 iOS 快捷指令应用的 NapStop 栏目中找到并自定义这些快捷指令。";
+"help.body.siri" = "GeoNap 支持 Siri 和快捷指令应用——无需任何设置。\n\n• \"创建 GeoNap\" — Siri 询问名称、位置和触发方向，然后保存闹钟。\n• \"启用我的 GeoNap\" — Siri 显示已保存的闹钟；选择一个重新启用。\n• \"禁用我的 GeoNap\" — 与上述相同，但停用闹钟。\n\n您也可以在 iOS 快捷指令应用的 GeoNap 栏目中找到并自定义这些快捷指令。";
 
 "help.body.settings" = "点击闹钟列表左上角的齿轮图标打开设置。点击任意设置旁边的 ⓘ 以查看详细说明。
 
@@ -187,18 +189,20 @@
 • 坐标 — 选择 GPS 坐标格式：DD（十进制度数）、DMS（度分秒）或 DDM（度十进制分数）。
 • 时钟 — 在 12 小时和 24 小时格式之间切换。
 • 语言 — 独立于 iPhone 系统语言更改显示语言。
+• 自动通知默认值 — 在此添加电话或电子邮件联系人。对此列表的更改会自动同步到所有已启用自动通知的闹钟。您仍可在每个闹钟中单独调整联系人。
 • 帮助与用户指南 — 本指南。
 • 隐私与位置共享 — 位置数据处理方式的完整说明。
 • 启用调试日志 — 请参阅下方\"报告问题\"。
 • 版本 — 显示当前版本，格式为 MajorVersion.GitBuildNumber-Date（例如：1.247-20260529）。报告错误时请附上此信息。";
 
-"help.body.reportingProblem" = "如果 NapStop 运行异常，您可以启用调试日志记录详细记录。\n\n启用日志记录的步骤：\n1. 打开设置 → 支持部分。\n2. 开启启用调试日志。\n3. 对话框解释记录内容，点击启用日志记录继续。\n4. 重现问题。\n5. 打开文件应用 → 我的 iPhone → NapStop → NapStopDebug.log，然后分享给支持团队。\n\n记录内容：设备型号、iOS 版本、位置权限状态、区域事件、闹钟事件、交通数据下载及错误。不会自动发送任何内容。";
+"help.body.reportingProblem" = "如果 GeoNap 运行异常，您可以启用调试日志记录详细记录。\n\n启用日志记录的步骤：\n1. 打开设置 → 支持部分。\n2. 开启启用调试日志。\n3. 对话框解释记录内容，点击启用日志记录继续。\n4. 重现问题。\n5. 打开文件应用 → 我的 iPhone → GeoNap → GeoNapDebug.log，然后分享给支持团队。\n\n记录内容：设备型号、iOS 版本、位置权限状态、区域事件、闹钟事件、交通数据下载及错误。不会自动发送任何内容。";
 
+"help.body.alarmIcons" = "每个闹钟行显示一个状态点、可选徽章和右侧状态图标。\n\n状态点（最左侧）：\n• 绿色 — 激活中，正在监测您的位置。\n• 红色 — 闹钟已触发。\n• 橙色 — 已推迟10分钟。\n• 灰色 — 已禁用。\n\n中间徽章（仅在相关时显示）：\n• 青色交通图标 — 交通闹钟。图标形状反映路线类型：火车、地铁、公交、轮渡等。\n• 蓝色重复箭头 — 每次行程后自动重置闹钟。\n• 绿色扩音器 — 自动通知已开启；触发时将向联系人发送消息。\n• 灰色带斜线铃铛 — 声音设为仅振动，不播放音频。\n• 紫色时间范围 — 闹钟仅在特定时间窗口内有效。\n• 橙色日期字母 — 闹钟仅在选定的星期几有效。\n\n右侧图标：\n• 红色带徽章铃铛 — 闹钟已触发，等待确认或推迟。\n• 橙色带Z的月亮 — 闹钟当前处于推迟状态。";
 "help.body.managingAlarms" = "向右滑动列表中任意闹钟，无需打开详情页即可快速启用或禁用。\n\n向左滑动可删除闹钟。已删除的闹钟立即移除，其地理围栏监控也随之停止。\n\n编辑闹钟时，点击打开详情页，然后点击编辑闹钟。\n\n共享闹钟位置时，打开详情页并点击共享位置，这将发送精确坐标的 Apple 地图链接。";
 
-"help.body.alwaysOnLocation" = "NapStop 需要始终开启位置权限才能在后台监控区域——即使屏幕已锁定或应用已关闭。\n\n如果设置时选择了暂不开启，可以在 iOS 设置 → 隐私与安全 → 位置服务 → NapStop 中授权，将其设置为始终。\n\n没有始终开启权限，闹钟只会在应用打开时触发。";
+"help.body.alwaysOnLocation" = "GeoNap 需要始终开启位置权限才能在后台监控区域——即使屏幕已锁定或应用已关闭。\n\n如果设置时选择了暂不开启，可以在 iOS 设置 → 隐私与安全 → 位置服务 → GeoNap 中授权，将其设置为始终。\n\n没有始终开启权限，闹钟只会在应用打开时触发。";
 
-"help.body.notifications" = "闹钟触发时，您将收到包含闹钟名称和备注（如已设置）的通知。在通知中可以：\n\n• 延后 10 分钟 — 暂停闹钟 10 分钟，然后重新激活。\n• 关闭 — 清除通知。重复闹钟在您离开区域后重置。\n\n请确保在 iOS 设置 → 通知 → NapStop 中已为 NapStop 启用通知。";
+"help.body.notifications" = "闹钟触发时，您将收到包含闹钟名称和备注（如已设置）的通知。在通知中可以：\n\n• 延后 10 分钟 — 暂停闹钟 10 分钟，然后重新激活。\n• 关闭 — 清除通知。重复闹钟在您离开区域后重置。\n\n如果闹钟已启用自动通知，下次将 GeoNap 切换到前台时，\"信息\"应用将自动打开。消息已预先填写收件人和您的到达或离开详情。点击发送即可确认。\n\n请确保在 iOS 设置 → 通知 → GeoNap 中已为 GeoNap 启用通知。";
 
 // MARK: - PrivacyView Section Titles
 "Privacy & Location" = "隐私与位置";
@@ -212,23 +216,23 @@
 "Questions" = "问题";
 
 // MARK: - PrivacyView Body Text
-"privacy.intro" = "NapStop 基于一个简单原则设计：您的位置和闹钟数据属于您。本文档准确说明应用使用哪些信息、这些信息存储在哪里，以及应用从不执行的操作。";
+"privacy.intro" = "GeoNap 基于一个简单原则设计：您的位置和闹钟数据属于您。本文档准确说明应用使用哪些信息、这些信息存储在哪里，以及应用从不执行的操作。";
 
-"privacy.body.locationData" = "NapStop 仅使用您设备的位置来监控地理围栏区域。位置数据完全在您的设备上处理——从不传输到任何服务器、存储在数据库中或与第三方共享。\n\n创建闹钟时，纬度、经度和半径保存在本地。除非您明确使用共享按钮（生成标准 Apple 地图链接），否则这些数据不会离开您的设备。\n\n应用请求\"始终\"位置权限，以便 iOS 在您进入或离开监控区域时可以在后台唤醒应用。您可以随时在 iOS 设置 → 隐私与安全 → 位置服务 → NapStop 中撤销此权限。";
+"privacy.body.locationData" = "GeoNap 仅使用您设备的位置来监控地理围栏区域。位置数据完全在您的设备上处理——从不传输到任何服务器、存储在数据库中或与第三方共享。\n\n创建闹钟时，纬度、经度和半径保存在本地。除非您明确使用共享按钮（生成标准 Apple 地图链接），否则这些数据不会离开您的设备。\n\n应用请求\"始终\"位置权限，以便 iOS 在您进入或离开监控区域时可以在后台唤醒应用。您可以随时在 iOS 设置 → 隐私与安全 → 位置服务 → GeoNap 中撤销此权限。";
 
-"privacy.body.onDeviceStorage" = "所有闹钟数据——包括名称、坐标、半径、时间窗口、活跃日期和触发历史——均使用 SwiftData 存储在应用的私有容器中。如果启用了备份，这些数据将包含在标准 iOS 备份（iCloud 备份或 iTunes/Finder）中。\n\n使用 NapStop 无需账号、登录或网络连接。";
+"privacy.body.onDeviceStorage" = "所有闹钟数据——包括名称、坐标、半径、时间窗口、活跃日期和触发历史——均使用 SwiftData 存储在应用的私有容器中。如果启用了备份，这些数据将包含在标准 iOS 备份（iCloud 备份或 iTunes/Finder）中。\n\n使用 GeoNap 无需账号、登录或网络连接。";
 
-"privacy.body.iCloudSync" = "NapStop 设计为通过 CloudKit 支持 iCloud 同步，让您的闹钟可以出现在登录同一 Apple ID 的所有 Apple 设备上。iCloud 同步激活时，闹钟记录存储在您个人的 iCloud 容器中，受 Apple 隐私政策约束。Apple 不将 CloudKit 数据用于广告。\n\n如果 iCloud 同步不可用或已禁用，应用自动回退到仅本地存储——不会丢失任何数据。您可以随时在设置 → [您的姓名] → iCloud → NapStop 中禁用 iCloud 同步。";
+"privacy.body.iCloudSync" = "GeoNap 设计为通过 CloudKit 支持 iCloud 同步，让您的闹钟可以出现在登录同一 Apple ID 的所有 Apple 设备上。iCloud 同步激活时，闹钟记录存储在您个人的 iCloud 容器中，受 Apple 隐私政策约束。Apple 不将 CloudKit 数据用于广告。\n\n如果 iCloud 同步不可用或已禁用，应用自动回退到仅本地存储——不会丢失任何数据。您可以随时在设置 → [您的姓名] → iCloud → GeoNap 中禁用 iCloud 同步。";
 
 "privacy.body.transitFeeds" = "交通闹钟功能直接从公共交通机构服务器下载 GTFS 数据。这些数据源包含站点名称、坐标和路线信息——不包含任何个人数据。\n\n下载的 GTFS 数据缓存在设备上应用的缓存目录中。当存储空间不足时，iOS 可能会删除缓存文件；应用将按需重新下载。\n\n您输入的任何自定义 GTFS URL 不会在当前会话之外保存，也不会向任何地方传输您浏览了哪些机构的信息。";
 
-"privacy.body.notifications" = "NapStop 使用 iOS 的 UNUserNotificationCenter 完全在设备上发送本地通知。通知由应用本身在地理围栏事件触发时生成——不通过任何推送通知服务器或远程服务发送。通知内容不会传输到您的设备之外。\n\n您可以在 iOS 设置 → 通知 → NapStop 中管理通知权限。";
+"privacy.body.notifications" = "GeoNap 使用 iOS 的 UNUserNotificationCenter 完全在设备上发送本地通知。通知由应用本身在地理围栏事件触发时生成——不通过任何推送通知服务器或远程服务发送。通知内容不会传输到您的设备之外。\n\n您可以在 iOS 设置 → 通知 → GeoNap 中管理通知权限。";
 
-"privacy.body.analytics" = "NapStop 不包含任何第三方分析 SDK、广告网络或崩溃报告服务。应用不追踪您的使用方式，除 iOS 在设置 → 隐私与安全 → 分析与改进中原生提供的内容外，不收集任何诊断信息。";
+"privacy.body.analytics" = "GeoNap 不包含任何第三方分析 SDK、广告网络或崩溃报告服务。应用不追踪您的使用方式，除 iOS 在设置 → 隐私与安全 → 分析与改进中原生提供的内容外，不收集任何诊断信息。";
 
-"privacy.body.dataDeletion" = "您可以向左滑动任意闹钟行来删除单个闹钟，或通过从设备中移除应用来删除所有数据。卸载 NapStop 将删除所有本地存储的闹钟记录。如果启用了 iCloud 同步，您还可以在设置 → [您的姓名] → iCloud → 管理账户存储 → NapStop 中删除应用的 CloudKit 数据。";
+"privacy.body.dataDeletion" = "您可以向左滑动任意闹钟行来删除单个闹钟，或通过从设备中移除应用来删除所有数据。卸载 GeoNap 将删除所有本地存储的闹钟记录。如果启用了 iCloud 同步，您还可以在设置 → [您的姓名] → iCloud → 管理账户存储 → GeoNap 中删除应用的 CloudKit 数据。";
 
-"privacy.body.contact" = "如果您对隐私或数据处理有疑问，可通过 App Store 上 NapStop 产品页面的支持链接联系开发者。";
+"privacy.body.contact" = "如果您对隐私或数据处理有疑问，可通过 App Store 上 GeoNap 产品页面的支持链接联系开发者。";
 
 // MARK: - Swipe Action Labels
 "Delete" = "删除";
@@ -237,7 +241,7 @@
 "Map Overview" = "地图概览";
 "No alarms to show" = "没有可显示的闹钟";
 "Create an alarm first and it will appear here." = "先创建一个闹钟，它将显示在这里。";
-"No Geo Alarms Yet" = "暂无 NapStop 闹钟";
+"No Geo Alarms Yet" = "暂无 GeoNap 闹钟";
 "Alarm limit reached" = "已达到闹钟上限";
 "Approaching alarm limit" = "即将达到闹钟上限";
 "iOS allows 20 active alarms. Disable one before adding another." = "iOS 最多允许 20 个活跃闹钟。请先禁用一个再添加新的。";
@@ -289,3 +293,16 @@
 "Sample coords" = "示例坐标";
 "DD = Decimal Degrees  ·  DMS = Degrees Minutes Seconds  ·  DDM = Degrees Decimal Minutes" = "DD = 十进制度数  ·  DMS = 度分秒  ·  DDM = 度十进制分数";
 "Tap ⓘ next to the setting for more information." = "点击设置旁边的 ⓘ 以获取更多信息。";
+
+/* Auto-Notify UI */
+"Feature Summary" = "功能摘要";
+"Alarm list icons" = "闹钟列表图标";
+"Auto-Notify" = "自动通知";
+"Auto-Notify Defaults" = "自动通知默认值";
+"Add from Contacts" = "从通讯录添加";
+"Add Manually" = "手动添加";
+"When this alarm fires, a message with your location will be sent to all listed contacts automatically." = "当此闹钟触发时，您的位置消息将自动发送给所有列出的联系人。";
+"Contacts listed here are pre-filled when you enable Auto-Notify on a new alarm. When an alarm fires, all listed contacts are messaged automatically. You can adjust the list per-alarm." = "此处列出的联系人在您对新闹钟启用自动通知时会预先填写。闹钟触发时，所有列出的联系人都会自动收到消息。您可以按每个闹钟调整列表。";
+
+/* HelpView — Auto-Notify section */
+"help.body.autoNotify" = "自动通知功能会在闹钟触发时自动向已保存的联系人发送短信，无需手动操作。\n\n启用方法：\n1. 创建或编辑闹钟时，打开\"自动通知\"开关。\n2. 点击\"从通讯录添加\"从地址簿中选择联系人，或点击\"手动添加\"输入电话号码或电子邮件地址。\n3. 点击\"保存闹钟\"。闹钟触发后，下次将 GeoNap 切换到前台时，\"信息\"应用会自动打开，已预先填写收件人和您的到达或离开详情。\n\n全局默认值：在\"设置\"→\"自动通知默认值\"中添加联系人，每次在新闹钟上启用自动通知时都会预先填写这些联系人，省去重复输入的麻烦。\n\n注意：消息通过 iOS\"信息\"应用发送。您的设备必须能够向列出的联系人发送短信或 iMessage。";

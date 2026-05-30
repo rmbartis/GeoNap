@@ -9,7 +9,7 @@
 "Next" = "次へ";
 "Skip" = "スキップ";
 
-"Geo Alarms" = "NapStop";
+"Geo Alarms" = "GeoNap";
 "Location Alarm" = "位置アラーム";
 "Transit Alarm" = "交通アラーム";
 "Location access required. Enable in Settings." = "位置情報へのアクセスが必要です。設定で有効にしてください。";
@@ -84,21 +84,21 @@
 "Preview" = "プレビュー";
 "Sample radius" = "サンプル半径";
 "Sample time" = "サンプル時刻";
-"Logging is ON. Detailed activity is being recorded to GeoAlarmDebug.log in the GeoAlarm folder in the Files app. Disable when no longer needed." = "ログ記録が有効です。詳細な活動がNapStopDebug.logに記録されています。不要になったら無効にしてください。";
+"Logging is ON. Detailed activity is being recorded to GeoAlarmDebug.log in the GeoAlarm folder in the Files app. Disable when no longer needed." = "ログ記録が有効です。詳細な活動がGeoNapDebug.logに記録されています。不要になったら無効にしてください。";
 "Enable to capture detailed diagnostic information when troubleshooting an issue. Logging is off by default and does not run in the background." = "問題のトラブルシューティング時に詳細な診断情報を取得するために有効にします。ログはデフォルトでオフです。";
 
 "Sleep through your commute" = "通勤中に眠れます";
-"GeoAlarm wakes you up when your device enters or leaves a location — not at a set time. Perfect for trains, buses, and long rides." = "NapStopは設定した時刻ではなく、デバイスが場所に入ったり出たりしたときに起こします。電車、バス、長距離移動に最適。";
+"GeoAlarm wakes you up when your device enters or leaves a location — not at a set time. Perfect for trains, buses, and long rides." = "GeoNapは設定した時刻ではなく、デバイスが場所に入ったり出たりしたときに起こします。電車、バス、長距離移動に最適。";
 "Set an alarm anywhere" = "どこにでもアラームを設定";
 "Drop a pin on any stop, station, or landmark. Choose how close you need to be before the alarm fires, and whether it should repeat every trip." = "任意の停留所、駅、ランドマークにピンを立てます。アラームが鳴る距離と、毎回繰り返すかを選択。";
 "Active time windows" = "有効時間帯";
 "Only want the alarm to fire during your morning commute? Set a time window and GeoAlarm will ignore the location outside those hours." = "朝の通勤時間だけアラームを鳴らしたい？時間帯を設定すると、その時間外は場所を無視します。";
 "Always On location needed" = "常時位置情報が必要です";
-"GeoAlarm monitors your position in the background so it can alert you even while your phone is locked. Your location is never shared or stored outside the app." = "NapStopは画面がロックされていてもバックグラウンドで位置を監視して通知します。位置情報はアプリ外で共有・保存されません。";
+"GeoAlarm monitors your position in the background so it can alert you even while your phone is locked. Your location is never shared or stored outside the app." = "GeoNapは画面がロックされていてもバックグラウンドで位置を監視して通知します。位置情報はアプリ外で共有・保存されません。";
 "Allow location access" = "位置情報へのアクセスを許可";
 "Not now" = "後で";
 "Choose Your Language" = "言語を選択";
-"Select the language you'd like to use in GeoAlarm. You can change this at any time in Settings." = "NapStopで使用する言語を選択してください。設定でいつでも変更できます。";
+"Select the language you'd like to use in GeoAlarm. You can change this at any time in Settings." = "GeoNapで使用する言語を選択してください。設定でいつでも変更できます。";
 
 "Choose Agency" = "事業者を選択";
 "Choose Route" = "路線を選択";
@@ -137,7 +137,7 @@
 "Airport Chime" = "空港のチャイム";
 
 "Help" = "ヘルプ";
-"What is NapStop?" = "NapStopとは？";
+"What is GeoNap?" = "GeoNapとは？";
 "Typical use cases" = "主な使い方";
 "Creating an alarm" = "アラームの作成";
 "Transit Alarms" = "交通アラーム";
@@ -149,8 +149,9 @@
 "Notifications" = "通知";
 
 // MARK: - HelpView Body Text
-"help.body.whatIsNapAlarm" = "NapStopは時刻ではなく現在地に基づいてアラームを鳴らします。旅の所要時間を予測する必要はなく、目的地にアラームを設定しておけば、到着時または出発時にアプリが通知します。\n\nバックグラウンドで静かに動作するので、停車駅を乗り過ごす心配なく、仮眠を取ったり読書したりしてリラックスできます。";
+"help.body.whatIsNapAlarm" = "GeoNap は時刻ではなく現在地に基づいてあなたを起こします。任意の場所にアラームを設定すると、到着または出発の瞬間に通知が届き、どんな旅でもリラックスできます。\n\n• 安心して仮眠 — GeoNap が毎回確実にあなたの停車地で起こしてくれるので、安心して眠れます。\n• 乗り過ごしゼロ — 聞き取れないアナウンスや壊れたスピーカーに頼る必要はもうありません。\n• 自動で他者に通知 — 到着・出発の瞬間に家族、友人、同僚へ自動でお知らせします。\n• カスタマイズ可能な Siri サポート — Siri ショートカットを使って声でハンズフリーアラームを作成できます。\n• ひと目でわかるサマリー — 各アラームの主な設定がホーム画面に直接表示されます。";
 
+"help.body.featureSummary" = "アプリ\n\n• マップ概要 — 保存したすべてのアラームを1つのマップで確認できます。\n• アラーム一覧 — すべてのアラームのステータス・バッジ・起動詳細をひと目で表示。\n• 場所または交通機関で作成 — 地図にピンを立てるか、リアルタイム時刻表から正確な停車地を選択。\n• カスタム交通フィード — 公開 GTFS フィード URL を手動で入力して、世界中の交通機関の時刻表を読み込めます。\n• 内蔵ログ — 設定でデバッグログを有効にして、サポートレポート用の詳細な活動を記録できます。\n\n個別アラーム\n\n• 名前とメモ — 各アラームに名前と通知に表示されるオプションのメモを設定します。\n• 柔軟な場所入力 — 地図をタップしてピンを置く、住所を検索する、または座標を手入力（DD・DMS・DDM）します。\n• 到着または出発のトリガー — アラームが区域への入場時か退場時に起動するかを選択します。\n• 調整可能な半径 — スライダーでジオフェンスのサイズを設定し、境界はマップにリアルタイム表示されます。\n• カスタムサウンド — バンドルされた旅行サウンド、システムデフォルト、緊急アラート、バイブレーションのみから選択。\n• スケジュール設定 — 特定の曜日と時間帯にアラームを制限し、各旅の後の繰り返しをオプションで設定できます。\n• 自動通知 — アラーム起動時に保存済みの連絡先へ自動でメッセージを送信します。\n\nパーソナライゼーション\n\n• 距離・時間単位 — メートル法と帝国法、12時間・24時間表示を切り替えます。\n• 座標形式 — GPS座標を DD・DMS・DDM形式で入力・表示します。\n• 13言語対応 — GeoNap は英語・スペイン語・フランス語・ドイツ語・イタリア語・ポルトガル語・アラビア語・ヒンディー語・日本語・中国語（簡体）・ロシア語・タイ語・ベトナム語に完全対応しています。\n• 自動通知デフォルト — 自動通知が有効なすべての新しいアラームに事前入力されるグローバル連絡先リストを管理します。";
 "help.body.useCases" = "• 電車・地下鉄の通勤者 — 降車駅にアラームを設定。乗り過ごすことなく到着直前に起こされます。毎朝自動で。\n\n• バス通勤者 — 自宅近くのバス停に出発アラームを設定。エリアを離れると鳴り、出発を促します。\n\n• 長距離ドライブの同乗者 — 経由地にアラームを設定。地図を見続けることなく、車が近づいたら通知が届きます。\n\n• 初めての街を旅する人 — ホテル・空港・待ち合わせ場所にアラームを設定して、いつでも目的地への接近を確認できます。";
 
 "help.body.creatingAlarm" = "右上の + をタップするとメニューが表示され、2種類のアラームを選べます。
@@ -166,6 +167,7 @@
 4. トリガーとして到着時または出発時を選びます。
 5. 半径スライダーでアラームが鳴るまでの距離を設定します。
 6. サウンド / バイブでトーンを選ぶか、バイブのみを選択します。
+7. オプションで自動通知を有効にすると、アラームが鳴ったときに保存した連絡先に自動的にメッセージが送信されます。
 
 名前の入力と場所のピン留めが完了するまで保存ボタンは無効です。iOSでは同時に有効化できるアラームは最大20件です。";
 
@@ -179,7 +181,7 @@
 
 "help.body.soundVibrate" = "各アラームには独自のサウンド設定があり、作成時または編集時にサウンド / バイブで選択します。\n\nシステムオプション：\n• バイブのみ — 音なし。静かな環境に最適。\n• デフォルト — 標準のiOS通知音。\n• 緊急 — サイレントモードとおやすみモードを無視してフル音量で再生。\n\n内蔵の旅行サウンド：\n• 船のホーン · ケーブルカーのベル · 蒸気機関車 · ヨットのベル · 着陸音 · 空港チャイム\n\n各設定はアラームと一緒に保存され、鳴るたびに再生されます。";
 
-"help.body.siri" = "NapStopはSiriとショートカットアプリに対応しています。設定不要で使えます。\n\n• 「NapStopを作る」— Siriが名前・場所・トリガー方向を確認し、アラームを保存します。\n• 「NapStopを有効にする」— Siriが保存済みアラームを表示。再度有効にするものを選びます。\n• 「NapStopを無効にする」— 上記と同様ですが、アラームを無効化します。\n\niOSのショートカットアプリのNapStopセクションから、これらのショートカットを見つけてカスタマイズすることもできます。";
+"help.body.siri" = "GeoNapはSiriとショートカットアプリに対応しています。設定不要で使えます。\n\n• 「GeoNapを作る」— Siriが名前・場所・トリガー方向を確認し、アラームを保存します。\n• 「GeoNapを有効にする」— Siriが保存済みアラームを表示。再度有効にするものを選びます。\n• 「GeoNapを無効にする」— 上記と同様ですが、アラームを無効化します。\n\niOSのショートカットアプリのGeoNapセクションから、これらのショートカットを見つけてカスタマイズすることもできます。";
 
 "help.body.settings" = "アラームリスト左上の歯車アイコンから設定を開きます。各設定の横にある ⓘ をタップすると詳細な説明が表示されます。
 
@@ -187,18 +189,20 @@
 • 座標 — GPS座標の形式を選択: DD（十進数）、DMS（度分秒）、またはDDM（度十進分）。
 • 時計 — 12時間表示と24時間表示を切り替え。
 • 言語 — iPhoneのシステム言語とは独立して表示言語を変更します。
+• 自動通知のデフォルト — 電話またはメールの連絡先をここに追加します。このリストへの変更は、自動通知が有効なすべてのアラームに自動的に反映されます。アラームごとに個別調整も可能です。
 • ヘルプ&ユーザーガイド — このガイド。
 • プライバシー&位置情報の共有 — 位置情報の取り扱いの全開示。
 • デバッグログを有効にする — 「問題の報告」参照。
 • ビルド — 現在のバージョンをMajorVersion.GitBuildNumber-Date形式（例: 1.247-20260529）で表示します。バグ報告時に含めてください。";
 
-"help.body.reportingProblem" = "NapStopが正常に動作しない場合は、詳細なログを記録するデバッグログ機能を有効にできます。\n\nログを有効にする手順：\n1. 設定 → サポートセクションを開く。\n2. デバッグログを有効にするをオンにする。\n3. ダイアログで記録内容が説明されます。ログを有効にするをタップして進む。\n4. 問題を再現する。\n5. ファイルアプリ → iPhoneの中 → NapStop → NapStopDebug.logを開き、サポートと共有する。\n\n記録される情報：デバイスモデル・iOSバージョン・位置情報の許可状況・リージョンイベント・アラームイベント・乗換フィードのダウンロード・エラー。自動的に送信されることはありません。";
+"help.body.reportingProblem" = "GeoNapが正常に動作しない場合は、詳細なログを記録するデバッグログ機能を有効にできます。\n\nログを有効にする手順：\n1. 設定 → サポートセクションを開く。\n2. デバッグログを有効にするをオンにする。\n3. ダイアログで記録内容が説明されます。ログを有効にするをタップして進む。\n4. 問題を再現する。\n5. ファイルアプリ → iPhoneの中 → GeoNap → GeoNapDebug.logを開き、サポートと共有する。\n\n記録される情報：デバイスモデル・iOSバージョン・位置情報の許可状況・リージョンイベント・アラームイベント・乗換フィードのダウンロード・エラー。自動的に送信されることはありません。";
 
+"help.body.alarmIcons" = "各アラーム行には、ステータスドット、オプションのバッジ、右側のステータスアイコンが表示されます。\n\nステータスドット（最左）：\n• 緑 — アクティブ、位置を監視中。\n• 赤 — アラームが発動しました。\n• オレンジ — 10分間スヌーズ中。\n• グレー — 無効。\n\n中央のバッジ（関連する場合のみ表示）：\n• ティール色の交通アイコン — 交通アラーム。形状は路線タイプを示します：電車・地下鉄・バス・フェリーなど。\n• 青のリピート矢印 — 各移動後に自動リセット。\n• 緑のメガホン — 自動通知オン；発動時に連絡先へメッセージが送信されます。\n• グレーのスラッシュ付きベル — 音がバイブレーションのみに設定されています。\n• 紫の時間範囲 — 特定の時間帯のみ有効。\n• オレンジの曜日略語 — 選択した曜日のみ有効。\n\n右側のアイコン：\n• 赤いバッジ付きベル — アラームが発動し、確認またはスヌーズを待っています。\n• オレンジのZZ付き月 — 現在スヌーズ中。";
 "help.body.managingAlarms" = "リスト内のアラームを右スワイプすると、詳細を開かずに素早くオン/オフを切り替えられます。\n\n左スワイプでアラームを削除できます。削除されたアラームはすぐに取り除かれ、ジオフェンスの監視も停止します。\n\nアラームを編集するには、タップして詳細画面を開き、アラームを編集をタップします。\n\nアラームの場所を共有するには、詳細画面を開いて場所を共有をタップします。正確な座標のApple Mapsリンクが送信されます。";
 
-"help.body.alwaysOnLocation" = "NapStopはバックグラウンドでエリアを監視するために「常に許可」の位置情報アクセスが必要です。画面がロックされていてもアプリが閉じていても機能します。\n\nセットアップ時に「今はしない」を選んだ場合は、後でiOS設定 → プライバシーとセキュリティ → 位置情報サービス → NapStopから「常に」に設定できます。\n\n「常に許可」がない場合、アラームはアプリが開いている間のみ鳴ります。";
+"help.body.alwaysOnLocation" = "GeoNapはバックグラウンドでエリアを監視するために「常に許可」の位置情報アクセスが必要です。画面がロックされていてもアプリが閉じていても機能します。\n\nセットアップ時に「今はしない」を選んだ場合は、後でiOS設定 → プライバシーとセキュリティ → 位置情報サービス → GeoNapから「常に」に設定できます。\n\n「常に許可」がない場合、アラームはアプリが開いている間のみ鳴ります。";
 
-"help.body.notifications" = "アラームが鳴ると、アラーム名とメモ（設定している場合）付きの通知が届きます。通知からできること：\n\n• 10分スヌーズ — アラームを10分間抑制し、その後再度有効化します。\n• 消去 — 通知をクリア。繰り返しアラームの場合、エリアを離れるとリセットされます。\n\niOS設定 → 通知 → NapStopでNapStopの通知が有効になっているか確認してください。";
+"help.body.notifications" = "アラームが鳴ると、アラーム名とメモ（設定している場合）付きの通知が届きます。通知からできること：\n\n• 10分スヌーズ — アラームを10分間抑制し、その後再度有効化します。\n• 消去 — 通知をクリア。繰り返しアラームの場合、エリアを離れるとリセットされます。\n\n自動通知がアラームで有効になっている場合、次回GeoNapを前面に表示したときにメッセージアプリが自動的に開きます。メッセージは保存した連絡先に宛てられ、到着・出発の詳細が事前に入力されています。送信をタップして確認します。\n\niOS設定 → 通知 → GeoNapでGeoNapの通知が有効になっているか確認してください。";
 
 // MARK: - PrivacyView Section Titles
 "Privacy & Location" = "プライバシーと位置情報";
@@ -212,23 +216,23 @@
 "Questions" = "ご質問";
 
 // MARK: - PrivacyView Body Text
-"privacy.intro" = "NapStopはシンプルな原則に基づいて設計されています。あなたの位置情報とアラームデータはあなたのものです。このドキュメントは、アプリが使用する情報、それがどこに保存されるか、そして決して行わないことを明確に説明します。";
+"privacy.intro" = "GeoNapはシンプルな原則に基づいて設計されています。あなたの位置情報とアラームデータはあなたのものです。このドキュメントは、アプリが使用する情報、それがどこに保存されるか、そして決して行わないことを明確に説明します。";
 
-"privacy.body.locationData" = "NapStopはジオフェンスエリアを監視するためだけに端末の位置情報を使用します。位置情報データはすべて端末上で処理されます。サーバーへの送信、データベースへの保存、第三者への共有は一切行いません。\n\nアラームを作成すると、緯度・経度・半径がローカルに保存されます。明示的に共有ボタンを使用した場合を除き、このデータが端末から出ることはありません。共有ボタンは標準的なApple Mapsのリンクを生成します。\n\nアプリは「常に許可」の位置情報アクセス権を要求します。これはiOSが監視エリアへの進入・退出時にバックグラウンドでアプリを起動するために必要です。iOS設定 → プライバシーとセキュリティ → 位置情報サービス → NapStopからいつでもアクセス権を取り消せます。";
+"privacy.body.locationData" = "GeoNapはジオフェンスエリアを監視するためだけに端末の位置情報を使用します。位置情報データはすべて端末上で処理されます。サーバーへの送信、データベースへの保存、第三者への共有は一切行いません。\n\nアラームを作成すると、緯度・経度・半径がローカルに保存されます。明示的に共有ボタンを使用した場合を除き、このデータが端末から出ることはありません。共有ボタンは標準的なApple Mapsのリンクを生成します。\n\nアプリは「常に許可」の位置情報アクセス権を要求します。これはiOSが監視エリアへの進入・退出時にバックグラウンドでアプリを起動するために必要です。iOS設定 → プライバシーとセキュリティ → 位置情報サービス → GeoNapからいつでもアクセス権を取り消せます。";
 
-"privacy.body.onDeviceStorage" = "アラームデータ（名前・座標・半径・時間帯・有効曜日・トリガー履歴）はすべて、アプリのプライベートコンテナ内でSwiftDataを使用してローカルに保存されます。バックアップが有効な場合、このデータは標準のiOSバックアップ（iCloudバックアップまたはiTunes/Finder）に含まれます。\n\nNapStopの使用にアカウント・ログイン・ネットワーク接続は不要です。";
+"privacy.body.onDeviceStorage" = "アラームデータ（名前・座標・半径・時間帯・有効曜日・トリガー履歴）はすべて、アプリのプライベートコンテナ内でSwiftDataを使用してローカルに保存されます。バックアップが有効な場合、このデータは標準のiOSバックアップ（iCloudバックアップまたはiTunes/Finder）に含まれます。\n\nGeoNapの使用にアカウント・ログイン・ネットワーク接続は不要です。";
 
-"privacy.body.iCloudSync" = "NapStopはCloudKitを介したiCloud同期をサポートするよう設計されており、同じApple IDでサインインしているすべてのAppleデバイスにアラームを表示できます。iCloud同期が有効な場合、アラームの記録はお客様個人のiCloudコンテナに保存され、Appleのプライバシーポリシーに基づいて管理されます。AppleはCloudKitデータを広告に使用しません。\n\niCloud同期が利用できない、または無効な場合、アプリは自動的にローカルのみのストレージにフォールバックします。データが失われることはありません。設定 → [ユーザー名] → iCloud → NapStopからいつでもiCloud同期を無効にできます。";
+"privacy.body.iCloudSync" = "GeoNapはCloudKitを介したiCloud同期をサポートするよう設計されており、同じApple IDでサインインしているすべてのAppleデバイスにアラームを表示できます。iCloud同期が有効な場合、アラームの記録はお客様個人のiCloudコンテナに保存され、Appleのプライバシーポリシーに基づいて管理されます。AppleはCloudKitデータを広告に使用しません。\n\niCloud同期が利用できない、または無効な場合、アプリは自動的にローカルのみのストレージにフォールバックします。データが失われることはありません。設定 → [ユーザー名] → iCloud → GeoNapからいつでもiCloud同期を無効にできます。";
 
 "privacy.body.transitFeeds" = "乗換アラーム機能は、公共交通機関のサーバーから直接GTFSデータをダウンロードします。これらのフィードには停車駅名・座標・路線情報が含まれており、個人情報は含まれていません。\n\nダウンロードされたGTFSデータは端末のアプリキャッシュディレクトリに保存されます。ストレージが少なくなるとiOSがキャッシュファイルを削除することがありますが、アプリは必要に応じて再ダウンロードします。\n\n入力したカスタムGTFSのURLは現在のセッションを超えて保存されることはなく、閲覧した交通機関に関する情報はどこにも送信されません。";
 
-"privacy.body.notifications" = "NapStopはiOSのUNUserNotificationCenterを使用して、完全にデバイス上でローカル通知を送信します。通知はジオフェンスイベント発生時にアプリ自体が生成するものであり、プッシュ通知サーバーやリモートサービスを通じて送信されることはありません。通知の内容がデバイスの外に送信されることはありません。\n\niOS設定 → 通知 → NapStopで通知の設定を管理できます。";
+"privacy.body.notifications" = "GeoNapはiOSのUNUserNotificationCenterを使用して、完全にデバイス上でローカル通知を送信します。通知はジオフェンスイベント発生時にアプリ自体が生成するものであり、プッシュ通知サーバーやリモートサービスを通じて送信されることはありません。通知の内容がデバイスの外に送信されることはありません。\n\niOS設定 → 通知 → GeoNapで通知の設定を管理できます。";
 
-"privacy.body.analytics" = "NapStopにはサードパーティの分析SDK・広告ネットワーク・クラッシュレポートサービスは一切含まれていません。アプリはユーザーの使用状況を追跡せず、iOSが設定 → プライバシーとセキュリティ → 解析と改善で標準的に提供するもの以外の診断情報を収集しません。";
+"privacy.body.analytics" = "GeoNapにはサードパーティの分析SDK・広告ネットワーク・クラッシュレポートサービスは一切含まれていません。アプリはユーザーの使用状況を追跡せず、iOSが設定 → プライバシーとセキュリティ → 解析と改善で標準的に提供するもの以外の診断情報を収集しません。";
 
-"privacy.body.dataDeletion" = "アラーム行を左スワイプして個別のアラームを削除できます。デバイスからアプリを削除することですべてのデータを消去できます。NapStopをアンインストールするとローカルに保存されたすべてのアラーム記録が削除されます。iCloud同期が有効だった場合は、設定 → [ユーザー名] → iCloud → アカウントのストレージを管理 → NapStopからアプリのCloudKitデータも削除できます。";
+"privacy.body.dataDeletion" = "アラーム行を左スワイプして個別のアラームを削除できます。デバイスからアプリを削除することですべてのデータを消去できます。GeoNapをアンインストールするとローカルに保存されたすべてのアラーム記録が削除されます。iCloud同期が有効だった場合は、設定 → [ユーザー名] → iCloud → アカウントのストレージを管理 → GeoNapからアプリのCloudKitデータも削除できます。";
 
-"privacy.body.contact" = "プライバシーやデータの取り扱いについてご質問がある場合は、NapStopの製品ページにあるApp Storeのサポートリンクからデベロッパーにお問い合わせください。";
+"privacy.body.contact" = "プライバシーやデータの取り扱いについてご質問がある場合は、GeoNapの製品ページにあるApp Storeのサポートリンクからデベロッパーにお問い合わせください。";
 
 // MARK: - Swipe Action Labels
 "Delete" = "削除";
@@ -237,7 +241,7 @@
 "Map Overview" = "地図の概要";
 "No alarms to show" = "表示するアラームがありません";
 "Create an alarm first and it will appear here." = "まずアラームを作成すると、ここに表示されます。";
-"No Geo Alarms Yet" = "NapStopアラームはまだありません";
+"No Geo Alarms Yet" = "GeoNapアラームはまだありません";
 "Alarm limit reached" = "アラーム上限に達しました";
 "Approaching alarm limit" = "アラーム上限に近づいています";
 "iOS allows 20 active alarms. Disable one before adding another." = "iOSは20個のアラームまで有効化できます。追加する前に1つ無効にしてください。";
@@ -289,3 +293,16 @@
 "Sample coords" = "サンプル座標";
 "DD = Decimal Degrees  ·  DMS = Degrees Minutes Seconds  ·  DDM = Degrees Decimal Minutes" = "DD = 十進数  ·  DMS = 度分秒  ·  DDM = 度十進分";
 "Tap ⓘ next to the setting for more information." = "設定の横の ⓘ をタップして詳細を確認。";
+
+/* Auto-Notify UI */
+"Feature Summary" = "機能概要";
+"Alarm list icons" = "アラームリストのアイコン";
+"Auto-Notify" = "自動通知";
+"Auto-Notify Defaults" = "自動通知のデフォルト";
+"Add from Contacts" = "連絡先から追加";
+"Add Manually" = "手動で追加";
+"When this alarm fires, a message with your location will be sent to all listed contacts automatically." = "このアラームが作動すると、位置情報を含むメッセージがリストのすべての連絡先に自動的に送信されます。";
+"Contacts listed here are pre-filled when you enable Auto-Notify on a new alarm. When an alarm fires, all listed contacts are messaged automatically. You can adjust the list per-alarm." = "ここに記載された連絡先は、新しいアラームで自動通知を有効にした際に事前入力されます。アラームが作動すると、リストのすべての連絡先に自動的にメッセージが送信されます。リストはアラームごとに調整できます。";
+
+/* HelpView — Auto-Notify section */
+"help.body.autoNotify" = "自動通知は、アラームが作動したときに保存した連絡先にテキストメッセージを自動的に送信します — タップ不要です。\n\n有効にするには：\n1. アラームの作成または編集時に、自動通知のトグルをオンにします。\n2. 「連絡先から追加」をタップしてアドレス帳から選択するか、「手動で追加」をタップして電話番号またはメールアドレスを入力します。\n3. 「アラームを保存」をタップします。アラームが作動すると、次回 GeoNap を前面に表示したときに、メッセージアプリが自動的に開き、連絡先と到着・出発の詳細が事前に入力されています。\n\nグローバルデフォルト：設定 → 自動通知のデフォルトで連絡先を追加すると、自動通知を有効にしたすべての新しいアラームに事前入力されます。\n\n注意：メッセージは iOS のメッセージアプリを通じて送信されます。登録した連絡先に SMS または iMessage を送信できる必要があります。";

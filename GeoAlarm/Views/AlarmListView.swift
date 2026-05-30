@@ -65,7 +65,7 @@ struct AlarmListView: View {
             Image(systemName: "location.circle")
                 .font(.system(size: 64))
                 .foregroundColor(.secondary)
-            Text("No NapStop Alarms Yet", bundle: bundle)
+            Text("No GeoNap Alarms Yet", bundle: bundle)
                 .font(.title2.bold())
             Text("Tap + to create your first alarm.\nYou'll be notified when you arrive at or leave any saved location.", bundle: bundle)
                 .multilineTextAlignment(.center)
@@ -111,7 +111,7 @@ struct AlarmRowView: View {
                 .foregroundColor(.secondary)
 
                 // Row 2: optional badges — only shown when at least one is set
-                if alarm.isRepeating || alarm.hasTimeWindow || alarm.isTransitAlarm || !alarm.isEveryDay {
+                if alarm.isRepeating || alarm.hasTimeWindow || alarm.isTransitAlarm || !alarm.isEveryDay || alarm.notifyContact || alarm.notificationSound == .vibrate {
                     HStack(spacing: 10) {
                         if alarm.isTransitAlarm, let rt = alarm.transitRouteType {
                             Image(systemName: rt.systemImage)
@@ -120,6 +120,14 @@ struct AlarmRowView: View {
                         if alarm.isRepeating {
                             Image(systemName: "repeat")
                                 .foregroundColor(.blue)
+                        }
+                        if alarm.notifyContact {
+                            Image(systemName: "megaphone.fill")
+                                .foregroundColor(.green)
+                        }
+                        if alarm.notificationSound == .vibrate {
+                            Image(systemName: "bell.slash.fill")
+                                .foregroundColor(.secondary)
                         }
                         if let window = alarm.windowLabel(using: timeFormat) {
                             Text(window)
@@ -190,7 +198,7 @@ private struct RegionLimitBanner: View {
 #Preview {
     NavigationStack {
         AlarmListView()
-            .navigationTitle("NapStop")
+            .navigationTitle("GeoNap")
     }
     .environmentObject(AlarmManager())
     .environmentObject(LocationManager())

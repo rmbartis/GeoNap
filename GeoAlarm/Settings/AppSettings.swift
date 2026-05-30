@@ -154,4 +154,7 @@ enum AppStorageKey {
     /// BCP-47 language code chosen by the user (e.g. "en", "es", "zh-Hans").
     /// Defaults to the system language if supported, otherwise English.
     static let appLanguage    = "appLanguage"
+    /// JSON-encoded [NotifyContact] default list for the Auto-Notify feature.
+    /// Pre-filled into per-alarm contact lists when Auto-Notify is first enabled.
+    static let defaultNotifyContacts = "defaultNotifyContacts"
 }
