@@ -99,10 +99,10 @@ final class NapAlarm {
     // MARK: - Sound
 
     /// Raw value of the chosen NotificationSound (String for SwiftData / CloudKit compatibility).
-    var soundNameRaw: String = NotificationSound.critical.rawValue
+    var soundNameRaw: String = NotificationSound.default.rawValue
 
     var notificationSound: NotificationSound {
-        get { NotificationSound(rawValue: soundNameRaw) ?? .critical }
+        get { NotificationSound(rawValue: soundNameRaw) ?? .default }
         set { soundNameRaw = newValue.rawValue }
     }
 
@@ -247,7 +247,7 @@ final class NapAlarm {
         transitRouteName: String? = nil,
         transitStopName: String? = nil,
         transitRouteType: GTFSRouteType? = nil,
-        notificationSound: NotificationSound = .critical
+        notificationSound: NotificationSound = .default
     ) {
         self.id = id
         self.name = name

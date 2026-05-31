@@ -3,6 +3,7 @@
 
 import SwiftUI
 import ContactsUI
+import MessageUI
 
 struct SettingsView: View {
 
@@ -35,15 +36,7 @@ struct SettingsView: View {
     @State private var defaultContacts: [NotifyContact]  = []
     @State private var showContactPicker  = false
     @State private var showManualEntry    = false
-
-    // SMTP settings state
-    @State private var smtpHost        = ""
-    @State private var smtpPort        = "465"
-    @State private var smtpUsername    = ""
-    @State private var smtpPassword    = ""
-    @State private var smtpFromAddress = ""
-    @State private var smtpFromName    = "GeoNap"
-    @State private var smtpShowPassword = false
+    @State private var showNoMailAlert    = false
 
     private var distanceUnit: DistanceUnit {
         DistanceUnit(rawValue: distanceUnitRaw) ?? .imperial
@@ -172,81 +165,8 @@ struct SettingsView: View {
                 } header: {
                     Text("Auto-Notify Defaults", bundle: bundle)
                 } footer: {
-                    Text("Contacts listed here are pre-filled when you enable Auto-Notify on a new alarm. Email contacts are notified silently and automatically. SMS/phone contacts require your approval before sending. You can adjust the list per-alarm.",
+                    Text("Contacts listed here are pre-filled when you enable Auto-Notify on a new alarm. Email contacts open the Mail app for your review before sending. SMS/phone contacts also require your approval before sending. You can adjust the list per-alarm.",
                          bundle: bundle)
-                }
-
-                // MARK: Email (SMTP)
-                Section {
-                    HStack {
-                        Text("Host")
-                        Spacer()
-                        TextField("e.g. smtp.gmail.com", text: $smtpHost)
-                            .multilineTextAlignment(.trailing)
-                            .autocorrectionDisabled()
-                            .textInputAutocapitalization(.never)
-                            .keyboardType(.URL)
-                    }
-                    HStack {
-                        Text("Port")
-                        Spacer()
-                        TextField("465", text: $smtpPort)
-                            .multilineTextAlignment(.trailing)
-                            .keyboardType(.numberPad)
-                            .frame(width: 60)
-                    }
-                    HStack {
-                        Text("Username")
-                        Spacer()
-                        TextField("you@example.com", text: $smtpUsername)
-                            .multilineTextAlignment(.trailing)
-                            .autocorrectionDisabled()
-                            .textInputAutocapitalization(.never)
-                            .keyboardType(.emailAddress)
-                    }
-                    HStack {
-                        Text("Password")
-                        Spacer()
-                        if smtpShowPassword {
-                            TextField("App password", text: $smtpPassword)
-                                .multilineTextAlignment(.trailing)
-                                .autocorrectionDisabled()
-                                .textInputAutocapitalization(.never)
-                        } else {
-                            SecureField("App password", text: $smtpPassword)
-                                .multilineTextAlignment(.trailing)
-                        }
-                        Button {
-                            smtpShowPassword.toggle()
-                        } label: {
-                            Image(systemName: smtpShowPassword ? "eye.slash" : "eye")
-                                .foregroundStyle(.secondary)
-                        }
-                        .buttonStyle(.plain)
-                    }
-                    HStack {
-                        Text("From name")
-                        Spacer()
-                        TextField("GeoNap", text: $smtpFromName)
-                            .multilineTextAlignment(.trailing)
-                    }
-                    HStack {
-                        Text("From address")
-                        Spacer()
-                        TextField("you@example.com", text: $smtpFromAddress)
-                            .multilineTextAlignment(.trailing)
-                            .autocorrectionDisabled()
-                            .textInputAutocapitalization(.never)
-                            .keyboardType(.emailAddress)
-                    }
-                    Button("Save Email Settings") {
-                        saveSMTPSettings()
-                    }
-                    .disabled(smtpHost.isEmpty || smtpUsername.isEmpty || smtpPassword.isEmpty || smtpFromAddress.isEmpty)
-                } header: {
-                    Text("Email (SMTP)")
-                } footer: {
-                    Text("Required to send silent email notifications. Gmail: use smtp.gmail.com port 465 with an App Password (not your regular password). Outlook: use smtp.office365.com port 587.")
                 }
 
                 // MARK: Help & Legal
@@ -316,7 +236,6 @@ struct SettingsView: View {
             .navigationBarTitleDisplayMode(.inline)
             .onAppear {
                 defaultContacts = [NotifyContact].loadGlobalDefaults()
-                loadSMTPSettings()
             }
             .background(
                 ContactPickerView(isPresented: $showContactPicker) { contact in
@@ -367,30 +286,13 @@ struct SettingsView: View {
             .sheet(isPresented: $showShareSheet) {
                 ShareSheet(items: shareItems)
             }
+            // No mail account configured
+            .alert("No Mail Account", isPresented: $showNoMailAlert) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text("No mail account is set up on this device. Go to Settings → Mail → Accounts to add one before using email Auto-Notify contacts.")
+            }
         }
-    }
-
-    // MARK: - SMTP helpers
-
-    private func loadSMTPSettings() {
-        let config = SMTPConfig.load()
-        smtpHost        = config.host
-        smtpPort        = String(config.port)
-        smtpUsername    = config.username
-        smtpPassword    = config.password
-        smtpFromAddress = config.fromAddress
-        smtpFromName    = config.fromName
-    }
-
-    private func saveSMTPSettings() {
-        var config = SMTPConfig.load()
-        config.host        = smtpHost.trimmingCharacters(in: .whitespaces)
-        config.port        = Int(smtpPort) ?? 465
-        config.username    = smtpUsername.trimmingCharacters(in: .whitespaces)
-        config.password    = smtpPassword
-        config.fromAddress = smtpFromAddress.trimmingCharacters(in: .whitespaces)
-        config.fromName    = smtpFromName.trimmingCharacters(in: .whitespaces)
-        config.save()
     }
 
     // MARK: - Auto-Notify helpers
@@ -412,6 +314,11 @@ struct SettingsView: View {
     }
 
     private func addDefaultContact(_ contact: NotifyContact) {
+        // Block email contacts when no mail account is configured on the device.
+        if contact.isEmail && !MFMailComposeViewController.canSendMail() {
+            showNoMailAlert = true
+            return
+        }
         guard !defaultContacts.contains(where: { $0.value == contact.value }) else { return }
         defaultContacts.append(contact)
         defaultContacts.saveAsGlobalDefaults()

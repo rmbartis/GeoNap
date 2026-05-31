@@ -1,10 +1,10 @@
 // NapAlarmModelTests.swift
-// Unit tests for the NapAlarm model: initialization, CLCircularRegion mapping,
-// coding round-trips, and helper properties.
+// Unit tests for the NapAlarm model, sound regression guards, and Info.plist checks.
 
 import XCTest
 import CoreLocation
-@testable import NapAlarm
+import UserNotifications
+@testable import GeoNap
 
 final class NapAlarmModelTests: XCTestCase {
 
@@ -55,9 +55,11 @@ final class NapAlarmModelTests: XCTestCase {
         XCTAssertTrue(alarm.clRegion.notifyOnExit)
     }
 
-    // MARK: - Codable round-trip
-    func test_codableRoundTrip() throws {
-        let original = NapAlarm(
+    // MARK: - Field assignment
+    // NapAlarm is a SwiftData @Model class (not Codable); verify fields survive
+    // in-memory mutation rather than JSON round-trip.
+    func test_fieldsRetainAssignedValues() {
+        let alarm = NapAlarm(
             name: "JFK Airport",
             latitude: 40.6413,
             longitude: -73.7781,
@@ -67,17 +69,13 @@ final class NapAlarmModelTests: XCTestCase {
             note: "Don't miss check-in"
         )
 
-        let data   = try JSONEncoder().encode(original)
-        let decoded = try JSONDecoder().decode(NapAlarm.self, from: data)
-
-        XCTAssertEqual(decoded.id,           original.id)
-        XCTAssertEqual(decoded.name,         original.name)
-        XCTAssertEqual(decoded.latitude,     original.latitude,  accuracy: 0.000001)
-        XCTAssertEqual(decoded.longitude,    original.longitude, accuracy: 0.000001)
-        XCTAssertEqual(decoded.radius,       original.radius)
-        XCTAssertEqual(decoded.regionEvent,  original.regionEvent)
-        XCTAssertEqual(decoded.state,        original.state)
-        XCTAssertEqual(decoded.note,         original.note)
+        XCTAssertEqual(alarm.name,        "JFK Airport")
+        XCTAssertEqual(alarm.latitude,    40.6413,  accuracy: 0.000001)
+        XCTAssertEqual(alarm.longitude,  -73.7781,  accuracy: 0.000001)
+        XCTAssertEqual(alarm.radius,      500)
+        XCTAssertEqual(alarm.regionEvent, .onExit)
+        XCTAssertEqual(alarm.state,       .inactive)
+        XCTAssertEqual(alarm.note,        "Don't miss check-in")
     }
 
     // MARK: - Equatable
@@ -88,5 +86,58 @@ final class NapAlarmModelTests: XCTestCase {
         a2 = NapAlarm(id: id, name: "Modified", latitude: 1, longitude: 1)
         // Same ID → equal (Equatable conforms on full struct, so fields must match)
         XCTAssertNotEqual(a1, a2)  // Different fields despite same ID
+    }
+}
+
+// MARK: - Sound regression guards
+
+/// Regression: default sound was changed to .critical, which requires the
+/// com.apple.developer.usernotifications.critical-alerts entitlement (not present).
+/// Without it iOS silently drops the sound — resulting in no audible alarm.
+final class SoundRegressionTests: XCTestCase {
+
+    func test_defaultSound_isDefault_notCritical() {
+        let alarm = NapAlarm(name: "Test", latitude: 40.0, longitude: -74.0)
+        XCTAssertEqual(alarm.notificationSound, .default,
+            "Default sound must be .default — .critical requires the critical-alerts entitlement which is not present")
+        XCTAssertNotEqual(alarm.notificationSound, .critical,
+            ".critical silently produces no sound without the entitlement")
+    }
+
+    func test_soundNameRaw_defaultsToDefault() {
+        let alarm = NapAlarm(name: "Test", latitude: 40.0, longitude: -74.0)
+        XCTAssertEqual(alarm.soundNameRaw, "default",
+            "soundNameRaw must be 'default' — was incorrectly set to 'critical'")
+    }
+
+    func test_explicitCriticalSound_roundTrips() {
+        let alarm = NapAlarm(name: "Test", latitude: 40.0, longitude: -74.0,
+                             notificationSound: .critical)
+        XCTAssertEqual(alarm.notificationSound, .critical)
+        XCTAssertEqual(alarm.soundNameRaw, "critical")
+    }
+
+    func test_vibrateSound_unSound_isNil() {
+        XCTAssertNil(NotificationSound.vibrate.unSound,
+            ".vibrate must produce nil UNNotificationSound (vibration only)")
+    }
+
+    func test_defaultAndCritical_ids_areDistinct() {
+        XCTAssertNotEqual(NotificationSound.default.id, NotificationSound.critical.id)
+    }
+
+    // MARK: Info.plist background modes
+
+    /// 'location' must be in UIBackgroundModes for reliable background geofencing.
+    func test_infoPlist_hasLocationBackgroundMode() {
+        let modes = Bundle.main.infoDictionary?["UIBackgroundModes"] as? [String] ?? []
+        XCTAssertTrue(modes.contains("location"),
+            "UIBackgroundModes must include 'location'. Found: \(modes)")
+    }
+
+    func test_infoPlist_hasRemoteNotificationBackgroundMode() {
+        let modes = Bundle.main.infoDictionary?["UIBackgroundModes"] as? [String] ?? []
+        XCTAssertTrue(modes.contains("remote-notification"),
+            "UIBackgroundModes must include 'remote-notification'. Found: \(modes)")
     }
 }

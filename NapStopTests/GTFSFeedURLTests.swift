@@ -13,7 +13,7 @@
 // CI environment variable SKIP_NETWORK_TESTS is set to "1".
 
 import XCTest
-@testable import NapAlarm
+@testable import GeoNap
 
 final class GTFSFeedURLTests: XCTestCase {
 

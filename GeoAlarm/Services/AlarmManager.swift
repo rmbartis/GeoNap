@@ -8,6 +8,7 @@ import CoreLocation
 import SwiftData
 import CoreData
 import Combine
+import MessageUI
 
 @MainActor
 final class AlarmManager: NSObject, ObservableObject {
@@ -15,9 +16,13 @@ final class AlarmManager: NSObject, ObservableObject {
     // MARK: - Published state
     @Published private(set) var alarms: [NapAlarm] = []
 
-    /// Set when the user taps "Notify Contact" on a fired alarm notification.
+    /// Set when an alarm fires and there are phone contacts to notify.
     /// ContentView observes this and presents the Messages compose sheet.
     @Published var pendingContactMessage: ContactMessage? = nil
+
+    /// Set when an alarm fires and there are email contacts to notify.
+    /// ContentView observes this and presents the Mail compose sheet.
+    @Published var pendingMailMessage: MailMessage? = nil
 
     /// Set when the app is opened from a Spotlight search result.
     /// ContentView observes this and navigates to the matching AlarmDetailView.
@@ -304,40 +309,8 @@ final class AlarmManager: NSObject, ObservableObject {
             ? "\(alarm.regionEvent.rawValue) detected."
             : alarm.note
         content.sound = alarm.notificationSound.unSound
-
-        content.userInfo = ["alarmID": alarm.id.uuidString]
         content.categoryIdentifier = NotificationCategory.geoAlarm
-
-        // Auto-Notify — split contacts into email (silent SMTP) and phone (compose sheet).
-        if alarm.notifyContact {
-            let timeStr   = DateFormatter.localizedString(from: Date(), dateStyle: .none, timeStyle: .short)
-            let direction = alarm.regionEvent == .onEntry ? "Arrival" : "Departure"
-            let verb      = alarm.regionEvent == .onEntry ? "arrived at" : "departed from"
-            var msgBody   = "[\(direction)] I \(verb) \(alarm.name) at \(timeStr)."
-            if !alarm.note.isEmpty { msgBody += " \(alarm.note)" }
-            let subject   = "GeoNap \(direction) — \(alarm.name)"
-
-            // Email contacts → send silently via SMTP (no UI required).
-            let emails = alarm.notifyContactList.filter { $0.isEmail }.map { $0.value }
-            if !emails.isEmpty {
-                DebugLogger.shared.log("Auto-Notify: sending email to \(emails) for alarm '\(alarm.name)'", category: "AlarmManager")
-                Task {
-                    do {
-                        try await SMTPService.shared.send(to: emails, subject: subject, body: msgBody)
-                        DebugLogger.shared.log("Auto-Notify: email sent to \(emails.count) recipient(s)", category: "AlarmManager")
-                    } catch {
-                        DebugLogger.shared.log("Auto-Notify: email FAILED — \(error.localizedDescription)", category: "AlarmManager")
-                    }
-                }
-            }
-
-            // Phone contacts → queue compose sheet (requires user approval to send).
-            let phones = alarm.notifyContactList.filter { !$0.isEmail }.map { $0.value }
-            if !phones.isEmpty {
-                pendingContactMessage = ContactMessage(phones: phones, body: msgBody)
-                DebugLogger.shared.log("Auto-Notify: SMS compose queued for \(phones.count) contact(s) on alarm '\(alarm.name)' (\(direction))", category: "AlarmManager")
-            }
-        }
+        content.userInfo = buildNotifyUserInfo(for: alarm)
 
         let request = UNNotificationRequest(
             identifier: alarm.id.uuidString,
@@ -349,6 +322,62 @@ final class AlarmManager: NSObject, ObservableObject {
                 print("❌ Notification failed: \(error.localizedDescription)")
                 DebugLogger.shared.log("Notification delivery failed: \(error.localizedDescription)", category: "AlarmManager")
             }
+        }
+    }
+
+    /// Builds the userInfo dictionary for a notification.
+    /// Always contains "alarmID". When Auto-Notify is enabled, also embeds
+    /// "notifyPhones", "notifyEmails", "notifyBody", and "notifySubject" so that
+    /// contact data survives an app relaunch triggered by tapping the notification.
+    ///
+    /// Exposed `internal` (not `private`) so unit tests can verify the output
+    /// without going through UNUserNotificationCenter.
+    func buildNotifyUserInfo(for alarm: NapAlarm) -> [String: Any] {
+        var userInfo: [String: Any] = ["alarmID": alarm.id.uuidString]
+        guard alarm.notifyContact, !alarm.notifyContactList.isEmpty else { return userInfo }
+
+        let timeStr   = DateFormatter.localizedString(from: Date(), dateStyle: .none, timeStyle: .short)
+        let direction = alarm.regionEvent == .onEntry ? "Arrival" : "Departure"
+        let verb      = alarm.regionEvent == .onEntry ? "arrived at" : "departed from"
+        var msgBody   = "[\(direction)] I \(verb) \(alarm.name) at \(timeStr)."
+        if !alarm.note.isEmpty { msgBody += " \(alarm.note)" }
+        let subject   = "GeoNap \(direction) — \(alarm.name)"
+
+        let phones = alarm.notifyContactList.filter { !$0.isEmail }.map { $0.value }
+        let emails = alarm.notifyContactList.filter {  $0.isEmail }.map { $0.value }
+
+        if !phones.isEmpty {
+            userInfo["notifyPhones"] = phones
+            userInfo["notifyBody"]   = msgBody
+            DebugLogger.shared.log("Auto-Notify: \(phones.count) SMS contact(s) embedded in notification for '\(alarm.name)'", category: "AlarmManager")
+        }
+        if !emails.isEmpty {
+            userInfo["notifyEmails"]  = emails
+            userInfo["notifySubject"] = subject
+            userInfo["notifyBody"]    = msgBody
+            DebugLogger.shared.log("Auto-Notify: \(emails.count) email contact(s) embedded in notification for '\(alarm.name)'", category: "AlarmManager")
+        }
+        return userInfo
+    }
+
+    /// Recovers Auto-Notify contact data from a notification's userInfo dictionary
+    /// and sets `pendingContactMessage` / `pendingMailMessage` accordingly.
+    /// Called from the notification-tap response handler so that the compose sheets
+    /// appear even when the app was fully relaunched by tapping the notification.
+    ///
+    /// Exposed `internal` so unit tests can verify recovery without needing a real
+    /// `UNNotificationResponse` object.
+    func recoverAutoNotify(from userInfo: [AnyHashable: Any]) {
+        let body = userInfo["notifyBody"] as? String ?? ""
+
+        if let phones = userInfo["notifyPhones"] as? [String], !phones.isEmpty {
+            pendingContactMessage = ContactMessage(phones: phones, body: body)
+            DebugLogger.shared.log("Auto-Notify: SMS compose queued from notification tap (\(phones.count) contact(s))", category: "AlarmManager")
+        }
+        if let emails = userInfo["notifyEmails"] as? [String], !emails.isEmpty {
+            let subject = userInfo["notifySubject"] as? String ?? "GeoNap Alarm"
+            pendingMailMessage = MailMessage(to: emails, subject: subject, body: body)
+            DebugLogger.shared.log("Auto-Notify: mail compose queued from notification tap (\(emails.count) recipient(s))", category: "AlarmManager")
         }
     }
 
@@ -455,6 +484,8 @@ extension AlarmManager: UNUserNotificationCenterDelegate {
         let alarmID = response.notification.request.content.userInfo["alarmID"] as? String
         let action  = response.actionIdentifier
 
+        let userInfo = response.notification.request.content.userInfo
+
         Task { @MainActor in
             switch action {
             case NotificationAction.snooze10:
@@ -466,7 +497,10 @@ extension AlarmManager: UNUserNotificationCenterDelegate {
                 }
 
             default:
-                break   // Dismiss and default tap need no extra handling
+                // Recover Auto-Notify contact data from the notification's userInfo.
+                // This handles the case where the app was fully relaunched by tapping
+                // the notification and in-memory pendingContactMessage/pendingMailMessage was lost.
+                recoverAutoNotify(from: userInfo)
             }
             completionHandler()
         }

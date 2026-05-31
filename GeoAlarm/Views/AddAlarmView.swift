@@ -4,6 +4,7 @@
 import SwiftUI
 import CoreLocation
 import MapKit
+import MessageUI
 
 struct AddAlarmView: View {
     @Environment(\.dismiss) private var dismiss
@@ -13,6 +14,7 @@ struct AddAlarmView: View {
     @StateObject private var searchService = LocationSearchService()
     @State private var showContactPicker  = false
     @State private var showManualEntry    = false
+    @State private var showNoMailAlert    = false
 
     @AppStorage(AppStorageKey.distanceUnit) private var distanceUnitRaw  = DistanceUnit.imperial.rawValue
     @AppStorage(AppStorageKey.timeFormat)   private var timeFormatRaw    = TimeFormat.twelveHour.rawValue
@@ -420,7 +422,7 @@ struct AddAlarmView: View {
             } header: {
                 Text("Auto-Notify", bundle: bundle)
             } footer: {
-                Text("Email contacts are notified automatically and silently when the alarm fires. SMS/phone contacts require your approval before the message is sent.",
+                Text("Email and SMS contacts both require your approval before the message is sent. The Mail or Messages app will open for confirmation when the alarm fires.",
                      bundle: bundle)
             }
 
@@ -462,6 +464,11 @@ struct AddAlarmView: View {
                 addContact(contact)
             }
         }
+        .alert("No Mail Account", isPresented: $showNoMailAlert) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text("No mail account is set up on this device. Go to Settings → Mail → Accounts to add one before using email Auto-Notify contacts.")
+        }
         .onAppear {
             if let alarm = existingAlarm {
                 viewModel.load(alarm: alarm)
@@ -491,6 +498,11 @@ struct AddAlarmView: View {
     }
 
     private func addContact(_ contact: NotifyContact) {
+        // Block email contacts when no mail account is configured on the device.
+        if contact.isEmail && !MFMailComposeViewController.canSendMail() {
+            showNoMailAlert = true
+            return
+        }
         guard !viewModel.notifyContactList.contains(where: { $0.value == contact.value }) else { return }
         viewModel.notifyContactList.append(contact)
     }

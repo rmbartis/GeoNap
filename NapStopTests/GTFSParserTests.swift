@@ -16,7 +16,7 @@
 //   that want URL checks only (saves bandwidth / build time).
 
 import XCTest
-@testable import NapAlarm
+@testable import GeoNap
 
 // GTFSService is @MainActor so the test class must be too.
 @MainActor
@@ -42,9 +42,11 @@ final class GTFSParserTests: XCTestCase {
         ParseTestCase(name: "TriMet",             minRoutes: 20, minStops: 500),
     ]
 
-    // Generous per-test timeout: the full download + parse must complete within
-    // this window.  Set higher than XCTest's default (600 s) for large feeds.
-    override var timeoutForAsyncExpectations: TimeInterval { 180 }
+    override func setUp() {
+        super.setUp()
+        // Generous per-test timeout: full download + parse must finish within 180 s.
+        executionTimeAllowance = 180
+    }
 
     // MARK: - Tests
 

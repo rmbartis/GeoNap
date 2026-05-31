@@ -1,13 +1,19 @@
 # .github/workflows/gtfs-tests.yml
 #
-# GeoAlarm — GTFS feed CI
+# GeoAlarm — CI
 #
 # Jobs
 # ────
+# unit-tests   Runs on every push + PR.
+#              Executes all NapStopTests EXCEPT the GTFS network tests.
+#              Covers alarm model, view-model validation, AlarmManager CRUD,
+#              notification userInfo embedding, Auto-Notify recovery, and
+#              sound/Info.plist regression guards.
+#              Requires no network access. Completes in ~2 min.
+#
 # url-checks   Runs on every push + PR.
 #              Executes GTFSFeedURLTests — lightweight HEAD/range-GET checks
-#              for all 29 curated feeds.  Completes in ~60 s and requires no
-#              large downloads.
+#              for all 29 curated feeds.  Completes in ~60 s.
 #
 # parse-tests  Runs only on push to main, or when manually triggered.
 #              Executes GTFSParserTests — full download + parse for 4 select
@@ -19,7 +25,7 @@
 # provided by GitHub Actions).  Never commit personal access tokens or API keys
 # to this file.
 
-name: GTFS Feed Tests
+name: GeoAlarm CI
 
 on:
   push:
@@ -42,7 +48,54 @@ concurrency:
 
 jobs:
   # ──────────────────────────────────────────────────────────────────────────
-  # Job 1 — URL reachability checks (every commit)
+  # Job 1 — Core unit tests (every commit, no network required)
+  # Covers alarm model, view-model validation, AlarmManager CRUD + state
+  # transitions, notification userInfo embedding/recovery, sound defaults,
+  # and Info.plist regression guards.
+  # ──────────────────────────────────────────────────────────────────────────
+  unit-tests:
+    name: Unit Tests
+    runs-on: macos-15
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: sudo xcode-select -s /Applications/Xcode_16.3.app/Contents/Developer
+
+      - name: Resolve Swift packages
+        run: |
+          xcodebuild -resolvePackageDependencies \
+            -project GeoAlarm.xcodeproj \
+            -scheme GeoNap
+
+      - name: Run unit tests
+        run: |
+          xcodebuild test \
+            -project GeoAlarm.xcodeproj \
+            -scheme GeoNap \
+            -destination 'platform=iOS Simulator,name=iPhone 16' \
+            -only-testing:NapStopTests/NapAlarmModelTests \
+            -only-testing:NapStopTests/AlarmViewModelTests \
+            -only-testing:NapStopTests/AlarmManagerTests \
+            -only-testing:NapStopTests/SoundRegressionTests \
+            -only-testing:NapStopTests/AutoNotifyTests \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            | xcpretty --color --report junit --output test-results-unit.xml
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: unit-test-results
+          path: test-results-unit.xml
+          retention-days: 14
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # Job 2 — URL reachability checks (every commit)
   # ──────────────────────────────────────────────────────────────────────────
   url-checks:
     name: GTFS URL Reachability
