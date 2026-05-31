@@ -60,13 +60,13 @@ jobs:
         run: |
           xcodebuild -resolvePackageDependencies \
             -project GeoAlarm.xcodeproj \
-            -scheme NapStop
+            -scheme GeoNap
 
       - name: Run URL reachability tests
         run: |
           xcodebuild test \
             -project GeoAlarm.xcodeproj \
-            -scheme NapStop \
+            -scheme GeoNap \
             -destination 'platform=iOS Simulator,name=iPhone 16' \
             -only-testing:NapStopTests/GTFSFeedURLTests \
             CODE_SIGN_IDENTITY="" \
@@ -104,13 +104,13 @@ jobs:
         run: |
           xcodebuild -resolvePackageDependencies \
             -project GeoAlarm.xcodeproj \
-            -scheme NapStop
+            -scheme GeoNap
 
       - name: Run full-parse tests
         run: |
           xcodebuild test \
             -project GeoAlarm.xcodeproj \
-            -scheme NapStop \
+            -scheme GeoNap \
             -destination 'platform=iOS Simulator,name=iPhone 16' \
             -only-testing:NapStopTests/GTFSParserTests \
             CODE_SIGN_IDENTITY="" \
