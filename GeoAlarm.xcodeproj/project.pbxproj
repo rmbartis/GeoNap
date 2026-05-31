@@ -153,9 +153,9 @@
 			productReference = 686A0F1F2FC337E40079F963 /* GeoNap.app */;
 			productType = "com.apple.product-type.application";
 		};
-		686A0F2F2FC337E50079F963 /* NapStopTests */ = {
+		686A0F2F2FC337E50079F963 /* GeoNapTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 686A0F482FC337E50079F963 /* Build configuration list for PBXNativeTarget "NapStopTests" */;
+			buildConfigurationList = 686A0F482FC337E50079F963 /* Build configuration list for PBXNativeTarget "GeoNapTests" */;
 			buildPhases = (
 				686A0F2C2FC337E50079F963 /* Sources */,
 				686A0F2D2FC337E50079F963 /* Frameworks */,
@@ -176,9 +176,9 @@
 			productReference = 686A0F302FC337E50079F963 /* GeoNapTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		686A0F392FC337E50079F963 /* NapStopUITests */ = {
+		686A0F392FC337E50079F963 /* GeoNapUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 686A0F4B2FC337E50079F963 /* Build configuration list for PBXNativeTarget "NapStopUITests" */;
+			buildConfigurationList = 686A0F4B2FC337E50079F963 /* Build configuration list for PBXNativeTarget "GeoNapUITests" */;
 			buildPhases = (
 				686A0F362FC337E50079F963 /* Sources */,
 				686A0F372FC337E50079F963 /* Frameworks */,
@@ -253,8 +253,8 @@
 			projectRoot = "";
 			targets = (
 				686A0F1E2FC337E40079F963 /* GeoNap */,
-				686A0F2F2FC337E50079F963 /* NapStopTests */,
-				686A0F392FC337E50079F963 /* NapStopUITests */,
+				686A0F2F2FC337E50079F963 /* GeoNapTests */,
+				686A0F392FC337E50079F963 /* GeoNapUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -706,7 +706,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		686A0F482FC337E50079F963 /* Build configuration list for PBXNativeTarget "NapStopTests" */ = {
+		686A0F482FC337E50079F963 /* Build configuration list for PBXNativeTarget "GeoNapTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				686A0F492FC337E50079F963 /* Debug */,
@@ -715,7 +715,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		686A0F4B2FC337E50079F963 /* Build configuration list for PBXNativeTarget "NapStopUITests" */ = {
+		686A0F4B2FC337E50079F963 /* Build configuration list for PBXNativeTarget "GeoNapUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				686A0F4C2FC337E50079F963 /* Debug */,

@@ -1,15 +1,19 @@
 // MapPickerView.swift
 // Interactive map for picking an alarm's center coordinate.
-// Long-press to drop a pin; shows the radius circle overlay.
+// Tap to drop a pin; "Use My Location" button pins current GPS position.
+// Shows the radius circle overlay.
 
 import SwiftUI
 import MapKit
+import CoreLocation
 
 struct MapPickerView: View {
     @Binding var latitude: Double
     @Binding var longitude: Double
     /// Alarm radius in metres — drives the geofence circle overlay.
     @Binding var radius: Double
+
+    @EnvironmentObject private var locationManager: LocationManager
 
     // Internal camera position — starts at automatic (no spinning "finding location" state)
     @State private var cameraPosition: MapCameraPosition = .automatic
@@ -45,6 +49,21 @@ struct MapPickerView: View {
                     longitude     = coord.longitude
                 }
             }
+        }
+        .overlay(alignment: .topTrailing) {
+            Button {
+                useCurrentLocation()
+            } label: {
+                Label("Use My Location", systemImage: "location.fill")
+                    .font(.caption.weight(.medium))
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 7)
+                    .background(.ultraThinMaterial)
+                    .cornerRadius(8)
+                    .shadow(radius: 2)
+            }
+            .disabled(locationManager.currentLocation == nil)
+            .padding([.top, .trailing], 10)
         }
         .overlay(alignment: .bottom) {
             Text(pinCoordinate == nil
@@ -90,6 +109,21 @@ struct MapPickerView: View {
             ))
         }
     }
+
+    // MARK: - Helpers
+
+    private func useCurrentLocation() {
+        guard let loc = locationManager.currentLocation else { return }
+        let coord      = loc.coordinate
+        pinCoordinate  = coord
+        latitude       = coord.latitude
+        longitude      = coord.longitude
+        cameraPosition = .region(MKCoordinateRegion(
+            center: coord,
+            latitudinalMeters: 1000,
+            longitudinalMeters: 1000
+        ))
+    }
 }
 
 #Preview {
@@ -99,4 +133,5 @@ struct MapPickerView: View {
         radius: .constant(300)
     )
     .frame(height: 300)
+    .environmentObject(LocationManager())
 }
