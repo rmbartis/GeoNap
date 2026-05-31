@@ -157,4 +157,12 @@ enum AppStorageKey {
     /// JSON-encoded [NotifyContact] default list for the Auto-Notify feature.
     /// Pre-filled into per-alarm contact lists when Auto-Notify is first enabled.
     static let defaultNotifyContacts = "defaultNotifyContacts"
+
+    // MARK: SMTP — silent email for Auto-Notify email contacts
+    static let smtpHost        = "smtpHost"
+    static let smtpPort        = "smtpPort"
+    static let smtpUsername    = "smtpUsername"
+    static let smtpPassword    = "smtpPassword"
+    static let smtpFromAddress = "smtpFromAddress"
+    static let smtpFromName    = "smtpFromName"
 }

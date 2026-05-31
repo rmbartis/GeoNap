@@ -12,6 +12,8 @@ struct HelpView: View {
 
                 helpSection(symbol: "lightbulb",   color: .yellow,
                             titleKey: "What is NapStop?",    bodyKey: "help.body.whatIsNapAlarm")
+                helpSection(symbol: "iphone.and.ipad", color: .gray,
+                            titleKey: "Minimum Requirements", bodyKey: "help.body.minimumRequirements")
                 helpSection(symbol: "list.star",    color: .blue,
                             titleKey: "Feature Summary",      bodyKey: "help.body.featureSummary")
                 helpSection(symbol: "tram",         color: .blue,

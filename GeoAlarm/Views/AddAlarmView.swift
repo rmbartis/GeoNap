@@ -420,7 +420,7 @@ struct AddAlarmView: View {
             } header: {
                 Text("Auto-Notify", bundle: bundle)
             } footer: {
-                Text("When this alarm fires, a message with your location will be sent to all listed contacts automatically.",
+                Text("Email contacts are notified automatically and silently when the alarm fires. SMS/phone contacts require your approval before the message is sent.",
                      bundle: bundle)
             }
 

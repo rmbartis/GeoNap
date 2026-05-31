@@ -1,4 +1,4 @@
 // Auto-generated -- do not edit. Rebuilt on every build.
 enum Build {
-    static let timestamp = "1.37-20260531"
+    static let timestamp = "1.38-20260531"
 }

@@ -149,6 +149,15 @@
 "Notifications" = "Thông báo";
 
 // MARK: - HelpView Body Text
+"help.body.minimumRequirements" = "GeoNap được thiết kế cho các thiết bị và hệ điều hành Apple sau:
+
+• iPhone — iOS 17.0 trở lên
+• iPad — iPadOS 17.0 trở lên
+• Apple Watch — watchOS 10.0 trở lên (tính năng đồng hành)
+
+Cần kết nối internet để tải dữ liệu lịch trình giao thông công cộng. Tất cả các chức năng báo thức khác hoạt động hoàn toàn ngoại tuyến.
+
+Dịch vụ Vị trí phải được đặt thành Luôn luôn để cho phép báo thức kích hoạt trong nền.";
 "help.body.whatIsNapAlarm" = "GeoNap đánh thức bạn dựa trên vị trí, không phải giờ giấc. Đặt báo thức tại bất kỳ địa điểm nào và ứng dụng thông báo ngay khi bạn đến — hoặc rời đi — để bạn thư giãn trên mọi hành trình.\n\n• Ngủ không lo lắng — ngủ yên tâm vì GeoNap sẽ đánh thức bạn đúng điểm dừng, mọi lúc.\n• Không bao giờ lỡ điểm dừng — không còn phụ thuộc vào thông báo bằng ngôn ngữ xa lạ hay loa hỏng.\n• Tự động thông báo cho người khác — cho gia đình, bạn bè hoặc đồng nghiệp biết ngay khi bạn đến hoặc đi.\n• Hỗ trợ Siri tùy chỉnh — tạo báo thức rảnh tay bằng giọng nói qua Phím tắt Siri.\n• Tóm tắt nhanh — mỗi báo thức hiển thị các cài đặt chính ngay trên màn hình chính.";
 
 "help.body.featureSummary" = "Ứng dụng\n\n• Tổng quan bản đồ — xem tất cả báo thức đã lưu trên một bản đồ duy nhất.\n• Danh sách báo thức — liệt kê đầy đủ mọi báo thức với trạng thái, huy hiệu và chi tiết kích hoạt trong nháy mắt.\n• Tạo theo vị trí hoặc phương tiện — ghim địa chỉ trên bản đồ hoặc duyệt lịch trình trực tiếp để chọn điểm dừng chính xác.\n• Nguồn dữ liệu phương tiện tùy chỉnh — nhập thủ công URL GTFS công khai để tải lịch trình từ bất kỳ cơ quan nào trên thế giới.\n• Ghi nhật ký tích hợp — bật nhật ký gỡ lỗi trong Cài đặt để ghi lại hoạt động chi tiết cho báo cáo hỗ trợ.\n\nBáo thức cá nhân\n\n• Tên và ghi chú — đặt tên cho từng báo thức và ghi chú tùy chọn xuất hiện trong thông báo.\n• Nhập vị trí linh hoạt — đặt ghim bằng cách chạm vào bản đồ, tìm kiếm địa chỉ hoặc nhập tọa độ (DD, DMS hoặc DDM).\n• Kích hoạt khi đến hoặc đi — chọn báo thức kích hoạt khi bạn vào hay rời khỏi khu vực.\n• Bán kính có thể điều chỉnh — đặt kích thước vùng địa lý bằng thanh trượt; ranh giới hiển thị trực tiếp trên bản đồ.\n• Âm thanh tùy chỉnh — chọn từ âm thanh du lịch, mặc định hệ thống, cảnh báo nghiêm trọng hoặc chỉ rung.\n• Lên lịch — giới hạn báo thức theo ngày trong tuần và khung giờ cụ thể, với tùy chọn lặp lại sau mỗi chuyến đi.\n• Tự động thông báo — tự động gửi tin nhắn đến danh bạ đã lưu khi báo thức kích hoạt.\n\nCá nhân hóa\n\n• Đơn vị khoảng cách và thời gian — chuyển đổi giữa hệ mét và Anh, và giữa đồng hồ 12 hoặc 24 giờ.\n• Định dạng tọa độ — nhập và xem tọa độ GPS theo DD, DMS hoặc DDM.\n• Mười ba ngôn ngữ — GeoNap được bản địa hóa hoàn toàn sang tiếng Anh, Tây Ban Nha, Pháp, Đức, Ý, Bồ Đào Nha, Ả Rập, Hindi, Nhật, Trung Quốc giản thể, Nga, Thái và Việt.\n• Danh bạ mặc định Tự động thông báo — duy trì danh sách liên hệ toàn cục tự động điền vào mọi báo thức mới có Tự động thông báo được bật.";

@@ -308,20 +308,34 @@ final class AlarmManager: NSObject, ObservableObject {
         content.userInfo = ["alarmID": alarm.id.uuidString]
         content.categoryIdentifier = NotificationCategory.geoAlarm
 
-        // Auto-compose message to all phone contacts — no user action required.
-        // The compose sheet will open automatically when the app comes to foreground.
+        // Auto-Notify — split contacts into email (silent SMTP) and phone (compose sheet).
         if alarm.notifyContact {
+            let timeStr   = DateFormatter.localizedString(from: Date(), dateStyle: .none, timeStyle: .short)
+            let direction = alarm.regionEvent == .onEntry ? "Arrival" : "Departure"
+            let verb      = alarm.regionEvent == .onEntry ? "arrived at" : "departed from"
+            var msgBody   = "[\(direction)] I \(verb) \(alarm.name) at \(timeStr)."
+            if !alarm.note.isEmpty { msgBody += " \(alarm.note)" }
+            let subject   = "GeoNap \(direction) — \(alarm.name)"
+
+            // Email contacts → send silently via SMTP (no UI required).
+            let emails = alarm.notifyContactList.filter { $0.isEmail }.map { $0.value }
+            if !emails.isEmpty {
+                DebugLogger.shared.log("Auto-Notify: sending email to \(emails) for alarm '\(alarm.name)'", category: "AlarmManager")
+                Task {
+                    do {
+                        try await SMTPService.shared.send(to: emails, subject: subject, body: msgBody)
+                        DebugLogger.shared.log("Auto-Notify: email sent to \(emails.count) recipient(s)", category: "AlarmManager")
+                    } catch {
+                        DebugLogger.shared.log("Auto-Notify: email FAILED — \(error.localizedDescription)", category: "AlarmManager")
+                    }
+                }
+            }
+
+            // Phone contacts → queue compose sheet (requires user approval to send).
             let phones = alarm.notifyContactList.filter { !$0.isEmail }.map { $0.value }
             if !phones.isEmpty {
-                let timeStr   = DateFormatter.localizedString(from: Date(), dateStyle: .none, timeStyle: .short)
-                let direction = alarm.regionEvent == .onEntry ? "Arrival" : "Departure"
-                let verb      = alarm.regionEvent == .onEntry ? "arrived at" : "departed from"
-                var body      = "[\(direction)] I \(verb) \(alarm.name) at \(timeStr)."
-                if !alarm.note.isEmpty {
-                    body += " \(alarm.note)"
-                }
-                pendingContactMessage = ContactMessage(phones: phones, body: body)
-                DebugLogger.shared.log("Auto-Notify: compose queued for \(phones.count) contact(s) on alarm '\(alarm.name)' (\(direction))", category: "AlarmManager")
+                pendingContactMessage = ContactMessage(phones: phones, body: msgBody)
+                DebugLogger.shared.log("Auto-Notify: SMS compose queued for \(phones.count) contact(s) on alarm '\(alarm.name)' (\(direction))", category: "AlarmManager")
             }
         }
 
