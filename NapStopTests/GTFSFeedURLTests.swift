@@ -15,6 +15,7 @@
 import XCTest
 @testable import GeoNap
 
+@MainActor
 final class GTFSFeedURLTests: XCTestCase {
 
     // Generous per-request ceiling; the point is reachability, not speed.

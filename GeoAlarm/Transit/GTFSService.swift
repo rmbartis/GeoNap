@@ -167,7 +167,7 @@ final class GTFSService: ObservableObject {
         }
         try FileManager.default.createDirectory(at: cachesDir, withIntermediateDirectories: true)
 
-        guard let archive = Archive(url: zipURL, accessMode: .read) else {
+        guard let archive = Archive(url: zipURL, accessMode: .read, preferredEncoding: nil) else {
             throw GTFSError.downloadFailed
         }
 
@@ -207,13 +207,10 @@ final class GTFSService: ObservableObject {
         DebugLogger.shared.log("GTFS parse START from directory: \(dir.lastPathComponent)", category: "GTFS")
         let parseStart = Date()
 
-        let parsedRoutes = await Task.detached(priority: .userInitiated) {
-            GTFSParser.parseRoutes(in: dir)
-        }.value
-
-        let parsedStops = await Task.detached(priority: .userInitiated) {
-            GTFSParser.parseStops(in: dir)
-        }.value
+        // Run parsing off the main actor using nonisolated async wrappers to avoid
+        // capturing @MainActor-isolated context in Task.detached closures.
+        let parsedRoutes = await GTFSParser.parseRoutesAsync(in: dir)
+        let parsedStops  = await GTFSParser.parseStopsAsync(in: dir)
 
         let elapsed = String(format: "%.2f", Date().timeIntervalSince(parseStart))
         DebugLogger.shared.log("GTFS parse COMPLETE: routes=\(parsedRoutes.count) stops=\(parsedStops.count) elapsed=\(elapsed)s", category: "GTFS")
@@ -250,6 +247,16 @@ enum GTFSError: LocalizedError {
 
 /// Pure-value CSV parser that handles quoted fields and CRLF/LF line endings.
 enum GTFSParser {
+
+    // MARK: - Async wrappers (nonisolated — safe to call from @MainActor without Task.detached)
+
+    nonisolated static func parseRoutesAsync(in dir: URL) async -> [GTFSRoute] {
+        parseRoutes(in: dir)
+    }
+
+    nonisolated static func parseStopsAsync(in dir: URL) async -> [GTFSStop] {
+        parseStops(in: dir)
+    }
 
     // MARK: Routes
 

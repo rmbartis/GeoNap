@@ -102,7 +102,7 @@ final class NapAlarm {
     var soundNameRaw: String = NotificationSound.default.rawValue
 
     var notificationSound: NotificationSound {
-        get { NotificationSound(rawValue: soundNameRaw) ?? .default }
+        get { NotificationSound(rawValue: soundNameRaw) }
         set { soundNameRaw = newValue.rawValue }
     }
 

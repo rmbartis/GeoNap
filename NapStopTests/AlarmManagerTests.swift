@@ -191,7 +191,7 @@ final class AutoNotifyTests: XCTestCase {
     // MARK: buildNotifyUserInfo — disabled / empty
 
     func test_buildNotifyUserInfo_noContactData_whenNotifyContactFalse() {
-        var alarm = makeAlarm()
+        let alarm = makeAlarm()
         alarm.notifyContact = false
         alarm.notifyContactList = [NotifyContact(name: "A", value: "+15550001111")]
         let info = sut.buildNotifyUserInfo(for: alarm)
@@ -200,7 +200,7 @@ final class AutoNotifyTests: XCTestCase {
     }
 
     func test_buildNotifyUserInfo_noContactData_whenListEmpty() {
-        var alarm = makeAlarm()
+        let alarm = makeAlarm()
         alarm.notifyContact = true
         alarm.notifyContactList = []
         let info = sut.buildNotifyUserInfo(for: alarm)
@@ -218,21 +218,21 @@ final class AutoNotifyTests: XCTestCase {
     }
 
     func test_buildNotifyUserInfo_body_containsAlarmName() {
-        var alarm = makeAlarmWithPhone()
+        let alarm = makeAlarmWithPhone()
         alarm.name = "Penn Station"
         let body = sut.buildNotifyUserInfo(for: alarm)["notifyBody"] as? String ?? ""
         XCTAssertTrue(body.contains("Penn Station"))
     }
 
     func test_buildNotifyUserInfo_body_mentionsArrival_forOnEntry() {
-        var alarm = makeAlarmWithPhone()
+        let alarm = makeAlarmWithPhone()
         alarm.regionEvent = .onEntry
         let body = sut.buildNotifyUserInfo(for: alarm)["notifyBody"] as? String ?? ""
         XCTAssertTrue(body.contains("Arrival") || body.contains("arrived"))
     }
 
     func test_buildNotifyUserInfo_body_mentionsDeparture_forOnExit() {
-        var alarm = makeAlarmWithPhone()
+        let alarm = makeAlarmWithPhone()
         alarm.regionEvent = .onExit
         let body = sut.buildNotifyUserInfo(for: alarm)["notifyBody"] as? String ?? ""
         XCTAssertTrue(body.contains("Departure") || body.contains("departed"))
@@ -242,7 +242,7 @@ final class AutoNotifyTests: XCTestCase {
 
     func test_buildNotifyUserInfo_emailContact_producesNoOutput() {
         // Email contacts are not supported; the key must not appear in userInfo.
-        var alarm = makeAlarm()
+        let alarm = makeAlarm()
         alarm.notifyContact = true
         alarm.notifyContactList = [NotifyContact(name: "A", value: "a@example.com")]
         let info = sut.buildNotifyUserInfo(for: alarm)
@@ -280,7 +280,7 @@ final class AutoNotifyTests: XCTestCase {
     }
 
     private func makeAlarmWithPhone(_ phone: String = "+15551234567") -> NapAlarm {
-        var alarm = makeAlarm()
+        let alarm = makeAlarm()
         alarm.notifyContact = true
         alarm.notifyContactList = [NotifyContact(name: "Alice", value: phone)]
         return alarm

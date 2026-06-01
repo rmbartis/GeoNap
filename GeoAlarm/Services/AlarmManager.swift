@@ -467,7 +467,10 @@ extension AlarmManager: UNUserNotificationCenterDelegate {
         let alarmID = response.notification.request.content.userInfo["alarmID"] as? String
         let action  = response.actionIdentifier
 
-        let userInfo = response.notification.request.content.userInfo
+        // Extract only the Sendable values we need before crossing into the Task.
+        // [AnyHashable: Any] is not Sendable, so we must not capture `userInfo` directly.
+        let notifyPhones = response.notification.request.content.userInfo["notifyPhones"] as? [String]
+        let notifyBody   = response.notification.request.content.userInfo["notifyBody"]   as? String ?? ""
 
         Task { @MainActor in
             switch action {
@@ -483,7 +486,10 @@ extension AlarmManager: UNUserNotificationCenterDelegate {
                 // Recover Auto-Notify contact data from the notification's userInfo.
                 // This handles the case where the app was fully relaunched by tapping
                 // the notification and in-memory pendingContactMessage/pendingMailMessage was lost.
-                recoverAutoNotify(from: userInfo)
+                if let phones = notifyPhones, !phones.isEmpty {
+                    pendingContactMessage = ContactMessage(phones: phones, body: notifyBody)
+                    DebugLogger.shared.log("Auto-Notify: SMS compose queued from notification tap (\(phones.count) contact(s))", category: "AlarmManager")
+                }
             }
             completionHandler()
         }

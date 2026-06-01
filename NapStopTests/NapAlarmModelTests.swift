@@ -94,6 +94,7 @@ final class NapAlarmModelTests: XCTestCase {
 /// Regression: default sound was changed to .critical, which requires the
 /// com.apple.developer.usernotifications.critical-alerts entitlement (not present).
 /// Without it iOS silently drops the sound — resulting in no audible alarm.
+@MainActor
 final class SoundRegressionTests: XCTestCase {
 
     func test_defaultSound_isDefault_notCritical() {
