@@ -36,7 +36,7 @@ enum CuratedFeeds {
             region: "USA · Atlanta",
             // Official MARTA developer page — no API key. Updated Apr 2026.
             // Source: https://itsmarta.com/app-developer-resources.aspx
-            feedURL: "https://itsmarta.com/google_transit_feed/google_transit.zip",
+            feedURL: "https://www.itsmarta.com/google_transit_feed/google_transit.zip",
             routeTypes: "Rail · Bus"
         ),
         CuratedFeed(
@@ -63,6 +63,7 @@ enum CuratedFeeds {
             name: "DART",
             region: "USA · Dallas",
             // Official DART fixed-route schedule page — HTTPS, no API key.
+            // DART server returns 404 for HEAD requests (use GET fallback in tests).
             // Source: https://www.dart.org/about/about-dart/fixed-route-schedule
             feedURL: "https://www.dart.org/transitdata/latest/google_transit.zip",
             routeTypes: "Light Rail · Bus"
@@ -218,8 +219,8 @@ enum CuratedFeeds {
         CuratedFeed(
             name: "Calgary Transit",
             region: "Canada · Calgary",
-            // Direct attachment URL from Open Calgary portal (Socrata).
-            feedURL: "https://data.calgary.ca/api/views/npk7-z3bj/files/6a57f0fe-0538-4b8c-acf9-a4cec50f5b38?filename=CT_GTFS.zip",
+            // Direct attachment URL from Open Calgary portal (Socrata). blobId verified May 2026.
+            feedURL: "https://data.calgary.ca/api/views/npk7-z3bj/files/5bd6ab18-b1e5-44be-8915-cf0d4d7ddce0?filename=CT_GTFS.zip",
             routeTypes: "Bus · Rail"
         ),
 

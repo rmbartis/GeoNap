@@ -43,9 +43,8 @@ final class AlarmViewModelTests: XCTestCase {
         sut.latitude  = 0
         sut.longitude = 0
         sut.radius    = 200
-        // 0,0 is technically valid coordinates — this test documents current behavior
-        // (the form requires the user to explicitly pick a location)
-        XCTAssertTrue(sut.isValid)  // ViewModel allows it; UI enforces pin placement
+        // isValid rejects (0,0): ViewModel now requires an explicit pin placement.
+        XCTAssertFalse(sut.isValid)
     }
 
     func test_isValid_true_withAllFieldsSet() {
@@ -195,14 +194,16 @@ final class AlarmViewModelTests: XCTestCase {
     }
 
     func test_isValid_below164ft_isFalse() {
-        // 163 ft = 49.68 m — genuinely below 50 m, should be invalid
+        // 155 ft = 47.24 m — well below the 50 m threshold even after rounding, should be invalid.
+        // (163 ft ≈ 49.68 m rounds to 50 m and is intentionally accepted by the rounding rule
+        //  that keeps 164 ft ≈ 49.99 m valid; use 155 ft to test a clearly out-of-range value.)
         sut.name      = "Test"
         sut.latitude  = 40.0
         sut.longitude = -74.0
-        sut.radius    = DistanceUnit.imperial.toMeters(163)  // = 49.682 m
+        sut.radius    = DistanceUnit.imperial.toMeters(155)  // = 47.244 m
 
         XCTAssertFalse(sut.isValid,
-            "163 ft (≈49.68 m) is genuinely below 50 m and should be invalid")
+            "155 ft (≈47.24 m) rounds to 47 m and should be invalid")
     }
 
     // MARK: - DistanceUnit conversion

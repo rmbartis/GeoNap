@@ -177,8 +177,8 @@ final class AlarmManager: NSObject, ObservableObject {
     /// in place is required for SwiftData to track and persist the changes.
     func update(alarm: NapAlarm) {
         guard let existing = alarms.first(where: { $0.id == alarm.id }) else {
-            // No existing record found (shouldn't happen) — fall back to insert.
-            add(alarm: alarm)
+            // No existing record found — this is a programmer error; do nothing.
+            print("[AlarmManager] update(alarm:) called with unknown alarm ID \(alarm.id) — ignored")
             return
         }
         stopMonitoring(existing)
