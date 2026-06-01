@@ -167,7 +167,10 @@ final class GTFSService: ObservableObject {
         }
         try FileManager.default.createDirectory(at: cachesDir, withIntermediateDirectories: true)
 
-        guard let archive = Archive(url: zipURL, accessMode: .read, preferredEncoding: nil) else {
+        let archive: Archive
+        do {
+            archive = try Archive(url: zipURL, accessMode: .read)
+        } catch {
             throw GTFSError.downloadFailed
         }
 
@@ -260,7 +263,7 @@ enum GTFSParser {
 
     // MARK: Routes
 
-    static func parseRoutes(in dir: URL) -> [GTFSRoute] {
+    nonisolated static func parseRoutes(in dir: URL) -> [GTFSRoute] {
         guard let fileURL = locate("routes.txt", in: dir) else { return [] }
         guard let text = (try? String(contentsOf: fileURL, encoding: .utf8))
                        ?? (try? String(contentsOf: fileURL, encoding: .isoLatin1)) else { return [] }
@@ -301,7 +304,7 @@ enum GTFSParser {
 
     // MARK: Stops
 
-    static func parseStops(in dir: URL) -> [GTFSStop] {
+    nonisolated static func parseStops(in dir: URL) -> [GTFSStop] {
         guard let fileURL = locate("stops.txt", in: dir) else { return [] }
         guard let text = (try? String(contentsOf: fileURL, encoding: .utf8))
                        ?? (try? String(contentsOf: fileURL, encoding: .isoLatin1)) else { return [] }
@@ -350,7 +353,7 @@ enum GTFSParser {
 
     // MARK: - Single-row CSV parser
 
-    private static func parseSingleRow(_ line: String) -> [String] {
+    nonisolated private static func parseSingleRow(_ line: String) -> [String] {
         var row: [String] = []
         var field = ""
         var inQuotes = false
@@ -387,7 +390,7 @@ enum GTFSParser {
 
     // MARK: - Helpers
 
-    private static func locate(_ filename: String, in dir: URL) -> URL? {
+    nonisolated private static func locate(_ filename: String, in dir: URL) -> URL? {
         let direct = dir.appendingPathComponent(filename)
         if FileManager.default.fileExists(atPath: direct.path) { return direct }
 
@@ -405,7 +408,7 @@ enum GTFSParser {
         return nil
     }
 
-    private static func columnIndex(_ header: [String]) -> [String: Int] {
+    nonisolated private static func columnIndex(_ header: [String]) -> [String: Int] {
         var dict: [String: Int] = [:]
         dict.reserveCapacity(header.count)
         for (i, col) in header.enumerated() {
@@ -418,14 +421,14 @@ enum GTFSParser {
         return dict
     }
 
-    private static func field(_ row: [String], _ idx: [String: Int], _ key: String) -> String {
+    nonisolated private static func field(_ row: [String], _ idx: [String: Int], _ key: String) -> String {
         guard let i = idx[key], i < row.count else { return "" }
         return row[i].trimmingCharacters(in: .whitespaces)
     }
 
     // MARK: - RFC 4180 CSV parser (kept for reference)
 
-    static func parseCSV(_ text: String) -> [[String]] {
+    nonisolated static func parseCSV(_ text: String) -> [[String]] {
         var rows: [[String]] = []
         var row:  [String]   = []
         var field = ""

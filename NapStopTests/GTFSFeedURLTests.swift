@@ -2,7 +2,11 @@
 // Tier 1 — URL reachability tests for all curated GTFS feeds.
 // Makes a lightweight HTTP request (HEAD, or byte-range GET as fallback) for
 // each URL and asserts a 2xx response code.  No full download is performed,
-// so the suite should complete in roughly 30–60 seconds.
+// so the suite should complete in roughly 60–120 seconds (including retries).
+//
+// Retry policy: on a transient 5xx server error, the request is retried up to
+// maxRetries times with an exponential back-off (2 s, 4 s, …).  4xx errors
+// are never retried — they indicate a genuinely bad URL.
 //
 // Run from the command line:
 //   xcodebuild test -project GeoAlarm.xcodeproj \
@@ -20,6 +24,10 @@ final class GTFSFeedURLTests: XCTestCase {
 
     // Generous per-request ceiling; the point is reachability, not speed.
     private let requestTimeout: TimeInterval = 30
+
+    // Retry policy for transient 5xx server errors.
+    private let maxRetries = 2               // up to 2 retries (3 total attempts)
+    private let retryBaseDelay: UInt64 = 2_000_000_000   // 2 s in nanoseconds
 
     // Each test case corresponds to one curated feed entry.
     // The test is table-driven so new feeds added to CuratedFeeds.all are
@@ -50,7 +58,7 @@ final class GTFSFeedURLTests: XCTestCase {
             }
 
             do {
-                let status = try await reachabilityStatus(for: url, session: session)
+                let status = try await reachabilityStatusWithRetry(for: url, session: session)
                 if !(200...299).contains(status) {
                     failures.append("\(feed.name) [\(feed.region)]: HTTP \(status) — \(feed.feedURL)")
                 }
@@ -121,11 +129,29 @@ final class GTFSFeedURLTests: XCTestCase {
         }
 
         let session = URLSession(configuration: .ephemeral)
-        let status = try await reachabilityStatus(for: url, session: session)
+        let status = try await reachabilityStatusWithRetry(for: url, session: session)
         XCTAssertTrue(
             (200...299).contains(status),
             "\(feedName): expected HTTP 2xx, got \(status) — \(feed.feedURL)"
         )
+    }
+
+    /// Calls `reachabilityStatus` and retries on transient 5xx server errors.
+    /// 4xx errors (bad URL / access denied) are returned immediately without retrying.
+    /// Retry delays are exponential: 2 s, 4 s, … (base × 2^attempt).
+    private func reachabilityStatusWithRetry(for url: URL, session: URLSession) async throws -> Int {
+        var lastStatus: Int = 0
+        for attempt in 0...maxRetries {
+            lastStatus = try await reachabilityStatus(for: url, session: session)
+            if (200...299).contains(lastStatus) { return lastStatus }   // success
+            if (400...499).contains(lastStatus) { return lastStatus }   // client error — don't retry
+            // 5xx transient server error — wait, then retry (unless this was the last attempt).
+            if attempt < maxRetries {
+                let delay = retryBaseDelay * (1 << attempt)  // 2 s, 4 s
+                try await Task.sleep(nanoseconds: delay)
+            }
+        }
+        return lastStatus
     }
 
     /// Returns the HTTP status code for `url` using HEAD, falling back to a

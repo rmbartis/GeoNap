@@ -19,7 +19,7 @@ enum GTFSRouteType: Int {
     case funicular  = 7
     case unknown    = 99
 
-    init(rawInt: Int) {
+    nonisolated init(rawInt: Int) {
         self = GTFSRouteType(rawValue: rawInt) ?? .unknown
     }
 
@@ -73,7 +73,7 @@ struct GTFSRoute: Identifiable, Hashable {
         return "\(shortName) · \(longName)"
     }
 
-    var routeColor: Color {
+    @MainActor var routeColor: Color {
         guard let hex = colorHex, !hex.isEmpty else { return .accentColor }
         return Color(hex: hex) ?? .accentColor
     }
