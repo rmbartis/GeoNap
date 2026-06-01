@@ -149,13 +149,12 @@ extension AlarmManager {
 
 // MARK: - Auto-Notify tests
 
-/// Tests for buildNotifyUserInfo and recoverAutoNotify.
+/// Tests for buildNotifyUserInfo and recoverAutoNotify (SMS/phone only).
 ///
-/// Device testing revealed two bugs:
-/// 1. SMS compose sheet never appeared after notification tap — pendingContactMessage
-///    was lost when the app relaunched. Fix: embed phone data in content.userInfo.
-/// 2. Email was sent to wrong address via SMTP. Fix: SMTP removed; email contacts
-///    are embedded in userInfo and presented via MFMailComposeViewController.
+/// Device testing revealed a bug: the SMS compose sheet never appeared after a
+/// notification tap because pendingContactMessage was lost on app relaunch.
+/// Fix: embed phone data in content.userInfo and recover it in recoverAutoNotify.
+/// Email Auto-Notify has been removed; only SMS/phone contacts are supported.
 @MainActor
 final class AutoNotifyTests: XCTestCase {
 
@@ -197,7 +196,6 @@ final class AutoNotifyTests: XCTestCase {
         alarm.notifyContactList = [NotifyContact(name: "A", value: "+15550001111")]
         let info = sut.buildNotifyUserInfo(for: alarm)
         XCTAssertNil(info["notifyPhones"])
-        XCTAssertNil(info["notifyEmails"])
         XCTAssertNil(info["notifyBody"])
     }
 
@@ -207,7 +205,6 @@ final class AutoNotifyTests: XCTestCase {
         alarm.notifyContactList = []
         let info = sut.buildNotifyUserInfo(for: alarm)
         XCTAssertNil(info["notifyPhones"])
-        XCTAssertNil(info["notifyEmails"])
     }
 
     // MARK: buildNotifyUserInfo — phone contacts
@@ -217,7 +214,7 @@ final class AutoNotifyTests: XCTestCase {
         let info = sut.buildNotifyUserInfo(for: alarm)
         XCTAssertEqual(info["notifyPhones"] as? [String], ["+15551234567"])
         XCTAssertNotNil(info["notifyBody"])
-        XCTAssertNil(info["notifySubject"], "Subject is email-only")
+        XCTAssertNil(info["notifyEmails"], "Email key must not appear — email not supported")
     }
 
     func test_buildNotifyUserInfo_body_containsAlarmName() {
@@ -241,36 +238,17 @@ final class AutoNotifyTests: XCTestCase {
         XCTAssertTrue(body.contains("Departure") || body.contains("departed"))
     }
 
-    // MARK: buildNotifyUserInfo — email contacts
+    // MARK: buildNotifyUserInfo — email contacts silently ignored
 
-    func test_buildNotifyUserInfo_embedsEmails() {
-        let alarm = makeAlarmWithEmail("alice@example.com")
-        let info = sut.buildNotifyUserInfo(for: alarm)
-        XCTAssertEqual(info["notifyEmails"] as? [String], ["alice@example.com"])
-        XCTAssertNotNil(info["notifySubject"])
-        XCTAssertNil(info["notifyPhones"], "Phones key absent for email-only contact")
-    }
-
-    func test_buildNotifyUserInfo_subject_containsGeoNap() {
-        let info = sut.buildNotifyUserInfo(for: makeAlarmWithEmail())
-        let subject = info["notifySubject"] as? String ?? ""
-        XCTAssertTrue(subject.contains("GeoNap"))
-    }
-
-    // MARK: buildNotifyUserInfo — mixed contacts
-
-    func test_buildNotifyUserInfo_embedsBoth_forMixedContacts() {
+    func test_buildNotifyUserInfo_emailContact_producesNoOutput() {
+        // Email contacts are not supported; the key must not appear in userInfo.
         var alarm = makeAlarm()
         alarm.notifyContact = true
-        alarm.notifyContactList = [
-            NotifyContact(name: "A", value: "+15550001111"),
-            NotifyContact(name: "B", value: "b@example.com")
-        ]
+        alarm.notifyContactList = [NotifyContact(name: "A", value: "a@example.com")]
         let info = sut.buildNotifyUserInfo(for: alarm)
-        XCTAssertNotNil(info["notifyPhones"])
-        XCTAssertNotNil(info["notifyEmails"])
-        XCTAssertNotNil(info["notifyBody"])
-        XCTAssertNotNil(info["notifySubject"])
+        XCTAssertNil(info["notifyEmails"], "Email contacts must be silently ignored")
+        XCTAssertNil(info["notifyPhones"])
+        XCTAssertNil(info["notifyBody"])
     }
 
     // MARK: recoverAutoNotify — phone recovery
@@ -295,44 +273,6 @@ final class AutoNotifyTests: XCTestCase {
         XCTAssertNil(sut.pendingContactMessage)
     }
 
-    // MARK: recoverAutoNotify — email recovery
-
-    func test_recoverAutoNotify_setsPendingMailMessage() {
-        sut.recoverAutoNotify(from: [
-            "notifyEmails":  ["alice@example.com"],
-            "notifySubject": "GeoNap Arrival",
-            "notifyBody":    "I arrived."
-        ])
-        XCTAssertNotNil(sut.pendingMailMessage)
-        XCTAssertEqual(sut.pendingMailMessage?.to,      ["alice@example.com"])
-        XCTAssertEqual(sut.pendingMailMessage?.subject, "GeoNap Arrival")
-        XCTAssertEqual(sut.pendingMailMessage?.body,    "I arrived.")
-    }
-
-    func test_recoverAutoNotify_usesDefaultSubject_whenMissing() {
-        sut.recoverAutoNotify(from: [
-            "notifyEmails": ["alice@example.com"],
-            "notifyBody":   "Body"
-        ])
-        XCTAssertEqual(sut.pendingMailMessage?.subject, "GeoNap Alarm")
-    }
-
-    func test_recoverAutoNotify_doesNotSetMailMessage_whenNoEmailsKey() {
-        sut.recoverAutoNotify(from: ["alarmID": "some-uuid"])
-        XCTAssertNil(sut.pendingMailMessage)
-    }
-
-    func test_recoverAutoNotify_setsBoth_forMixedUserInfo() {
-        sut.recoverAutoNotify(from: [
-            "notifyPhones":  ["+15550001111"],
-            "notifyEmails":  ["a@example.com"],
-            "notifySubject": "GeoNap Arrival",
-            "notifyBody":    "I arrived."
-        ])
-        XCTAssertNotNil(sut.pendingContactMessage)
-        XCTAssertNotNil(sut.pendingMailMessage)
-    }
-
     // MARK: Helpers
 
     private func makeAlarm(name: String = "Times Square") -> NapAlarm {
@@ -346,10 +286,6 @@ final class AutoNotifyTests: XCTestCase {
         return alarm
     }
 
-    private func makeAlarmWithEmail(_ email: String = "alice@example.com") -> NapAlarm {
-        var alarm = makeAlarm()
-        alarm.notifyContact = true
-        alarm.notifyContactList = [NotifyContact(name: "Alice", value: email)]
-        return alarm
-    }
+    // NOTE: makeAlarmWithEmail removed — email Auto-Notify not supported.
+    // Kept as tombstone so future re-addition is straightforward.
 }

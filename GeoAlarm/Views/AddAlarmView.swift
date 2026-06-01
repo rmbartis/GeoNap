@@ -4,7 +4,6 @@
 import SwiftUI
 import CoreLocation
 import MapKit
-import MessageUI
 
 struct AddAlarmView: View {
     @Environment(\.dismiss) private var dismiss
@@ -14,7 +13,6 @@ struct AddAlarmView: View {
     @StateObject private var searchService = LocationSearchService()
     @State private var showContactPicker  = false
     @State private var showManualEntry    = false
-    @State private var showNoMailAlert    = false
 
     @AppStorage(AppStorageKey.distanceUnit) private var distanceUnitRaw  = DistanceUnit.imperial.rawValue
     @AppStorage(AppStorageKey.timeFormat)   private var timeFormatRaw    = TimeFormat.twelveHour.rawValue
@@ -422,7 +420,7 @@ struct AddAlarmView: View {
             } header: {
                 Text("Auto-Notify", bundle: bundle)
             } footer: {
-                Text("Email and SMS contacts both require your approval before the message is sent. The Mail or Messages app will open for confirmation when the alarm fires.",
+                Text("SMS contacts require your approval before the message is sent. The Messages app will open for confirmation when the alarm fires.",
                      bundle: bundle)
             }
 
@@ -464,11 +462,6 @@ struct AddAlarmView: View {
                 addContact(contact)
             }
         }
-        .alert("No Mail Account", isPresented: $showNoMailAlert) {
-            Button("OK", role: .cancel) {}
-        } message: {
-            Text("No mail account is set up on this device. Go to Settings → Mail → Accounts to add one before using email Auto-Notify contacts.")
-        }
         .onAppear {
             if let alarm = existingAlarm {
                 viewModel.load(alarm: alarm)
@@ -498,11 +491,8 @@ struct AddAlarmView: View {
     }
 
     private func addContact(_ contact: NotifyContact) {
-        // Block email contacts when no mail account is configured on the device.
-        if contact.isEmail && !MFMailComposeViewController.canSendMail() {
-            showNoMailAlert = true
-            return
-        }
+        // Email contacts are not supported — phone/SMS only.
+        guard !contact.isEmail else { return }
         guard !viewModel.notifyContactList.contains(where: { $0.value == contact.value }) else { return }
         viewModel.notifyContactList.append(contact)
     }
@@ -619,10 +609,10 @@ struct AddContactManuallySheet: View {
 
     private var trimmedValue: String { value.trimmingCharacters(in: .whitespaces) }
 
-    /// True when the value field contains a valid phone or email.
+    /// True when the value field contains a valid phone number.
     private var isValueValid: Bool {
         guard !trimmedValue.isEmpty else { return false }
-        return trimmedValue.contains("@") ? isValidEmail(trimmedValue) : isValidPhone(trimmedValue)
+        return isValidPhone(trimmedValue)
     }
 
     private var isValid: Bool {
@@ -632,11 +622,7 @@ struct AddContactManuallySheet: View {
     /// Inline error shown while the user types — nil when empty or valid.
     private var valueError: String? {
         guard !trimmedValue.isEmpty, !isValueValid else { return nil }
-        if trimmedValue.contains("@") {
-            return "Invalid email — must be in the form name@example.com"
-        } else {
-            return "Invalid phone — use digits, spaces, dashes, parentheses, or a leading +"
-        }
+        return "Invalid phone — use digits, spaces, dashes, parentheses, or a leading +"
     }
 
     // MARK: - Body
@@ -648,8 +634,8 @@ struct AddContactManuallySheet: View {
                     TextField("Name", text: $name)
                         .textContentType(.name)
                         .autocorrectionDisabled()
-                    TextField("Phone or email", text: $value)
-                        .keyboardType(.emailAddress)
+                    TextField("Phone number", text: $value)
+                        .keyboardType(.phonePad)
                         .autocorrectionDisabled()
                         .textInputAutocapitalization(.never)
                 } footer: {
@@ -658,12 +644,12 @@ struct AddContactManuallySheet: View {
                             .font(.caption)
                             .foregroundStyle(.red)
                     } else {
-                        Text("Phone (e.g. +1 555-1234) or email (e.g. name@example.com).")
+                        Text("Phone number (e.g. +1 555-1234).")
                             .font(.caption)
                     }
                 }
             }
-            .navigationTitle("Add Contact")
+            .navigationTitle("Add Phone Contact")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
@@ -694,12 +680,5 @@ struct AddContactManuallySheet: View {
         return digitCount >= 7
     }
 
-    /// Email: local@domain.tld — basic structural check, not RFC 5322 exhaustive.
-    private func isValidEmail(_ s: String) -> Bool {
-        let parts = s.split(separator: "@", maxSplits: 1, omittingEmptySubsequences: false)
-        guard parts.count == 2 else { return false }
-        let local  = String(parts[0])
-        let domain = String(parts[1])
-        return !local.isEmpty && domain.contains(".") && !domain.hasPrefix(".") && !domain.hasSuffix(".")
-    }
 }
+

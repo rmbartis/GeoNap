@@ -3,7 +3,6 @@
 
 import SwiftUI
 import ContactsUI
-import MessageUI
 
 struct SettingsView: View {
 
@@ -36,7 +35,6 @@ struct SettingsView: View {
     @State private var defaultContacts: [NotifyContact]  = []
     @State private var showContactPicker  = false
     @State private var showManualEntry    = false
-    @State private var showNoMailAlert    = false
 
     private var distanceUnit: DistanceUnit {
         DistanceUnit(rawValue: distanceUnitRaw) ?? .imperial
@@ -165,7 +163,7 @@ struct SettingsView: View {
                 } header: {
                     Text("Auto-Notify Defaults", bundle: bundle)
                 } footer: {
-                    Text("Contacts listed here are pre-filled when you enable Auto-Notify on a new alarm. Email contacts open the Mail app for your review before sending. SMS/phone contacts also require your approval before sending. You can adjust the list per-alarm.",
+                    Text("Contacts listed here are pre-filled when you enable Auto-Notify on a new alarm. SMS contacts require your approval before sending — the Messages app opens for confirmation. You can adjust the list per-alarm.",
                          bundle: bundle)
                 }
 
@@ -286,12 +284,6 @@ struct SettingsView: View {
             .sheet(isPresented: $showShareSheet) {
                 ShareSheet(items: shareItems)
             }
-            // No mail account configured
-            .alert("No Mail Account", isPresented: $showNoMailAlert) {
-                Button("OK", role: .cancel) {}
-            } message: {
-                Text("No mail account is set up on this device. Go to Settings → Mail → Accounts to add one before using email Auto-Notify contacts.")
-            }
         }
     }
 
@@ -314,11 +306,8 @@ struct SettingsView: View {
     }
 
     private func addDefaultContact(_ contact: NotifyContact) {
-        // Block email contacts when no mail account is configured on the device.
-        if contact.isEmail && !MFMailComposeViewController.canSendMail() {
-            showNoMailAlert = true
-            return
-        }
+        // Email contacts are not supported — phone/SMS only.
+        guard !contact.isEmail else { return }
         guard !defaultContacts.contains(where: { $0.value == contact.value }) else { return }
         defaultContacts.append(contact)
         defaultContacts.saveAsGlobalDefaults()

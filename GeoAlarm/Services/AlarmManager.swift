@@ -20,10 +20,6 @@ final class AlarmManager: NSObject, ObservableObject {
     /// ContentView observes this and presents the Messages compose sheet.
     @Published var pendingContactMessage: ContactMessage? = nil
 
-    /// Set when an alarm fires and there are email contacts to notify.
-    /// ContentView observes this and presents the Mail compose sheet.
-    @Published var pendingMailMessage: MailMessage? = nil
-
     /// Set when the app is opened from a Spotlight search result.
     /// ContentView observes this and navigates to the matching AlarmDetailView.
     @Published var spotlightAlarmID: UUID? = nil
@@ -326,9 +322,9 @@ final class AlarmManager: NSObject, ObservableObject {
     }
 
     /// Builds the userInfo dictionary for a notification.
-    /// Always contains "alarmID". When Auto-Notify is enabled, also embeds
-    /// "notifyPhones", "notifyEmails", "notifyBody", and "notifySubject" so that
-    /// contact data survives an app relaunch triggered by tapping the notification.
+    /// Always contains "alarmID". When Auto-Notify is enabled with phone contacts,
+    /// also embeds "notifyPhones" and "notifyBody" so that contact data survives
+    /// an app relaunch triggered by tapping the notification.
     ///
     /// Exposed `internal` (not `private`) so unit tests can verify the output
     /// without going through UNUserNotificationCenter.
@@ -341,29 +337,21 @@ final class AlarmManager: NSObject, ObservableObject {
         let verb      = alarm.regionEvent == .onEntry ? "arrived at" : "departed from"
         var msgBody   = "[\(direction)] I \(verb) \(alarm.name) at \(timeStr)."
         if !alarm.note.isEmpty { msgBody += " \(alarm.note)" }
-        let subject   = "GeoNap \(direction) — \(alarm.name)"
 
         let phones = alarm.notifyContactList.filter { !$0.isEmail }.map { $0.value }
-        let emails = alarm.notifyContactList.filter {  $0.isEmail }.map { $0.value }
 
         if !phones.isEmpty {
             userInfo["notifyPhones"] = phones
             userInfo["notifyBody"]   = msgBody
             DebugLogger.shared.log("Auto-Notify: \(phones.count) SMS contact(s) embedded in notification for '\(alarm.name)'", category: "AlarmManager")
         }
-        if !emails.isEmpty {
-            userInfo["notifyEmails"]  = emails
-            userInfo["notifySubject"] = subject
-            userInfo["notifyBody"]    = msgBody
-            DebugLogger.shared.log("Auto-Notify: \(emails.count) email contact(s) embedded in notification for '\(alarm.name)'", category: "AlarmManager")
-        }
         return userInfo
     }
 
     /// Recovers Auto-Notify contact data from a notification's userInfo dictionary
-    /// and sets `pendingContactMessage` / `pendingMailMessage` accordingly.
-    /// Called from the notification-tap response handler so that the compose sheets
-    /// appear even when the app was fully relaunched by tapping the notification.
+    /// and sets `pendingContactMessage` accordingly.
+    /// Called from the notification-tap response handler so that the SMS compose
+    /// sheet appears even when the app was fully relaunched by tapping the notification.
     ///
     /// Exposed `internal` so unit tests can verify recovery without needing a real
     /// `UNNotificationResponse` object.
@@ -373,11 +361,6 @@ final class AlarmManager: NSObject, ObservableObject {
         if let phones = userInfo["notifyPhones"] as? [String], !phones.isEmpty {
             pendingContactMessage = ContactMessage(phones: phones, body: body)
             DebugLogger.shared.log("Auto-Notify: SMS compose queued from notification tap (\(phones.count) contact(s))", category: "AlarmManager")
-        }
-        if let emails = userInfo["notifyEmails"] as? [String], !emails.isEmpty {
-            let subject = userInfo["notifySubject"] as? String ?? "GeoNap Alarm"
-            pendingMailMessage = MailMessage(to: emails, subject: subject, body: body)
-            DebugLogger.shared.log("Auto-Notify: mail compose queued from notification tap (\(emails.count) recipient(s))", category: "AlarmManager")
         }
     }
 

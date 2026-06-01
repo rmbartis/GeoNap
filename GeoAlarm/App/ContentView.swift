@@ -3,7 +3,6 @@
 
 import SwiftUI
 import CoreLocation
-import MessageUI
 
 struct ContentView: View {
     @EnvironmentObject var locationManager: LocationManager
@@ -16,7 +15,6 @@ struct ContentView: View {
     @State private var showTransitAlarm   = false
     @State private var showAddAlarm       = false
     @State private var showMessageCompose = false
-    @State private var showMailCompose    = false
     @State private var spotlightAlarm: NapAlarm? = nil
 
     var body: some View {
@@ -110,19 +108,6 @@ struct ContentView: View {
         }
         .onChange(of: alarmManager.pendingContactMessage) { _, newValue in
             if newValue != nil { showMessageCompose = true }
-        }
-        // Mail compose sheet — presented when the alarm fires with email contacts.
-        .sheet(isPresented: $showMailCompose) {
-            if let msg = alarmManager.pendingMailMessage {
-                MailComposeView(message: msg) {
-                    alarmManager.pendingMailMessage = nil
-                    showMailCompose = false
-                }
-                .ignoresSafeArea()
-            }
-        }
-        .onChange(of: alarmManager.pendingMailMessage) { _, newValue in
-            if newValue != nil { showMailCompose = true }
         }
         // Spotlight deep link: when the user taps an alarm in Spotlight search,
         // navigate directly to its detail view.
