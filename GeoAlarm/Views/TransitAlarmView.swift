@@ -593,6 +593,11 @@ struct TransitAlarmView: View {
                     : "Parsing \(selectedFeed?.name ?? "feed") stops…")
                     .font(.subheadline)
                     .foregroundColor(.white)
+                if service.downloadAttempt > 1 {
+                    Text("Attempt \(service.downloadAttempt) of \(service.maxDownloadAttempts)")
+                        .font(.caption)
+                        .foregroundColor(.white.opacity(0.75))
+                }
                 Button { service.cancel() } label: {
                     Text("Cancel", bundle: bundle)
                 }

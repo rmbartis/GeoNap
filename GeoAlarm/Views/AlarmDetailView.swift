@@ -186,7 +186,7 @@ struct AlarmDetailView: View {
 
                 ShareLink(item: shareURLString) {
                     Label {
-                        Text("Share location", bundle: bundle)
+                        Text("Share Alarm Location", bundle: bundle)
                     } icon: {
                         Image(systemName: "square.and.arrow.up")
                     }

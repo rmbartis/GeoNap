@@ -20,6 +20,8 @@ final class GTFSService: ObservableObject {
     @Published var downloadProgress: Double = 0   // 0.0 – 1.0
     @Published var isLoading: Bool = false
     @Published var errorMessage: String? = nil
+    @Published var downloadAttempt: Int = 0        // current attempt (1-based); 0 = not downloading
+    let maxDownloadAttempts = 3
 
     // MARK: - Private
 
@@ -67,12 +69,37 @@ final class GTFSService: ObservableObject {
         DebugLogger.shared.log("GTFS download START: '\(feed.name)' url=\(feed.feedURL)", category: "GTFS")
         isLoading = true
         downloadProgress = 0
-        defer { isLoading = false }
+        downloadAttempt = 0
+        defer { isLoading = false; downloadAttempt = 0 }
 
+        // --- Retry loop (network errors only; cancel exits immediately) ---
+        var zipURL: URL? = nil
+        var lastDownloadError: Error = GTFSError.downloadFailed
+        for attempt in 1...maxDownloadAttempts {
+            downloadAttempt = attempt
+            downloadProgress = 0
+            do {
+                zipURL = try await download(from: url)
+                break   // success
+            } catch is CancellationError {
+                return  // user cancelled — defer handles cleanup
+            } catch {
+                lastDownloadError = error
+                DebugLogger.shared.log("GTFS attempt \(attempt)/\(maxDownloadAttempts) failed: \(error.localizedDescription)", category: "GTFS")
+                if attempt < maxDownloadAttempts {
+                    try? await Task.sleep(nanoseconds: 2_000_000_000)   // 2 s between retries
+                }
+            }
+        }
+
+        guard let zipURL else {
+            errorMessage = "\(feed.name): \(lastDownloadError.localizedDescription)"
+            DebugLogger.shared.log("GTFS download/parse FAILED: '\(feed.name)' error='\(lastDownloadError.localizedDescription)' url=\(feed.feedURL)", category: "GTFS")
+            return
+        }
+
+        // --- Extract and parse ---
         do {
-            let zipURL = try await download(from: url)
-
-            // Log the size of the downloaded ZIP
             let zipBytes = (try? FileManager.default.attributesOfItem(atPath: zipURL.path)[.size] as? Int64) ?? 0
             DebugLogger.shared.log("GTFS download COMPLETE: '\(feed.name)' size=\(ByteCountFormatter.string(fromByteCount: zipBytes, countStyle: .file))", category: "GTFS")
 
@@ -104,7 +131,7 @@ final class GTFSService: ObservableObject {
                 delegateQueue: nil
             )
             var request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData)
-            request.timeoutInterval = 120
+            request.timeoutInterval = 15
 
             let task = session.downloadTask(with: request) { location, response, error in
                 if let error {

@@ -272,6 +272,7 @@ final class AlarmManager: NSObject, ObservableObject {
             CrashReporter.setKey("lastTriggeredAlarm", value: alarms[index].name)
             DebugLogger.shared.log("🔔 Alarm TRIGGERED: '\(alarms[index].name)' event=\(event.rawValue) triggerCount=\(alarms[index].triggerCount) regionID=\(regionID)", category: "AlarmManager")
             fireNotification(for: alarms[index])
+            queueAutoNotify(for: alarms[index])
             scheduleWindowEndGuard(for: alarms[index])
             save()
             print("🔔 Alarm triggered: \(alarms[index].name)")
@@ -319,6 +320,28 @@ final class AlarmManager: NSObject, ObservableObject {
                 DebugLogger.shared.log("Notification delivery failed: \(error.localizedDescription)", category: "AlarmManager")
             }
         }
+    }
+
+    /// Sets `pendingContactMessage` immediately when an alarm fires so the SMS
+    /// compose sheet appears as soon as the app is (or comes) in the foreground.
+    ///
+    /// This is separate from the notification-tap recovery path in `didReceive`
+    /// (which handles the background → tap → relaunch case).  Having both ensures
+    /// the compose sheet is never missed:
+    ///   • App in foreground: sheet appears immediately via this call.
+    ///   • App in background: user taps notification → `didReceive` sets it as backup.
+    private func queueAutoNotify(for alarm: NapAlarm) {
+        let phones = alarm.notifyContactList.filter { !$0.isEmail }.map { $0.value }
+        guard alarm.notifyContact, !phones.isEmpty else { return }
+
+        let direction = alarm.regionEvent == .onEntry ? "Arrival" : "Departure"
+        let verb      = alarm.regionEvent == .onEntry ? "arrived at" : "departed from"
+        let timeStr   = DateFormatter.localizedString(from: Date(), dateStyle: .none, timeStyle: .short)
+        var body = "[\(direction)] I \(verb) \(alarm.name) at \(timeStr)."
+        if !alarm.note.isEmpty { body += " \(alarm.note)" }
+
+        pendingContactMessage = ContactMessage(phones: phones, body: body)
+        DebugLogger.shared.log("Auto-Notify: SMS compose queued at alarm fire (\(phones.count) contact(s))", category: "AlarmManager")
     }
 
     /// Builds the userInfo dictionary for a notification.

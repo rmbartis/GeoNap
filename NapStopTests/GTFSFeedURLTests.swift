@@ -22,8 +22,8 @@ import XCTest
 @MainActor
 final class GTFSFeedURLTests: XCTestCase {
 
-    // Generous per-request ceiling; the point is reachability, not speed.
-    private let requestTimeout: TimeInterval = 30
+    // Per-request ceiling; the point is reachability, not speed.
+    private let requestTimeout: TimeInterval = 10
 
     // Retry policy for transient 5xx server errors.
     private let maxRetries = 2               // up to 2 retries (3 total attempts)
