@@ -273,6 +273,7 @@ struct TransitAlarmView: View {
                     Button {
                         selectedRoute = route
                         step = .stop
+                        DebugLogger.shared.log("Transit route selected: '\(route.fullLabel)' type=\(route.type.rawValue)", category: "UI")
                     } label: {
                         HStack(spacing: 12) {
                             Image(systemName: route.type.systemImage)
@@ -317,6 +318,7 @@ struct TransitAlarmView: View {
                         selectedStop = stop
                         prefillAlarmName(from: stop)
                         step = .confirm
+                        DebugLogger.shared.log("Transit stop selected: '\(stop.name)' lat=\(stop.latitude) lon=\(stop.longitude)", category: "UI")
                     } label: {
                         HStack {
                             VStack(alignment: .leading, spacing: 2) {
@@ -708,6 +710,7 @@ struct TransitAlarmView: View {
     }
 
     private func pickCuratedFeed(_ curated: CuratedFeed) {
+        DebugLogger.shared.log("Transit agency selected: '\(curated.name)' region=\(curated.region)", category: "UI")
         let model = GTFSFeedModel(
             name: curated.name,
             feedURL: curated.feedURL,
@@ -760,6 +763,7 @@ struct TransitAlarmView: View {
             transitRouteType: selectedRoute?.type,
             notificationSound: notificationSound
         )
+        DebugLogger.shared.log("Transit alarm created: '\(alarm.name)' agency='\(selectedFeed?.name ?? "?")' route='\(selectedRoute?.fullLabel ?? "?")' stop='\(stop.name)' event=\(regionEvent.rawValue) radius=\(Int(radius))m", category: "UI")
         onSave(alarm)
     }
 

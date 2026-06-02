@@ -191,10 +191,16 @@ struct AlarmDetailView: View {
                         Image(systemName: "square.and.arrow.up")
                     }
                 }
+                .simultaneousGesture(TapGesture().onEnded {
+                    DebugLogger.shared.log("Share Alarm Location tapped: '\(alarm.name)' lat=\(alarm.latitude) lon=\(alarm.longitude)", category: "UI")
+                })
             }
         }
         .navigationTitle(alarm.name)
         .navigationBarTitleDisplayMode(.large)
+        .onAppear {
+            DebugLogger.shared.log("Alarm detail viewed: '\(alarm.name)' state=\(alarm.state.rawValue) triggerCount=\(alarm.triggerCount)", category: "UI")
+        }
     }
 
     // MARK: - Helpers

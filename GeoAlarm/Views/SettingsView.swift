@@ -144,8 +144,10 @@ struct SettingsView: View {
                         defaultContactRow(contact)
                     }
                     .onDelete { offsets in
+                        let removed = offsets.map { defaultContacts[$0].name }
                         defaultContacts.remove(atOffsets: offsets)
                         defaultContacts.saveAsGlobalDefaults()
+                        DebugLogger.shared.log("Default Auto-Notify contact removed: \(removed.joined(separator: ", "))", category: "UI")
                     }
 
                     Button {
@@ -235,6 +237,15 @@ struct SettingsView: View {
             .onAppear {
                 defaultContacts = [NotifyContact].loadGlobalDefaults()
             }
+            .onChange(of: distanceUnitRaw) { _, newValue in
+                DebugLogger.shared.log("Setting changed: Distance unit → \(newValue)", category: "UI")
+            }
+            .onChange(of: coordFormatRaw) { _, newValue in
+                DebugLogger.shared.log("Setting changed: Coordinate format → \(newValue)", category: "UI")
+            }
+            .onChange(of: timeFormatRaw) { _, newValue in
+                DebugLogger.shared.log("Setting changed: Clock format → \(newValue)", category: "UI")
+            }
             .background(
                 ContactPickerView(isPresented: $showContactPicker) { contact in
                     addDefaultContact(contact)
@@ -311,6 +322,7 @@ struct SettingsView: View {
         guard !defaultContacts.contains(where: { $0.value == contact.value }) else { return }
         defaultContacts.append(contact)
         defaultContacts.saveAsGlobalDefaults()
+        DebugLogger.shared.log("Default Auto-Notify contact added: '\(contact.name)'", category: "UI")
     }
 
     // MARK: - Debug section

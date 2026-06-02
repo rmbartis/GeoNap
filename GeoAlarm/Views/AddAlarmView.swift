@@ -86,6 +86,7 @@ struct AddAlarmView: View {
                                     if viewModel.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                                         viewModel.name = completion.title
                                     }
+                                    DebugLogger.shared.log("Location selected from search: '\(completion.title)' lat=\(coord.latitude) lon=\(coord.longitude)", category: "UI")
                                 }
                                 searchService.clear()
                             }
@@ -495,6 +496,7 @@ struct AddAlarmView: View {
         guard !contact.isEmail else { return }
         guard !viewModel.notifyContactList.contains(where: { $0.value == contact.value }) else { return }
         viewModel.notifyContactList.append(contact)
+        DebugLogger.shared.log("Auto-Notify contact added: '\(contact.name)'", category: "UI")
     }
 
     // MARK: - Time window summary
@@ -568,8 +570,10 @@ struct AddAlarmView: View {
             viewModel.longitude = coord.longitude
             coordEntryError = nil
             showCoordEntry = false
+            DebugLogger.shared.log("Manual coordinates applied: lat=\(coord.latitude) lon=\(coord.longitude) format=\(coordFormat.label)", category: "UI")
         } catch let err as CoordinateParseError {
             coordEntryError = err.errorDescription
+            DebugLogger.shared.log("Manual coordinates rejected: \(err.errorDescription ?? "parse error") input='\(coordLatEntry)', '\(coordLonEntry)'", category: "UI")
         } catch {
             coordEntryError = error.localizedDescription
         }
@@ -579,8 +583,10 @@ struct AddAlarmView: View {
         guard let alarm = viewModel.buildAlarm() else { return }
         if isEditing {
             alarmManager.update(alarm: alarm)
+            DebugLogger.shared.log("Alarm updated: '\(alarm.name)' lat=\(alarm.latitude) lon=\(alarm.longitude) radius=\(Int(alarm.radius))m event=\(alarm.regionEvent.rawValue) repeat=\(alarm.isRepeating) sound=\(alarm.notificationSound.rawValue) autoNotify=\(alarm.notifyContact)", category: "UI")
         } else {
             alarmManager.add(alarm: alarm)
+            DebugLogger.shared.log("Alarm created: '\(alarm.name)' lat=\(alarm.latitude) lon=\(alarm.longitude) radius=\(Int(alarm.radius))m event=\(alarm.regionEvent.rawValue) repeat=\(alarm.isRepeating) sound=\(alarm.notificationSound.rawValue) autoNotify=\(alarm.notifyContact)", category: "UI")
         }
         dismiss()
     }
