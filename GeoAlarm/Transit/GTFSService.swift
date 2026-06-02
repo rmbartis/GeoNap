@@ -79,7 +79,7 @@ final class GTFSService: ObservableObject {
             downloadAttempt = attempt
             downloadProgress = 0
             do {
-                zipURL = try await download(from: url)
+                zipURL = try await download(from: url, attempt: attempt)
                 break   // success
             } catch is CancellationError {
                 return  // user cancelled — defer handles cleanup
@@ -120,7 +120,9 @@ final class GTFSService: ObservableObject {
     }
 
     // Returns a temporary file URL for the downloaded ZIP.
-    private func download(from url: URL) async throws -> URL {
+    // Timeout scales with attempt: 15 s × attempt (15 s, 30 s, 45 s).
+    private func download(from url: URL, attempt: Int = 1) async throws -> URL {
+        let timeoutInterval: TimeInterval = 15.0 * Double(attempt)
         let tmpURL = FileManager.default.temporaryDirectory
             .appendingPathComponent(UUID().uuidString + ".zip")
 
@@ -131,7 +133,7 @@ final class GTFSService: ObservableObject {
                 delegateQueue: nil
             )
             var request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData)
-            request.timeoutInterval = 15
+            request.timeoutInterval = timeoutInterval
 
             let task = session.downloadTask(with: request) { location, response, error in
                 if let error {
