@@ -19,8 +19,6 @@ struct SettingsView: View {
     // Controls the confirmation alert shown before logging is enabled
     @State private var showEnableConfirmation = false
     // Controls the share sheet for exporting the log file
-    @State private var shareItems: [Any] = []
-    @State private var showShareSheet = false
     // Controls the "log cleared" feedback
     @State private var showClearedBanner = false
 
@@ -291,10 +289,6 @@ struct SettingsView: View {
                     If support requests it, you can find and share the file using the iOS Files app.
                     """, bundle: bundle)
             }
-            // Share sheet for log export
-            .sheet(isPresented: $showShareSheet) {
-                ShareSheet(items: shareItems)
-            }
         }
     }
 
@@ -353,16 +347,17 @@ struct SettingsView: View {
                 }
 
                 // Share log button
-                Button {
-                    let url = DebugLogger.shared.logFileURL
-                    guard FileManager.default.fileExists(atPath: url.path) else { return }
-                    shareItems = [url]
-                    showShareSheet = true
-                } label: {
-                    Label {
-                        Text("Share Log with Support", bundle: bundle)
-                    } icon: {
-                        Image(systemName: "square.and.arrow.up")
+                if FileManager.default.fileExists(atPath: DebugLogger.shared.logFileURL.path) {
+                    ShareLink(
+                        item: DebugLogger.shared.logFileURL,
+                        subject: Text("GeoNap Debug Log"),
+                        message: Text("Debug log from GeoNap")
+                    ) {
+                        Label {
+                            Text("Share Log with Support", bundle: bundle)
+                        } icon: {
+                            Image(systemName: "square.and.arrow.up")
+                        }
                     }
                 }
 
@@ -419,17 +414,6 @@ struct SettingsView: View {
     }
 }
 
-// MARK: - UIActivityViewController wrapper
-
-private struct ShareSheet: UIViewControllerRepresentable {
-    let items: [Any]
-
-    func makeUIViewController(context: Context) -> UIActivityViewController {
-        UIActivityViewController(activityItems: items, applicationActivities: nil)
-    }
-
-    func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
-}
 
 // MARK: - Reusable info label with popover
 
