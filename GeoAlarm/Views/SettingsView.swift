@@ -324,7 +324,7 @@ struct SettingsView: View {
                         title: "Enable Debug Log",
                         isPresented: $infoDebugLog,
                         helpTitle: "Debug Logging",
-                        helpBody: "Records detailed diagnostic information to a private log file stored only on your device.\\n\\nWhat is logged:\\n• Location events and region crossings\\n• Alarm trigger and snooze activity\\n• Transit feed downloads\\n• Errors and warnings\\n\\nNothing is sent automatically. If support requests it, share the log via the 'Share Log with Support' button that appears below when logging is enabled.\\n\\nLogging is off by default and does not run in the background when the app is closed. Disable it again once your issue is resolved."
+                        helpBody: "Records detailed diagnostic information to a private log file stored only on your device.\n\nWhat is logged:\n• Location events and region crossings\n• Alarm trigger and snooze activity\n• Transit feed downloads\n• Errors and warnings\n\nFile location:\nGeoNapDebug.log in the app's Documents folder. You can also access it in the Files app under GeoNap → On My iPhone.\n\nNothing is sent automatically. If support requests it, share the log via the 'Share Log with Support' button that appears below when logging is enabled.\n\nLogging is off by default and does not run in the background when the app is closed. Disable it again once your issue is resolved."
                     )
                 } icon: {
                     Image(systemName: "doc.text.magnifyingglass")

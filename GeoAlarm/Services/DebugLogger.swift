@@ -6,7 +6,7 @@
 //   DebugLogger.shared.log("Region entered", category: "Location")
 //
 // The log file location (visible in Files app):
-//   On My iPhone → NapAlarm → GeoNapDebug.log
+//   On My iPhone → GeoNap → GeoNapDebug.log
 //
 // Logging is opt-in and controlled via the "Enable Debug Log" toggle in
 // Settings.  When disabled, log() is a no-op.
@@ -42,7 +42,7 @@ final class DebugLogger {
 
     /// The URL of the log file — `Documents/GeoNapDebug.log`.
     /// This path is shown to users in the confirmation dialog and is accessible
-    /// via the Files app: On My iPhone → NapAlarm → GeoNapDebug.log
+    /// via the Files app: On My iPhone → GeoNap → GeoNapDebug.log
     var logFileURL: URL {
         FileManager.default
             .urls(for: .documentDirectory, in: .userDomainMask)[0]
