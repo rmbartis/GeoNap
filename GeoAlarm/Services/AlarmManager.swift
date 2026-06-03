@@ -341,6 +341,13 @@ final class AlarmManager: NSObject, ObservableObject {
         if !alarm.note.isEmpty { body += " \(alarm.note)" }
 
         pendingContactMessage = ContactMessage(phones: phones, body: body)
+
+        // Persist for NotifyContactsIntent — lets a Shortcuts Personal Automation
+        // read the data and send SMS via "Send Message" without a compose sheet.
+        // Persist body for NotifyContactsIntent — lets a Shortcuts Personal Automation
+        // read the message and send SMS via "Send Message" without a compose sheet.
+        UserDefaults.standard.set(body, forKey: AutoNotifyDefaultsKey.pendingBody)
+
         DebugLogger.shared.log("Auto-Notify: SMS compose queued at alarm fire (\(phones.count) contact(s))", category: "AlarmManager")
     }
 
@@ -435,6 +442,7 @@ final class AlarmManager: NSObject, ObservableObject {
     func snooze(_ alarm: NapAlarm, minutes: Int = 10) {
         alarm.state = .snoozed
         save()
+        DebugLogger.shared.log("Alarm snoozed \(minutes) min: '\(alarm.name)'", category: "AlarmManager")
         DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(minutes * 60)) { [weak self] in
             guard let self,
                   let index = self.alarms.firstIndex(where: { $0.id == alarm.id }),

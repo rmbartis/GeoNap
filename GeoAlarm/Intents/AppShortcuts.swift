@@ -46,5 +46,21 @@ struct NapAlarmShortcuts: AppShortcutsProvider {
             shortTitle: "Disable NapAlarm",
             systemImageName: "pause.circle.fill"
         )
+
+        // ── Notify Contacts ───────────────────────────────────────────────────
+        // Used as Action 1 in a Personal Automation:
+        //   Trigger : notification from GeoNap
+        //   Action 1: this intent  →  returns recipients + body
+        //   Action 2: Send Message (using outputs from Action 1)
+        //   Setting : Run Without Asking ✓
+        AppShortcut(
+            intent: NotifyContactsIntent(),
+            phrases: [
+                "Notify my contacts via \(.applicationName)",
+                "Send \(.applicationName) alert to contacts"
+            ],
+            shortTitle: "Notify Contacts",
+            systemImageName: "message.fill"
+        )
     }
 }

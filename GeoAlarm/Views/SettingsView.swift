@@ -167,6 +167,9 @@ struct SettingsView: View {
                          bundle: bundle)
                 }
 
+                // MARK: Auto-SMS (Shortcuts automation)
+                autoSMSSection
+
                 // MARK: Help & Legal
                 Section {
                     NavigationLink(destination: HelpView()) {
@@ -393,6 +396,52 @@ struct SettingsView: View {
         }
     }
 
+    // MARK: - Auto-SMS section
+
+    private var autoSMSSection: some View {
+        Section {
+            // Step-by-step instructions
+            VStack(alignment: .leading, spacing: 10) {
+                Text("Send SMS automatically when an alarm fires — no compose sheet, no tapping Send.")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                Divider()
+
+                Text("One-time setup in the Shortcuts app:")
+                    .font(.subheadline.weight(.medium))
+
+                VStack(alignment: .leading, spacing: 6) {
+                    AutoSMSStep(number: "1", text: "Open Shortcuts → Automation → tap +")
+                    AutoSMSStep(number: "2", text: "Choose \u{201C}App\u{201D} → select GeoNap → \u{201C}Receives a Notification\u{201D}")
+                    AutoSMSStep(number: "3", text: "Tap \u{201C}New Blank Automation\u{201D}, then add action:")
+                    AutoSMSStep(number: "  ", text: "\u{201C}Notify Contacts via NapAlarm\u{201D}")
+                    AutoSMSStep(number: "4", text: "Add a second action: \u{201C}Send Message\u{201D}")
+                    AutoSMSStep(number: "  ", text: "Message → choose \u{201C}Body\u{201D} from step 3")
+                    AutoSMSStep(number: "  ", text: "Recipients → tap + and pick your contacts")
+                    AutoSMSStep(number: "5", text: "Turn off \u{201C}Ask Before Running\u{201D} → Done")
+                }
+                .font(.subheadline)
+            }
+            .padding(.vertical, 4)
+
+            // Deep-link button
+            Button {
+                if let url = URL(string: "shortcuts://create-shortcut") {
+                    UIApplication.shared.open(url)
+                }
+            } label: {
+                Label("Open Shortcuts App", systemImage: "arrow.up.right.square")
+            }
+        } header: {
+            Text("Auto-SMS (No Approval Needed)")
+        } footer: {
+            Text("Supported on all GeoNap-compatible devices (iOS 16 and later). The automation runs silently using the Shortcuts \u{201C}Send Message\u{201D} action \u{2014} messages appear to come from you in the standard Messages app.")
+                .font(.caption)
+        }
+    }
+
     // MARK: - Toggle binding
 
     /// Custom binding so we can intercept the toggle turning ON and show a
@@ -414,6 +463,24 @@ struct SettingsView: View {
     }
 }
 
+
+// MARK: - Auto-SMS step row
+
+private struct AutoSMSStep: View {
+    let number: String
+    let text: String
+
+    var body: some View {
+        HStack(alignment: .top, spacing: 6) {
+            Text(number)
+                .monospacedDigit()
+                .foregroundStyle(.secondary)
+                .frame(width: 16, alignment: .trailing)
+            Text(text)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+    }
+}
 
 // MARK: - Reusable info label with popover
 

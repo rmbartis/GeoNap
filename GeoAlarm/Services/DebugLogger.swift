@@ -49,6 +49,25 @@ final class DebugLogger {
             .appendingPathComponent("GeoNapDebug.log")
     }
 
+    // MARK: - In-memory buffer (for testing and last-N-entries UI)
+
+    /// A structured log entry kept in memory.
+    struct Entry {
+        let timestamp: String
+        let category:  String
+        let message:   String
+    }
+
+    /// Maximum number of entries retained in `recentEntries`.
+    private let maxRecentEntries = 200
+
+    /// The most recent log entries, newest last.
+    /// Populated synchronously in `log()` before the async file write,
+    /// so tests can read it immediately without waiting for I/O.
+    private(set) var recentEntries: [Entry] = []
+
+    private let entriesLock = NSLock()
+
     // MARK: - Private
 
     private let queue = DispatchQueue(label: "com.geoalarm.debuglogger", qos: .utility)
@@ -64,6 +83,13 @@ final class DebugLogger {
         guard isEnabled else { return }
 
         let timestamp = iso.string(from: Date())
+
+        // In-memory append — synchronous so callers can read recentEntries immediately.
+        entriesLock.lock()
+        recentEntries.append(Entry(timestamp: timestamp, category: category, message: message))
+        if recentEntries.count > maxRecentEntries { recentEntries.removeFirst() }
+        entriesLock.unlock()
+
         let entry = "[\(timestamp)] [\(category)] \(message)\n"
 
         queue.async { [weak self] in
@@ -87,8 +113,12 @@ final class DebugLogger {
         }
     }
 
-    /// Remove the log file.
+    /// Remove the log file and clear the in-memory buffer.
     func clearLog() {
+        entriesLock.lock()
+        recentEntries.removeAll()
+        entriesLock.unlock()
+
         queue.async { [weak self] in
             guard let self else { return }
             try? FileManager.default.removeItem(at: self.logFileURL)
