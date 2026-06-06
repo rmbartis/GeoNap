@@ -305,3 +305,22 @@ Envoyer sans approbation (configuration unique):
 Vous pouvez ignorer l'etape Appuyer sur Envoyer grace a une Automatisation Personnelle dans Raccourcis. Une fois configuree, iOS envoie le message automatiquement a chaque declenchement d'alarme - sans changer d'app, sans confirmation.
 
 Consultez Reglages - Auto-SMS (Sans approbation) pour les instructions etape par etape.\n\nEnvoyer sans approbation (configuration unique) :\nVous pouvez ignorer l’étape Appuyer sur Envoyer grâce à une Automatisation Personnelle dans Raccourcis. Une fois configurée, iOS envoie le message automatiquement à chaque déclenchement d’alarme — sans changer d’app, sans confirmation.\n\nConsultez Réglages → Auto-SMS (Sans approbation) pour les instructions étape par étape.";
+
+/* Auto-SMS section (SettingsView) */
+"Auto-SMS (No Approval Needed)" = "Auto-SMS (Sans approbation)";
+"settings.autoSMS.description" = "Envoie des SMS automatiquement quand une alarme se déclenche — sans fenêtre de composition, sans appuyer sur Envoyer.";
+"settings.autoSMS.setupTitle" = "Configuration unique dans l'app Raccourcis :";
+"settings.autoSMS.step1" = "Ouvrir Raccourcis → Automatisation → appuyer sur +";
+"settings.autoSMS.step2" = "Choisir \u{AB}App\u{BB} → sélectionner GeoNap → \u{AB}Reçoit une notification\u{BB}";
+"settings.autoSMS.step3a" = "Appuyer sur \u{AB}Nouvelle automatisation vide\u{BB}, puis ajouter l'action :";
+"settings.autoSMS.step3b" = "\u{AB}Notifier les contacts via GeoNap\u{BB}";
+"settings.autoSMS.step4a" = "Ajouter une deuxième action : \u{AB}Envoyer un message\u{BB}";
+"settings.autoSMS.step4b" = "Message → choisir \u{AB}Corps\u{BB} de l'étape 3";
+"settings.autoSMS.step4c" = "Destinataires → appuyer sur + et choisir vos contacts";
+"settings.autoSMS.step5" = "Désactiver \u{AB}Demander avant d'exécuter\u{BB} → Terminé";
+"Open Shortcuts App" = "Ouvrir Raccourcis";
+"settings.autoSMS.footer" = "Compatible avec tous les appareils GeoNap (iOS 16 et ultérieur). L'automatisation s'exécute silencieusement via l'action \u{AB}Envoyer un message\u{BB} de Raccourcis — les messages apparaissent comme venant de vous dans l'app Messages standard.";
+
+/* AlarmFiringView */
+"Snooze 10 min" = "Reporter 10 min";
+"Slide to dismiss" = "Faire glisser pour arrêter";

@@ -326,3 +326,22 @@ Gui ma khong can phe duyet (thiet lap mot lan):
 Ban co the bo qua buoc Nhan Gui bang cach su dung Tu dong hoa Ca nhan trong Phim tat. Sau khi thiet lap, iOS se tu dong gui tin nhan moi khi bao thuc kich hoat - khong can chuyen ung dung, khong can xac nhan.
 
 Xem Cai dat - SMS Tu dong (Khong can phe duyet) de biet huong dan tung buoc.\n\nGửi mà không cần phê duyệt (thiết lập một lần):\nBạn có thể bỏ qua bước Nhấn Gửi bằng cách sử dụng Tự động hóa Cá nhân trong Phím tắt. Sau khi thiết lập, iOS sẽ tự động gửi tin nhắn mỗi khi báo thức kích hoạt — không cần chuyển ứng dụng, không cần xác nhận.\n\nXem Cài đặt → SMS Tự động (Không cần phê duyệt) để biết hướng dẫn từng bước.";
+
+/* Auto-SMS section (SettingsView) */
+"Auto-SMS (No Approval Needed)" = "SMS Tự động (Không cần phê duyệt)";
+"settings.autoSMS.description" = "Tự động gửi SMS khi báo thức kích hoạt — không có cửa sổ soạn thảo, không cần nhấn Gửi.";
+"settings.autoSMS.setupTitle" = "Thiết lập một lần trong app Phím tắt:";
+"settings.autoSMS.step1" = "Mở Phím tắt → Tự động hóa → nhấn +";
+"settings.autoSMS.step2" = "Chọn \u{201C}App\u{201D} → chọn GeoNap → \u{201C}Nhận thông báo\u{201D}";
+"settings.autoSMS.step3a" = "Nhấn \u{201C}Tự động hóa trống mới\u{201D}, sau đó thêm hành động:";
+"settings.autoSMS.step3b" = "\u{201C}Thông báo liên hệ qua GeoNap\u{201D}";
+"settings.autoSMS.step4a" = "Thêm hành động thứ hai: \u{201C}Gửi tin nhắn\u{201D}";
+"settings.autoSMS.step4b" = "Tin nhắn → chọn \u{201C}Nội dung\u{201D} từ bước 3";
+"settings.autoSMS.step4c" = "Người nhận → nhấn + và chọn liên hệ của bạn";
+"settings.autoSMS.step5" = "Tắt \u{201C}Hỏi trước khi chạy\u{201D} → Xong";
+"Open Shortcuts App" = "Mở app Phím tắt";
+"settings.autoSMS.footer" = "Hỗ trợ trên tất cả thiết bị tương thích GeoNap (iOS 16 trở lên). Tự động hóa chạy im lặng bằng hành động \u{201C}Gửi tin nhắn\u{201D} của Phím tắt — tin nhắn hiển thị như gửi từ bạn trong app Tin nhắn tiêu chuẩn.";
+
+/* AlarmFiringView */
+"Snooze 10 min" = "Báo lại 10 phút";
+"Slide to dismiss" = "Trượt để tắt";

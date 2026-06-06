@@ -322,3 +322,22 @@ Purn setup ke liye Settings - Auto-SMS (Anumodan ki aavashyakta nahin) dekhen.\n
 /* HelpView — Auto-Notify section */
 "help.body.autoNotify" = "स्वतः सूचना अलार्म बजने के तुरंत बाद आपके सहेजे गए संपर्कों को स्वचालित रूप से एक SMS भेजती है — आपके स्थान द्वारा सक्रिय, आपकी किसी क्रिया से नहीं।\n\nअलार्म बजने पर क्या होता है:\n• GeoNap पहचानता है कि आप जियोफेंस क्षेत्र में प्रवेश किए या छोड़ा।\n• अगली बार जब आप GeoNap को अग्रभूमि में लाएंगे, Messages ऐप स्वचालित रूप से खुलेगा।\n• संदेश पहले से ही पते किया हुआ और भरा हुआ होगा — उदाहरण के लिए: \"[आगमन] मैं सुबह 9:14 बजे नई दिल्ली स्टेशन पहुँच गया।\"\n• भेजें टैप करके पुष्टि करें। Apple के लिए यह कदम ज़रूरी है — GeoNap पृष्ठभूमि में चुपचाप SMS नहीं भेज सकता।\n\nसक्षम करने के लिए:\n1. अलार्म बनाते या संपादित करते समय, स्वतः सूचना टॉगल चालू करें।\n2. संपर्कों से जोड़ें या मैन्युअल रूप से जोड़ें पर टैप करें।\n3. अलार्म सहेजें पर टैप करें।\n\nवैश्विक डिफ़ॉल्ट: सेटिंग्स → स्वतः सूचना डिफ़ॉल्ट में संपर्क जोड़ें जो हर नए अलार्म पर पहले से भरे जाएंगे।\n\nनोट: संदेश iOS Messages ऐप के माध्यम से भेजे जाते हैं।
 \n\nबिना अनुमोदन के भेजें (एक बार की सेटअप):\nShortcuts में एक व्यक्तिगत ऑटोमेशन का उपयोग करके आप 'भेजें टैप करें' चरण को पूरी तरह से छोड़ सकते हैं। एक बार सेटअप हो जाने पर, iOS हर बार अलार्म फ़ायर होने पर स्वचालित रूप से संदेश भेजता है — कोई ऐप स्विच नहीं, कोई पुष्टि नहीं।\n\nचरण-दर-चरण निर्देशों के लिए सेटिंग्स → ऑटो-SMS (अनुमोदन की आवश्यकता नहीं) देखें।";
+
+/* Auto-SMS section (SettingsView) */
+"Auto-SMS (No Approval Needed)" = "ऑटो-SMS (अनुमोदन की आवश्यकता नहीं)";
+"settings.autoSMS.description" = "अलार्म बजने पर स्वचालित रूप से SMS भेजें — कोई रचना विंडो नहीं, भेजें टैप करने की जरूरत नहीं।";
+"settings.autoSMS.setupTitle" = "Shortcuts ऐप में एक बार का सेटअप:";
+"settings.autoSMS.step1" = "Shortcuts खोलें → Automation → + टैप करें";
+"settings.autoSMS.step2" = "\u{201C}App\u{201D} चुनें → GeoNap चुनें → \u{201C}Receives a Notification\u{201D}";
+"settings.autoSMS.step3a" = "\u{201C}New Blank Automation\u{201D} टैप करें, फिर कार्य जोड़ें:";
+"settings.autoSMS.step3b" = "\u{201C}GeoNap के माध्यम से संपर्कों को सूचित करें\u{201D}";
+"settings.autoSMS.step4a" = "दूसरा कार्य जोड़ें: \u{201C}Send Message\u{201D}";
+"settings.autoSMS.step4b" = "Message → चरण 3 से \u{201C}Body\u{201D} चुनें";
+"settings.autoSMS.step4c" = "Recipients → + टैप करें और संपर्क चुनें";
+"settings.autoSMS.step5" = "\u{201C}Ask Before Running\u{201D} बंद करें → Done";
+"Open Shortcuts App" = "Shortcuts ऐप खोलें";
+"settings.autoSMS.footer" = "सभी GeoNap-संगत डिवाइस पर समर्थित (iOS 16 और बाद में)। Shortcuts के \u{201C}Send Message\u{201D} कार्य का उपयोग करके ऑटोमेशन चुपचाप चलती है — संदेश मानक Messages ऐप में आपकी ओर से भेजे हुए दिखते हैं।";
+
+/* AlarmFiringView */
+"Snooze 10 min" = "10 मिनट के लिए स्नूज़";
+"Slide to dismiss" = "खारिज करने के लिए स्लाइड करें";

@@ -322,3 +322,22 @@ Shosai na settei teijun ni tsuite wa Settei - Jido SMS (Shonin fuyou) wo go ran 
 /* HelpView — Auto-Notify section */
 "help.body.autoNotify" = "自動通知は、アラームが作動した瞬間に保存した連絡先にテキストメッセージを自動的に送信します — あなたの位置情報で起動され、操作は不要です。\n\nアラームが作動したときの流れ：\n• GeoNap がジオフェンスエリアへの入退場を検知します。\n• 次回 GeoNap を前面に表示したとき、メッセージアプリが自動的に開きます。\n• メッセージはすでに宛先と内容が入力されています — 例：\"[到着] 9時14分に東京駅に到着しました。\"\n• 「送信」をタップして確認します。Appleの要件によりこの手順が必要です — GeoNap はバックグラウンドで SMS を無音送信できません。\n\n有効にするには：\n1. アラームの作成または編集時に、自動通知のトグルをオンにします。\n2. 「連絡先から追加」または「手動で追加」をタップして電話番号を入力します。\n3. 「アラームを保存」をタップします。\n\nグローバルデフォルト：設定 → 自動通知のデフォルトで連絡先を追加すると、すべての新しいアラームに事前入力されます。\n\n注意：メッセージは iOS のメッセージアプリを通じて送信されます。
 \n\n承認なしで送信（初回のみ設定）:\nショートカットの個人オートメーションを使うことで「送信をタップ」するステップを完全に省略できます。設定後はアラームが作動するたびにiOSが自動的にメッセージを送信します — アプリの切り替えも確認も不要です。\n\n手順については設定 → 自動SMS（承認不要）をご覧ください。";
+
+/* Auto-SMS section (SettingsView) */
+"Auto-SMS (No Approval Needed)" = "自動SMS（承認不要）";
+"settings.autoSMS.description" = "アラームが作動したとき自動的にSMSを送信 — 作成画面なし、送信ボタンのタップ不要。";
+"settings.autoSMS.setupTitle" = "ショートカットアプリでの初回設定：";
+"settings.autoSMS.step1" = "ショートカット → オートメーション → ＋ をタップ";
+"settings.autoSMS.step2" = "\u{201C}App\u{201D} を選択 → GeoNap を選択 → \u{201C}通知を受信\u{201D}";
+"settings.autoSMS.step3a" = "\u{201C}新規空のオートメーション\u{201D} をタップし、アクションを追加：";
+"settings.autoSMS.step3b" = "\u{201C}GeoNap で連絡先に通知\u{201D}";
+"settings.autoSMS.step4a" = "2番目のアクションを追加：\u{201C}メッセージを送信\u{201D}";
+"settings.autoSMS.step4b" = "メッセージ → ステップ3の\u{201C}本文\u{201D}を選択";
+"settings.autoSMS.step4c" = "受信者 → ＋ をタップして連絡先を選択";
+"settings.autoSMS.step5" = "\u{201C}実行前に確認\u{201D} をオフ → 完了";
+"Open Shortcuts App" = "ショートカットアプリを開く";
+"settings.autoSMS.footer" = "GeoNap対応のすべてのデバイスで利用可能（iOS 16以降）。ショートカットの\u{201C}メッセージを送信\u{201D}アクションを使ってオートメーションが静かに実行されます — メッセージは標準のメッセージアプリであなたから送信されたように表示されます。";
+
+/* AlarmFiringView */
+"Snooze 10 min" = "10分スヌーズ";
+"Slide to dismiss" = "スライドして解除";

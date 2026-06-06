@@ -316,3 +316,22 @@
 /* HelpView — Auto-Notify section */
 "help.body.autoNotify" = "自动通知功能会在闹钟触发的瞬间自动向已保存的联系人发送短信 — 由您的位置触发，无需您进行任何操作。\n\n闹钟触发时的流程：\n• GeoNap 检测到您进入或离开了地理围栏区域。\n• 下次将 GeoNap 切换到前台时，\"信息\"应用会自动打开。\n• 消息已预先填写好收件人和内容 — 例如：\"[到达] 我于上午 9:14 到达了北京站。\"\n• 点击\"发送\"确认。Apple 要求此步骤 — GeoNap 无法在后台静默发送短信。\n\n启用方法：\n1. 创建或编辑闹钟时，打开\"自动通知\"开关。\n2. 点击\"从通讯录添加\"或\"手动添加\"输入电话号码。\n3. 点击\"保存闹钟\"。\n\n全局默认值：在\"设置\"→\"自动通知默认值\"中添加联系人，每次新闹钟启用自动通知时都会预先填写。\n\n注意：消息通过 iOS\"信息\"应用发送。
 \n\n无需批准即可发送（一次性设置）:\n您可以使用「捷径」中的个人自动化操作完全跳过「轻点发送」步骤。设置完成后，每次闹钟触发时 iOS 将自动发送消息 — 无需切换应用，无需确认。\n\n请参阅设置 → 自动短信（无需批准）获取分步设置说明。";
+
+/* Auto-SMS section (SettingsView) */
+"Auto-SMS (No Approval Needed)" = "自动短信（无需批准）";
+"settings.autoSMS.description" = "闹钟触发时自动发送短信 — 无需编辑窗口，无需点击发送。";
+"settings.autoSMS.setupTitle" = "在「捷径」App 中进行一次性设置：";
+"settings.autoSMS.step1" = "打开「捷径」→ 自动化 → 点击 +";
+"settings.autoSMS.step2" = "选择\u{201C}App\u{201D} → 选择 GeoNap → \u{201C}收到通知\u{201D}";
+"settings.autoSMS.step3a" = "点击\u{201C}新建空白自动化\u{201D}，然后添加操作：";
+"settings.autoSMS.step3b" = "\u{201C}通过 GeoNap 通知联系人\u{201D}";
+"settings.autoSMS.step4a" = "添加第二个操作：\u{201C}发送信息\u{201D}";
+"settings.autoSMS.step4b" = "信息 → 从步骤 3 选择\u{201C}正文\u{201D}";
+"settings.autoSMS.step4c" = "收件人 → 点击 + 并选择您的联系人";
+"settings.autoSMS.step5" = "关闭\u{201C}运行前询问\u{201D} → 完成";
+"Open Shortcuts App" = "打开「捷径」App";
+"settings.autoSMS.footer" = "支持所有兼容 GeoNap 的设备（iOS 16 及更高版本）。自动化使用「捷径」的\u{201C}发送信息\u{201D}操作静默运行 — 消息在标准「信息」App 中显示为由您发送。";
+
+/* AlarmFiringView */
+"Snooze 10 min" = "贪睡 10 分钟";
+"Slide to dismiss" = "滑动以解除";

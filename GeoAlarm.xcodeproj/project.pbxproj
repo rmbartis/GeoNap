@@ -7,8 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		686A0FCD2FC39F2E0079F963 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = 686A0FCC2FC39F2E0079F963 /* FirebaseCore */; };
-		686A0FCF2FC39F2E0079F963 /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = 686A0FCE2FC39F2E0079F963 /* FirebaseCrashlytics */; };
 		686A100D2FC48EB90079F963 /* ZIPFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 686A100C2FC48EB90079F963 /* ZIPFoundation */; };
 /* End PBXBuildFile section */
 
@@ -72,8 +70,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				686A0FCD2FC39F2E0079F963 /* FirebaseCore in Frameworks */,
-				686A0FCF2FC39F2E0079F963 /* FirebaseCrashlytics in Frameworks */,
 				686A100D2FC48EB90079F963 /* ZIPFoundation in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -145,8 +141,6 @@
 			);
 			name = GeoNap;
 			packageProductDependencies = (
-				686A0FCC2FC39F2E0079F963 /* FirebaseCore */,
-				686A0FCE2FC39F2E0079F963 /* FirebaseCrashlytics */,
 				686A100C2FC48EB90079F963 /* ZIPFoundation */,
 			);
 			productName = GeoNap;
@@ -244,7 +238,6 @@
 			mainGroup = 686A0F162FC337E40079F963;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				686A0FCB2FC39F2E0079F963 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				686A100A2FC48E3F0079F963 /* XCRemoteSwiftPackageReference "ZIPFoundation" */,
 			);
 			preferredProjectObjectVersion = 77;
@@ -740,14 +733,6 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		686A0FCB2FC39F2E0079F963 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 12.13.0;
-			};
-		};
 		686A100A2FC48E3F0079F963 /* XCRemoteSwiftPackageReference "ZIPFoundation" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/weichsel/ZIPFoundation.git";
@@ -759,16 +744,6 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		686A0FCC2FC39F2E0079F963 /* FirebaseCore */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 686A0FCB2FC39F2E0079F963 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = FirebaseCore;
-		};
-		686A0FCE2FC39F2E0079F963 /* FirebaseCrashlytics */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 686A0FCB2FC39F2E0079F963 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = FirebaseCrashlytics;
-		};
 		686A100C2FC48EB90079F963 /* ZIPFoundation */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 686A100A2FC48E3F0079F963 /* XCRemoteSwiftPackageReference "ZIPFoundation" */;

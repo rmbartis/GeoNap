@@ -7,6 +7,7 @@ import CoreLocation
 struct ContentView: View {
     @EnvironmentObject var locationManager: LocationManager
     @EnvironmentObject var alarmManager: AlarmManager
+    @EnvironmentObject var languageManager: LanguageManager
     @Environment(\.languageBundle) private var bundle
 
     @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding = false
@@ -94,6 +95,17 @@ struct ContentView: View {
             set: { if !$0 { hasSeenOnboarding = true } }
         )) {
             OnboardingView()
+        }
+        // Full-screen alarm ringing view — shown whenever a geo-alarm fires.
+        // Dismissed by the user sliding the dismiss slider (or via snooze).
+        .fullScreenCover(item: $alarmManager.firingAlarm) { alarm in
+            AlarmFiringView(
+                alarm: alarm,
+                onDismiss: { alarmManager.dismissFiringAlarm() },
+                onSnooze:  { alarmManager.snooze(alarm, minutes: 10) }
+            )
+            .environmentObject(alarmManager)
+            .environment(\.languageBundle, languageManager.currentBundle)
         }
         // Contact notification compose sheet — presented when the user taps
         // "Notify Contact" on a fired alarm notification and the app comes foreground.

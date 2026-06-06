@@ -3,7 +3,6 @@
 
 import SwiftUI
 import SwiftData
-import FirebaseCore
 import CoreSpotlight
 
 @main
@@ -31,7 +30,6 @@ struct NapStopApp: App {
     }()
 
     init() {
-        FirebaseApp.configure()
         CrashReporter.log("App launched")
     }
 
@@ -43,8 +41,6 @@ struct NapStopApp: App {
                 .environmentObject(languageManager)
                 // Pass the selected .lproj bundle so every Text("key", bundle: bundle)
                 // call resolves strings in the chosen language.
-                // Environment propagation is enough — no .id() needed, and using one
-                // would destroy the view tree (dismissing sheets) on every language change.
                 .environment(\.languageBundle, languageManager.currentBundle)
         }
         .modelContainer(container)
@@ -77,3 +73,4 @@ struct RootView: View {
             }
     }
 }
+

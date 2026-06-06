@@ -151,19 +151,26 @@ struct SettingsView: View {
                     Button {
                         showContactPicker = true
                     } label: {
-                        Label("Add from Contacts",
-                              systemImage: "person.crop.circle.badge.plus")
+                        Label {
+                            Text("Add from Contacts", bundle: bundle)
+                        } icon: {
+                            Image(systemName: "person.crop.circle.badge.plus")
+                        }
                     }
 
                     Button {
                         showManualEntry = true
                     } label: {
-                        Label("Add Manually", systemImage: "plus.circle")
+                        Label {
+                            Text("Add Manually", bundle: bundle)
+                        } icon: {
+                            Image(systemName: "plus.circle")
+                        }
                     }
                 } header: {
                     Text("Auto-Notify Defaults", bundle: bundle)
                 } footer: {
-                    Text("Contacts listed here are pre-filled when you enable Auto-Notify on a new alarm. SMS contacts require your approval before sending — the Messages app opens for confirmation. You can adjust the list per-alarm.",
+                    Text("Contacts listed here are pre-filled when you enable Auto-Notify on a new alarm. When an alarm fires, all listed contacts are messaged automatically. You can adjust the list per-alarm.",
                          bundle: bundle)
                 }
 
@@ -402,25 +409,25 @@ struct SettingsView: View {
         Section {
             // Step-by-step instructions
             VStack(alignment: .leading, spacing: 10) {
-                Text("Send SMS automatically when an alarm fires — no compose sheet, no tapping Send.")
+                Text("settings.autoSMS.description", bundle: bundle)
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
 
                 Divider()
 
-                Text("One-time setup in the Shortcuts app:")
+                Text("settings.autoSMS.setupTitle", bundle: bundle)
                     .font(.subheadline.weight(.medium))
 
                 VStack(alignment: .leading, spacing: 6) {
-                    AutoSMSStep(number: "1", text: "Open Shortcuts → Automation → tap +")
-                    AutoSMSStep(number: "2", text: "Choose \u{201C}App\u{201D} → select GeoNap → \u{201C}Receives a Notification\u{201D}")
-                    AutoSMSStep(number: "3", text: "Tap \u{201C}New Blank Automation\u{201D}, then add action:")
-                    AutoSMSStep(number: "  ", text: "\u{201C}Notify Contacts via NapAlarm\u{201D}")
-                    AutoSMSStep(number: "4", text: "Add a second action: \u{201C}Send Message\u{201D}")
-                    AutoSMSStep(number: "  ", text: "Message → choose \u{201C}Body\u{201D} from step 3")
-                    AutoSMSStep(number: "  ", text: "Recipients → tap + and pick your contacts")
-                    AutoSMSStep(number: "5", text: "Turn off \u{201C}Ask Before Running\u{201D} → Done")
+                    AutoSMSStep(number: "1", textKey: "settings.autoSMS.step1")
+                    AutoSMSStep(number: "2", textKey: "settings.autoSMS.step2")
+                    AutoSMSStep(number: "3", textKey: "settings.autoSMS.step3a")
+                    AutoSMSStep(number: "  ", textKey: "settings.autoSMS.step3b")
+                    AutoSMSStep(number: "4", textKey: "settings.autoSMS.step4a")
+                    AutoSMSStep(number: "  ", textKey: "settings.autoSMS.step4b")
+                    AutoSMSStep(number: "  ", textKey: "settings.autoSMS.step4c")
+                    AutoSMSStep(number: "5", textKey: "settings.autoSMS.step5")
                 }
                 .font(.subheadline)
             }
@@ -432,12 +439,16 @@ struct SettingsView: View {
                     UIApplication.shared.open(url)
                 }
             } label: {
-                Label("Open Shortcuts App", systemImage: "arrow.up.right.square")
+                Label {
+                    Text("Open Shortcuts App", bundle: bundle)
+                } icon: {
+                    Image(systemName: "arrow.up.right.square")
+                }
             }
         } header: {
-            Text("Auto-SMS (No Approval Needed)")
+            Text("Auto-SMS (No Approval Needed)", bundle: bundle)
         } footer: {
-            Text("Supported on all GeoNap-compatible devices (iOS 16 and later). The automation runs silently using the Shortcuts \u{201C}Send Message\u{201D} action \u{2014} messages appear to come from you in the standard Messages app.")
+            Text("settings.autoSMS.footer", bundle: bundle)
                 .font(.caption)
         }
     }
@@ -468,7 +479,9 @@ struct SettingsView: View {
 
 private struct AutoSMSStep: View {
     let number: String
-    let text: String
+    let textKey: String
+
+    @Environment(\.languageBundle) private var bundle
 
     var body: some View {
         HStack(alignment: .top, spacing: 6) {
@@ -476,7 +489,7 @@ private struct AutoSMSStep: View {
                 .monospacedDigit()
                 .foregroundStyle(.secondary)
                 .frame(width: 16, alignment: .trailing)
-            Text(text)
+            Text(NSLocalizedString(textKey, bundle: bundle, comment: ""))
                 .fixedSize(horizontal: false, vertical: true)
         }
     }

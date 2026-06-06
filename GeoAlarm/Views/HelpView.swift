@@ -34,6 +34,8 @@ struct HelpView: View {
                             titleKey: "Alarm sound / vibrate", bodyKey: "help.body.soundVibrate")
                 helpSection(symbol: "mic",          color: .indigo,
                             titleKey: "Siri & Shortcuts",     bodyKey: "help.body.siri")
+                helpSection(symbol: "house.fill",   color: .orange,
+                            titleKey: "Apple Home Automation", bodyKey: "help.body.appleAutomation")
                 helpSection(symbol: "gear",         color: .gray,
                             titleKey: "Settings",             bodyKey: "help.body.settings")
                 helpSection(symbol: "doc.text.magnifyingglass", color: .orange,
@@ -80,3 +82,4 @@ struct HelpView: View {
         HelpView()
     }
 }
+

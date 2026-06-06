@@ -305,3 +305,22 @@ Inviare senza approvazione (configurazione una tantum):
 Puoi saltare il passaggio Tocca Invia usando un'Automazione Personale di Comandi Rapidi. Una volta configurata, iOS invia il messaggio automaticamente ogni volta che un allarme scatta - nessun cambio di app, nessuna conferma.
 
 Vedi Impostazioni - Auto-SMS (Senza approvazione) per le istruzioni passo passo.\n\nInviare senza approvazione (configurazione una tantum):\nPuoi saltare il passaggio Tocca Invia usando un’Automazione Personale di Comandi Rapidi. Una volta configurata, iOS invia il messaggio automaticamente ogni volta che un allarme scatta — nessun cambio di app, nessuna conferma.\n\nVedi Impostazioni → Auto-SMS (Senza approvazione) per le istruzioni passo passo.";
+
+/* Auto-SMS section (SettingsView) */
+"Auto-SMS (No Approval Needed)" = "Auto-SMS (Senza approvazione)";
+"settings.autoSMS.description" = "Invia SMS automaticamente quando si attiva un allarme — nessuna finestra di composizione, nessun tocco su Invia.";
+"settings.autoSMS.setupTitle" = "Configurazione una tantum nell'app Comandi Rapidi:";
+"settings.autoSMS.step1" = "Apri Comandi Rapidi → Automazione → tocca +";
+"settings.autoSMS.step2" = "Scegli \u{201C}App\u{201D} → seleziona GeoNap → \u{201C}Riceve una notifica\u{201D}";
+"settings.autoSMS.step3a" = "Tocca \u{201C}Nuova automazione vuota\u{201D}, poi aggiungi azione:";
+"settings.autoSMS.step3b" = "\u{201C}Notifica contatti tramite GeoNap\u{201D}";
+"settings.autoSMS.step4a" = "Aggiungi una seconda azione: \u{201C}Invia messaggio\u{201D}";
+"settings.autoSMS.step4b" = "Messaggio → scegli \u{201C}Corpo\u{201D} dal passaggio 3";
+"settings.autoSMS.step4c" = "Destinatari → tocca + e scegli i tuoi contatti";
+"settings.autoSMS.step5" = "Disattiva \u{201C}Chiedi prima di eseguire\u{201D} → Fine";
+"Open Shortcuts App" = "Apri Comandi Rapidi";
+"settings.autoSMS.footer" = "Supportato su tutti i dispositivi compatibili con GeoNap (iOS 16 e versioni successive). L'automazione viene eseguita in silenzio tramite l'azione \u{201C}Invia messaggio\u{201D} di Comandi Rapidi — i messaggi appaiono come inviati da te nell'app Messaggi standard.";
+
+/* AlarmFiringView */
+"Snooze 10 min" = "Posticipa 10 min";
+"Slide to dismiss" = "Scorri per chiudere";

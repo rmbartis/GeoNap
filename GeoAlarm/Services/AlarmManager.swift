@@ -16,6 +16,10 @@ final class AlarmManager: NSObject, ObservableObject {
     // MARK: - Published state
     @Published private(set) var alarms: [NapAlarm] = []
 
+    /// Set when an alarm fires — triggers AlarmFiringView in ContentView.
+    /// Cleared when the user slides to dismiss, snoozes, or taps Dismiss on the notification.
+    @Published var firingAlarm: NapAlarm? = nil
+
     /// Set when an alarm fires and there are phone contacts to notify.
     /// ContentView observes this and presents the Messages compose sheet.
     @Published var pendingContactMessage: ContactMessage? = nil
@@ -272,6 +276,7 @@ final class AlarmManager: NSObject, ObservableObject {
             CrashReporter.setKey("lastTriggeredAlarm", value: alarms[index].name)
             DebugLogger.shared.log("🔔 Alarm TRIGGERED: '\(alarms[index].name)' event=\(event.rawValue) triggerCount=\(alarms[index].triggerCount) regionID=\(regionID)", category: "AlarmManager")
             fireNotification(for: alarms[index])
+            startAlarmRinging(for: alarms[index])
             queueAutoNotify(for: alarms[index])
             scheduleWindowEndGuard(for: alarms[index])
             save()
@@ -394,6 +399,23 @@ final class AlarmManager: NSObject, ObservableObject {
         }
     }
 
+    // MARK: - Alarm ringing (looping sound + full-screen UI)
+
+    private func startAlarmRinging(for alarm: NapAlarm) {
+        // Start the looping sound (continues in background via UIBackgroundModes: audio).
+        AlarmAudioPlayer.shared.play(sound: alarm.notificationSound)
+        // Show AlarmFiringView — ContentView observes this property.
+        firingAlarm = alarm
+        DebugLogger.shared.log("Alarm ringing started: '\(alarm.name)'", category: "AlarmManager")
+    }
+
+    /// Called by the slide-to-dismiss gesture in AlarmFiringView.
+    func dismissFiringAlarm() {
+        AlarmAudioPlayer.shared.stop()
+        firingAlarm = nil
+        DebugLogger.shared.log("Alarm dismissed by user (slider)", category: "AlarmManager")
+    }
+
     // MARK: - Time window guard
 
     /// Schedules a timer that fires at windowEnd.
@@ -440,6 +462,8 @@ final class AlarmManager: NSObject, ObservableObject {
 
     /// Suppress a triggered alarm and re-arm it after `minutes` minutes.
     func snooze(_ alarm: NapAlarm, minutes: Int = 10) {
+        AlarmAudioPlayer.shared.stop()
+        firingAlarm = nil
         alarm.state = .snoozed
         save()
         DebugLogger.shared.log("Alarm snoozed \(minutes) min: '\(alarm.name)'", category: "AlarmManager")
@@ -508,15 +532,25 @@ extension AlarmManager: UNUserNotificationCenterDelegate {
             case NotificationAction.snooze10:
                 if let id = alarmID,
                    let alarm = alarms.first(where: { $0.id.uuidString == id }) {
-                    snooze(alarm, minutes: 10)
+                    snooze(alarm, minutes: 10)   // also stops audio + clears firingAlarm
                     print("😴 Snoozed: \(alarm.name) for 10 min")
                     DebugLogger.shared.log("Alarm snoozed 10 min via notification action: '\(alarm.name)'", category: "AlarmManager")
                 }
 
+            case NotificationAction.dismiss,
+                 UNNotificationDismissActionIdentifier:
+                // User tapped Dismiss button or swiped away the notification —
+                // stop the looping sound and clear the full-screen alarm view.
+                AlarmAudioPlayer.shared.stop()
+                firingAlarm = nil
+                DebugLogger.shared.log("Alarm dismissed via notification action", category: "AlarmManager")
+
             default:
-                // Recover Auto-Notify contact data from the notification's userInfo.
-                // This handles the case where the app was fully relaunched by tapping
-                // the notification and in-memory pendingContactMessage/pendingMailMessage was lost.
+                // UNNotificationDefaultActionIdentifier — user tapped the banner to open the app.
+                // Do NOT stop the audio here; AlarmFiringView is already showing (firingAlarm is set)
+                // and the user slides to dismiss from there.
+                //
+                // Recover Auto-Notify contact data so the SMS compose sheet appears on relaunch.
                 if let phones = notifyPhones, !phones.isEmpty {
                     pendingContactMessage = ContactMessage(phones: phones, body: notifyBody)
                     DebugLogger.shared.log("Auto-Notify: SMS compose queued from notification tap (\(phones.count) contact(s))", category: "AlarmManager")

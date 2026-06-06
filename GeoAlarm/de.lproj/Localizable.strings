@@ -301,3 +301,22 @@ Siehe Einstellungen - Auto-SMS (Keine Bestatigung erforderlich) fur die vollstan
 /* HelpView — Auto-Notify section */
 "help.body.autoNotify" = "Auto-Benachrichtigung sendet automatisch eine Textnachricht an Ihre gespeicherten Kontakte, sobald ein Alarm auslöst — ausgelöst durch Ihren Standort, nicht durch eine Aktion von Ihnen.\n\nWas passiert, wenn der Alarm auslöst:\n• GeoNap erkennt, dass Sie das Geofence-Gebiet betreten oder verlassen haben.\n• Beim nächsten Öffnen von GeoNap im Vordergrund öffnet sich die Nachrichten-App automatisch.\n• Die Nachricht ist bereits adressiert und vorausgefüllt — zum Beispiel: \"[Ankunft] Ich bin um 9:14 Uhr in Berlin Hbf angekommen.\"\n• Tippen Sie auf Senden zum Bestätigen. Apple verlangt diesen Schritt — GeoNap kann keine SMS im Hintergrund senden.\n\nAktivieren:\n1. Beim Erstellen oder Bearbeiten eines Alarms schalten Sie Auto-Benachrichtigung ein.\n2. Tippen Sie auf Aus Kontakten hinzufügen oder Manuell hinzufügen, um eine Telefonnummer einzugeben.\n3. Tippen Sie auf Alarm speichern.\n\nGlobale Standards: Unter Einstellungen → Auto-Benachrichtigung Standardkontakte fügen Sie Kontakte hinzu, die bei jedem neuen Alarm vorausgefüllt werden.\n\nHinweis: Nachrichten werden über die iOS-Nachrichten-App gesendet. Ihr Gerät muss SMS oder iMessage senden können.
 \n\nOhne Bestätigung senden (einmalige Einrichtung):\nMit einer persönlichen Automation in der Kurzbefehle-App können Sie den Schritt „Senden tippen“ vollständig überspringen. Nach der Einrichtung sendet iOS die Nachricht automatisch bei jedem Alarmauslöser — kein App-Wechsel, keine Bestätigung.\n\nSiehe Einstellungen → Auto-SMS (Keine Bestätigung erforderlich) für eine schrittweise Anleitung.";
+
+/* Auto-SMS section (SettingsView) */
+"Auto-SMS (No Approval Needed)" = "Auto-SMS (Keine Bestätigung erforderlich)";
+"settings.autoSMS.description" = "SMS automatisch senden, wenn ein Alarm auslöst — kein Verfassensfenster, kein Tippen auf Senden.";
+"settings.autoSMS.setupTitle" = "Einmalige Einrichtung in der Kurzbefehle-App:";
+"settings.autoSMS.step1" = "Kurzbefehle öffnen → Automation → + tippen";
+"settings.autoSMS.step2" = "\u{201E}App\u{201C} wählen → GeoNap auswählen → \u{201E}Erhält eine Benachrichtigung\u{201C}";
+"settings.autoSMS.step3a" = "\u{201E}Neue leere Automation\u{201C} tippen, dann Aktion hinzufügen:";
+"settings.autoSMS.step3b" = "\u{201E}Kontakte über GeoNap benachrichtigen\u{201C}";
+"settings.autoSMS.step4a" = "Zweite Aktion hinzufügen: \u{201E}Nachricht senden\u{201C}";
+"settings.autoSMS.step4b" = "Nachricht → \u{201E}Inhalt\u{201C} aus Schritt 3 wählen";
+"settings.autoSMS.step4c" = "Empfänger → + tippen und Kontakte auswählen";
+"settings.autoSMS.step5" = "\u{201E}Vor dem Ausführen fragen\u{201C} deaktivieren → Fertig";
+"Open Shortcuts App" = "Kurzbefehle-App öffnen";
+"settings.autoSMS.footer" = "Wird auf allen GeoNap-kompatiblen Geräten unterstützt (iOS 16 und höher). Die Automation läuft lautlos über die Aktion \u{201E}Nachricht senden\u{201C} der Kurzbefehle-App — Nachrichten erscheinen als von Ihnen gesendet in der Standard-Nachrichten-App.";
+
+/* AlarmFiringView */
+"Snooze 10 min" = "10 Min. schlummern";
+"Slide to dismiss" = "Zum Beenden wischen";

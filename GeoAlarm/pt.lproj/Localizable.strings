@@ -322,3 +322,22 @@ Consulte Definicoes - Auto-SMS (Sem aprovacao necessaria) para a configuracao co
 /* HelpView — Auto-Notify section */
 "help.body.autoNotify" = "A Notificação automática envia automaticamente uma mensagem de texto para os seus contactos guardados no momento em que um alarme é acionado — ativada pela sua localização, sem qualquer ação da sua parte.\n\nO que acontece quando o alarme dispara:\n• O GeoNap deteta que entrou ou saiu da área delimitada.\n• Da próxima vez que abrir o GeoNap, a app Mensagens abre automaticamente.\n• A mensagem já está endereçada e preenchida — por exemplo: \"[Chegada] Cheguei à Estação do Oriente às 9h14.\"\n• Toque em Enviar para confirmar. A Apple exige este passo — o GeoNap não pode enviar SMS em silêncio em segundo plano.\n\nPara ativar:\n1. Ao criar ou editar um alarme, ative o interruptor Notificação automática.\n2. Toque em Adicionar dos Contactos ou Adicionar manualmente para introduzir um número de telefone.\n3. Toque em Guardar alarme.\n\nPredefinições globais: Em Definições → Predefinições de Notificação automática, adicione contactos que serão preenchidos em cada novo alarme.\n\nNota: As mensagens são enviadas através da app Mensagens do iOS.
 \n\nEnviar sem aprovação (configuração única):\nPode ignorar o passo Tocar em Enviar usando uma Automatização Pessoal de Atalhos. Uma vez configurada, o iOS envia a mensagem automaticamente sempre que um alarme é acionado — sem trocar de app, sem confirmação.\n\nConsulte Definições → Auto-SMS (Sem aprovação necessária) para instruções passo a passo.";
+
+/* Auto-SMS section (SettingsView) */
+"Auto-SMS (No Approval Needed)" = "Auto-SMS (Sem aprovação necessária)";
+"settings.autoSMS.description" = "Envia SMS automaticamente quando um alarme é acionado — sem janela de composição, sem tocar em Enviar.";
+"settings.autoSMS.setupTitle" = "Configuração única na app Atalhos:";
+"settings.autoSMS.step1" = "Abrir Atalhos → Automatização → tocar em +";
+"settings.autoSMS.step2" = "Escolher \u{201C}App\u{201D} → selecionar GeoNap → \u{201C}Recebe uma notificação\u{201D}";
+"settings.autoSMS.step3a" = "Tocar em \u{201C}Nova automatização em branco\u{201D}, depois adicionar ação:";
+"settings.autoSMS.step3b" = "\u{201C}Notificar contactos via GeoNap\u{201D}";
+"settings.autoSMS.step4a" = "Adicionar segunda ação: \u{201C}Enviar mensagem\u{201D}";
+"settings.autoSMS.step4b" = "Mensagem → escolher \u{201C}Corpo\u{201D} do passo 3";
+"settings.autoSMS.step4c" = "Destinatários → tocar em + e escolher os seus contactos";
+"settings.autoSMS.step5" = "Desativar \u{201C}Perguntar antes de executar\u{201D} → Concluído";
+"Open Shortcuts App" = "Abrir app Atalhos";
+"settings.autoSMS.footer" = "Suportado em todos os dispositivos compatíveis com GeoNap (iOS 16 ou posterior). A automatização é executada silenciosamente usando a ação \u{201C}Enviar mensagem\u{201D} dos Atalhos — as mensagens aparecem como enviadas por si na app Mensagens padrão.";
+
+/* AlarmFiringView */
+"Snooze 10 min" = "Adiar 10 min";
+"Slide to dismiss" = "Deslizar para desligar";

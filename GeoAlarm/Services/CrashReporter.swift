@@ -1,41 +1,53 @@
 // CrashReporter.swift
-// Thin wrapper around Firebase Crashlytics.
-// Import this file instead of FirebaseCrashlytics directly so
-// the rest of the app stays decoupled from the Firebase SDK.
+// Native crash and error reporting — replaces Firebase Crashlytics.
+// No third-party SDKs. No data leaves the device.
+//
+// Breadcrumbs and non-fatal errors are written to two places:
+//   1. OSLog — visible in Xcode console and Console.app, and automatically
+//      included in iOS crash reports captured by the system.
+//   2. DebugLogger — visible in the in-app debug log (Settings → Support).
+//
+// System crash logs are captured automatically by iOS and accessible via:
+//   Settings → Privacy & Security → Analytics & Improvements → Analytics Data
+//   Xcode → Window → Devices & Simulators → View Device Logs
+//
+// The public API is intentionally identical to the old Crashlytics wrapper
+// so no call sites in the app needed to change.
 
 import Foundation
-import FirebaseCrashlytics
+import OSLog
 
 enum CrashReporter {
 
+    private static let logger = Logger(
+        subsystem: Bundle.main.bundleIdentifier ?? "com.rmbartis.GeoNap",
+        category: "CrashReporter"
+    )
+
     // MARK: - Breadcrumbs
 
-    /// Log a plain-text breadcrumb that will appear in the Crashlytics
-    /// "Log" section for any crash that follows.
+    /// Log a plain-text breadcrumb.
+    /// Appears in Xcode console, Console.app, and is included in system
+    /// crash reports that follow — providing context for the crash.
     static func log(_ message: String) {
-        Crashlytics.crashlytics().log(message)
+        logger.info("📍 \(message, privacy: .public)")
     }
 
     // MARK: - Non-fatal errors
 
-    /// Record a caught error as a non-fatal issue in the Firebase Console.
-    /// `context` is attached as a custom key so you can filter by feature.
+    /// Record a caught error for diagnostic purposes.
+    /// Written to OSLog; visible in Xcode console and system crash reports.
     static func record(_ error: Error, context: String? = nil) {
-        var userInfo: [String: Any] = [:]
-        if let context {
-            userInfo["context"] = context
-        }
-        Crashlytics.crashlytics().record(
-            error: error,
-            userInfo: userInfo.isEmpty ? nil : userInfo
-        )
+        let tag = context.map { "[\($0)] " } ?? ""
+        let description = "\(tag)\(error.localizedDescription)"
+        logger.error("❌ Non-fatal: \(description, privacy: .public)")
     }
 
     // MARK: - Custom keys
 
-    /// Attach an arbitrary key/value pair that appears alongside every
-    /// crash or non-fatal report — useful for app state (e.g. alarm count).
+    /// Attach a key/value pair to the OSLog stream (mirrors Crashlytics API).
     static func setKey(_ key: String, value: CustomStringConvertible) {
-        Crashlytics.crashlytics().setCustomValue(value.description, forKey: key)
+        logger.debug("🔑 \(key, privacy: .public)=\(value.description, privacy: .public)")
     }
 }
+
