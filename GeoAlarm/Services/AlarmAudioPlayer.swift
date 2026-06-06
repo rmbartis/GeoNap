@@ -88,17 +88,19 @@ final class AlarmAudioPlayer {
     private func playSystemSoundStep() {
         guard isPlaying, systemSoundLooping else { return }
         AudioServicesPlayAlertSoundWithCompletion(SystemSoundID(1007)) { [weak self] in
-            guard let self, self.isPlaying, self.systemSoundLooping else { return }
+            // Callback is @Sendable — do NOT access @MainActor properties here.
+            // Dispatch back to the main actor before reading any isolated state.
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) { [weak self] in
-                self?.playSystemSoundStep()
+                guard let self, self.isPlaying, self.systemSoundLooping else { return }
+                self.playSystemSoundStep()
             }
         }
     }
 
     private func startVibrateLoop() {
         AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
-        vibrateTimer = Timer.scheduledTimer(withTimeInterval: 1.5, repeats: true) { [weak self] _ in
-            guard let self, self.isPlaying else { return }
+        // No self capture needed: the timer is invalidated in stop(), so if it fires we're still playing.
+        vibrateTimer = Timer.scheduledTimer(withTimeInterval: 1.5, repeats: true) { _ in
             AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
         }
     }

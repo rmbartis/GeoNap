@@ -212,4 +212,116 @@ final class LocalizationTests: XCTestCase {
             }
         }
     }
+
+    // MARK: - Auto-SMS section keys (SettingsView)
+
+    /// Every language file must contain all 13 keys used by the Auto-SMS section.
+    func test_allLanguages_haveAutoSMSSectionKeys() throws {
+        let autoSMSKeys = [
+            "Auto-SMS (No Approval Needed)",
+            "settings.autoSMS.description",
+            "settings.autoSMS.setupTitle",
+            "settings.autoSMS.step1",
+            "settings.autoSMS.step2",
+            "settings.autoSMS.step3a",
+            "settings.autoSMS.step3b",
+            "settings.autoSMS.step4a",
+            "settings.autoSMS.step4b",
+            "settings.autoSMS.step4c",
+            "settings.autoSMS.step5",
+            "Open Shortcuts App",
+            "settings.autoSMS.footer",
+        ]
+        for lang in expectedTokens.keys.sorted() {
+            let url = try stringsURL(for: lang, sourceFile: #file)
+            let raw = try String(contentsOf: url, encoding: .utf8)
+            for key in autoSMSKeys {
+                XCTAssertTrue(
+                    raw.contains("\"\(key)\""),
+                    "\(lang): Auto-SMS key '\(key)' missing from Localizable.strings"
+                )
+            }
+        }
+    }
+
+    /// Auto-SMS description values must contain native-script content, not romanized
+    /// placeholders. Spot-checks the key with the longest translatable phrase.
+    func test_autoSMS_description_allLanguages_haveNativeScript() throws {
+        let nativeTokens: [String: String] = [
+            "en":      "no compose sheet",
+            "de":      "Verfassen",
+            "es":      "hoja de redacción",
+            "fr":      "fenêtre de composition",
+            "it":      "nessuna finestra",
+            "pt":      "janela de composição",
+            "ru":      "окна",
+            "ar":      "نافذة",
+            "hi":      "विंडो",
+            "ja":      "作成",
+            "th":      "หน้าต่าง",
+            "vi":      "cửa sổ",
+            "zh-Hans": "无需",
+        ]
+        for (lang, token) in nativeTokens.sorted(by: { $0.key < $1.key }) {
+            let url = try stringsURL(for: lang, sourceFile: #file)
+            let raw = try String(contentsOf: url, encoding: .utf8)
+            let val = try XCTUnwrap(
+                value(for: "settings.autoSMS.description", in: raw),
+                "\(lang): settings.autoSMS.description key missing"
+            )
+            XCTAssertTrue(
+                val.contains(token),
+                "\(lang) settings.autoSMS.description missing native token '\(token)'. Got: \(val)"
+            )
+        }
+    }
+
+    // MARK: - AlarmFiringView keys
+
+    /// Both UI strings used by AlarmFiringView must be present in every language file.
+    func test_allLanguages_haveAlarmFiringViewKeys() throws {
+        let keys = ["Snooze 10 min", "Slide to dismiss"]
+        for lang in expectedTokens.keys.sorted() {
+            let url = try stringsURL(for: lang, sourceFile: #file)
+            let raw = try String(contentsOf: url, encoding: .utf8)
+            for key in keys {
+                XCTAssertTrue(
+                    raw.contains("\"\(key)\""),
+                    "\(lang): AlarmFiringView key '\(key)' missing from Localizable.strings"
+                )
+            }
+        }
+    }
+
+    /// "Slide to dismiss" translations must use native script — not an English
+    /// literal left as a fallback.
+    func test_slideToDismiss_nonEnglishLanguages_areNotEnglishLiteral() throws {
+        let nonEnglish = expectedTokens.keys.filter { $0 != "en" }
+        for lang in nonEnglish.sorted() {
+            let url = try stringsURL(for: lang, sourceFile: #file)
+            let raw = try String(contentsOf: url, encoding: .utf8)
+            if let val = value(for: "Slide to dismiss", in: raw) {
+                XCTAssertNotEqual(
+                    val, "Slide to dismiss",
+                    "\(lang) 'Slide to dismiss' is still the untranslated English literal"
+                )
+            }
+        }
+    }
+
+    /// "Snooze 10 min" translations must use native script — not an English
+    /// literal left as a fallback.
+    func test_snooze10min_nonEnglishLanguages_areNotEnglishLiteral() throws {
+        let nonEnglish = expectedTokens.keys.filter { $0 != "en" }
+        for lang in nonEnglish.sorted() {
+            let url = try stringsURL(for: lang, sourceFile: #file)
+            let raw = try String(contentsOf: url, encoding: .utf8)
+            if let val = value(for: "Snooze 10 min", in: raw) {
+                XCTAssertNotEqual(
+                    val, "Snooze 10 min",
+                    "\(lang) 'Snooze 10 min' is still the untranslated English literal"
+                )
+            }
+        }
+    }
 }
