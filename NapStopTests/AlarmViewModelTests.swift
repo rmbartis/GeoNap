@@ -138,6 +138,85 @@ final class AlarmViewModelTests: XCTestCase {
         XCTAssertEqual(built?.id, existing.id)
     }
 
+    // MARK: - Edit round-trip (regression tests for alarm-sound bug)
+    // The bug: buildAlarm() in edit mode created a new NapAlarm instead of
+    // mutating the existing SwiftData-managed object, so all edits — including
+    // the user-selected sound — were silently discarded.
+
+    func test_editRoundTrip_mutatesExistingObject_notifcationSound() {
+        // Arrange: existing alarm with the default sound.
+        let existing = NapAlarm(
+            name: "Penn Station", latitude: 40.750, longitude: -73.997,
+            notificationSound: .default
+        )
+        sut.load(alarm: existing)
+
+        // Act: user picks a custom sound and taps Save.
+        let custom = NotificationSound(rawValue: "train-horn.wav")
+        sut.notificationSound = custom
+        guard let built = sut.buildAlarm() else {
+            XCTFail("buildAlarm returned nil"); return
+        }
+
+        // Assert: buildAlarm must return the SAME managed object and its
+        // sound must reflect the user's selection.
+        XCTAssertTrue(built === existing,
+            "buildAlarm() in edit mode must return the existing NapAlarm object " +
+            "so SwiftData tracks the mutation — not a newly allocated one.")
+        XCTAssertEqual(existing.notificationSound, custom,
+            "The existing NapAlarm's notificationSound must be updated in place.")
+    }
+
+    func test_editRoundTrip_mutatesAllFields() {
+        let existing = NapAlarm(
+            name: "Original", latitude: 10.0, longitude: 20.0,
+            radius: 200, regionEvent: .onEntry, isRepeating: false,
+            notificationSound: .default
+        )
+        sut.load(alarm: existing)
+
+        sut.name              = "Updated"
+        sut.latitude          = 51.5
+        sut.longitude         = -0.12
+        sut.radius            = 500
+        sut.regionEvent       = .onExit
+        sut.isRepeating       = true
+        sut.notificationSound = NotificationSound(rawValue: "boat-horn.wav")
+
+        guard let built = sut.buildAlarm() else {
+            XCTFail("buildAlarm returned nil"); return
+        }
+
+        XCTAssertTrue(built === existing, "Edit mode must return the existing alarm object")
+        XCTAssertEqual(existing.name,              "Updated")
+        XCTAssertEqual(existing.latitude,          51.5,  accuracy: 0.0001)
+        XCTAssertEqual(existing.longitude,         -0.12, accuracy: 0.0001)
+        XCTAssertEqual(existing.radius,            500)
+        XCTAssertEqual(existing.regionEvent,       .onExit)
+        XCTAssertTrue(existing.isRepeating)
+        XCTAssertEqual(existing.notificationSound, NotificationSound(rawValue: "boat-horn.wav"))
+    }
+
+    func test_editRoundTrip_afterReset_buildCreatesNewObject() {
+        // After reset(), buildAlarm() must NOT mutate the previously loaded alarm.
+        let existing = NapAlarm(
+            name: "Train", latitude: 40.750, longitude: -73.997,
+            notificationSound: .default
+        )
+        sut.load(alarm: existing)
+        sut.reset()
+
+        sut.name      = "New Alarm"
+        sut.latitude  = 40.758
+        sut.longitude = -73.985
+
+        guard let built = sut.buildAlarm() else {
+            XCTFail("buildAlarm returned nil"); return
+        }
+        XCTAssertFalse(built === existing,
+            "After reset(), buildAlarm() must not mutate the previously loaded alarm")
+    }
+
     // MARK: - reset
 
     func test_reset_clearsAllFields() {
