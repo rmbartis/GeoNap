@@ -75,6 +75,13 @@ final class AlarmViewModel: ObservableObject {
 
     private var editingID: UUID?
 
+    /// Holds a reference to the SwiftData-managed object being edited.
+    /// When set, buildAlarm() mutates this object in place so the model
+    /// context tracks the changes and save() persists them correctly.
+    /// Creating a new NapAlarm in edit mode (the old behaviour) left the
+    /// original object — and its sound — unchanged in the context.
+    private var existingAlarm: NapAlarm?
+
     // MARK: - Edit mode
 
     func load(alarm: NapAlarm) {
@@ -83,6 +90,7 @@ final class AlarmViewModel: ObservableObject {
         suppressAutoNotifyDidSet = true
         defer { suppressAutoNotifyDidSet = false }
 
+        existingAlarm     = alarm
         editingID         = alarm.id
         name              = alarm.name
         note              = alarm.note
@@ -128,6 +136,30 @@ final class AlarmViewModel: ObservableObject {
             }
         }
 
+        // When editing, mutate the existing SwiftData-managed object in place.
+        // Creating a new NapAlarm and passing it to update() would leave the
+        // original object (and its sound/properties) unchanged in the context,
+        // because the new object is never inserted — the bug that caused the
+        // user-selected alarm sound to be ignored on edit.
+        if let alarm = existingAlarm {
+            alarm.name              = trimmedName
+            alarm.latitude          = latitude
+            alarm.longitude         = longitude
+            alarm.radius            = radius
+            alarm.regionEvent       = regionEvent
+            alarm.note              = note
+            alarm.isRepeating       = isRepeating
+            alarm.activeDays        = activeDays
+            alarm.hasTimeWindow     = hasTimeWindow
+            alarm.windowStart       = hasTimeWindow ? windowStart : nil
+            alarm.windowEnd         = hasTimeWindow ? windowEnd   : nil
+            alarm.notifyContact     = notifyContact
+            alarm.notifyContactList = notifyContact ? notifyContactList : []
+            alarm.notificationSound = notificationSound
+            return alarm
+        }
+
+        // New alarm — create a fresh object.
         return NapAlarm(
             id: editingID ?? UUID(),
             name: trimmedName,
@@ -159,6 +191,7 @@ final class AlarmViewModel: ObservableObject {
         suppressAutoNotifyDidSet = true
         defer { suppressAutoNotifyDidSet = false }
 
+        existingAlarm     = nil
         editingID         = nil
         name              = ""
         note              = ""
