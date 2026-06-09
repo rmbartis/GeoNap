@@ -57,9 +57,11 @@ final class AlarmAudioPlayer {
     // MARK: - Private
 
     private func startBundledLoop(soundID: String) {
-        // sound.id is the full filename, e.g. "Boat Horn.wav" — strip the extension.
-        let name = (soundID as NSString).deletingPathExtension
-        guard let url = Bundle.main.url(forResource: name, withExtension: "wav") else {
+        // Locate the file via recursive bundle search so it works whether Xcode
+        // copied it to the bundle root or preserved it in a Sounds/ subfolder
+        // (PBXFileSystemSynchronizedRootGroup in Xcode 16+ keeps directory structure).
+        let sound = NotificationSound(id: soundID)
+        guard let url = sound.bundleURL else {
             startSystemSoundLoop()
             return
         }

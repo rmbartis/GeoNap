@@ -59,6 +59,29 @@ struct NotificationSound: Identifiable, Hashable, Codable {
     }
 
     // MARK: - Bundle discovery
+
+    /// Returns the URL of this sound file in the app bundle, regardless of whether
+    /// Xcode copied it to the bundle root or preserved it inside a Sounds/ subfolder.
+    /// (PBXFileSystemSynchronizedRootGroup in Xcode 16+ preserves directory structure.)
+    var bundleURL: URL? {
+        guard !isSystem else { return nil }
+        return Bundle.main
+            .paths(forResourcesOfType: "wav", inDirectory: nil)
+            .first { URL(fileURLWithPath: $0).lastPathComponent == id }
+            .map { URL(fileURLWithPath: $0) }
+    }
+
+    /// Returns the bundle-relative path string needed by UNNotificationSound.
+    /// This is "Train Horn.wav" when the file is at the bundle root, or
+    /// "Sounds/Train Horn.wav" when it lives in a subfolder.
+    var bundleRelativeSoundName: String {
+        guard let resourceURL = Bundle.main.resourceURL,
+              let url = bundleURL
+        else { return id }
+        let relative = url.path.replacingOccurrences(of: resourceURL.path + "/", with: "")
+        return relative.isEmpty ? id : relative
+    }
+
     static var bundledSounds: [NotificationSound] {
         Bundle.main
             .paths(forResourcesOfType: "wav", inDirectory: nil)
@@ -81,7 +104,9 @@ struct NotificationSound: Identifiable, Hashable, Codable {
         case "default":  return .default
         case "critical": return .defaultCritical
         default:
-            return UNNotificationSound(named: UNNotificationSoundName(rawValue: id))
+            // bundleRelativeSoundName resolves the correct path regardless of
+            // whether Xcode copied the file to the bundle root or a subfolder.
+            return UNNotificationSound(named: UNNotificationSoundName(rawValue: bundleRelativeSoundName))
         }
     }
 }

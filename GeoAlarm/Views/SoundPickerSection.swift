@@ -55,10 +55,10 @@ final class SoundPreviewPlayer: NSObject, ObservableObject, AVAudioPlayerDelegat
     }
 
     private func playBundled(_ sound: NotificationSound) {
-        // sound.id is the full filename, e.g. "boat-horn.wav"
-        let nameWithoutExt = (sound.id as NSString).deletingPathExtension
-        guard let url = Bundle.main.url(forResource: nameWithoutExt,
-                                        withExtension: "wav") else {
+        // Use bundleURL to locate the file regardless of whether it's at the
+        // bundle root or in a Sounds/ subfolder (Xcode 16+ sync groups preserve
+        // directory structure, so url(forResource:) alone won't find it).
+        guard let url = sound.bundleURL else {
             DispatchQueue.main.async { self.playingSound = nil }
             return
         }
