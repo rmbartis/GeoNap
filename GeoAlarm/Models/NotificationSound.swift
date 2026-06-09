@@ -91,8 +91,10 @@ struct NotificationSound: Identifiable, Hashable, Codable {
     }
 
     static var all: [NotificationSound] {
-        // Explicit var avoids Swift misreading the .default keyword in an array literal
-        var list: [NotificationSound] = [.vibrate, .default, .critical]
+        // .critical is omitted — Apple denied the Critical Alerts entitlement
+        // (June 2026). UNNotificationSound.defaultCritical requires that entitlement;
+        // without it the sound is silently downgraded and the option is misleading.
+        var list: [NotificationSound] = [.vibrate, .default]
         list.append(contentsOf: bundledSounds)
         return list
     }
@@ -102,7 +104,7 @@ struct NotificationSound: Identifiable, Hashable, Codable {
         switch id {
         case "vibrate":  return nil
         case "default":  return .default
-        case "critical": return .defaultCritical
+        case "critical": return .default  // Critical Alerts entitlement was denied; fall back to default
         default:
             // bundleRelativeSoundName resolves the correct path regardless of
             // whether Xcode copied the file to the bundle root or a subfolder.
