@@ -33,7 +33,17 @@ final class AlarmAudioPlayer {
         case "vibrate":
             startVibrateLoop()
         case "default", "critical":
-            startSystemSoundLoop()
+            // AudioServicesPlayAlertSoundWithCompletion is silenced when the device
+            // is locked and the screen is off — it only plays in the foreground.
+            // AVAudioPlayer with UIBackgroundModes:audio plays through a locked screen,
+            // so we use the first available bundled sound as the looping alarm tone.
+            // (The notification banner still uses UNNotificationSound.default for its
+            // one-shot ding; this only affects the looping in-app alarm sound.)
+            if let fallback = NotificationSound.bundledSounds.first {
+                startBundledLoop(soundID: fallback.id)
+            } else {
+                startSystemSoundLoop()
+            }
         default:
             startBundledLoop(soundID: sound.id)
         }

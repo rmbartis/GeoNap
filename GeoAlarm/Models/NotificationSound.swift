@@ -106,9 +106,42 @@ struct NotificationSound: Identifiable, Hashable, Codable {
         case "default":  return .default
         case "critical": return .default  // Critical Alerts entitlement was denied; fall back to default
         default:
-            // bundleRelativeSoundName resolves the correct path regardless of
-            // whether Xcode copied the file to the bundle root or a subfolder.
-            return UNNotificationSound(named: UNNotificationSoundName(rawValue: bundleRelativeSoundName))
+            // Use just the filename (e.g. "Train Horn.wav"), NOT a subfolder path.
+            // UNNotificationSound only searches the bundle root and Library/Sounds —
+            // subdirectory paths like "Sounds/Train Horn.wav" are silently ignored
+            // and fall back to the default sound. installBundledSoundsIfNeeded()
+            // (called at app startup) copies files into Library/Sounds so iOS finds them.
+            return UNNotificationSound(named: UNNotificationSoundName(rawValue: id))
+        }
+    }
+
+    // MARK: - Library/Sounds installation
+
+    /// Copies all bundled WAV alarm sounds into the app's Library/Sounds directory
+    /// so that UNNotificationSound(named:) can find them at notification delivery time.
+    ///
+    /// Background: UNNotificationSound only searches the bundle root and Library/Sounds —
+    /// it does NOT recurse into subdirectories. Xcode 16's PBXFileSystemSynchronizedRootGroup
+    /// preserves the Sounds/ folder structure in the built bundle, so the WAV files land at
+    /// e.g. GeoAlarm.app/Sounds/Train Horn.wav rather than GeoAlarm.app/Train Horn.wav.
+    /// Promoting them to Library/Sounds once at startup fixes this permanently.
+    ///
+    /// Safe to call on every launch — files that already exist are skipped.
+    static func installBundledSoundsIfNeeded() {
+        let fm = FileManager.default
+        guard let libraryURL = fm.urls(for: .libraryDirectory, in: .userDomainMask).first else { return }
+        let soundsDir = libraryURL.appendingPathComponent("Sounds", isDirectory: true)
+        try? fm.createDirectory(at: soundsDir, withIntermediateDirectories: true)
+        for sound in bundledSounds {
+            guard let srcURL = sound.bundleURL else { continue }
+            let dstURL = soundsDir.appendingPathComponent(sound.id)
+            guard !fm.fileExists(atPath: dstURL.path) else { continue }
+            do {
+                try fm.copyItem(at: srcURL, to: dstURL)
+                DebugLogger.shared.log("Installed alarm sound to Library/Sounds: \(sound.id)", category: "Notifications")
+            } catch {
+                DebugLogger.shared.log("Failed to install alarm sound '\(sound.id)': \(error.localizedDescription)", category: "Notifications")
+            }
         }
     }
 }

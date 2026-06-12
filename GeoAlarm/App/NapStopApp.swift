@@ -57,6 +57,9 @@ struct RootView: View {
     var body: some View {
         ContentView()
             .onAppear {
+                // Copy bundled WAV sounds into Library/Sounds so UNNotificationSound(named:)
+                // can find them. Must run before any alarm can fire.
+                NotificationSound.installBundledSoundsIfNeeded()
                 alarmManager.setModelContext(modelContext)
                 alarmManager.locationManager = locationManager
                 locationManager.requestAlwaysAuthorization()
