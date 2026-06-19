@@ -163,7 +163,19 @@ final class AlarmManager: NSObject, ObservableObject {
             )
             DebugLogger.shared.log("Alarm '\(alarm.name)' inserted as INACTIVE — region monitoring limit reached (\(Self.regionMonitoringLimit))", category: "AlarmManager")
         }
+        // Capture the chosen sound BEFORE handing the object to the SwiftData context.
+        // When context.insert() registers a newly-created model, its context-managed
+        // backing store can be initialised from the class-level property default
+        // ("default") rather than the value set in NapAlarm's custom init.
+        // Re-applying the captured value after insert ensures SwiftData tracks it as
+        // a mutation and persists the user's selection — the same fix that resolved
+        // the identical symptom for the edit path in update(alarm:).
+        let soundRaw = toInsert.soundNameRaw
         modelContext?.insert(toInsert)
+        if toInsert.soundNameRaw != soundRaw {
+            DebugLogger.shared.log("⚠️ SwiftData backing-store init reset soundNameRaw '\(toInsert.soundNameRaw)' → reapplying '\(soundRaw)'", category: "AlarmManager")
+        }
+        toInsert.soundNameRaw = soundRaw
         save()
         alarms.append(toInsert)
         SpotlightManager.shared.index(toInsert)

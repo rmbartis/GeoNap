@@ -99,7 +99,17 @@ struct AlarmFiringView: View {
                     .padding(.bottom, 52)
             }
         }
-        .onAppear { pulse = 1.12 }
+        .onAppear {
+            pulse = 1.12
+            // Belt-and-suspenders audio start: the lock-screen delivery path
+            // (background geo-event → AVAudioPlayer) can fail or be interrupted
+            // by the companion notification chime before the interruption handler
+            // fires. When the user unlocks and this view appears, restart the
+            // looping alarm sound if it is not already playing.
+            if !AlarmAudioPlayer.shared.isPlaying {
+                AlarmAudioPlayer.shared.play(sound: alarm.notificationSound)
+            }
+        }
     }
 }
 

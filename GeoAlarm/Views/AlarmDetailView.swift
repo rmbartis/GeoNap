@@ -10,6 +10,10 @@ struct AlarmDetailView: View {
 
     @EnvironmentObject var alarmManager: AlarmManager
     @Environment(\.languageBundle) private var bundle
+    // Declared unconditionally — @State inside #if blocks can prevent SwiftUI
+    // from registering the property wrapper, making the whole section disappear.
+    // Only used by the #if targetEnvironment(simulator) section below.
+    @State private var simulatorCountdown: Int? = nil
     @AppStorage(AppStorageKey.distanceUnit) private var distanceUnitRaw = DistanceUnit.imperial.rawValue
     @AppStorage(AppStorageKey.timeFormat)   private var timeFormatRaw   = TimeFormat.twelveHour.rawValue
     private var distanceUnit: DistanceUnit { DistanceUnit(rawValue: distanceUnitRaw) ?? .imperial }
@@ -167,6 +171,41 @@ struct AlarmDetailView: View {
             } header: {
                 Text("History", bundle: bundle)
             }
+
+            // MARK: Simulator-only trigger — stripped from device builds at compile time
+            #if targetEnvironment(simulator)
+            Section {
+                Button {
+                    simulatorCountdown = 5
+                    NotificationSound.installBundledSoundsIfNeeded()
+                    Task {
+                        for remaining in stride(from: 5, through: 1, by: -1) {
+                            simulatorCountdown = remaining
+                            try? await Task.sleep(for: .seconds(1))
+                        }
+                        simulatorCountdown = nil
+                        alarmManager.handleRegionEvent(
+                            regionID: alarm.id.uuidString,
+                            event: alarm.regionEvent
+                        )
+                    }
+                } label: {
+                    if let remaining = simulatorCountdown {
+                        Label("Firing in \(remaining)…", systemImage: "timer")
+                    } else {
+                        Label("Simulate Trigger Now", systemImage: "location.fill.viewfinder")
+                    }
+                }
+                .foregroundStyle(alarm.isActive && simulatorCountdown == nil ? Color.red : Color.secondary)
+                .disabled(!alarm.isActive || simulatorCountdown != nil)
+
+                Text("Press, then lock the Simulator (⌘L) — the alarm fires after 5 seconds.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            } header: {
+                Label("Simulator Testing", systemImage: "hammer.fill")
+            }
+            #endif
 
             // MARK: Actions
             Section {

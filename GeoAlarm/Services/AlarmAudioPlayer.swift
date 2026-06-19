@@ -15,7 +15,56 @@ import Foundation
 final class AlarmAudioPlayer {
 
     static let shared = AlarmAudioPlayer()
-    private init() {}
+
+    private init() {
+        // Resume looping playback after audio-session interruptions.
+        //
+        // When a geo-alarm fires, the companion UNNotificationSound (a one-shot
+        // chime) is delivered by iOS almost simultaneously with AlarmAudioPlayer
+        // starting AVAudioPlayer. iOS treats the notification chime as an audio
+        // interruption: AVAudioPlayer stops and — without this observer — never
+        // restarts, leaving the device silent on the lock screen despite the alarm
+        // still being "active".
+        //
+        // AVAudioSession posts interruption notifications on the main thread, so
+        // the Task dispatch below is safe with @MainActor isolation.
+        NotificationCenter.default.addObserver(
+            forName: AVAudioSession.interruptionNotification,
+            object: AVAudioSession.sharedInstance(),
+            queue: .main
+        ) { [weak self] notification in
+            guard let self else { return }
+            // queue: .main guarantees we are already on the main thread.
+            // assumeIsolated() tells the compiler that without crossing any
+            // actor boundary — so Notification need not be Sendable.
+            MainActor.assumeIsolated {
+                self.handleSessionInterruption(notification)
+            }
+        }
+    }
+
+    // MARK: - Interruption recovery
+
+    private func handleSessionInterruption(_ notification: Notification) {
+        guard
+            isPlaying,
+            let info = notification.userInfo,
+            let typeRaw = info[AVAudioSessionInterruptionTypeKey] as? UInt,
+            let type = AVAudioSession.InterruptionType(rawValue: typeRaw),
+            type == .ended
+        else { return }
+
+        // Re-activate the session and resume the loop.
+        // The notification chime is typically < 2 s; it is finished by the time
+        // iOS posts the interruption-ended event.
+        do {
+            try AVAudioSession.sharedInstance().setActive(true)
+            audioPlayer?.play()
+            DebugLogger.shared.log("AlarmAudioPlayer: resumed after audio-session interruption", category: "Audio")
+        } catch {
+            DebugLogger.shared.log("AlarmAudioPlayer: resume failed after interruption — \(error.localizedDescription)", category: "Audio")
+        }
+    }
 
     private(set) var isPlaying = false
 
