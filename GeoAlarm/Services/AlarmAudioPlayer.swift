@@ -42,7 +42,7 @@ final class AlarmAudioPlayer {
             }
         }
 
-        // Re-activate with Bluetooth options when CarPlay connects or the route changes.
+        // Re-activate with A2DP options when CarPlay connects or the audio route changes.
         NotificationCenter.default.addObserver(
             forName: AVAudioSession.routeChangeNotification,
             object: AVAudioSession.sharedInstance(),
@@ -174,9 +174,11 @@ final class AlarmAudioPlayer {
             let session = AVAudioSession.sharedInstance()
             // .playback keeps audio alive in the background (requires UIBackgroundModes: audio).
             // .duckOthers       — lowers CarPlay radio so the alarm is audible over it
-            // .allowBluetoothHFP  — routes alarm through CarPlay / HFP Bluetooth (hands-free)
-            // .allowBluetoothA2DP — routes alarm through stereo BT speakers / AirPods
-            try session.setCategory(.playback, mode: .default, options: [.duckOthers, .allowBluetoothHFP, .allowBluetoothA2DP])
+            // .allowBluetoothA2DP — routes alarm through stereo BT speakers / AirPods / CarPlay
+            // Note: .allowBluetoothHFP is only valid with .playAndRecord — do NOT use it here;
+            // it causes setCategory to throw, which silences the alarm entirely.
+            // A2DP is the correct protocol for one-way playback to Bluetooth/CarPlay.
+            try session.setCategory(.playback, mode: .default, options: [.duckOthers, .allowBluetoothA2DP])
             try session.setActive(true)
             let player = try AVAudioPlayer(contentsOf: url)
             player.numberOfLoops = -1   // loop forever

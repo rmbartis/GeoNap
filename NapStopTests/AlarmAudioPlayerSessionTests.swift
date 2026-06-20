@@ -55,22 +55,15 @@ final class AlarmAudioPlayerSessionTests: XCTestCase {
                       ".duckOthers required so alarm lowers CarPlay radio volume")
     }
 
-    func test_play_bundledSound_includesAllowBluetooth() throws {
-        guard let sound = NotificationSound.bundledSounds.first else {
-            throw XCTSkip("No bundled sounds available")
-        }
-        AlarmAudioPlayer.shared.play(sound: sound)
-        XCTAssertTrue(AVAudioSession.sharedInstance().categoryOptions.contains(.allowBluetoothHFP),
-                      ".allowBluetoothHFP required so alarm routes through CarPlay / HFP Bluetooth")
-    }
-
     func test_play_bundledSound_includesAllowBluetoothA2DP() throws {
         guard let sound = NotificationSound.bundledSounds.first else {
             throw XCTSkip("No bundled sounds available")
         }
         AlarmAudioPlayer.shared.play(sound: sound)
-        XCTAssertTrue(AVAudioSession.sharedInstance().categoryOptions.contains(.allowBluetoothHFPA2DP),
-                      ".allowBluetoothHFPA2DP required so alarm routes through stereo BT speakers")
+        // A2DP is the correct protocol for one-way playback to Bluetooth / CarPlay.
+        // (.allowBluetoothHFP is only valid with .playAndRecord and must NOT be used here.)
+        XCTAssertTrue(AVAudioSession.sharedInstance().categoryOptions.contains(.allowBluetoothA2DP),
+                      ".allowBluetoothA2DP required so alarm routes through stereo BT speakers / CarPlay")
     }
 
     // MARK: - Route change handling
