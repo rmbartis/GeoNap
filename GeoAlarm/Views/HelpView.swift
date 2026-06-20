@@ -5,6 +5,38 @@ import SwiftUI
 
 struct HelpView: View {
     @Environment(\.languageBundle) private var bundle
+    @State private var copied = false
+
+    // All sections in order — used to build the full text for copying.
+    private var sections: [(titleKey: String, bodyKey: String)] { [
+        ("What is NapStop?",                    "help.body.whatIsNapAlarm"),
+        ("Minimum Requirements",                "help.body.minimumRequirements"),
+        ("Feature Summary",                     "help.body.featureSummary"),
+        ("Typical use cases",                   "help.body.useCases"),
+        ("Creating an alarm",                   "help.body.creatingAlarm"),
+        ("Radius",                              "help.body.radius"),
+        ("Repeat",                              "help.body.repeat"),
+        ("Active time window",                  "help.body.timeWindow"),
+        ("Transit Alarms",                      "help.body.transitAlarms"),
+        ("Auto-Notify",                         "help.body.autoNotify"),
+        ("Alarm sound / vibrate",               "help.body.soundVibrate"),
+        ("Siri & Shortcuts",                    "help.body.siri"),
+        ("Apple Home Automation",               "help.body.appleAutomation"),
+        ("Settings",                            "help.body.settings"),
+        ("Reporting a problem",                 "help.body.reportingProblem"),
+        ("Managing alarms",                     "help.body.managingAlarms"),
+        ("Alarm list icons",                    "help.body.alarmIcons"),
+        ("Always On location",                  "help.body.alwaysOnLocation"),
+        ("Notifications",                       "help.body.notifications"),
+    ] }
+
+    private var fullHelpText: String {
+        sections.map { s in
+            let title = NSLocalizedString(s.titleKey, bundle: bundle, comment: "")
+            let body  = NSLocalizedString(s.bodyKey,  bundle: bundle, comment: "")
+            return "\(title)\n\(body)"
+        }.joined(separator: "\n\n")
+    }
 
     var body: some View {
         ScrollView {
@@ -54,6 +86,20 @@ struct HelpView: View {
         }
         .navigationTitle(Text("Help", bundle: bundle))
         .navigationBarTitleDisplayMode(.large)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button {
+                    UIPasteboard.general.string = fullHelpText
+                    copied = true
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) { copied = false }
+                } label: {
+                    Image(systemName: copied ? "checkmark.circle.fill" : "doc.on.doc")
+                        .foregroundStyle(copied ? .green : .primary)
+                        .animation(.easeInOut(duration: 0.2), value: copied)
+                }
+                .accessibilityLabel(copied ? "Copied" : "Copy all help text")
+            }
+        }
     }
 
     // MARK: - Section builder

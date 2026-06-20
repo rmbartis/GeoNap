@@ -60,10 +60,44 @@ struct AddAlarmView: View {
                     TextField(NSLocalizedString("Search address or place…", bundle: bundle, comment: ""), text: $searchService.query)
                         .autocorrectionDisabled()
                         .textInputAutocapitalization(.never)
+                        .submitLabel(.search)
+                        .onSubmit {
+                            let text = searchService.query
+                            Task {
+                                if let coord = await searchService.searchByText(text) {
+                                    viewModel.latitude  = coord.latitude
+                                    viewModel.longitude = coord.longitude
+                                    if viewModel.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                                        viewModel.name = text
+                                    }
+                                }
+                                searchService.clear()
+                            }
+                        }
                     if searchService.isSearching {
                         ProgressView()
                             .scaleEffect(0.8)
                     } else if !searchService.query.isEmpty {
+                        // Search button — lets user commit a typed address without
+                        // picking from the autocomplete list
+                        Button {
+                            let text = searchService.query
+                            Task {
+                                if let coord = await searchService.searchByText(text) {
+                                    viewModel.latitude  = coord.latitude
+                                    viewModel.longitude = coord.longitude
+                                    if viewModel.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                                        viewModel.name = text
+                                    }
+                                }
+                                searchService.clear()
+                            }
+                        } label: {
+                            Image(systemName: "arrow.right.circle.fill")
+                                .foregroundColor(.accentColor)
+                        }
+                        .buttonStyle(.plain)
+
                         Button {
                             searchService.clear()
                         } label: {

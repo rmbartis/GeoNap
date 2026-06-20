@@ -58,6 +58,27 @@ final class LocationSearchService: NSObject, ObservableObject {
         }
     }
 
+    /// Searches directly for a free-form address or place name without requiring
+    /// the user to select from the autocomplete list first.
+    /// Called when the user presses Return or taps the search button.
+    func searchByText(_ text: String) async -> CLLocationCoordinate2D? {
+        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return nil }
+        isSearching = true
+        let request = MKLocalSearch.Request()
+        request.naturalLanguageQuery = trimmed
+        let search = MKLocalSearch(request: request)
+        do {
+            let response = try await search.start()
+            isSearching = false
+            return response.mapItems.first?.placemark.coordinate
+        } catch {
+            print("📍 LocationSearchService searchByText error: \(error.localizedDescription)")
+            isSearching = false
+            return nil
+        }
+    }
+
     /// Clears the query and results (e.g. after a result is selected).
     func clear() {
         query = ""
