@@ -41,6 +41,41 @@ final class AlarmAudioPlayer {
                 self.handleSessionInterruption(notification)
             }
         }
+
+        // Re-activate with Bluetooth options when CarPlay connects or the route changes.
+        NotificationCenter.default.addObserver(
+            forName: AVAudioSession.routeChangeNotification,
+            object: AVAudioSession.sharedInstance(),
+            queue: .main
+        ) { [weak self] notification in
+            guard let self else { return }
+            MainActor.assumeIsolated {
+                self.handleRouteChange(notification)
+            }
+        }
+    }
+
+    // MARK: - Route change recovery
+    //
+    // When CarPlay connects/disconnects (or any output route changes) iOS may
+    // reroute or interrupt the session. Re-activate with Bluetooth options so
+    // the alarm follows the new output device automatically.
+
+    private func handleRouteChange(_ notification: Notification) {
+        guard isPlaying,
+              let info = notification.userInfo,
+              let reasonRaw = info[AVAudioSessionRouteChangeReasonKey] as? UInt,
+              let reason = AVAudioSession.RouteChangeReason(rawValue: reasonRaw)
+        else { return }
+
+        switch reason {
+        case .newDeviceAvailable, .oldDeviceUnavailable, .override, .categoryChange:
+            try? AVAudioSession.sharedInstance().setActive(true)
+            audioPlayer?.play()
+            DebugLogger.shared.log("AlarmAudioPlayer: re-activated after route change (\(reason.rawValue))", category: "Audio")
+        default:
+            break
+        }
     }
 
     // MARK: - Interruption recovery
@@ -138,7 +173,10 @@ final class AlarmAudioPlayer {
         do {
             let session = AVAudioSession.sharedInstance()
             // .playback keeps audio alive in the background (requires UIBackgroundModes: audio).
-            try session.setCategory(.playback, mode: .default, options: [])
+            // .duckOthers       — lowers CarPlay radio so the alarm is audible over it
+            // .allowBluetoothHFP  — routes alarm through CarPlay / HFP Bluetooth (hands-free)
+            // .allowBluetoothA2DP — routes alarm through stereo BT speakers / AirPods
+            try session.setCategory(.playback, mode: .default, options: [.duckOthers, .allowBluetoothHFP, .allowBluetoothA2DP])
             try session.setActive(true)
             let player = try AVAudioPlayer(contentsOf: url)
             player.numberOfLoops = -1   // loop forever
