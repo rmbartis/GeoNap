@@ -116,14 +116,25 @@ final class AlarmAudioPlayer {
     // MARK: - Private
 
     private func startBundledLoop(soundID: String) {
-        // Locate the file via recursive bundle search so it works whether Xcode
-        // copied it to the bundle root or preserved it in a Sounds/ subfolder
-        // (PBXFileSystemSynchronizedRootGroup in Xcode 16+ keeps directory structure).
+        // 1. Locate the WAV — bundle first, then Library/Sounds (where
+        //    installBundledSoundsIfNeeded() copies files at each app launch).
         let sound = NotificationSound(id: soundID)
-        guard let url = sound.bundleURL else {
-            startSystemSoundLoop()
-            return
+        let url: URL
+        if let bundleURL = sound.bundleURL {
+            url = bundleURL
+        } else {
+            let fm = FileManager.default
+            guard let libURL = fm.urls(for: .libraryDirectory, in: .userDomainMask).first else {
+                startSystemSoundLoop(); return
+            }
+            let candidate = libURL.appendingPathComponent("Sounds/\(soundID)")
+            guard fm.fileExists(atPath: candidate.path) else {
+                startSystemSoundLoop(); return
+            }
+            url = candidate
         }
+
+        // 2. Activate the audio session and start looping.
         do {
             let session = AVAudioSession.sharedInstance()
             // .playback keeps audio alive in the background (requires UIBackgroundModes: audio).
@@ -135,8 +146,17 @@ final class AlarmAudioPlayer {
             player.prepareToPlay()
             player.play()
             audioPlayer = player
+            DebugLogger.shared.log("AlarmAudioPlayer: looping \(soundID)", category: "Audio")
         } catch {
-            startSystemSoundLoop()
+            // The companion notification chime often grabs the audio session for ~2 s
+            // immediately after a geo-alarm fires. Rather than falling back to a
+            // different tone (which would ignore the user's sound choice), we retry
+            // once the session is free. The interruption-ended observer also retries.
+            DebugLogger.shared.log("AlarmAudioPlayer: session busy — retrying in 2 s (\(error.localizedDescription))", category: "Audio")
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
+                guard let self, self.isPlaying else { return }
+                self.startBundledLoop(soundID: soundID)
+            }
         }
     }
 

@@ -65,8 +65,13 @@ struct NotificationSound: Identifiable, Hashable, Codable {
     /// (PBXFileSystemSynchronizedRootGroup in Xcode 16+ preserves directory structure.)
     var bundleURL: URL? {
         guard !isSystem else { return nil }
-        return Bundle.main
-            .paths(forResourcesOfType: "wav", inDirectory: nil)
+        // Search both the bundle root AND the Sounds/ subfolder.
+        // paths(forResourcesOfType:inDirectory:nil) only scans the top-level resource
+        // directory; Xcode 16 PBXFileSystemSynchronizedRootGroup preserves the Sounds/
+        // subfolder structure, so WAV files may land in GeoAlarm.app/Sounds/ instead.
+        let candidates = Bundle.main.paths(forResourcesOfType: "wav", inDirectory: nil)
+                       + Bundle.main.paths(forResourcesOfType: "wav", inDirectory: "Sounds")
+        return candidates
             .first { URL(fileURLWithPath: $0).lastPathComponent == id }
             .map { URL(fileURLWithPath: $0) }
     }
@@ -83,9 +88,9 @@ struct NotificationSound: Identifiable, Hashable, Codable {
     }
 
     static var bundledSounds: [NotificationSound] {
-        Bundle.main
-            .paths(forResourcesOfType: "wav", inDirectory: nil)
-            .map { URL(fileURLWithPath: $0).lastPathComponent }
+        let allPaths = Bundle.main.paths(forResourcesOfType: "wav", inDirectory: nil)
+                     + Bundle.main.paths(forResourcesOfType: "wav", inDirectory: "Sounds")
+        return Array(Set(allPaths.map { URL(fileURLWithPath: $0).lastPathComponent }))
             .sorted()
             .map { NotificationSound(id: $0) }
     }
