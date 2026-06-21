@@ -572,21 +572,12 @@ extension AlarmManager: UNUserNotificationCenterDelegate {
         }
     }
 
-    /// Show the banner when the app is in the foreground, but suppress the
-    /// notification sound.  AlarmAudioPlayer is already looping the alarm tone
-    /// via AVAudioPlayer at this point; allowing the system to also play
-    /// UNNotificationSound creates an AVAudioSession interruption that can
-    /// prevent the looping audio from routing through CarPlay or resuming after
-    /// the lock screen activates.
-    ///
-    /// The notification sound still plays normally in the background / lock-screen
-    /// case (where willPresent is NOT called) because it is set on
-    /// UNMutableNotificationContent.sound in fireNotification().
+    /// Show banner + play sound even when the app is in the foreground.
     nonisolated func userNotificationCenter(
         _ center: UNUserNotificationCenter,
         willPresent notification: UNNotification,
         withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
     ) {
-        completionHandler([.banner, .badge])
+        completionHandler([.banner, .sound, .badge])
     }
 }

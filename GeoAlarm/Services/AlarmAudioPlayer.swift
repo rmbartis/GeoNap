@@ -30,12 +30,8 @@ final class AlarmAudioPlayer {
         // When a geo-alarm fires, the companion UNNotificationSound (a one-shot
         // chime) is delivered by the system almost simultaneously with
         // AlarmAudioPlayer starting AVAudioPlayer.  iOS treats that chime as an
-        // audio interruption; without this observer the player never restarts.
-        //
-        // NOTE: willPresent in AlarmManager suppresses the notification .sound
-        // when the app is in the foreground, so on CarPlay the interruption is
-        // avoided entirely — this observer is the safety net for the background /
-        // lock-screen case.
+        // audio interruption; without this observer the player never restarts
+        // after the chime finishes (especially on CarPlay / lock screen).
         NotificationCenter.default.addObserver(
             forName: AVAudioSession.interruptionNotification,
             object: AVAudioSession.sharedInstance(),
