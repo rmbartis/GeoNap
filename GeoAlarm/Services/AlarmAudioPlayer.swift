@@ -17,32 +17,37 @@ final class AlarmAudioPlayer {
     static let shared = AlarmAudioPlayer()
 
     private init() {
+        // Pre-configure the audio session category at init time so it is always
+        // .playback before the first play() call.  This reduces the chance of
+        // setCategory failing when the alarm fires in the background (e.g. CarPlay
+        // already has the session when the geo-fence wakes the app).
+        try? AVAudioSession.sharedInstance().setCategory(
+            .playback, mode: .default, options: [.duckOthers, .allowBluetoothA2DP]
+        )
+
         // Resume looping playback after audio-session interruptions.
         //
         // When a geo-alarm fires, the companion UNNotificationSound (a one-shot
-        // chime) is delivered by iOS almost simultaneously with AlarmAudioPlayer
-        // starting AVAudioPlayer. iOS treats the notification chime as an audio
-        // interruption: AVAudioPlayer stops and — without this observer — never
-        // restarts, leaving the device silent on the lock screen despite the alarm
-        // still being "active".
+        // chime) is delivered by the system almost simultaneously with
+        // AlarmAudioPlayer starting AVAudioPlayer.  iOS treats that chime as an
+        // audio interruption; without this observer the player never restarts.
         //
-        // AVAudioSession posts interruption notifications on the main thread, so
-        // the Task dispatch below is safe with @MainActor isolation.
+        // NOTE: willPresent in AlarmManager suppresses the notification .sound
+        // when the app is in the foreground, so on CarPlay the interruption is
+        // avoided entirely — this observer is the safety net for the background /
+        // lock-screen case.
         NotificationCenter.default.addObserver(
             forName: AVAudioSession.interruptionNotification,
             object: AVAudioSession.sharedInstance(),
             queue: .main
         ) { [weak self] notification in
             guard let self else { return }
-            // queue: .main guarantees we are already on the main thread.
-            // assumeIsolated() tells the compiler that without crossing any
-            // actor boundary — so Notification need not be Sendable.
             MainActor.assumeIsolated {
                 self.handleSessionInterruption(notification)
             }
         }
 
-        // Re-activate with A2DP options when CarPlay connects or the audio route changes.
+        // Re-activate when CarPlay connects or the audio route changes mid-alarm.
         NotificationCenter.default.addObserver(
             forName: AVAudioSession.routeChangeNotification,
             object: AVAudioSession.sharedInstance(),
@@ -89,15 +94,33 @@ final class AlarmAudioPlayer {
             type == .ended
         else { return }
 
-        // Re-activate the session and resume the loop.
-        // The notification chime is typically < 2 s; it is finished by the time
-        // iOS posts the interruption-ended event.
+        // Re-activate the session and resume.
+        // We deliberately ignore AVAudioSessionInterruptionOptionShouldResume —
+        // for an alarm we always want to resume regardless of system hints.
         do {
             try AVAudioSession.sharedInstance().setActive(true)
             audioPlayer?.play()
-            DebugLogger.shared.log("AlarmAudioPlayer: resumed after audio-session interruption", category: "Audio")
+
+            // On CarPlay the player may be non-nil but silently refuse to play
+            // (play() returns false). If so, rebuild it via startBundledLoop.
+            if let player = audioPlayer, !player.isPlaying, let id = currentSoundID {
+                DebugLogger.shared.log(
+                    "AlarmAudioPlayer: player present but not playing after interruption — restarting loop",
+                    category: "Audio"
+                )
+                startBundledLoop(soundID: id)
+            } else {
+                DebugLogger.shared.log("AlarmAudioPlayer: resumed after interruption", category: "Audio")
+            }
         } catch {
-            DebugLogger.shared.log("AlarmAudioPlayer: resume failed after interruption — \(error.localizedDescription)", category: "Audio")
+            // setActive failed — rebuild the entire player so we get fresh retries.
+            DebugLogger.shared.log(
+                "AlarmAudioPlayer: setActive failed after interruption (\(error.localizedDescription)) — restarting loop",
+                category: "Audio"
+            )
+            if let id = currentSoundID {
+                startBundledLoop(soundID: id)
+            }
         }
     }
 
@@ -106,6 +129,9 @@ final class AlarmAudioPlayer {
     private var audioPlayer: AVAudioPlayer?
     private var vibrateTimer: Timer?
     private var systemSoundLooping = false
+    /// Tracks the active sound ID so the interruption handler can restart
+    /// the loop if AVAudioPlayer fails to resume after a CarPlay route change.
+    private var currentSoundID: String?
 
     // MARK: - Public
 
@@ -136,6 +162,7 @@ final class AlarmAudioPlayer {
     func stop() {
         isPlaying = false
         systemSoundLooping = false
+        currentSoundID = nil
 
         audioPlayer?.stop()
         audioPlayer = nil
@@ -150,9 +177,10 @@ final class AlarmAudioPlayer {
 
     // MARK: - Private
 
-    private func startBundledLoop(soundID: String) {
-        // 1. Locate the WAV — bundle first, then Library/Sounds (where
-        //    installBundledSoundsIfNeeded() copies files at each app launch).
+    private func startBundledLoop(soundID: String, attempt: Int = 1) {
+        currentSoundID = soundID
+
+        // 1. Locate the WAV — bundle first, then Library/Sounds.
         let sound = NotificationSound(id: soundID)
         let url: URL
         if let bundleURL = sound.bundleURL {
@@ -170,32 +198,47 @@ final class AlarmAudioPlayer {
         }
 
         // 2. Activate the audio session and start looping.
+        // The category was pre-configured in init(); setCategory here re-applies
+        // it in case another part of the app changed it since launch.
+        // .duckOthers       — lowers CarPlay radio so the alarm is audible over it
+        // .allowBluetoothA2DP — routes through BT speakers / AirPods / CarPlay A2DP
+        // NOTE: .allowBluetoothHFP is only valid with .playAndRecord — never use it
+        // with .playback; it causes setCategory to throw and silences the alarm.
         do {
             let session = AVAudioSession.sharedInstance()
-            // .playback keeps audio alive in the background (requires UIBackgroundModes: audio).
-            // .duckOthers       — lowers CarPlay radio so the alarm is audible over it
-            // .allowBluetoothA2DP — routes alarm through stereo BT speakers / AirPods / CarPlay
-            // Note: .allowBluetoothHFP is only valid with .playAndRecord — do NOT use it here;
-            // it causes setCategory to throw, which silences the alarm entirely.
-            // A2DP is the correct protocol for one-way playback to Bluetooth/CarPlay.
             try session.setCategory(.playback, mode: .default, options: [.duckOthers, .allowBluetoothA2DP])
             try session.setActive(true)
             let player = try AVAudioPlayer(contentsOf: url)
-            player.numberOfLoops = -1   // loop forever
+            player.numberOfLoops = -1
             player.volume = 1.0
             player.prepareToPlay()
-            player.play()
+            let started = player.play()
             audioPlayer = player
-            DebugLogger.shared.log("AlarmAudioPlayer: looping \(soundID)", category: "Audio")
+            DebugLogger.shared.log(
+                "AlarmAudioPlayer: looping \(soundID) (attempt \(attempt), play()=\(started))",
+                category: "Audio"
+            )
         } catch {
-            // The companion notification chime often grabs the audio session for ~2 s
-            // immediately after a geo-alarm fires. Rather than falling back to a
-            // different tone (which would ignore the user's sound choice), we retry
-            // once the session is free. The interruption-ended observer also retries.
-            DebugLogger.shared.log("AlarmAudioPlayer: session busy — retrying in 2 s (\(error.localizedDescription))", category: "Audio")
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
+            // The audio session can be temporarily busy — most often because the
+            // companion UNNotificationSound fires at almost the same instant.
+            // Retry up to 4 times with increasing delays so we get the session
+            // once the notification chime finishes (typically < 2 s).
+            let maxAttempts = 4
+            guard attempt < maxAttempts else {
+                DebugLogger.shared.log(
+                    "AlarmAudioPlayer: all \(maxAttempts) attempts failed for '\(soundID)' — \(error.localizedDescription)",
+                    category: "Audio"
+                )
+                return
+            }
+            let delay = Double(attempt) * 0.5   // 0.5 s, 1.0 s, 1.5 s
+            DebugLogger.shared.log(
+                "AlarmAudioPlayer: session busy (attempt \(attempt)) — retrying in \(delay) s: \(error.localizedDescription)",
+                category: "Audio"
+            )
+            DispatchQueue.main.asyncAfter(deadline: .now() + delay) { [weak self] in
                 guard let self, self.isPlaying else { return }
-                self.startBundledLoop(soundID: soundID)
+                self.startBundledLoop(soundID: soundID, attempt: attempt + 1)
             }
         }
     }
