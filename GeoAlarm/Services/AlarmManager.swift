@@ -9,6 +9,7 @@ import SwiftData
 import CoreData
 import Combine
 import MessageUI
+import UIKit
 
 @MainActor
 final class AlarmManager: NSObject, ObservableObject {
@@ -37,6 +38,13 @@ final class AlarmManager: NSObject, ObservableObject {
 
     /// Injected via setModelContext() on app launch (from RootView.onAppear).
     private var modelContext: ModelContext?
+
+    // MARK: - Background task
+    // Keeps the app alive long enough for the AVAudioSession to start when the
+    // geo-fence fires with the screen locked. Once AVAudioPlayer is playing,
+    // UIBackgroundModes:audio sustains it on its own — this task just bridges
+    // the gap between wake-up and the first audio frame.
+    private var backgroundTask: UIBackgroundTaskIdentifier = .invalid
 
     // MARK: - Init
     override init() { super.init() }
@@ -414,6 +422,13 @@ final class AlarmManager: NSObject, ObservableObject {
     // MARK: - Alarm ringing (looping sound + full-screen UI)
 
     private func startAlarmRinging(for alarm: NapAlarm) {
+        // Request a background task BEFORE starting the audio session.
+        // When the geo-fence fires with the screen locked, the app is in
+        // .background and iOS can suspend it at any moment. The background
+        // task gives us ~30 s of guaranteed execution time — enough for
+        // AVAudioPlayer to open the session and play the first audio frame.
+        // After that, UIBackgroundModes:audio sustains playback on its own.
+        beginAudioBackgroundTask()
         // Start the looping sound (continues in background via UIBackgroundModes: audio).
         AlarmAudioPlayer.shared.play(sound: alarm.notificationSound)
         // Show AlarmFiringView — ContentView observes this property.
@@ -424,6 +439,7 @@ final class AlarmManager: NSObject, ObservableObject {
     /// Called by the slide-to-dismiss gesture in AlarmFiringView.
     func dismissFiringAlarm() {
         AlarmAudioPlayer.shared.stop()
+        endAudioBackgroundTask()
         firingAlarm = nil
         DebugLogger.shared.log("Alarm dismissed by user (slider)", category: "AlarmManager")
     }
@@ -470,11 +486,37 @@ final class AlarmManager: NSObject, ObservableObject {
         }
     }
 
+    // MARK: - Background task helpers
+
+    private func beginAudioBackgroundTask() {
+        endAudioBackgroundTask()
+        backgroundTask = UIApplication.shared.beginBackgroundTask(
+            withName: "GeoAlarmAudioPlayback"
+        ) { [weak self] in
+            // Expiry: iOS is about to suspend us — stop cleanly.
+            self?.AlarmAudioPlayer_stop()
+            self?.endAudioBackgroundTask()
+        }
+    }
+
+    /// Wrapper so the expiry handler can call stop without triggering
+    /// the full dismissFiringAlarm flow (which touches @Published state).
+    private func AlarmAudioPlayer_stop() {
+        AlarmAudioPlayer.shared.stop()
+    }
+
+    private func endAudioBackgroundTask() {
+        guard backgroundTask != .invalid else { return }
+        UIApplication.shared.endBackgroundTask(backgroundTask)
+        backgroundTask = .invalid
+    }
+
     // MARK: - Snooze
 
     /// Suppress a triggered alarm and re-arm it after `minutes` minutes.
     func snooze(_ alarm: NapAlarm, minutes: Int = 10) {
         AlarmAudioPlayer.shared.stop()
+        endAudioBackgroundTask()
         firingAlarm = nil
         alarm.state = .snoozed
         save()
@@ -554,6 +596,7 @@ extension AlarmManager: UNUserNotificationCenterDelegate {
                 // User tapped Dismiss button or swiped away the notification —
                 // stop the looping sound and clear the full-screen alarm view.
                 AlarmAudioPlayer.shared.stop()
+                endAudioBackgroundTask()
                 firingAlarm = nil
                 DebugLogger.shared.log("Alarm dismissed via notification action", category: "AlarmManager")
 
