@@ -493,8 +493,12 @@ final class AlarmManager: NSObject, ObservableObject {
         backgroundTask = UIApplication.shared.beginBackgroundTask(
             withName: "GeoAlarmAudioPlayback"
         ) { [weak self] in
-            // Expiry: iOS is about to suspend us — stop cleanly.
-            self?.AlarmAudioPlayer_stop()
+            // Expiry: iOS is about to suspend the app.
+            // Do NOT stop the audio player here — once AVAudioPlayer is running
+            // with .playback category, UIBackgroundModes:audio sustains it on its
+            // own without needing the background task. Stopping here would silence
+            // the looping alarm on the lock screen after ~30 s.
+            // Just release the task token so iOS doesn't terminate us for holding it.
             self?.endAudioBackgroundTask()
         }
     }
