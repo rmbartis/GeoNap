@@ -31,6 +31,7 @@
 		686A0F1F2FC337E40079F963 /* GeoNap.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GeoNap.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		686A0F302FC337E50079F963 /* GeoNapTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GeoNapTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		686A0F3A2FC337E50079F963 /* GeoNapUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GeoNapUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		6880B3EC2FEC2E3500692392 /* GeoNap.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = GeoNap.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -94,6 +95,7 @@
 		686A0F162FC337E40079F963 = {
 			isa = PBXGroup;
 			children = (
+				6880B3EC2FEC2E3500692392 /* GeoNap.entitlements */,
 				686A0F212FC337E40079F963 /* GeoAlarm */,
 				686A0F332FC337E50079F963 /* NapStopTests */,
 				686A0F3D2FC337E50079F963 /* NapStopUITests */,
@@ -359,6 +361,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = GeoNap.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;
@@ -414,6 +417,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = GeoNap.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;

@@ -114,6 +114,10 @@ struct MapPickerView: View {
 
     private func useCurrentLocation() {
         guard let loc = locationManager.currentLocation else { return }
+        // Reject a stale / inaccurate fix so the pin lands where the user IS, not
+        // where they were minutes ago (the cause of alarms centred off-position).
+        let age = Date().timeIntervalSince(loc.timestamp)
+        guard age < 30, loc.horizontalAccuracy >= 0, loc.horizontalAccuracy < 100 else { return }
         let coord      = loc.coordinate
         pinCoordinate  = coord
         latitude       = coord.latitude

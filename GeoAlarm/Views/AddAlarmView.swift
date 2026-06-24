@@ -9,10 +9,21 @@ struct AddAlarmView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.languageBundle) private var bundle
     @EnvironmentObject var alarmManager: AlarmManager
+    @EnvironmentObject private var locationManager: LocationManager
     @StateObject private var viewModel = AlarmViewModel()
     @StateObject private var searchService = LocationSearchService()
     @State private var showContactPicker  = false
     @State private var showManualEntry    = false
+
+    /// Runs the new-alarm initialisation (reset + current-location default) only
+    /// once, so onAppear firing again after a sub-sheet doesn't wipe the form.
+    @State private var didInitNewAlarm = false
+
+    /// Warning shown when an alarm can't fire from the user's current position —
+    /// e.g. a departure alarm armed while already outside its circle.
+    @State private var showGeometryWarning = false
+    @State private var geometryWarningText = ""
+    @State private var pendingAlarm: NapAlarm?
 
     @AppStorage(AppStorageKey.distanceUnit) private var distanceUnitRaw  = DistanceUnit.imperial.rawValue
     @AppStorage(AppStorageKey.timeFormat)   private var timeFormatRaw    = TimeFormat.twelveHour.rawValue
@@ -503,7 +514,34 @@ struct AddAlarmView: View {
                 // Pre-fill the coordinate entry fields with the alarm's location
                 coordLatEntry = CoordinateParser.format(latitude:  alarm.latitude,  format: coordFormat)
                 coordLonEntry = CoordinateParser.format(longitude: alarm.longitude, format: coordFormat)
+            } else if !didInitNewAlarm {
+                // New alarm: start clean and default the centre to the user's
+                // CURRENT location so "set an alarm here, then leave" works as
+                // expected. Runs once so returning from a sub-sheet won't wipe input.
+                didInitNewAlarm = true
+                viewModel.reset()
+                autofillCurrentLocationIfNeeded()
             }
+        }
+        // The first GPS fix after launch can be a stale last-known location — the
+        // very thing that centred alarms where the user *was*, not where they
+        // *are*. Fill the centre from the first FRESH fix, never overriding a
+        // location the user has already chosen.
+        .onChange(of: locationManager.currentLocation?.timestamp) { _, _ in
+            guard existingAlarm == nil, !viewModel.hasLocation else { return }
+            autofillCurrentLocationIfNeeded()
+        }
+        .alert(Text("Check alarm location", bundle: bundle),
+               isPresented: $showGeometryWarning,
+               presenting: pendingAlarm) { alarm in
+            Button(NSLocalizedString("Save Anyway", bundle: bundle, comment: "")) {
+                commitSave(alarm)
+            }
+            Button(NSLocalizedString("Cancel", bundle: bundle, comment: ""), role: .cancel) {
+                pendingAlarm = nil
+            }
+        } message: { _ in
+            Text(geometryWarningText)
         }
     }
 
@@ -615,6 +653,17 @@ struct AddAlarmView: View {
 
     private func saveAlarm() {
         guard let alarm = viewModel.buildAlarm() else { return }
+        // Warn if the alarm can't fire from where the user is right now.
+        if let warning = geometryWarning(for: alarm) {
+            pendingAlarm = alarm
+            geometryWarningText = warning
+            showGeometryWarning = true
+            return
+        }
+        commitSave(alarm)
+    }
+
+    private func commitSave(_ alarm: NapAlarm) {
         if isEditing {
             alarmManager.update(alarm: alarm)
             DebugLogger.shared.log("Alarm updated: '\(alarm.name)' lat=\(alarm.latitude) lon=\(alarm.longitude) radius=\(Int(alarm.radius))m event=\(alarm.regionEvent.rawValue) repeat=\(alarm.isRepeating) sound=\(alarm.notificationSound.rawValue) autoNotify=\(alarm.notifyContact)", category: "UI")
@@ -623,6 +672,45 @@ struct AddAlarmView: View {
             DebugLogger.shared.log("Alarm created: '\(alarm.name)' lat=\(alarm.latitude) lon=\(alarm.longitude) radius=\(Int(alarm.radius))m event=\(alarm.regionEvent.rawValue) repeat=\(alarm.isRepeating) sound=\(alarm.notificationSound.rawValue) autoNotify=\(alarm.notifyContact)", category: "UI")
         }
         dismiss()
+    }
+
+    /// Returns the user's location only if the fix is recent and accurate. A stale
+    /// last-known fix is what centred alarms where the user *was*, not where they
+    /// *are*, so we deliberately reject it.
+    private func freshCurrentLocation() -> CLLocation? {
+        guard let loc = locationManager.currentLocation else { return nil }
+        let age = Date().timeIntervalSince(loc.timestamp)
+        guard age < 30, loc.horizontalAccuracy >= 0, loc.horizontalAccuracy < 100 else { return nil }
+        return loc
+    }
+
+    /// Default a brand-new alarm's centre to the user's current location, but
+    /// never override a location the user has already set (map tap / search).
+    private func autofillCurrentLocationIfNeeded() {
+        guard !viewModel.hasLocation, let loc = freshCurrentLocation() else { return }
+        viewModel.setCoordinate(loc.coordinate)
+        coordLatEntry = CoordinateParser.format(latitude:  loc.coordinate.latitude,  format: coordFormat)
+        coordLonEntry = CoordinateParser.format(longitude: loc.coordinate.longitude, format: coordFormat)
+        DebugLogger.shared.log("New alarm centre defaulted to current location (\(loc.coordinate.latitude), \(loc.coordinate.longitude)) accuracy=\(Int(loc.horizontalAccuracy))m", category: "UI")
+    }
+
+    /// Warns when the chosen trigger can't fire from the user's current position:
+    /// a departure (exit) alarm armed while already OUTSIDE the circle, or an
+    /// arrival (entry) alarm armed while already INSIDE it. Returns nil if we have
+    /// no fresh fix to judge by (we don't block in that case).
+    private func geometryWarning(for alarm: NapAlarm) -> String? {
+        guard let loc = freshCurrentLocation() else { return nil }
+        let center = CLLocation(latitude: alarm.latitude, longitude: alarm.longitude)
+        let distance = loc.distance(from: center)
+        let inside = distance <= alarm.radius
+        switch alarm.regionEvent {
+        case .onExit where !inside:
+            return String(format: NSLocalizedString("You're about %d m outside this alarm's area. A departure alarm only fires when you LEAVE the circle — it won't trigger until you're inside it first.", bundle: bundle, comment: ""), Int(distance))
+        case .onEntry where inside:
+            return NSLocalizedString("You're already inside this alarm's area. An arrival alarm only fires when you ENTER — it won't trigger until you leave and come back.", bundle: bundle, comment: "")
+        default:
+            return nil
+        }
     }
 }
 

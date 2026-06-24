@@ -1,23 +1,33 @@
 // AlarmManager.swift
-// Owns the list of GeoAlarms, coordinates region monitoring via LocationManager,
+// Owns the list of NapAlarms, coordinates region monitoring via LocationManager,
 // fires local notifications on region events, and persists via SwiftData.
 
 import Foundation
 import UserNotifications
 import CoreLocation
 import SwiftData
+import CoreData
 import Combine
+import MessageUI
 import UIKit
-import AVFoundation
 
 @MainActor
-final class AlarmManager: ObservableObject {
+final class AlarmManager: NSObject, ObservableObject {
 
     // MARK: - Published state
-    @Published private(set) var alarms: [GeoAlarm] = []
+    @Published private(set) var alarms: [NapAlarm] = []
 
-    /// Set when the user taps a Spotlight search result — AlarmListView scrolls to this alarm.
-    @Published var spotlightAlarmID: UUID?
+    /// Set when an alarm fires — triggers AlarmFiringView in ContentView.
+    /// Cleared when the user slides to dismiss, snoozes, or taps Dismiss on the notification.
+    @Published var firingAlarm: NapAlarm? = nil
+
+    /// Set when an alarm fires and there are phone contacts to notify.
+    /// ContentView observes this and presents the Messages compose sheet.
+    @Published var pendingContactMessage: ContactMessage? = nil
+
+    /// Set when the app is opened from a Spotlight search result.
+    /// ContentView observes this and navigates to the matching AlarmDetailView.
+    @Published var spotlightAlarmID: UUID? = nil
 
     // MARK: - Dependencies
 
@@ -29,47 +39,54 @@ final class AlarmManager: ObservableObject {
     /// Injected via setModelContext() on app launch (from RootView.onAppear).
     private var modelContext: ModelContext?
 
-    /// Debug logger — defaults to the shared singleton; override in tests.
-    var logger: DebugLogging = DebugLogger.shared
-
-    // MARK: - Audio player (foreground + background alarms — bypasses silent switch)
-    private let audioPlayer = AlarmAudioPlayer()
-
-    // Background task that keeps the app alive while the alarm audio plays.
-    // Required when the geo-fence fires with the screen locked so iOS doesn't
-    // suspend us before the AVAudioSession has a chance to start.
-    // Once the .playback session is active, iOS lets audio continue on its own
-    // (provided 'audio' is listed in UIBackgroundModes in Info.plist).
+    // MARK: - Background task
+    // Keeps the app alive long enough for the AVAudioSession to start when the
+    // geo-fence fires with the screen locked. Once AVAudioPlayer is playing,
+    // UIBackgroundModes:audio sustains it on its own — this task just bridges
+    // the gap between wake-up and the first audio frame.
     private var backgroundTask: UIBackgroundTaskIdentifier = .invalid
 
     // MARK: - Init
-    init() {}
+    override init() { super.init() }
 
     // MARK: - SwiftData setup
 
     func setModelContext(_ context: ModelContext) {
         modelContext = context
         load()
+        observeRemoteChanges()
+    }
+
+    /// Listens for CloudKit remote-change notifications so alarms stay in sync
+    /// when another device adds, edits, or deletes an alarm via iCloud.
+    private func observeRemoteChanges() {
+        NotificationCenter.default.addObserver(
+            forName: NSNotification.Name.NSPersistentStoreRemoteChange,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            guard let self else { return }
+            Task { @MainActor in
+                self.load()
+                self.reregisterAllRegions()
+                print("☁️ iCloud sync received — alarms reloaded")
+            }
+        }
     }
 
     // MARK: - Notification identifiers
 
     enum NotificationAction {
-        static let snooze10        = "SNOOZE_10"
-        static let dismiss         = "DISMISS"
-        static let notifyContacts  = "NOTIFY_CONTACTS"
+        static let snooze10       = "SNOOZE_10"
+        static let dismiss        = "DISMISS"
+        static let notifyContact  = "NOTIFY_CONTACT"
     }
 
     enum NotificationCategory {
-        static let geoAlarm           = "GEO_ALARM"
-        static let geoAlarmAutoNotify = "GEO_ALARM_AUTONOTIFY"
-    }
-
-    // MARK: - Auto-notify helpers
-
-    /// Returns the per-alarm contact list (decoded from JSON).
-    private func resolvedContacts(for alarm: GeoAlarm) -> [NotifyContact] {
-        alarm.notifyContactList
+        /// Standard alarm — no contact action.
+        static let geoAlarm        = "GEO_ALARM"
+        /// Alarm with a contact set — includes "Notify Contact" action.
+        static let geoAlarmContact = "GEO_ALARM_CONTACT"
     }
 
     // MARK: - Notification permission + category setup
@@ -85,14 +102,14 @@ final class AlarmManager: ObservableObject {
         // while the app is foregrounded.
         center.delegate = self
 
-        // .criticalAlert is required to bypass the ringer switch in background
-        // notifications. iOS silently ignores it if the entitlement isn't present,
-        // so it's safe to request now — no crash or rejection risk.
-        center.requestAuthorization(options: [.alert, .sound, .badge, .criticalAlert]) { granted, error in
+        center.requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
             if let error = error {
                 print("❌ Notification permission error: \(error.localizedDescription)")
+                DebugLogger.shared.log("Notification permission error: \(error.localizedDescription)", category: "Notifications")
             } else {
+                let msg = granted ? "Notification permission granted" : "Notification permission denied"
                 print(granted ? "✅ Notifications granted" : "⚠️ Notifications denied")
+                DebugLogger.shared.log(msg, category: "Notifications")
             }
         }
     }
@@ -108,79 +125,142 @@ final class AlarmManager: ObservableObject {
             title: "Dismiss",
             options: [.destructive]
         )
-        let notifyContactsAction = UNNotificationAction(
-            identifier: NotificationAction.notifyContacts,
-            title: "Notify Contacts",
-            options: [.foreground]          // Brings app to foreground to open compose UI
-        )
 
-        // Standard category — no auto-notify action
-        let standard = UNNotificationCategory(
+        // Single category for all alarms — contact messaging is triggered automatically,
+        // not via a user-facing action button.
+        let standardCategory = UNNotificationCategory(
             identifier: NotificationCategory.geoAlarm,
             actions: [snoozeAction, dismissAction],
             intentIdentifiers: [],
             options: [.customDismissAction]
         )
-
-        // Auto-notify category — includes "Notify Contacts" action
-        let autoNotify = UNNotificationCategory(
-            identifier: NotificationCategory.geoAlarmAutoNotify,
-            actions: [notifyContactsAction, snoozeAction, dismissAction],
-            intentIdentifiers: [],
-            options: [.customDismissAction]
-        )
-
-        UNUserNotificationCenter.current().setNotificationCategories([standard, autoNotify])
+        UNUserNotificationCenter.current().setNotificationCategories([standardCategory])
     }
+
+    // MARK: - Region limit
+
+    /// iOS caps CLLocationManager region monitoring at 20 simultaneous regions.
+    static let regionMonitoringLimit = 20
+
+    /// Number of currently active (monitored) alarms.
+    var activeAlarmCount: Int { alarms.filter(\.isActive).count }
+
+    /// True when one or two slots remain — show a caution warning.
+    var isNearRegionLimit: Bool { activeAlarmCount >= Self.regionMonitoringLimit - 2 }
+
+    /// True when all slots are full — block adding new active alarms.
+    var isAtRegionLimit: Bool  { activeAlarmCount >= Self.regionMonitoringLimit }
 
     // MARK: - CRUD
 
-    func add(alarm: GeoAlarm) {
-        modelContext?.insert(alarm)
+    func add(alarm: NapAlarm) {
+        // If already at the iOS 20-region cap, insert as inactive so monitoring
+        // isn't attempted. The user can enable it after disabling another alarm.
+        var toInsert = alarm
+        if alarm.isActive && isAtRegionLimit {
+            toInsert = NapAlarm(
+                id: alarm.id, name: alarm.name,
+                latitude: alarm.latitude, longitude: alarm.longitude,
+                radius: alarm.radius, regionEvent: alarm.regionEvent,
+                state: .inactive, note: alarm.note,
+                isRepeating: alarm.isRepeating,
+                hasTimeWindow: alarm.hasTimeWindow,
+                windowStart: alarm.windowStart, windowEnd: alarm.windowEnd,
+                activeDays: alarm.activeDays,
+                notificationSound: alarm.notificationSound
+            )
+            DebugLogger.shared.log("Alarm '\(alarm.name)' inserted as INACTIVE — region monitoring limit reached (\(Self.regionMonitoringLimit))", category: "AlarmManager")
+        }
+        // Capture the chosen sound BEFORE handing the object to the SwiftData context.
+        // When context.insert() registers a newly-created model, its context-managed
+        // backing store can be initialised from the class-level property default
+        // ("default") rather than the value set in NapAlarm's custom init.
+        // Re-applying the captured value after insert ensures SwiftData tracks it as
+        // a mutation and persists the user's selection — the same fix that resolved
+        // the identical symptom for the edit path in update(alarm:).
+        let soundRaw = toInsert.soundNameRaw
+        modelContext?.insert(toInsert)
+        if toInsert.soundNameRaw != soundRaw {
+            DebugLogger.shared.log("⚠️ SwiftData backing-store init reset soundNameRaw '\(toInsert.soundNameRaw)' → reapplying '\(soundRaw)'", category: "AlarmManager")
+        }
+        toInsert.soundNameRaw = soundRaw
         save()
-        alarms.append(alarm)
-        if alarm.isActive { startMonitoring(alarm) }
-        logger.log(.alarmAdded(alarm.name))
+        alarms.append(toInsert)
+        SpotlightManager.shared.index(toInsert)
+        if toInsert.isActive {
+            startMonitoring(toInsert)
+            DebugLogger.shared.log("Alarm added + monitoring started: '\(toInsert.name)' radius=\(Int(toInsert.radius))m event=\(toInsert.regionEvent.rawValue) lat=\(toInsert.latitude) lon=\(toInsert.longitude)", category: "AlarmManager")
+        } else {
+            DebugLogger.shared.log("Alarm added (inactive): '\(toInsert.name)'", category: "AlarmManager")
+        }
+        refreshKeepAlive()
     }
 
-    /// Call after mutating a GeoAlarm's properties directly (SwiftData tracks changes).
-    func update(alarm: GeoAlarm) {
+    /// Applies all editable fields from `alarm` (built by AlarmViewModel.buildAlarm())
+    /// onto the existing SwiftData-managed object with the same UUID, then saves.
+    /// buildAlarm() creates a new, uninserted instance — mutating the managed object
+    /// in place is required for SwiftData to track and persist the changes.
+    func update(alarm: NapAlarm) {
+        guard let existing = alarms.first(where: { $0.id == alarm.id }) else {
+            // No existing record found — this is a programmer error; do nothing.
+            print("[AlarmManager] update(alarm:) called with unknown alarm ID \(alarm.id) — ignored")
+            return
+        }
+        stopMonitoring(existing)
+        existing.name              = alarm.name
+        existing.latitude          = alarm.latitude
+        existing.longitude         = alarm.longitude
+        existing.radius            = alarm.radius
+        existing.regionEvent       = alarm.regionEvent
+        existing.note              = alarm.note
+        existing.isRepeating       = alarm.isRepeating
+        existing.hasTimeWindow     = alarm.hasTimeWindow
+        existing.windowStart       = alarm.windowStart
+        existing.windowEnd         = alarm.windowEnd
+        existing.state             = alarm.state
+        existing.soundNameRaw      = alarm.soundNameRaw
+        existing.activeDaysRaw     = alarm.activeDaysRaw
+        existing.notifyContact     = alarm.notifyContact
+        existing.notifyContactsJSON = alarm.notifyContactsJSON
         save()
-        stopMonitoring(alarm)
-        if alarm.isActive { startMonitoring(alarm) }
-        logger.log(.alarmUpdated(alarm.name))
+        SpotlightManager.shared.index(existing)
+        if existing.isActive { startMonitoring(existing) }
+        refreshKeepAlive()
     }
 
-    func delete(alarm: GeoAlarm) {
-        let name = alarm.name
+    func delete(alarm: NapAlarm) {
+        DebugLogger.shared.log("Alarm deleted: '\(alarm.name)'", category: "AlarmManager")
         stopMonitoring(alarm)
+        SpotlightManager.shared.deindex(alarm)
         modelContext?.delete(alarm)
         alarms.removeAll { $0.id == alarm.id }
         save()
-        logger.log(.alarmDeleted(name))
+        refreshKeepAlive()
     }
 
     func delete(at offsets: IndexSet) {
         offsets.forEach { stopMonitoring(alarms[$0]) }
+        offsets.forEach { SpotlightManager.shared.deindex(alarms[$0]) }
         offsets.forEach { modelContext?.delete(alarms[$0]) }
-        alarms.remove(atOffsets: offsets)
+        for index in offsets.reversed() {
+            alarms.remove(at: index)
+        }
         save()
+        refreshKeepAlive()
     }
 
-    func toggleActive(_ alarm: GeoAlarm) {
+    func toggleActive(_ alarm: NapAlarm) {
         alarm.state = alarm.isActive ? .inactive : .active
-        // Log before calling update() so the toggled state is reflected.
-        logger.log(.alarmToggled(name: alarm.name, isActive: alarm.isActive))
         update(alarm: alarm)
     }
 
     // MARK: - Region monitoring helpers
 
-    private func startMonitoring(_ alarm: GeoAlarm) {
+    private func startMonitoring(_ alarm: NapAlarm) {
         locationManager?.startMonitoring(region: alarm.clRegion)
     }
 
-    private func stopMonitoring(_ alarm: GeoAlarm) {
+    private func stopMonitoring(_ alarm: NapAlarm) {
         locationManager?.stopMonitoring(region: alarm.clRegion)
     }
 
@@ -188,6 +268,19 @@ final class AlarmManager: ObservableObject {
     func reregisterAllRegions() {
         locationManager?.stopMonitoringAll()
         alarms.filter(\.isActive).forEach { startMonitoring($0) }
+        refreshKeepAlive()
+    }
+
+    /// Start or stop the audio keep-alive session based on whether any alarm is
+    /// armed. The keep-alive holds the audio session open so a background-triggered
+    /// alarm can sound without iOS blocking a fresh session start (OSStatus -50).
+    /// Must be (re)evaluated whenever the set of active alarms changes.
+    private func refreshKeepAlive() {
+        if activeAlarmCount > 0 {
+            AlarmAudioPlayer.shared.beginKeepAlive()
+        } else {
+            AlarmAudioPlayer.shared.endKeepAlive()
+        }
     }
 
     // MARK: - Region event handling
@@ -204,15 +297,26 @@ final class AlarmManager: ObservableObject {
     func handleRegionEvent(regionID: String, event: RegionEvent) {
 
         // ── 1. Fire the alarm ──────────────────────────────────────────────
-        // Match an ACTIVE alarm whose trigger matches this event.
+        // Match an ACTIVE alarm whose trigger matches this event AND whose
+        // time window (if set) includes the current time.
         if let index = alarms.firstIndex(where: {
             $0.id.uuidString == regionID && $0.isActive && $0.regionEvent == event
         }) {
+            guard alarms[index].isWithinWindow() else {
+                print("⏰ Alarm '\(alarms[index].name)' skipped — outside time window")
+                return
+            }
             alarms[index].state = .triggered
             alarms[index].lastTriggeredAt = Date()
+            alarms[index].triggerCount += 1
+            CrashReporter.log("Alarm triggered: \(alarms[index].name) (\(event.rawValue))")
+            CrashReporter.setKey("lastTriggeredAlarm", value: alarms[index].name)
+            DebugLogger.shared.log("🔔 Alarm TRIGGERED: '\(alarms[index].name)' event=\(event.rawValue) triggerCount=\(alarms[index].triggerCount) regionID=\(regionID)", category: "AlarmManager")
             fireNotification(for: alarms[index])
+            startAlarmRinging(for: alarms[index])
+            queueAutoNotify(for: alarms[index])
+            scheduleWindowEndGuard(for: alarms[index])
             save()
-            logger.log(.alarmTriggered(name: alarms[index].name))
             print("🔔 Alarm triggered: \(alarms[index].name)")
         }
 
@@ -230,57 +334,30 @@ final class AlarmManager: ObservableObject {
             alarms[index].state = .active
             save()
             startMonitoring(alarms[index])   // keep iOS monitoring the region
-            logger.log(.alarmRearmed(name: alarms[index].name))
+            DebugLogger.shared.log("🔄 Repeating alarm re-armed: '\(alarms[index].name)'", category: "AlarmManager")
             print("🔄 Repeating alarm re-armed: \(alarms[index].name)")
         }
     }
 
     // MARK: - Local notification
 
-    private func fireNotification(for alarm: GeoAlarm) {
-        // ── ORDERING IS DELIBERATE ──────────────────────────────────────────
-        // Schedule the local notification FIRST, before touching the audio
-        // session. The visual banner + system notification must never depend on
-        // the audio path succeeding.
-        //
-        // CarPlay / Bluetooth connect events generate a burst of audio
-        // interruption & route-change callbacks exactly when an alarm fires.
-        // Previously audio was started before the notification was scheduled, so
-        // any stall or crash in that audio burst suppressed the notification
-        // entirely — no banner AND no sound, specifically over CarPlay.
-        // Scheduling first guarantees the user always gets the visual + system
-        // notification regardless of what the audio session does afterward.
-
+    private func fireNotification(for alarm: NapAlarm) {
         let content = UNMutableNotificationContent()
         content.title = "📍 \(alarm.name)"
         content.body = alarm.note.isEmpty
             ? "\(alarm.regionEvent.rawValue) detected."
             : alarm.note
-        // Set the notification sound. nil means no audio (vibrate-only alarms).
-        // .defaultCritical bypasses the silent switch once Apple grants the
-        // Critical Alerts entitlement; custom .wav files fall back to the
-        // system default if not found in the bundle (no crash, just audible).
         content.sound = alarm.notificationSound.unSound
-
-        // Time Sensitive breaks through Focus / Do Not Disturb on iOS 15+.
-        // No entitlement required. Once the Critical Alerts entitlement is
-        // granted, upgrade this to .critical so it also bypasses the ringer switch.
+        // Time Sensitive lets the banner + sound break through Focus / Do Not
+        // Disturb — including the Driving Focus that iOS auto-enables when the
+        // phone connects to CarPlay. Without this, a default-level notification
+        // is silently suppressed on CarPlay (no banner, no notification sound),
+        // which is the CarPlay-only "no visual notification" symptom. No
+        // entitlement required. (Upgrade to .critical only once Apple grants the
+        // Critical Alerts entitlement, which also bypasses the ringer switch.)
         content.interruptionLevel = .timeSensitive
-
-        // Resolve contacts first so they can go into both userInfo and categoryIdentifier.
-        let contacts = resolvedContacts(for: alarm)
-        content.userInfo = [
-            "alarmID":   alarm.id.uuidString,
-            "alarmName": alarm.name,
-            "latitude":  alarm.latitude,
-            "longitude": alarm.longitude,
-            "contacts":  contacts.toJSON()   // JSON-encoded [NotifyContact] for the delegate
-        ]
-
-        // Use the auto-notify category when the alarm has auto-notify on and contacts exist.
-        content.categoryIdentifier = (alarm.autoNotify && !contacts.isEmpty)
-            ? NotificationCategory.geoAlarmAutoNotify
-            : NotificationCategory.geoAlarm
+        content.categoryIdentifier = NotificationCategory.geoAlarm
+        content.userInfo = buildNotifyUserInfo(for: alarm)
 
         let request = UNNotificationRequest(
             identifier: alarm.id.uuidString,
@@ -290,50 +367,171 @@ final class AlarmManager: ObservableObject {
         UNUserNotificationCenter.current().add(request) { error in
             if let error = error {
                 print("❌ Notification failed: \(error.localizedDescription)")
+                DebugLogger.shared.log("Notification delivery failed: \(error.localizedDescription)", category: "AlarmManager")
             }
         }
-
-        // ── Now start the bypass-silent-switch audio ────────────────────────
-        // AVAudioPlayer with .playback category bypasses the ringer/silent switch —
-        // unlike UNNotificationSound which obeys it. When the screen is locked the
-        // app is in .background; a UIBackgroundTask keeps us alive long enough for
-        // the audio session to start, after which iOS sustains it automatically
-        // (requires 'audio' in UIBackgroundModes — see Xcode target → Signing &
-        // Capabilities → Background Modes → Audio, AirPlay, and Picture in Picture).
-        beginAudioBackgroundTask()
-        audioPlayer.play(alarm.notificationSound)
-
-        // Linked Shortcut can only be opened while the app is foregrounded.
-        if UIApplication.shared.applicationState == .active {
-            let shortcutName = alarm.linkedShortcut.trimmingCharacters(in: .whitespaces)
-            if !shortcutName.isEmpty,
-               let encoded = shortcutName.addingPercentEncoding(
-                   withAllowedCharacters: .urlQueryAllowed),
-               let url = URL(string: "shortcuts://run-shortcut?name=\(encoded)") {
-                UIApplication.shared.open(url)
-                print("🔗 Opening Shortcut: \(shortcutName)")
-            }
-        }
-
-        // Refresh Siri / Shortcuts parameter list so the system knows
-        // which alarms exist (used by AlarmFiredIntent suggestions).
-        GeoNapShortcuts.updateAppShortcutParameters()
     }
 
-    // MARK: - Background task management
+    /// Sets `pendingContactMessage` immediately when an alarm fires so the SMS
+    /// compose sheet appears as soon as the app is (or comes) in the foreground.
+    ///
+    /// This is separate from the notification-tap recovery path in `didReceive`
+    /// (which handles the background → tap → relaunch case).  Having both ensures
+    /// the compose sheet is never missed:
+    ///   • App in foreground: sheet appears immediately via this call.
+    ///   • App in background: user taps notification → `didReceive` sets it as backup.
+    private func queueAutoNotify(for alarm: NapAlarm) {
+        let phones = alarm.notifyContactList.filter { !$0.isEmail }.map { $0.value }
+        guard alarm.notifyContact, !phones.isEmpty else { return }
+
+        let direction = alarm.regionEvent == .onEntry ? "Arrival" : "Departure"
+        let verb      = alarm.regionEvent == .onEntry ? "arrived at" : "departed from"
+        let timeStr   = DateFormatter.localizedString(from: Date(), dateStyle: .none, timeStyle: .short)
+        var body = "[\(direction)] I \(verb) \(alarm.name) at \(timeStr)."
+        if !alarm.note.isEmpty { body += " \(alarm.note)" }
+
+        pendingContactMessage = ContactMessage(phones: phones, body: body)
+
+        // Persist for NotifyContactsIntent — lets a Shortcuts Personal Automation
+        // read the data and send SMS via "Send Message" without a compose sheet.
+        // Persist body for NotifyContactsIntent — lets a Shortcuts Personal Automation
+        // read the message and send SMS via "Send Message" without a compose sheet.
+        UserDefaults.standard.set(body, forKey: AutoNotifyDefaultsKey.pendingBody)
+
+        DebugLogger.shared.log("Auto-Notify: SMS compose queued at alarm fire (\(phones.count) contact(s))", category: "AlarmManager")
+    }
+
+    /// Builds the userInfo dictionary for a notification.
+    /// Always contains "alarmID". When Auto-Notify is enabled with phone contacts,
+    /// also embeds "notifyPhones" and "notifyBody" so that contact data survives
+    /// an app relaunch triggered by tapping the notification.
+    ///
+    /// Exposed `internal` (not `private`) so unit tests can verify the output
+    /// without going through UNUserNotificationCenter.
+    func buildNotifyUserInfo(for alarm: NapAlarm) -> [String: Any] {
+        var userInfo: [String: Any] = ["alarmID": alarm.id.uuidString]
+        guard alarm.notifyContact, !alarm.notifyContactList.isEmpty else { return userInfo }
+
+        let timeStr   = DateFormatter.localizedString(from: Date(), dateStyle: .none, timeStyle: .short)
+        let direction = alarm.regionEvent == .onEntry ? "Arrival" : "Departure"
+        let verb      = alarm.regionEvent == .onEntry ? "arrived at" : "departed from"
+        var msgBody   = "[\(direction)] I \(verb) \(alarm.name) at \(timeStr)."
+        if !alarm.note.isEmpty { msgBody += " \(alarm.note)" }
+
+        let phones = alarm.notifyContactList.filter { !$0.isEmail }.map { $0.value }
+
+        if !phones.isEmpty {
+            userInfo["notifyPhones"] = phones
+            userInfo["notifyBody"]   = msgBody
+            DebugLogger.shared.log("Auto-Notify: \(phones.count) SMS contact(s) embedded in notification for '\(alarm.name)'", category: "AlarmManager")
+        }
+        return userInfo
+    }
+
+    /// Recovers Auto-Notify contact data from a notification's userInfo dictionary
+    /// and sets `pendingContactMessage` accordingly.
+    /// Called from the notification-tap response handler so that the SMS compose
+    /// sheet appears even when the app was fully relaunched by tapping the notification.
+    ///
+    /// Exposed `internal` so unit tests can verify recovery without needing a real
+    /// `UNNotificationResponse` object.
+    func recoverAutoNotify(from userInfo: [AnyHashable: Any]) {
+        let body = userInfo["notifyBody"] as? String ?? ""
+
+        if let phones = userInfo["notifyPhones"] as? [String], !phones.isEmpty {
+            pendingContactMessage = ContactMessage(phones: phones, body: body)
+            DebugLogger.shared.log("Auto-Notify: SMS compose queued from notification tap (\(phones.count) contact(s))", category: "AlarmManager")
+        }
+    }
+
+    // MARK: - Alarm ringing (looping sound + full-screen UI)
+
+    private func startAlarmRinging(for alarm: NapAlarm) {
+        // Request a background task BEFORE starting the audio session.
+        // When the geo-fence fires with the screen locked, the app is in
+        // .background and iOS can suspend it at any moment. The background
+        // task gives us ~30 s of guaranteed execution time — enough for
+        // AVAudioPlayer to open the session and play the first audio frame.
+        // After that, UIBackgroundModes:audio sustains playback on its own.
+        beginAudioBackgroundTask()
+        // Start the looping sound (continues in background via UIBackgroundModes: audio).
+        AlarmAudioPlayer.shared.play(sound: alarm.notificationSound)
+        // Show AlarmFiringView — ContentView observes this property.
+        firingAlarm = alarm
+        DebugLogger.shared.log("Alarm ringing started: '\(alarm.name)'", category: "AlarmManager")
+    }
+
+    /// Called by the slide-to-dismiss gesture in AlarmFiringView.
+    func dismissFiringAlarm() {
+        AlarmAudioPlayer.shared.stop()
+        endAudioBackgroundTask()
+        firingAlarm = nil
+        DebugLogger.shared.log("Alarm dismissed by user (slider)", category: "AlarmManager")
+    }
+
+    // MARK: - Time window guard
+
+    /// Schedules a timer that fires at windowEnd.
+    /// If the alarm is still active or triggered at that point (user hasn't left
+    /// the region), it is automatically deactivated — satisfying the guard condition.
+    private func scheduleWindowEndGuard(for alarm: NapAlarm) {
+        guard alarm.hasTimeWindow, let end = alarm.windowEnd else { return }
+
+        let cal = Calendar.current
+        let now = Date()
+        let endHour   = cal.component(.hour,   from: end)
+        let endMinute = cal.component(.minute, from: end)
+
+        guard var fireDate = cal.date(bySettingHour: endHour,
+                                      minute: endMinute,
+                                      second: 0,
+                                      of: now) else { return }
+        // If the end time has already passed today, fire tomorrow
+        // (handles overnight windows where end is past midnight).
+        if fireDate <= now {
+            fireDate = cal.date(byAdding: .day, value: 1, to: fireDate) ?? fireDate
+        }
+
+        let delay = fireDate.timeIntervalSince(now)
+        let alarmID = alarm.id
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + delay) { [weak self] in
+            guard let self,
+                  let index = self.alarms.firstIndex(where: { $0.id == alarmID }),
+                  self.alarms[index].hasTimeWindow else { return }
+
+            let currentState = self.alarms[index].state
+            guard currentState == .active || currentState == .triggered else { return }
+
+            self.alarms[index].state = .inactive
+            self.stopMonitoring(self.alarms[index])
+            self.save()
+            print("⏰ Window closed: '\(self.alarms[index].name)' auto-deactivated")
+            CrashReporter.log("Window end guard fired: \(self.alarms[index].name)")
+        }
+    }
+
+    // MARK: - Background task helpers
 
     private func beginAudioBackgroundTask() {
-        endAudioBackgroundTask()   // cancel any prior task
+        endAudioBackgroundTask()
         backgroundTask = UIApplication.shared.beginBackgroundTask(
             withName: "GeoAlarmAudioPlayback"
         ) { [weak self] in
-            // Expiry handler — iOS is about to suspend the app.
-            // Do NOT stop the audio player here: once the .playback AVAudioSession
-            // is active, iOS sustains it independently (requires 'audio' in
-            // UIBackgroundModes). Stopping here would silence the alarm on lock screen.
-            // Just end the task token so iOS doesn't terminate us for holding it.
+            // Expiry: iOS is about to suspend the app.
+            // Do NOT stop the audio player here — once AVAudioPlayer is running
+            // with .playback category, UIBackgroundModes:audio sustains it on its
+            // own without needing the background task. Stopping here would silence
+            // the looping alarm on the lock screen after ~30 s.
+            // Just release the task token so iOS doesn't terminate us for holding it.
             self?.endAudioBackgroundTask()
         }
+    }
+
+    /// Wrapper so the expiry handler can call stop without triggering
+    /// the full dismissFiringAlarm flow (which touches @Published state).
+    private func AlarmAudioPlayer_stop() {
+        AlarmAudioPlayer.shared.stop()
     }
 
     private func endAudioBackgroundTask() {
@@ -342,51 +540,16 @@ final class AlarmManager: ObservableObject {
         backgroundTask = .invalid
     }
 
-    // MARK: - Auto-notify contact dispatch
-
-    /// Opens a pre-composed SMS or email so the user can send their location to contacts.
-    /// Called on the main actor after the user taps "Notify Contacts" in the notification banner.
-    func sendAutoNotification(alarmName: String, latitude: Double, longitude: Double,
-                               contactsJSON: String = "") {
-        let contacts = [NotifyContact].fromJSON(contactsJSON)
-        guard !contacts.isEmpty else { return }
-
-        let mapsURL = "https://maps.apple.com/?ll=\(latitude),\(longitude)"
-        let message = "🔔 GeoAlarm fired: \"\(alarmName)\"\nMy location: \(mapsURL)"
-
-        let phones = contacts.filter { !$0.isEmail }.map(\.value)
-        let emails = contacts.filter {  $0.isEmail }.map(\.value)
-
-        // Prefer SMS — supports comma-separated recipients in one URL.
-        if !phones.isEmpty {
-            let recipients  = phones.joined(separator: ",")
-            let encodedBody = message.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
-            if let url = URL(string: "sms:\(recipients)&body=\(encodedBody)") {
-                UIApplication.shared.open(url)
-                return
-            }
-        }
-
-        // Fall back to Mail for email-only contacts.
-        if !emails.isEmpty {
-            let to      = emails.joined(separator: ",")
-            let subject = "GeoAlarm: \(alarmName)"
-                .addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
-            let body    = message
-                .addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
-            if let url = URL(string: "mailto:\(to)?subject=\(subject)&body=\(body)") {
-                UIApplication.shared.open(url)
-            }
-        }
-    }
-
     // MARK: - Snooze
 
     /// Suppress a triggered alarm and re-arm it after `minutes` minutes.
-    func snooze(_ alarm: GeoAlarm, minutes: Int = 10) {
+    func snooze(_ alarm: NapAlarm, minutes: Int = 10) {
+        AlarmAudioPlayer.shared.stop()
+        endAudioBackgroundTask()
+        firingAlarm = nil
         alarm.state = .snoozed
         save()
-        logger.log(.alarmSnoozed(name: alarm.name, minutes: minutes))
+        DebugLogger.shared.log("Alarm snoozed \(minutes) min: '\(alarm.name)'", category: "AlarmManager")
         DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(minutes * 60)) { [weak self] in
             guard let self,
                   let index = self.alarms.firstIndex(where: { $0.id == alarm.id }),
@@ -400,93 +563,88 @@ final class AlarmManager: ObservableObject {
     // MARK: - SwiftData persistence
 
     private func save() {
-        try? modelContext?.save()
+        do {
+            try modelContext?.save()
+        } catch {
+            print("❌ SwiftData save failed: \(error.localizedDescription)")
+            DebugLogger.shared.log("SwiftData save FAILED: \(error.localizedDescription)", category: "AlarmManager")
+            CrashReporter.record(error, context: "SwiftData.save")
+        }
+        // Push latest state to paired Apple Watch after every save.
+        WatchConnectivityManager.shared.updateWatch(with: alarms)
     }
 
     private func load() {
         guard let context = modelContext else { return }
-        alarms = (try? context.fetch(
-            FetchDescriptor<GeoAlarm>(sortBy: [SortDescriptor(\.name)])
-        )) ?? []
+        do {
+            alarms = try context.fetch(
+                FetchDescriptor<NapAlarm>(sortBy: [SortDescriptor(\.name)])
+            )
+            CrashReporter.setKey("alarmCount", value: alarms.count)
+            // Rebuild Spotlight index to match current alarms on every launch.
+            SpotlightManager.shared.reindexAll(alarms)
+        } catch {
+            print("❌ SwiftData load failed: \(error.localizedDescription)")
+            CrashReporter.record(error, context: "SwiftData.load")
+            alarms = []
+        }
     }
 }
-
-// MARK: - Preview support
-
-#if DEBUG
-    /// Directly sets the alarms array — for SwiftUI Previews only.
-    func injectPreviewAlarms(_ previewAlarms: [GeoAlarm]) {
-        alarms = previewAlarms
-    }
-
-    static var preview: AlarmManager {
-        let mgr = AlarmManager()
-        mgr.injectPreviewAlarms(GeoAlarm.samples)
-        return mgr
-    }
-#endif
 
 // MARK: - UNUserNotificationCenterDelegate
 
 extension AlarmManager: UNUserNotificationCenterDelegate {
 
-    /// Called when the user taps an action button (Snooze / Dismiss) on the
-    /// notification — on iPhone, iPad, or Apple Watch.
+    /// Called when the user taps an action button (Snooze / Dismiss) —
+    /// works on iPhone lock screen, notification banner, and Apple Watch.
     nonisolated func userNotificationCenter(
         _ center: UNUserNotificationCenter,
         didReceive response: UNNotificationResponse,
         withCompletionHandler completionHandler: @escaping () -> Void
     ) {
-        let userInfo  = response.notification.request.content.userInfo
-        let alarmID   = userInfo["alarmID"] as? String
-        let action    = response.actionIdentifier
+        let alarmID = response.notification.request.content.userInfo["alarmID"] as? String
+        let action  = response.actionIdentifier
+
+        // Extract only the Sendable values we need before crossing into the Task.
+        // [AnyHashable: Any] is not Sendable, so we must not capture `userInfo` directly.
+        let notifyPhones = response.notification.request.content.userInfo["notifyPhones"] as? [String]
+        let notifyBody   = response.notification.request.content.userInfo["notifyBody"]   as? String ?? ""
 
         Task { @MainActor in
             switch action {
             case NotificationAction.snooze10:
-                audioPlayer.stop()
-                endAudioBackgroundTask()
                 if let id = alarmID,
                    let alarm = alarms.first(where: { $0.id.uuidString == id }) {
-                    snooze(alarm, minutes: 10)
-                    print("😴 Snoozed alarm: \(alarm.name) for 10 min")
+                    snooze(alarm, minutes: 10)   // also stops audio + clears firingAlarm
+                    print("😴 Snoozed: \(alarm.name) for 10 min")
+                    DebugLogger.shared.log("Alarm snoozed 10 min via notification action: '\(alarm.name)'", category: "AlarmManager")
                 }
-
-            case NotificationAction.notifyContacts:
-                let info         = response.notification.request.content.userInfo
-                let name         = info["alarmName"] as? String ?? "Alarm"
-                let latitude     = info["latitude"]  as? Double ?? 0
-                let longitude    = info["longitude"] as? Double ?? 0
-                let contactsJSON = info["contacts"]  as? String ?? ""
-                sendAutoNotification(alarmName: name, latitude: latitude, longitude: longitude,
-                                     contactsJSON: contactsJSON)
-                print("📤 Auto-notify contacts for alarm: \(name)")
 
             case NotificationAction.dismiss,
                  UNNotificationDismissActionIdentifier:
-                audioPlayer.stop()
+                // User tapped Dismiss button or swiped away the notification —
+                // stop the looping sound and clear the full-screen alarm view.
+                AlarmAudioPlayer.shared.stop()
                 endAudioBackgroundTask()
-
-            case UNNotificationDefaultActionIdentifier:
-                // User tapped the notification to open the app (e.g. from the
-                // lock screen). When the alarm fired in the background, the
-                // audio player was skipped (app wasn't active), so the custom
-                // sound never played. Play it now that the app is foregrounded.
-                if let id = alarmID,
-                   let alarm = alarms.first(where: { $0.id.uuidString == id }) {
-                    audioPlayer.play(alarm.notificationSound)
-                    print("🔔 Playing alarm sound after notification opened: \(alarm.name)")
-                }
+                firingAlarm = nil
+                DebugLogger.shared.log("Alarm dismissed via notification action", category: "AlarmManager")
 
             default:
-                break
+                // UNNotificationDefaultActionIdentifier — user tapped the banner to open the app.
+                // Do NOT stop the audio here; AlarmFiringView is already showing (firingAlarm is set)
+                // and the user slides to dismiss from there.
+                //
+                // Recover Auto-Notify contact data so the SMS compose sheet appears on relaunch.
+                if let phones = notifyPhones, !phones.isEmpty {
+                    pendingContactMessage = ContactMessage(phones: phones, body: notifyBody)
+                    DebugLogger.shared.log("Auto-Notify: SMS compose queued from notification tap (\(phones.count) contact(s))", category: "AlarmManager")
+                }
             }
             completionHandler()
         }
     }
 
-    /// Show notification banners even when the app is in the foreground
-    /// (e.g. the user is looking at the alarm list when they arrive).
+    /// Show banner + play sound even when the app is in the foreground.
     nonisolated func userNotificationCenter(
         _ center: UNUserNotificationCenter,
         willPresent notification: UNNotification,
