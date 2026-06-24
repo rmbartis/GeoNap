@@ -115,22 +115,29 @@ final class AlarmManager: NSObject, ObservableObject {
     }
 
     private func registerNotificationCategories() {
+        // "Stop Alarm" is listed FIRST so it's the prominent button on the
+        // notification — including on the CarPlay screen, where the driver taps it
+        // to silence the looping alarm without unlocking or opening the phone.
+        // It runs in the background (no .foreground) so silencing is instant and
+        // safe while driving; the handler in didReceive stops the audio.
+        let stopAction = UNNotificationAction(
+            identifier: NotificationAction.dismiss,
+            title: "Stop Alarm",
+            options: [.destructive]
+        )
         let snoozeAction = UNNotificationAction(
             identifier: NotificationAction.snooze10,
             title: "Snooze 10 min",
             options: []
         )
-        let dismissAction = UNNotificationAction(
-            identifier: NotificationAction.dismiss,
-            title: "Dismiss",
-            options: [.destructive]
-        )
 
         // Single category for all alarms — contact messaging is triggered automatically,
         // not via a user-facing action button.
+        // .customDismissAction also routes a swipe-away to our handler so the audio
+        // stops if the driver dismisses the banner instead of tapping Stop Alarm.
         let standardCategory = UNNotificationCategory(
             identifier: NotificationCategory.geoAlarm,
-            actions: [snoozeAction, dismissAction],
+            actions: [stopAction, snoozeAction],
             intentIdentifiers: [],
             options: [.customDismissAction]
         )
