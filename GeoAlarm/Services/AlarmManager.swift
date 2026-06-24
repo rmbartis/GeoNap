@@ -10,6 +10,7 @@ import CoreData
 import Combine
 import MessageUI
 import UIKit
+import AVFoundation
 
 @MainActor
 final class AlarmManager: NSObject, ObservableObject {
@@ -379,6 +380,54 @@ final class AlarmManager: NSObject, ObservableObject {
         }
     }
 
+    // MARK: - CarPlay audible-repeat fallback
+    //
+    // On CarPlay with NO other audio playing, iOS blocks our looping AVAudioPlayer
+    // from being audible (the app lacks the CarPlay audio entitlement). The only
+    // sound iOS will play to the car in that case is a NOTIFICATION's own sound.
+    // Since a notification sound plays once (not looped), we schedule a short
+    // series of follow-up notifications so the alarm tone RE-RINGS through the car
+    // until the user acts. These are cancelled the moment the alarm is stopped.
+
+    private static let carPlayRepeatCount = 6
+    private static let carPlayRepeatInterval: TimeInterval = 6   // seconds between rings
+
+    private func carPlayRepeatID(_ id: UUID, _ i: Int) -> String { "\(id.uuidString)-carplay-\(i)" }
+
+    /// Schedules repeat alarm-sound notifications ONLY when needed: the current
+    /// output is CarPlay and nothing else is playing (so our loop is inaudible).
+    private func scheduleCarPlayAudioRepeatsIfNeeded(for alarm: NapAlarm) {
+        let session = AVAudioSession.sharedInstance()
+        let onCarPlay = session.currentRoute.outputs.contains { $0.portType == .carAudio }
+        guard onCarPlay, !session.isOtherAudioPlaying else { return }
+        guard alarm.notificationSound.unSound != nil else { return }   // vibrate-only: no sound to repeat
+
+        let center = UNUserNotificationCenter.current()
+        for i in 1...Self.carPlayRepeatCount {
+            let content = UNMutableNotificationContent()
+            content.title = "📍 \(alarm.name)"
+            content.body = alarm.note.isEmpty ? "\(alarm.regionEvent.rawValue) detected." : alarm.note
+            content.sound = alarm.notificationSound.unSound
+            content.interruptionLevel = .timeSensitive
+            content.categoryIdentifier = NotificationCategory.geoAlarm
+            content.userInfo = ["alarmID": alarm.id.uuidString]
+            let trigger = UNTimeIntervalNotificationTrigger(
+                timeInterval: Self.carPlayRepeatInterval * Double(i), repeats: false)
+            center.add(UNNotificationRequest(identifier: carPlayRepeatID(alarm.id, i),
+                                             content: content, trigger: trigger))
+        }
+        DebugLogger.shared.log("CarPlay silent-car: scheduled \(Self.carPlayRepeatCount) audio-repeat notifications for '\(alarm.name)'", category: "AlarmManager")
+    }
+
+    /// Cancels any pending/delivered CarPlay repeat notifications for an alarm.
+    private func cancelCarPlayAudioRepeats(forAlarmID idString: String) {
+        guard let uuid = UUID(uuidString: idString) else { return }
+        let ids = (1...Self.carPlayRepeatCount).map { carPlayRepeatID(uuid, $0) }
+        let center = UNUserNotificationCenter.current()
+        center.removePendingNotificationRequests(withIdentifiers: ids)
+        center.removeDeliveredNotifications(withIdentifiers: ids)
+    }
+
     /// Sets `pendingContactMessage` immediately when an alarm fires so the SMS
     /// compose sheet appears as soon as the app is (or comes) in the foreground.
     ///
@@ -463,6 +512,9 @@ final class AlarmManager: NSObject, ObservableObject {
         beginAudioBackgroundTask()
         // Start the looping sound (continues in background via UIBackgroundModes: audio).
         AlarmAudioPlayer.shared.play(sound: alarm.notificationSound)
+        // On CarPlay with no other audio, the loop above is inaudible; fall back to
+        // repeating notification sounds (the only audio iOS plays to the car there).
+        scheduleCarPlayAudioRepeatsIfNeeded(for: alarm)
         // Show AlarmFiringView — ContentView observes this property.
         firingAlarm = alarm
         DebugLogger.shared.log("Alarm ringing started: '\(alarm.name)'", category: "AlarmManager")
@@ -472,6 +524,7 @@ final class AlarmManager: NSObject, ObservableObject {
     func dismissFiringAlarm() {
         AlarmAudioPlayer.shared.stop()
         endAudioBackgroundTask()
+        if let id = firingAlarm?.id.uuidString { cancelCarPlayAudioRepeats(forAlarmID: id) }
         firingAlarm = nil
         DebugLogger.shared.log("Alarm dismissed by user (slider)", category: "AlarmManager")
     }
@@ -553,6 +606,7 @@ final class AlarmManager: NSObject, ObservableObject {
     func snooze(_ alarm: NapAlarm, minutes: Int = 10) {
         AlarmAudioPlayer.shared.stop()
         endAudioBackgroundTask()
+        cancelCarPlayAudioRepeats(forAlarmID: alarm.id.uuidString)
         firingAlarm = nil
         alarm.state = .snoozed
         save()
@@ -629,10 +683,11 @@ extension AlarmManager: UNUserNotificationCenterDelegate {
 
             case NotificationAction.dismiss,
                  UNNotificationDismissActionIdentifier:
-                // User tapped Dismiss button or swiped away the notification —
+                // User tapped Stop Alarm or swiped away the notification —
                 // stop the looping sound and clear the full-screen alarm view.
                 AlarmAudioPlayer.shared.stop()
                 endAudioBackgroundTask()
+                if let id = alarmID { cancelCarPlayAudioRepeats(forAlarmID: id) }
                 firingAlarm = nil
                 DebugLogger.shared.log("Alarm dismissed via notification action", category: "AlarmManager")
 
