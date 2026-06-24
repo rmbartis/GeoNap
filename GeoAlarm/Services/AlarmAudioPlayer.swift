@@ -98,6 +98,7 @@ final class AlarmAudioPlayer {
             let ok = player.play()
             keepAlivePlayer = player
             DebugLogger.shared.log("AlarmAudioPlayer: keep-alive session active (silent, play()=\(ok))", category: "Audio")
+            logRoute("keep-alive")
         } catch {
             DebugLogger.shared.log("AlarmAudioPlayer: keep-alive start FAILED — \(error.localizedDescription)", category: "Audio")
         }
@@ -121,6 +122,7 @@ final class AlarmAudioPlayer {
             // Not fatal: the keep-alive session is very likely still active.
             DebugLogger.shared.log("AlarmAudioPlayer: setCategory/Active at fire returned \(error.localizedDescription) — continuing (session likely already active)", category: "Audio")
         }
+        logRoute("at fire")
 
         switch sound.id {
         case "vibrate":
@@ -134,6 +136,34 @@ final class AlarmAudioPlayer {
         default:
             startBundledLoop(soundID: sound.id)
         }
+
+        // CarPlay claims its audio channel for our stream only when something is
+        // already driving it (other audio) or a route-change event fires. In a
+        // silent car with no route change, the stream never becomes audible. Nudge
+        // the session a couple of times to force it to claim the channel — this
+        // mirrors the Bluetooth route-change recovery that already works.
+        scheduleRouteClaimNudges()
+    }
+
+    /// Re-assert the active session and restart playback shortly after firing, to
+    /// force CarPlay (with no other audio) to route our stream to the car speakers.
+    private func scheduleRouteClaimNudges() {
+        for delay in [0.4, 1.2, 2.5] {
+            DispatchQueue.main.asyncAfter(deadline: .now() + delay) { [weak self] in
+                guard let self, self.isPlaying else { return }
+                try? AVAudioSession.sharedInstance().setActive(true)
+                if let p = self.audioPlayer, !p.isPlaying { p.play() }
+                self.logRoute("after nudge (+\(delay)s)")
+            }
+        }
+    }
+
+    /// Logs the current output route + category so a debug log reveals whether the
+    /// alarm is actually routed to CarPlay/Bluetooth or stuck on another output.
+    private func logRoute(_ tag: String) {
+        let s = AVAudioSession.sharedInstance()
+        let outs = s.currentRoute.outputs.map { $0.portType.rawValue }.joined(separator: ",")
+        DebugLogger.shared.log("AlarmAudioPlayer: route \(tag) → out=[\(outs.isEmpty ? "none" : outs)] cat=\(s.category.rawValue) mix=\(s.categoryOptions.contains(.mixWithOthers)) duck=\(s.categoryOptions.contains(.duckOthers))", category: "Audio")
     }
 
     /// Stop the audible alarm. If alarms are still armed, fall back to the silent
@@ -261,6 +291,7 @@ final class AlarmAudioPlayer {
             try? AVAudioSession.sharedInstance().setActive(true)
             audioPlayer?.play()
             DebugLogger.shared.log("AlarmAudioPlayer: re-activated after route change (\(reason.rawValue))", category: "Audio")
+            logRoute("after route change")
         default:
             break
         }
