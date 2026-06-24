@@ -112,11 +112,20 @@ final class AlarmAudioPlayer {
         keepAlivePlayer = nil
         isPlaying = true
 
-        // Switch the (already-active) session to a ducking, Bluetooth-capable
-        // configuration so the alarm is audible over CarPlay/BT audio.
+        // Switch the (already-active) session to a PRIMARY (non-mixing) playback
+        // configuration so the alarm takes over the audio channel.
+        //
+        // CRITICAL: do NOT use .duckOthers here. .duckOthers implicitly sets
+        // .mixWithOthers, which marks our stream as *secondary/mixable* — and
+        // CarPlay only plays a secondary stream when another (primary) source is
+        // already driving the car's channel. In a silent car that means the alarm
+        // is inaudible even though it's "playing" (confirmed by the route log
+        // showing out=[CarAudio] mix=true with no sound). Plain .playback makes us
+        // the primary stream, which CarPlay plays even with nothing else going —
+        // and like the system Clock alarm, it briefly takes over any music.
         let session = AVAudioSession.sharedInstance()
         do {
-            try session.setCategory(.playback, mode: .default, options: [.duckOthers, .allowBluetoothA2DP])
+            try session.setCategory(.playback, mode: .default, options: [.allowBluetoothA2DP])
             try session.setActive(true)
         } catch {
             // Not fatal: the keep-alive session is very likely still active.
