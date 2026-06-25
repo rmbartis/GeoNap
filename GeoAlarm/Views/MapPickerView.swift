@@ -14,6 +14,7 @@ struct MapPickerView: View {
     @Binding var radius: Double
 
     @EnvironmentObject private var locationManager: LocationManager
+    @Environment(\.languageBundle) private var bundle
 
     // Internal camera position — starts at automatic (no spinning "finding location" state)
     @State private var cameraPosition: MapCameraPosition = .automatic
@@ -54,7 +55,7 @@ struct MapPickerView: View {
             Button {
                 useCurrentLocation()
             } label: {
-                Label("Use My Location", systemImage: "location.fill")
+                Label { Text("Use My Location", bundle: bundle) } icon: { Image(systemName: "location.fill") }
                     .font(.caption.weight(.medium))
                     .padding(.horizontal, 10)
                     .padding(.vertical, 7)
@@ -67,8 +68,9 @@ struct MapPickerView: View {
         }
         .overlay(alignment: .bottom) {
             Text(pinCoordinate == nil
-                 ? "Tap the map to set alarm location"
-                 : "Tap to move the pin")
+                 ? LocalizedStringKey("Tap the map to set alarm location")
+                 : LocalizedStringKey("Tap to move the pin"),
+                 bundle: bundle)
                 .font(.caption)
                 .padding(6)
                 .background(.ultraThinMaterial)

@@ -341,3 +341,27 @@ Consulte Definicoes - Auto-SMS (Sem aprovacao necessaria) para a configuracao co
 /* AlarmFiringView */
 "Snooze 10 min" = "Adiar 10 min";
 "Slide to dismiss" = "Deslizar para desligar";
+
+// --- Added: missing UI translations ---
+"Minimum Requirements" = "Requisitos mínimos";
+"No GeoNap Alarms Yet" = "Ainda não há alarmes do GeoNap";
+"Use My Location" = "Usar minha localização";
+"Tap the map to set alarm location" = "Toque no mapa para definir o local do alarme";
+"Tap to move the pin" = "Toque para mover o marcador";
+"Share your location when this alarm fires" = "Compartilhe sua localização quando este alarme tocar";
+"Sound" = "Som";
+"Save Anyway" = "Salvar mesmo assim";
+"Check alarm location" = "Verifique o local do alarme";
+"Add at least one contact to enable Auto-Notify." = "Adicione pelo menos um contato para ativar a notificação automática.";
+"No contacts saved for this alarm." = "Nenhum contato salvo para este alarme.";
+"Phone number (e.g. +1 555-1234)." = "Número de telefone (ex.: +1 555-1234).";
+"Select the language you'd like to use in GeoNap. You can change this at any time in Settings." = "Escolha o idioma que deseja usar no GeoNap. Você pode alterá-lo a qualquer momento em Ajustes.";
+"SMS contacts require your approval before the message is sent. The Messages app will open for confirmation when the alarm fires." = "Os contatos por SMS exigem sua aprovação antes do envio. O app Mensagens abrirá para confirmação quando o alarme tocar.";
+"Logging is ON. Detailed activity is being recorded to GeoNapDebug.log in the GeoNap folder in the Files app. Disable when no longer needed." = "O registro está ATIVADO. A atividade detalhada está sendo gravada em GeoNapDebug.log, na pasta GeoNap do app Arquivos. Desative quando não for mais necessário.";
+"GeoNap wakes you up when your device enters or leaves a location — not at a set time. Perfect for trains, buses, and long rides." = "O GeoNap acorda você quando o dispositivo entra ou sai de um local, não em um horário fixo. Perfeito para trens, ônibus e viagens longas.";
+"Only want the alarm to fire during your morning commute? Set a time window and GeoNap will ignore the location outside those hours." = "Quer que o alarme toque apenas no trajeto da manhã? Defina uma faixa de horário e o GeoNap ignorará o local fora desse período.";
+"GeoNap monitors your position in the background so it can alert you even while your phone is locked. Your location is never shared or stored outside the app." = "O GeoNap monitora sua posição em segundo plano para avisá-lo mesmo com o telefone bloqueado. Sua localização nunca é compartilhada nem armazenada fora do app.";
+"You're about %d m outside this alarm's area. A departure alarm only fires when you LEAVE the circle — it won't trigger until you're inside it first." = "Você está a cerca de %d m fora da área deste alarme. Um alarme de partida só toca quando você SAI do círculo; não será acionado até você estar dentro dele primeiro.";
+"You're already inside this alarm's area. An arrival alarm only fires when you ENTER — it won't trigger until you leave and come back." = "Você já está dentro da área deste alarme. Um alarme de chegada só toca quando você ENTRA; não será acionado até você sair e voltar.";
+"Apple Home Automation" = "Automação da Casa Apple";
+"help.body.appleAutomation" = "O GeoNap integra-se com o Apple HomeKit e o app Atalhos para que sua casa esteja pronta assim que você chegar: luzes acesas, temperatura ajustada, persianas abertas.\n\nConfiguração:\n1. Abra o app Atalhos → Automação → + → Automação pessoal.\n2. Escolha Ao chegar a um local → use o mesmo local do seu alarme de casa no GeoNap.\n3. Adicione ações da Casa: luzes, termostato ou uma cena completa (ex.: \"Bem-vindo a casa\").\n4. Salve. A automação roda em segundo plano, sem precisar tocar em nada.\n\nPara também tocar um som de alarme:\n5. No GeoNap, edite seu alarme de casa → Executar atalho → digite o nome do atalho.\n6. O GeoNap dispara o alarme sonoro e abre o atalho ao mesmo tempo.\n\nFunciona com qualquer dispositivo compatível com HomeKit:\n• Luzes e cenas de luz\n• Aquecimento e refrigeração (termostato)\n• Ar-condicionado\n• Fechaduras de portas\n• Persianas e cortinas\n• Ventiladores e ventilação\n• Qualquer cena \"Chegar em casa\" no app Casa";

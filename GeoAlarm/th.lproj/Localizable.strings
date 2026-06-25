@@ -341,3 +341,27 @@ Du Setting - Auto-SMS (Mai tong anumat) samrap tang kha thang mot.\n• «แจ
 /* AlarmFiringView */
 "Snooze 10 min" = "เลื่อนนาฬิกา 10 นาที";
 "Slide to dismiss" = "เลื่อนเพื่อปิด";
+
+// --- Added: missing UI translations ---
+"Minimum Requirements" = "ความต้องการขั้นต่ำ";
+"No GeoNap Alarms Yet" = "ยังไม่มีการปลุกของ GeoNap";
+"Use My Location" = "ใช้ตำแหน่งของฉัน";
+"Tap the map to set alarm location" = "แตะแผนที่เพื่อตั้งตำแหน่งปลุก";
+"Tap to move the pin" = "แตะเพื่อย้ายหมุด";
+"Share your location when this alarm fires" = "แชร์ตำแหน่งของคุณเมื่อการปลุกนี้ทำงาน";
+"Sound" = "เสียง";
+"Save Anyway" = "บันทึกต่อไป";
+"Check alarm location" = "ตรวจสอบตำแหน่งปลุก";
+"Add at least one contact to enable Auto-Notify." = "เพิ่มผู้ติดต่ออย่างน้อยหนึ่งรายเพื่อเปิดการแจ้งเตือนอัตโนมัติ";
+"No contacts saved for this alarm." = "ไม่มีผู้ติดต่อที่บันทึกไว้สำหรับการปลุกนี้";
+"Phone number (e.g. +1 555-1234)." = "หมายเลขโทรศัพท์ (เช่น +1 555-1234)";
+"Select the language you'd like to use in GeoNap. You can change this at any time in Settings." = "เลือกภาษาที่คุณต้องการใช้ใน GeoNap คุณเปลี่ยนได้ทุกเมื่อในการตั้งค่า";
+"SMS contacts require your approval before the message is sent. The Messages app will open for confirmation when the alarm fires." = "ผู้ติดต่อทาง SMS ต้องได้รับการอนุมัติจากคุณก่อนส่งข้อความ แอป Messages จะเปิดขึ้นเพื่อยืนยันเมื่อการปลุกทำงาน";
+"Logging is ON. Detailed activity is being recorded to GeoNapDebug.log in the GeoNap folder in the Files app. Disable when no longer needed." = "การบันทึกล็อกเปิดอยู่ กิจกรรมโดยละเอียดกำลังถูกบันทึกไปยัง GeoNapDebug.log ในโฟลเดอร์ GeoNap ในแอปไฟล์ ปิดเมื่อไม่ต้องการใช้แล้ว";
+"GeoNap wakes you up when your device enters or leaves a location — not at a set time. Perfect for trains, buses, and long rides." = "GeoNap จะปลุกคุณเมื่ออุปกรณ์เข้าหรือออกจากสถานที่ ไม่ใช่ตามเวลาที่ตั้งไว้ เหมาะสำหรับรถไฟ รถบัส และการเดินทางไกล";
+"Only want the alarm to fire during your morning commute? Set a time window and GeoNap will ignore the location outside those hours." = "ต้องการให้ปลุกเฉพาะช่วงเดินทางตอนเช้าใช่ไหม? ตั้งช่วงเวลา แล้ว GeoNap จะไม่สนใจตำแหน่งนอกช่วงเวลานั้น";
+"GeoNap monitors your position in the background so it can alert you even while your phone is locked. Your location is never shared or stored outside the app." = "GeoNap ติดตามตำแหน่งของคุณในเบื้องหลังเพื่อแจ้งเตือนคุณได้แม้ขณะล็อกหน้าจอ ตำแหน่งของคุณจะไม่ถูกแชร์หรือจัดเก็บนอกแอป";
+"You're about %d m outside this alarm's area. A departure alarm only fires when you LEAVE the circle — it won't trigger until you're inside it first." = "คุณอยู่นอกพื้นที่ของการปลุกนี้ประมาณ %d ม. การปลุกขาออกจะทำงานเฉพาะเมื่อคุณ “ออก” จากวงกลม จะยังไม่ทำงานจนกว่าคุณจะอยู่ข้างในก่อน";
+"You're already inside this alarm's area. An arrival alarm only fires when you ENTER — it won't trigger until you leave and come back." = "คุณอยู่ในพื้นที่ของการปลุกนี้อยู่แล้ว การปลุกขาเข้าจะทำงานเฉพาะเมื่อคุณ “เข้า” มา จะยังไม่ทำงานจนกว่าคุณจะออกไปแล้วกลับมา";
+"Apple Home Automation" = "ระบบอัตโนมัติ Apple Home";
+"help.body.appleAutomation" = "GeoNap ทำงานร่วมกับ Apple HomeKit และแอปทางลัด เพื่อให้บ้านพร้อมทันทีที่คุณมาถึง: เปิดไฟ ตั้งอุณหภูมิ เปิดม่าน\n\nการตั้งค่า:\n1. เปิดแอปทางลัด → ระบบอัตโนมัติ → + → ระบบอัตโนมัติส่วนตัว\n2. เลือก \"เมื่อมาถึงสถานที่\" → ตั้งเป็นตำแหน่งเดียวกับการปลุกที่บ้านใน GeoNap\n3. เพิ่มการทำงานของบ้าน: ไฟ เทอร์โมสตัท หรือฉากทั้งชุด (เช่น \"ยินดีต้อนรับกลับบ้าน\")\n4. บันทึก ระบบอัตโนมัติจะทำงานในเบื้องหลังโดยไม่ต้องแตะใด ๆ\n\nหากต้องการให้มีเสียงปลุกด้วย:\n5. ใน GeoNap แก้ไขการปลุกที่บ้าน → เรียกใช้ทางลัด → ใส่ชื่อทางลัด\n6. GeoNap จะส่งเสียงปลุกและเปิดทางลัดไปพร้อมกัน\n\nใช้ได้กับอุปกรณ์ที่รองรับ HomeKit ทุกชนิด:\n• ไฟและฉากแสงไฟ\n• ทำความร้อนและทำความเย็น (เทอร์โมสตัท)\n• เครื่องปรับอากาศ\n• ล็อกประตู\n• ม่านและมู่ลี่\n• พัดลมและการระบายอากาศ\n• ฉาก \"ถึงบ้าน\" ใด ๆ ในแอปบ้าน";

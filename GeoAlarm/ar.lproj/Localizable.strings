@@ -341,3 +341,27 @@ Raj3 al-i3dadat - SMS tlqaei (bdon mwafqa) llit3dad alkaml.\n• «إشعار ج
 /* AlarmFiringView */
 "Snooze 10 min" = "تأجيل 10 دقائق";
 "Slide to dismiss" = "اسحب للرفض";
+
+// --- Added: missing UI translations ---
+"Minimum Requirements" = "الحد الأدنى من المتطلبات";
+"No GeoNap Alarms Yet" = "لا توجد منبّهات GeoNap بعد";
+"Use My Location" = "استخدام موقعي";
+"Tap the map to set alarm location" = "اضغط على الخريطة لتحديد موقع المنبّه";
+"Tap to move the pin" = "اضغط لتحريك العلامة";
+"Share your location when this alarm fires" = "شارك موقعك عند إطلاق هذا المنبّه";
+"Sound" = "الصوت";
+"Save Anyway" = "حفظ على أي حال";
+"Check alarm location" = "تحقّق من موقع المنبّه";
+"Add at least one contact to enable Auto-Notify." = "أضف جهة اتصال واحدة على الأقل لتفعيل الإشعار التلقائي.";
+"No contacts saved for this alarm." = "لا توجد جهات اتصال محفوظة لهذا المنبّه.";
+"Phone number (e.g. +1 555-1234)." = "رقم الهاتف (مثال: +1 555-1234).";
+"Select the language you'd like to use in GeoNap. You can change this at any time in Settings." = "اختر اللغة التي تريد استخدامها في GeoNap. يمكنك تغييرها في أي وقت من الإعدادات.";
+"SMS contacts require your approval before the message is sent. The Messages app will open for confirmation when the alarm fires." = "تتطلب جهات اتصال الرسائل القصيرة موافقتك قبل إرسال الرسالة. سيُفتح تطبيق الرسائل للتأكيد عند إطلاق المنبّه.";
+"Logging is ON. Detailed activity is being recorded to GeoNapDebug.log in the GeoNap folder in the Files app. Disable when no longer needed." = "التسجيل مُفعَّل. يتم تسجيل النشاط المفصّل في GeoNapDebug.log داخل مجلد GeoNap في تطبيق الملفات. عطّله عند عدم الحاجة إليه.";
+"GeoNap wakes you up when your device enters or leaves a location — not at a set time. Perfect for trains, buses, and long rides." = "يوقظك GeoNap عندما يدخل جهازك مكاناً أو يغادره، وليس في وقت محدّد. مثالي للقطارات والحافلات والرحلات الطويلة.";
+"Only want the alarm to fire during your morning commute? Set a time window and GeoNap will ignore the location outside those hours." = "تريد أن ينطلق المنبّه أثناء تنقّل الصباح فقط؟ حدّد نافذة زمنية وسيتجاهل GeoNap الموقع خارج تلك الساعات.";
+"GeoNap monitors your position in the background so it can alert you even while your phone is locked. Your location is never shared or stored outside the app." = "يراقب GeoNap موقعك في الخلفية لتنبيهك حتى عندما يكون هاتفك مقفلاً. لا تتم مشاركة موقعك أو تخزينه خارج التطبيق إطلاقاً.";
+"You're about %d m outside this alarm's area. A departure alarm only fires when you LEAVE the circle — it won't trigger until you're inside it first." = "أنت على بُعد حوالي %d م خارج منطقة هذا المنبّه. منبّه المغادرة ينطلق فقط عند مغادرتك الدائرة، ولن ينطلق حتى تكون داخلها أولاً.";
+"You're already inside this alarm's area. An arrival alarm only fires when you ENTER — it won't trigger until you leave and come back." = "أنت بالفعل داخل منطقة هذا المنبّه. منبّه الوصول ينطلق فقط عند دخولك، ولن ينطلق حتى تخرج ثم تعود.";
+"Apple Home Automation" = "أتمتة Apple Home";
+"help.body.appleAutomation" = "يتكامل GeoNap مع Apple HomeKit وتطبيق الاختصارات ليكون منزلك جاهزاً لحظة وصولك: إضاءة مُشغّلة، ودرجة حرارة مضبوطة، وستائر مفتوحة.\n\nالإعداد:\n1. افتح تطبيق الاختصارات ← الأتمتة ← + ← أتمتة شخصية.\n2. اختر «الوصول إلى موقع» ← اضبط نفس موقع منبّه المنزل في GeoNap.\n3. أضف إجراءات المنزل: الإضاءة أو منظّم الحرارة أو مشهداً كاملاً (مثل «أهلاً بعودتك»).\n4. احفظ. تعمل الأتمتة في الخلفية دون أي نقر.\n\nولتشغيل صوت منبّه أيضاً:\n5. في GeoNap، عدّل منبّه المنزل ← تشغيل اختصار ← أدخل اسم الاختصار.\n6. يُطلق GeoNap صوت المنبّه ويفتح الاختصار في الوقت نفسه.\n\nيعمل مع أي جهاز متوافق مع HomeKit:\n• الإضاءة ومشاهد الإضاءة\n• التدفئة والتبريد (منظّم الحرارة)\n• تكييف الهواء\n• أقفال الأبواب\n• الستائر والمظلات\n• المراوح والتهوية\n• أي مشهد «الوصول إلى المنزل» في تطبيق المنزل";

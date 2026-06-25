@@ -341,3 +341,27 @@ Shosai na settei teijun ni tsuite wa Settei - Jido SMS (Shonin fuyou) wo go ran 
 /* AlarmFiringView */
 "Snooze 10 min" = "10分スヌーズ";
 "Slide to dismiss" = "スライドして解除";
+
+// --- Added: missing UI translations ---
+"Minimum Requirements" = "最小要件";
+"No GeoNap Alarms Yet" = "GeoNap アラームはまだありません";
+"Use My Location" = "現在地を使用";
+"Tap the map to set alarm location" = "地図をタップしてアラームの場所を設定";
+"Tap to move the pin" = "タップしてピンを移動";
+"Share your location when this alarm fires" = "このアラームが鳴ったら現在地を共有";
+"Sound" = "サウンド";
+"Save Anyway" = "このまま保存";
+"Check alarm location" = "アラームの場所を確認";
+"Add at least one contact to enable Auto-Notify." = "自動通知を有効にするには連絡先を 1 件以上追加してください。";
+"No contacts saved for this alarm." = "このアラームに保存された連絡先はありません。";
+"Phone number (e.g. +1 555-1234)." = "電話番号（例：+1 555-1234）。";
+"Select the language you'd like to use in GeoNap. You can change this at any time in Settings." = "GeoNap で使用する言語を選択してください。設定でいつでも変更できます。";
+"SMS contacts require your approval before the message is sent. The Messages app will open for confirmation when the alarm fires." = "SMS の連絡先には送信前にあなたの承認が必要です。アラームが鳴ると確認のためメッセージ App が開きます。";
+"Logging is ON. Detailed activity is being recorded to GeoNapDebug.log in the GeoNap folder in the Files app. Disable when no longer needed." = "ログ記録がオンです。詳細な動作はファイル App の GeoNap フォルダ内 GeoNapDebug.log に記録されます。不要になったら無効にしてください。";
+"GeoNap wakes you up when your device enters or leaves a location — not at a set time. Perfect for trains, buses, and long rides." = "GeoNap は時刻ではなく、デバイスが場所に出入りしたときに起こします。電車・バス・長距離移動に最適です。";
+"Only want the alarm to fire during your morning commute? Set a time window and GeoNap will ignore the location outside those hours." = "朝の通勤中だけアラームを鳴らしたいですか？ 時間帯を設定すれば、その時間外は GeoNap が場所を無視します。";
+"GeoNap monitors your position in the background so it can alert you even while your phone is locked. Your location is never shared or stored outside the app." = "GeoNap はバックグラウンドで位置を監視し、iPhone がロック中でも通知できます。あなたの位置情報がアプリの外で共有・保存されることはありません。";
+"You're about %d m outside this alarm's area. A departure alarm only fires when you LEAVE the circle — it won't trigger until you're inside it first." = "このアラームのエリアから約 %d m 外側にいます。出発アラームは円から「出た」ときだけ鳴ります。先に円の中に入るまで作動しません。";
+"You're already inside this alarm's area. An arrival alarm only fires when you ENTER — it won't trigger until you leave and come back." = "すでにこのアラームのエリア内にいます。到着アラームは円に「入った」ときだけ鳴ります。いったん出て戻るまで作動しません。";
+"Apple Home Automation" = "Apple ホームのオートメーション";
+"help.body.appleAutomation" = "GeoNap は Apple HomeKit とショートカット App と連携し、到着した瞬間に家を整えます。照明オン、温度設定、ブラインドを開く、など。\n\n設定:\n1. ショートカット App を開く → オートメーション → + → 個人用オートメーション。\n2. 「到着」を選択 → GeoNap の自宅アラームと同じ場所を設定。\n3. ホームのアクションを追加：照明、サーモスタット、またはシーン全体（例：「おかえりなさい」）。\n4. 保存。オートメーションはバックグラウンドで実行され、操作は不要です。\n\nアラーム音も鳴らすには:\n5. GeoNap で自宅アラームを編集 → ショートカットを実行 → ショートカット名を入力。\n6. GeoNap が音を鳴らすと同時にショートカットを開きます。\n\nHomeKit 対応の機器で動作します:\n• 照明と照明シーン\n• 暖房・冷房（サーモスタット）\n• エアコン\n• ドアの鍵\n• ブラインドやシェード\n• 扇風機・換気\n• ホーム App の「帰宅」シーン";

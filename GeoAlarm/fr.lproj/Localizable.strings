@@ -324,3 +324,27 @@ Consultez Reglages - Auto-SMS (Sans approbation) pour les instructions etape par
 /* AlarmFiringView */
 "Snooze 10 min" = "Reporter 10 min";
 "Slide to dismiss" = "Faire glisser pour arrêter";
+
+// --- Added: missing UI translations ---
+"Minimum Requirements" = "Configuration minimale";
+"No GeoNap Alarms Yet" = "Aucune alarme GeoNap";
+"Use My Location" = "Utiliser ma position";
+"Tap the map to set alarm location" = "Touchez la carte pour définir le lieu de l'alarme";
+"Tap to move the pin" = "Touchez pour déplacer le repère";
+"Share your location when this alarm fires" = "Partagez votre position lorsque cette alarme se déclenche";
+"Sound" = "Son";
+"Save Anyway" = "Enregistrer quand même";
+"Check alarm location" = "Vérifiez le lieu de l'alarme";
+"Add at least one contact to enable Auto-Notify." = "Ajoutez au moins un contact pour activer la notification automatique.";
+"No contacts saved for this alarm." = "Aucun contact enregistré pour cette alarme.";
+"Phone number (e.g. +1 555-1234)." = "Numéro de téléphone (p. ex. +1 555-1234).";
+"Select the language you'd like to use in GeoNap. You can change this at any time in Settings." = "Choisissez la langue que vous souhaitez utiliser dans GeoNap. Vous pouvez la modifier à tout moment dans les Réglages.";
+"SMS contacts require your approval before the message is sent. The Messages app will open for confirmation when the alarm fires." = "Les contacts SMS nécessitent votre approbation avant l'envoi du message. L'app Messages s'ouvrira pour confirmation au déclenchement de l'alarme.";
+"Logging is ON. Detailed activity is being recorded to GeoNapDebug.log in the GeoNap folder in the Files app. Disable when no longer needed." = "La journalisation est ACTIVÉE. L'activité détaillée est enregistrée dans GeoNapDebug.log, dans le dossier GeoNap de l'app Fichiers. Désactivez-la quand elle n'est plus nécessaire.";
+"GeoNap wakes you up when your device enters or leaves a location — not at a set time. Perfect for trains, buses, and long rides." = "GeoNap vous réveille quand votre appareil entre ou sort d'un lieu, et non à une heure fixe. Parfait pour les trains, les bus et les longs trajets.";
+"Only want the alarm to fire during your morning commute? Set a time window and GeoNap will ignore the location outside those hours." = "Vous voulez que l'alarme se déclenche uniquement le matin ? Définissez une plage horaire et GeoNap ignorera le lieu en dehors de ces heures.";
+"GeoNap monitors your position in the background so it can alert you even while your phone is locked. Your location is never shared or stored outside the app." = "GeoNap surveille votre position en arrière-plan pour vous alerter même lorsque votre téléphone est verrouillé. Votre position n'est jamais partagée ni stockée hors de l'app.";
+"You're about %d m outside this alarm's area. A departure alarm only fires when you LEAVE the circle — it won't trigger until you're inside it first." = "Vous êtes à environ %d m hors de la zone de cette alarme. Une alarme de départ se déclenche seulement quand vous QUITTEZ le cercle ; elle ne se déclenchera pas tant que vous n'y êtes pas d'abord entré.";
+"You're already inside this alarm's area. An arrival alarm only fires when you ENTER — it won't trigger until you leave and come back." = "Vous êtes déjà dans la zone de cette alarme. Une alarme d'arrivée se déclenche seulement quand vous ENTREZ ; elle ne se déclenchera pas tant que vous n'êtes pas sorti puis revenu.";
+"Apple Home Automation" = "Automatisation Apple Home";
+"help.body.appleAutomation" = "GeoNap s'intègre à Apple HomeKit et à l'app Raccourcis pour que votre maison soit prête dès votre arrivée : lumières allumées, température réglée, volets ouverts.\n\nConfiguration :\n1. Ouvrez l'app Raccourcis → Automatisation → + → Automatisation personnelle.\n2. Choisissez Arriver à un lieu → utilisez le même lieu que votre alarme « maison » dans GeoNap.\n3. Ajoutez des actions Maison : lumières, thermostat ou une scène complète (p. ex. « Bienvenue à la maison »).\n4. Enregistrez. L'automatisation s'exécute en arrière-plan, sans aucune action.\n\nPour avoir aussi une alarme sonore :\n5. Dans GeoNap, modifiez votre alarme « maison » → Exécuter le raccourci → saisissez le nom du raccourci.\n6. GeoNap déclenche l'alarme sonore et ouvre le raccourci en même temps.\n\nFonctionne avec tout appareil compatible HomeKit :\n• Lumières et scènes lumineuses\n• Chauffage et climatisation (thermostat)\n• Climatisation\n• Serrures de porte\n• Volets et stores\n• Ventilateurs et ventilation\n• Toute scène « Arriver à la maison » dans l'app Maison";

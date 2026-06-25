@@ -345,3 +345,27 @@ Xem Cai dat - SMS Tu dong (Khong can phe duyet) de biet huong dan tung buoc.\n\n
 /* AlarmFiringView */
 "Snooze 10 min" = "Báo lại 10 phút";
 "Slide to dismiss" = "Trượt để tắt";
+
+// --- Added: missing UI translations ---
+"Minimum Requirements" = "Yêu cầu tối thiểu";
+"No GeoNap Alarms Yet" = "Chưa có báo thức GeoNap";
+"Use My Location" = "Dùng vị trí của tôi";
+"Tap the map to set alarm location" = "Chạm vào bản đồ để đặt vị trí báo thức";
+"Tap to move the pin" = "Chạm để di chuyển ghim";
+"Share your location when this alarm fires" = "Chia sẻ vị trí của bạn khi báo thức này kêu";
+"Sound" = "Âm thanh";
+"Save Anyway" = "Vẫn lưu";
+"Check alarm location" = "Kiểm tra vị trí báo thức";
+"Add at least one contact to enable Auto-Notify." = "Thêm ít nhất một liên hệ để bật Tự động thông báo.";
+"No contacts saved for this alarm." = "Chưa lưu liên hệ nào cho báo thức này.";
+"Phone number (e.g. +1 555-1234)." = "Số điện thoại (ví dụ: +1 555-1234).";
+"Select the language you'd like to use in GeoNap. You can change this at any time in Settings." = "Chọn ngôn ngữ bạn muốn dùng trong GeoNap. Bạn có thể đổi bất cứ lúc nào trong Cài đặt.";
+"SMS contacts require your approval before the message is sent. The Messages app will open for confirmation when the alarm fires." = "Liên hệ SMS cần bạn phê duyệt trước khi gửi tin nhắn. Ứng dụng Tin nhắn sẽ mở để xác nhận khi báo thức kêu.";
+"Logging is ON. Detailed activity is being recorded to GeoNapDebug.log in the GeoNap folder in the Files app. Disable when no longer needed." = "Đang BẬT ghi nhật ký. Hoạt động chi tiết đang được ghi vào GeoNapDebug.log trong thư mục GeoNap của ứng dụng Tệp. Tắt khi không còn cần.";
+"GeoNap wakes you up when your device enters or leaves a location — not at a set time. Perfect for trains, buses, and long rides." = "GeoNap đánh thức bạn khi thiết bị vào hoặc rời một địa điểm — không theo giờ định sẵn. Hoàn hảo cho tàu, xe buýt và những chuyến đi dài.";
+"Only want the alarm to fire during your morning commute? Set a time window and GeoNap will ignore the location outside those hours." = "Chỉ muốn báo thức kêu trong lúc đi làm buổi sáng? Đặt khung giờ và GeoNap sẽ bỏ qua vị trí ngoài những giờ đó.";
+"GeoNap monitors your position in the background so it can alert you even while your phone is locked. Your location is never shared or stored outside the app." = "GeoNap theo dõi vị trí của bạn ở chế độ nền để cảnh báo ngay cả khi điện thoại đang khóa. Vị trí của bạn không bao giờ được chia sẻ hay lưu ngoài ứng dụng.";
+"You're about %d m outside this alarm's area. A departure alarm only fires when you LEAVE the circle — it won't trigger until you're inside it first." = "Bạn đang ở ngoài khu vực báo thức khoảng %d m. Báo thức khi rời đi chỉ kêu khi bạn RỜI khỏi vòng tròn — nó sẽ không kích hoạt cho đến khi bạn ở bên trong trước.";
+"You're already inside this alarm's area. An arrival alarm only fires when you ENTER — it won't trigger until you leave and come back." = "Bạn đã ở trong khu vực báo thức này. Báo thức khi đến chỉ kêu khi bạn VÀO — nó sẽ không kích hoạt cho đến khi bạn rời đi rồi quay lại.";
+"Apple Home Automation" = "Tự động hóa Apple Home";
+"help.body.appleAutomation" = "GeoNap tích hợp với Apple HomeKit và ứng dụng Phím tắt để nhà bạn sẵn sàng ngay khi bạn về: bật đèn, đặt nhiệt độ, mở rèm.\n\nThiết lập:\n1. Mở ứng dụng Phím tắt → Tự động hóa → + → Tự động hóa cá nhân.\n2. Chọn \"Khi đến một địa điểm\" → đặt cùng vị trí với báo thức ở nhà trong GeoNap.\n3. Thêm thao tác Nhà: đèn, bộ điều nhiệt, hoặc cả một cảnh (ví dụ \"Chào mừng về nhà\").\n4. Lưu. Tự động hóa chạy ở chế độ nền — không cần chạm gì cả.\n\nĐể cũng có âm báo thức:\n5. Trong GeoNap, sửa báo thức ở nhà → Chạy phím tắt → nhập tên phím tắt.\n6. GeoNap phát âm báo thức và mở phím tắt cùng lúc.\n\nHoạt động với mọi thiết bị tương thích HomeKit:\n• Đèn và cảnh ánh sáng\n• Sưởi và làm mát (bộ điều nhiệt)\n• Điều hòa không khí\n• Khóa cửa\n• Rèm và mành cửa sổ\n• Quạt và thông gió\n• Bất kỳ cảnh \"Về đến nhà\" nào trong ứng dụng Nhà";

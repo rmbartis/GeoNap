@@ -335,3 +335,27 @@
 /* AlarmFiringView */
 "Snooze 10 min" = "贪睡 10 分钟";
 "Slide to dismiss" = "滑动以解除";
+
+// --- Added: missing UI translations ---
+"Minimum Requirements" = "最低要求";
+"No GeoNap Alarms Yet" = "还没有 GeoNap 闹钟";
+"Use My Location" = "使用我的位置";
+"Tap the map to set alarm location" = "点按地图设置闹钟位置";
+"Tap to move the pin" = "点按以移动图钉";
+"Share your location when this alarm fires" = "此闹钟触发时分享你的位置";
+"Sound" = "声音";
+"Save Anyway" = "仍然保存";
+"Check alarm location" = "检查闹钟位置";
+"Add at least one contact to enable Auto-Notify." = "添加至少一个联系人以启用自动通知。";
+"No contacts saved for this alarm." = "此闹钟没有已保存的联系人。";
+"Phone number (e.g. +1 555-1234)." = "电话号码（例如 +1 555-1234）。";
+"Select the language you'd like to use in GeoNap. You can change this at any time in Settings." = "选择你想在 GeoNap 中使用的语言。你可以随时在“设置”中更改。";
+"SMS contacts require your approval before the message is sent. The Messages app will open for confirmation when the alarm fires." = "短信联系人在发送前需要你的确认。闹钟触发时会打开“信息”App 以供确认。";
+"Logging is ON. Detailed activity is being recorded to GeoNapDebug.log in the GeoNap folder in the Files app. Disable when no longer needed." = "日志记录已开启。详细活动正记录到“文件”App 中 GeoNap 文件夹内的 GeoNapDebug.log。不需要时请关闭。";
+"GeoNap wakes you up when your device enters or leaves a location — not at a set time. Perfect for trains, buses, and long rides." = "GeoNap 在你的设备进入或离开某个地点时唤醒你，而不是在固定时间。非常适合火车、公交和长途出行。";
+"Only want the alarm to fire during your morning commute? Set a time window and GeoNap will ignore the location outside those hours." = "只想在早上通勤时触发闹钟？设置一个时间段，GeoNap 会在该时段之外忽略此位置。";
+"GeoNap monitors your position in the background so it can alert you even while your phone is locked. Your location is never shared or stored outside the app." = "GeoNap 在后台监测你的位置，因此即使手机锁定也能提醒你。你的位置绝不会在 App 之外被分享或存储。";
+"You're about %d m outside this alarm's area. A departure alarm only fires when you LEAVE the circle — it won't trigger until you're inside it first." = "你在此闹钟区域外约 %d 米。出发闹钟只有在你“离开”圆圈时才会触发；需先进入圆圈内才会生效。";
+"You're already inside this alarm's area. An arrival alarm only fires when you ENTER — it won't trigger until you leave and come back." = "你已在此闹钟区域内。到达闹钟只有在你“进入”时才会触发；需先离开再返回才会生效。";
+"Apple Home Automation" = "Apple 家庭自动化";
+"help.body.appleAutomation" = "GeoNap 与 Apple HomeKit 和“快捷指令”App 集成，让你一到家家里就准备就绪：开灯、设定温度、拉开窗帘。\n\n设置：\n1. 打开“快捷指令”App → 自动化 → + → 个人自动化。\n2. 选择“当我到达某地”→ 设置为与 GeoNap 家庭闹钟相同的位置。\n3. 添加“家庭”操作：选择灯光、恒温器或整套场景（例如“欢迎回家”）。\n4. 保存。自动化在后台运行，无需任何操作。\n\n如需同时响起闹钟声：\n5. 在 GeoNap 中编辑家庭闹钟 → 运行快捷指令 → 输入快捷指令名称。\n6. GeoNap 会同时响起声音并打开该快捷指令。\n\n适用于任何兼容 HomeKit 的设备：\n• 灯光与灯光场景\n• 制热与制冷（恒温器）\n• 空调\n• 门锁\n• 窗帘与遮阳帘\n• 风扇与通风\n• “家庭”App 中的任意“到家”场景";

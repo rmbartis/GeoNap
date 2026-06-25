@@ -18,6 +18,12 @@ struct NotificationSound: Identifiable, Hashable, Codable {
     static let `default` = NotificationSound(id: "default")
     static let critical  = NotificationSound(id: "critical")
 
+    /// Bundled WAV used as the looping tone for the "Default" sound. The real
+    /// system default sound can't be looped on the locked screen, so "Default"
+    /// loops this neutral tone instead. The leading "_" keeps it out of the
+    /// user-facing sound picker (see `bundledSounds`).
+    static let defaultLoopTone = "_DefaultAlarm.wav"
+
     private static let systemIDs: Set<String> = ["vibrate", "default", "critical"]
     var isSystem: Bool { Self.systemIDs.contains(id) }
 
@@ -91,6 +97,7 @@ struct NotificationSound: Identifiable, Hashable, Codable {
         let allPaths = Bundle.main.paths(forResourcesOfType: "wav", inDirectory: nil)
                      + Bundle.main.paths(forResourcesOfType: "wav", inDirectory: "Sounds")
         return Array(Set(allPaths.map { URL(fileURLWithPath: $0).lastPathComponent }))
+            .filter { !$0.hasPrefix("_") }   // exclude reserved tones (e.g. _DefaultAlarm.wav)
             .sorted()
             .map { NotificationSound(id: $0) }
     }

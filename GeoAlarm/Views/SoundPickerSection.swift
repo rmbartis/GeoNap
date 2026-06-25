@@ -46,9 +46,15 @@ final class SoundPreviewPlayer: NSObject, ObservableObject, AVAudioPlayerDelegat
             AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
             scheduleStop(after: 0.6)
         case "default", "critical":
-            // 1007 = tri-tone; stable since iOS 4; respects ringer switch.
-            AudioServicesPlayAlertSound(SystemSoundID(1007))
-            scheduleStop(after: 1.8)
+            // Preview the actual neutral tone the "Default" alarm loops, so the
+            // preview matches what fires. Fall back to the tri-tone if missing.
+            if NotificationSound(id: NotificationSound.defaultLoopTone).bundleURL != nil {
+                playBundled(NotificationSound(id: NotificationSound.defaultLoopTone))
+                scheduleStop(after: 3.4)
+            } else {
+                AudioServicesPlayAlertSound(SystemSoundID(1007))
+                scheduleStop(after: 1.8)
+            }
         default:
             playBundled(sound)
         }

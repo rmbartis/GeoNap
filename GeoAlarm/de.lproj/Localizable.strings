@@ -320,3 +320,27 @@ Siehe Einstellungen - Auto-SMS (Keine Bestatigung erforderlich) fur die vollstan
 /* AlarmFiringView */
 "Snooze 10 min" = "10 Min. schlummern";
 "Slide to dismiss" = "Zum Beenden wischen";
+
+// --- Added: missing UI translations ---
+"Minimum Requirements" = "Mindestanforderungen";
+"No GeoNap Alarms Yet" = "Noch keine GeoNap-Alarme";
+"Use My Location" = "Meinen Standort verwenden";
+"Tap the map to set alarm location" = "Tippe auf die Karte, um den Alarmort festzulegen";
+"Tap to move the pin" = "Tippen, um die Stecknadel zu verschieben";
+"Share your location when this alarm fires" = "Teile deinen Standort, wenn dieser Alarm auslöst";
+"Sound" = "Ton";
+"Save Anyway" = "Trotzdem speichern";
+"Check alarm location" = "Alarmort prüfen";
+"Add at least one contact to enable Auto-Notify." = "Füge mindestens einen Kontakt hinzu, um die automatische Benachrichtigung zu aktivieren.";
+"No contacts saved for this alarm." = "Keine Kontakte für diesen Alarm gespeichert.";
+"Phone number (e.g. +1 555-1234)." = "Telefonnummer (z. B. +1 555-1234).";
+"Select the language you'd like to use in GeoNap. You can change this at any time in Settings." = "Wähle die Sprache, die du in GeoNap verwenden möchtest. Du kannst sie jederzeit in den Einstellungen ändern.";
+"SMS contacts require your approval before the message is sent. The Messages app will open for confirmation when the alarm fires." = "SMS-Kontakte erfordern deine Bestätigung, bevor die Nachricht gesendet wird. Die Nachrichten-App öffnet sich zur Bestätigung, wenn der Alarm auslöst.";
+"Logging is ON. Detailed activity is being recorded to GeoNapDebug.log in the GeoNap folder in the Files app. Disable when no longer needed." = "Protokollierung ist EIN. Detaillierte Aktivität wird in GeoNapDebug.log im GeoNap-Ordner der Dateien-App aufgezeichnet. Deaktiviere sie, wenn sie nicht mehr benötigt wird.";
+"GeoNap wakes you up when your device enters or leaves a location — not at a set time. Perfect for trains, buses, and long rides." = "GeoNap weckt dich, wenn dein Gerät einen Ort betritt oder verlässt – nicht zu einer festen Zeit. Perfekt für Züge, Busse und lange Fahrten.";
+"Only want the alarm to fire during your morning commute? Set a time window and GeoNap will ignore the location outside those hours." = "Soll der Alarm nur auf dem morgendlichen Arbeitsweg auslösen? Lege ein Zeitfenster fest, und GeoNap ignoriert den Ort außerhalb dieser Stunden.";
+"GeoNap monitors your position in the background so it can alert you even while your phone is locked. Your location is never shared or stored outside the app." = "GeoNap überwacht deine Position im Hintergrund, um dich auch bei gesperrtem Telefon zu warnen. Dein Standort wird nie außerhalb der App geteilt oder gespeichert.";
+"You're about %d m outside this alarm's area. A departure alarm only fires when you LEAVE the circle — it won't trigger until you're inside it first." = "Du bist etwa %d m außerhalb des Alarmbereichs. Ein Abfahrtsalarm löst nur aus, wenn du den Kreis VERLÄSST – er wird erst ausgelöst, wenn du zuerst darin bist.";
+"You're already inside this alarm's area. An arrival alarm only fires when you ENTER — it won't trigger until you leave and come back." = "Du bist bereits im Alarmbereich. Ein Ankunftsalarm löst nur aus, wenn du ihn BETRITTST – er wird erst ausgelöst, wenn du gehst und zurückkommst.";
+"Apple Home Automation" = "Apple Home-Automation";
+"help.body.appleAutomation" = "GeoNap lässt sich mit Apple HomeKit und der Kurzbefehle-App verbinden, damit dein Zuhause bereit ist, sobald du ankommst: Licht an, Temperatur eingestellt, Jalousien geöffnet.\n\nEinrichtung:\n1. Öffne die Kurzbefehle-App → Automation → + → Persönliche Automation.\n2. Wähle Bei Ankunft an einem Ort → denselben Ort wie deinen GeoNap-Heimalarm.\n3. Füge Home-Aktionen hinzu: Licht, Thermostat oder eine ganze Szene (z. B. „Willkommen zu Hause\").\n4. Sichern. Die Automation läuft im Hintergrund – kein Tippen nötig.\n\nFür zusätzlich einen Alarmton:\n5. Bearbeite in GeoNap deinen Heimalarm → Kurzbefehl ausführen → gib den Namen des Kurzbefehls ein.\n6. GeoNap löst den hörbaren Alarm aus und öffnet gleichzeitig den Kurzbefehl.\n\nFunktioniert mit jedem HomeKit-kompatiblen Gerät:\n• Lampen und Lichtszenen\n• Heizung und Kühlung (Thermostat)\n• Klimaanlage\n• Türschlösser\n• Jalousien und Rollos\n• Ventilatoren und Lüftung\n• Jede „Zuhause ankommen\"-Szene in der Home-App";

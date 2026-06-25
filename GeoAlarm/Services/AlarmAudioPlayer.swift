@@ -137,7 +137,12 @@ final class AlarmAudioPlayer {
         case "vibrate":
             startVibrateLoop()
         case "default", "critical":
-            if let fallback = NotificationSound.bundledSounds.first {
+            // "Default" loops a dedicated neutral tone — the real system default
+            // sound can't be looped on the locked screen. Fall back to any bundled
+            // sound, then the system tri-tone, only if the tone is missing.
+            if NotificationSound(id: NotificationSound.defaultLoopTone).bundleURL != nil {
+                startBundledLoop(soundID: NotificationSound.defaultLoopTone)
+            } else if let fallback = NotificationSound.bundledSounds.first {
                 startBundledLoop(soundID: fallback.id)
             } else {
                 startSystemSoundLoop()
