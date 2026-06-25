@@ -274,6 +274,7 @@ final class AlarmManager: NSObject, ObservableObject {
 
     /// Re-register all active alarms — call on launch or after permission grant.
     func reregisterAllRegions() {
+        deactivateExpiredWindowAlarms()   // backstop: clean up alarms whose window ended while suspended
         locationManager?.stopMonitoringAll()
         alarms.filter(\.isActive).forEach { startMonitoring($0) }
         refreshKeepAlive()
@@ -303,6 +304,10 @@ final class AlarmManager: NSObject, ObservableObject {
     }
 
     func handleRegionEvent(regionID: String, event: RegionEvent) {
+
+        // Opportunistic backstop: any region event means the app is awake, so
+        // clean up windowed alarms whose window ended while we were suspended.
+        deactivateExpiredWindowAlarms()
 
         // ── 1. Fire the alarm ──────────────────────────────────────────────
         // Match an ACTIVE alarm whose trigger matches this event AND whose
@@ -349,7 +354,10 @@ final class AlarmManager: NSObject, ObservableObject {
 
     // MARK: - Local notification
 
-    private func fireNotification(for alarm: NapAlarm) {
+    /// Builds the alarm notification content (title, body, sound, category, userInfo).
+    /// Shared by the initial geo-fence fire and the snooze re-ring so they look and
+    /// behave identically.
+    private func makeAlarmContent(for alarm: NapAlarm) -> UNMutableNotificationContent {
         let content = UNMutableNotificationContent()
         content.title = "📍 \(alarm.name)"
         content.body = alarm.note.isEmpty
@@ -366,10 +374,13 @@ final class AlarmManager: NSObject, ObservableObject {
         content.interruptionLevel = .timeSensitive
         content.categoryIdentifier = NotificationCategory.geoAlarm
         content.userInfo = buildNotifyUserInfo(for: alarm)
+        return content
+    }
 
+    private func fireNotification(for alarm: NapAlarm) {
         let request = UNNotificationRequest(
             identifier: alarm.id.uuidString,
-            content: content,
+            content: makeAlarmContent(for: alarm),
             trigger: nil
         )
         UNUserNotificationCenter.current().add(request) { error in
@@ -524,7 +535,10 @@ final class AlarmManager: NSObject, ObservableObject {
     func dismissFiringAlarm() {
         AlarmAudioPlayer.shared.stop()
         endAudioBackgroundTask()
-        if let id = firingAlarm?.id.uuidString { cancelCarPlayAudioRepeats(forAlarmID: id) }
+        if let id = firingAlarm?.id.uuidString {
+            cancelCarPlayAudioRepeats(forAlarmID: id)
+            cancelSnoozeReFire(forAlarmID: id)
+        }
         firingAlarm = nil
         DebugLogger.shared.log("Alarm dismissed by user (slider)", category: "AlarmManager")
     }
@@ -571,6 +585,31 @@ final class AlarmManager: NSObject, ObservableObject {
         }
     }
 
+    /// Reliable backstop for the time-window cleanup above. The in-memory timer in
+    /// scheduleWindowEndGuard(...) does not run once the app is suspended or
+    /// terminated in the background, so a windowed alarm that fired could stay
+    /// "triggered" and keep its region monitored past the window's end. This sweep
+    /// deactivates any windowed alarm that has fired (state == .triggered) and
+    /// whose active window has since ended, and runs whenever the app re-registers
+    /// regions, handles a region event, or returns to the foreground.
+    ///
+    /// Note: this is cleanup only. Whether an alarm can FIRE is already gated every
+    /// time by isWithinWindow() in handleRegionEvent, so the time window is enforced
+    /// regardless of whether this sweep has run. It deliberately ignores .active
+    /// alarms so a not-yet-fired daily windowed alarm is never disabled just because
+    /// the app happens to be open outside its window.
+    func deactivateExpiredWindowAlarms() {
+        var changed = false
+        for alarm in alarms where alarm.hasTimeWindow && alarm.state == .triggered {
+            guard !alarm.isWithinWindow() else { continue }
+            alarm.state = .inactive
+            stopMonitoring(alarm)
+            changed = true
+            DebugLogger.shared.log("Window closed (sweep): '\(alarm.name)' auto-deactivated past window end", category: "AlarmManager")
+        }
+        if changed { save(); refreshKeepAlive() }
+    }
+
     // MARK: - Background task helpers
 
     private func beginAudioBackgroundTask() {
@@ -603,6 +642,8 @@ final class AlarmManager: NSObject, ObservableObject {
     // MARK: - Snooze
 
     /// Suppress a triggered alarm and re-arm it after `minutes` minutes.
+    private func snoozeID(_ id: UUID) -> String { "\(id.uuidString)-snooze" }
+
     func snooze(_ alarm: NapAlarm, minutes: Int = 10) {
         AlarmAudioPlayer.shared.stop()
         endAudioBackgroundTask()
@@ -611,14 +652,45 @@ final class AlarmManager: NSObject, ObservableObject {
         alarm.state = .snoozed
         save()
         DebugLogger.shared.log("Alarm snoozed \(minutes) min: '\(alarm.name)'", category: "AlarmManager")
-        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(minutes * 60)) { [weak self] in
-            guard let self,
-                  let index = self.alarms.firstIndex(where: { $0.id == alarm.id }),
-                  self.alarms[index].state == .snoozed else { return }
-            self.alarms[index].state = .active
-            self.startMonitoring(self.alarms[index])
-            self.save()
+
+        // Re-ring via a SCHEDULED notification rather than an in-memory timer.
+        // A DispatchQueue.asyncAfter does not run once the app is suspended or
+        // terminated in the background (the usual state after snoozing and putting
+        // the phone down), which is why snoozed alarms never re-fired. A scheduled
+        // notification is delivered by the system regardless of app state, plays the
+        // alarm sound, and shows Stop/Snooze again. When the app is foreground or
+        // the user opens it, handleSnoozeReFire() restarts the full looping alarm.
+        let content = makeAlarmContent(for: alarm)
+        var info = content.userInfo
+        info["snoozeReFire"] = true
+        content.userInfo = info
+        let trigger = UNTimeIntervalNotificationTrigger(
+            timeInterval: max(1, Double(minutes) * 60), repeats: false)
+        let request = UNNotificationRequest(identifier: snoozeID(alarm.id),
+                                            content: content, trigger: trigger)
+        UNUserNotificationCenter.current().add(request) { error in
+            if let error = error {
+                DebugLogger.shared.log("Snooze re-ring scheduling FAILED: \(error.localizedDescription)", category: "AlarmManager")
+            }
         }
+    }
+
+    /// Called when a snooze re-ring notification is presented (app foreground) or
+    /// opened by the user — restarts the full looping alarm + firing screen.
+    private func handleSnoozeReFire(alarmID: String?) {
+        guard let id = alarmID,
+              let alarm = alarms.first(where: { $0.id.uuidString == id }) else { return }
+        alarm.state = .triggered
+        alarm.lastTriggeredAt = Date()
+        save()
+        startAlarmRinging(for: alarm)   // looping audio + firing view + CarPlay repeats
+        DebugLogger.shared.log("Snooze re-fire: '\(alarm.name)' ringing again", category: "AlarmManager")
+    }
+
+    /// Cancels a pending snooze re-ring (when the user stops/dismisses the alarm).
+    private func cancelSnoozeReFire(forAlarmID idString: String) {
+        guard let uuid = UUID(uuidString: idString) else { return }
+        UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [snoozeID(uuid)])
     }
 
     // MARK: - SwiftData persistence
@@ -670,6 +742,7 @@ extension AlarmManager: UNUserNotificationCenterDelegate {
         // [AnyHashable: Any] is not Sendable, so we must not capture `userInfo` directly.
         let notifyPhones = response.notification.request.content.userInfo["notifyPhones"] as? [String]
         let notifyBody   = response.notification.request.content.userInfo["notifyBody"]   as? String ?? ""
+        let isSnoozeReFire = response.notification.request.content.userInfo["snoozeReFire"] as? Bool ?? false
 
         Task { @MainActor in
             switch action {
@@ -687,14 +760,19 @@ extension AlarmManager: UNUserNotificationCenterDelegate {
                 // stop the looping sound and clear the full-screen alarm view.
                 AlarmAudioPlayer.shared.stop()
                 endAudioBackgroundTask()
-                if let id = alarmID { cancelCarPlayAudioRepeats(forAlarmID: id) }
+                if let id = alarmID {
+                    cancelCarPlayAudioRepeats(forAlarmID: id)
+                    cancelSnoozeReFire(forAlarmID: id)   // don't let it ring again after Stop
+                }
                 firingAlarm = nil
                 DebugLogger.shared.log("Alarm dismissed via notification action", category: "AlarmManager")
 
             default:
                 // UNNotificationDefaultActionIdentifier — user tapped the banner to open the app.
-                // Do NOT stop the audio here; AlarmFiringView is already showing (firingAlarm is set)
-                // and the user slides to dismiss from there.
+                // If this is a snooze re-ring the user opened, restart the full alarm.
+                if isSnoozeReFire { handleSnoozeReFire(alarmID: alarmID) }
+                // Otherwise the original alarm's AlarmFiringView is already showing
+                // (firingAlarm is set) and the user slides to dismiss from there.
                 //
                 // Recover Auto-Notify contact data so the SMS compose sheet appears on relaunch.
                 if let phones = notifyPhones, !phones.isEmpty {
@@ -712,6 +790,14 @@ extension AlarmManager: UNUserNotificationCenterDelegate {
         willPresent notification: UNNotification,
         withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
     ) {
+        // If a snooze re-ring is delivered while the app is foregrounded, restart
+        // the full looping alarm + firing screen (a scheduled notification alone
+        // only plays its sound once).
+        let isSnoozeReFire = notification.request.content.userInfo["snoozeReFire"] as? Bool ?? false
+        let alarmID = notification.request.content.userInfo["alarmID"] as? String
+        if isSnoozeReFire {
+            Task { @MainActor in self.handleSnoozeReFire(alarmID: alarmID) }
+        }
         completionHandler([.banner, .sound, .badge])
     }
 }

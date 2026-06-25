@@ -51,6 +51,7 @@ struct NapStopApp: App {
 /// on first appear, then hands off to ContentView.
 struct RootView: View {
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.scenePhase) private var scenePhase
     @EnvironmentObject var locationManager: LocationManager
     @EnvironmentObject var alarmManager: AlarmManager
 
@@ -65,6 +66,14 @@ struct RootView: View {
                 locationManager.requestAlwaysAuthorization()
                 alarmManager.reregisterAllRegions()
                 alarmManager.requestNotificationPermission()
+            }
+            // When the app returns to the foreground, clean up any windowed alarms
+            // whose active window ended while the app was suspended/terminated
+            // (the in-memory window-end timer can't run in that state).
+            .onChange(of: scenePhase) { _, phase in
+                if phase == .active {
+                    alarmManager.deactivateExpiredWindowAlarms()
+                }
             }
             // Handle Spotlight search result taps — route to the matching alarm.
             .onContinueUserActivity(CSSearchableItemActionType) { activity in
