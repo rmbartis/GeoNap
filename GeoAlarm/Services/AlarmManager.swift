@@ -644,42 +644,63 @@ final class AlarmManager: NSObject, ObservableObject {
     /// Suppress a triggered alarm and re-arm it after `minutes` minutes.
     private func snoozeID(_ id: UUID) -> String { "\(id.uuidString)-snooze" }
 
+    /// In-app timers that re-fire snoozed alarms. Kept so they can be cancelled
+    /// when the user stops the alarm or re-snoozes.
+    private var snoozeWorkItems: [UUID: DispatchWorkItem] = [:]
+
     func snooze(_ alarm: NapAlarm, minutes: Int = 10) {
-        AlarmAudioPlayer.shared.stop()
+        AlarmAudioPlayer.shared.stop()      // stops the alarm; resumes the silent keep-alive
         endAudioBackgroundTask()
         cancelCarPlayAudioRepeats(forAlarmID: alarm.id.uuidString)
+        cancelSnoozeReFire(forAlarmID: alarm.id.uuidString)   // clear any prior snooze for this alarm
         firingAlarm = nil
         alarm.state = .snoozed
         save()
         DebugLogger.shared.log("Alarm snoozed \(minutes) min: '\(alarm.name)'", category: "AlarmManager")
 
-        // Re-ring via a SCHEDULED notification rather than an in-memory timer.
-        // A DispatchQueue.asyncAfter does not run once the app is suspended or
-        // terminated in the background (the usual state after snoozing and putting
-        // the phone down), which is why snoozed alarms never re-fired. A scheduled
-        // notification is delivered by the system regardless of app state, plays the
-        // alarm sound, and shows Stop/Snooze again. When the app is foreground or
-        // the user opens it, handleSnoozeReFire() restarts the full looping alarm.
+        // Keep the silent keep-alive session running through the snooze so the app
+        // stays alive in the background. That lets the SAME looping-alarm path the
+        // geo-fence uses run when the snooze expires — full audio through the lock
+        // screen, not just a one-shot notification sound.
+        AlarmAudioPlayer.shared.beginKeepAlive()
+
+        let alarmID = alarm.id
+        let interval = max(1, Double(minutes) * 60)
+
+        // PRIMARY: an in-app timer that restarts the full looping alarm. This runs
+        // because the keep-alive audio keeps the app alive in the background.
+        let work = DispatchWorkItem { [weak self] in
+            self?.handleSnoozeReFire(alarmID: alarmID.uuidString)
+        }
+        snoozeWorkItems[alarmID] = work
+        DispatchQueue.main.asyncAfter(deadline: .now() + interval, execute: work)
+
+        // FALLBACK: a scheduled notification, fired 2 s later, in case the app was
+        // suspended/terminated before the timer could run (e.g. the audio session
+        // was interrupted). The timer cancels this notification when it fires; if
+        // the timer couldn't run, the notification rings the alarm and restarts the
+        // loop when the app is next foregrounded or opened.
         let content = makeAlarmContent(for: alarm)
         var info = content.userInfo
         info["snoozeReFire"] = true
         content.userInfo = info
-        let trigger = UNTimeIntervalNotificationTrigger(
-            timeInterval: max(1, Double(minutes) * 60), repeats: false)
-        let request = UNNotificationRequest(identifier: snoozeID(alarm.id),
-                                            content: content, trigger: trigger)
-        UNUserNotificationCenter.current().add(request) { error in
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: interval + 2, repeats: false)
+        UNUserNotificationCenter.current().add(
+            UNNotificationRequest(identifier: snoozeID(alarmID), content: content, trigger: trigger)) { error in
             if let error = error {
-                DebugLogger.shared.log("Snooze re-ring scheduling FAILED: \(error.localizedDescription)", category: "AlarmManager")
+                DebugLogger.shared.log("Snooze re-ring fallback scheduling FAILED: \(error.localizedDescription)", category: "AlarmManager")
             }
         }
     }
 
-    /// Called when a snooze re-ring notification is presented (app foreground) or
-    /// opened by the user — restarts the full looping alarm + firing screen.
+    /// Restarts the full looping alarm when a snooze expires — via the in-app timer
+    /// (app alive) or the fallback notification (app was suspended). The state guard
+    /// ensures it runs only once even if both paths fire.
     private func handleSnoozeReFire(alarmID: String?) {
         guard let id = alarmID,
-              let alarm = alarms.first(where: { $0.id.uuidString == id }) else { return }
+              let alarm = alarms.first(where: { $0.id.uuidString == id }),
+              alarm.state == .snoozed else { return }
+        cancelSnoozeReFire(forAlarmID: id)   // stop the other re-fire mechanism from also firing
         alarm.state = .triggered
         alarm.lastTriggeredAt = Date()
         save()
@@ -687,10 +708,13 @@ final class AlarmManager: NSObject, ObservableObject {
         DebugLogger.shared.log("Snooze re-fire: '\(alarm.name)' ringing again", category: "AlarmManager")
     }
 
-    /// Cancels a pending snooze re-ring (when the user stops/dismisses the alarm).
+    /// Cancels a pending snooze re-fire (both the in-app timer and the fallback
+    /// notification) — when the user stops/dismisses the alarm or re-snoozes.
     private func cancelSnoozeReFire(forAlarmID idString: String) {
         guard let uuid = UUID(uuidString: idString) else { return }
         UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [snoozeID(uuid)])
+        snoozeWorkItems[uuid]?.cancel()
+        snoozeWorkItems[uuid] = nil
     }
 
     // MARK: - SwiftData persistence

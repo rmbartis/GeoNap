@@ -70,8 +70,9 @@ final class AlarmAudioPlayer {
     /// alarm can make sound without iOS blocking a fresh session start (-50).
     func beginKeepAlive() {
         armed = true
-        // Don't disturb an alarm that's already sounding.
-        guard !isPlaying else { return }
+        // Don't disturb an alarm that's already sounding, and don't stack a second
+        // silent player if keep-alive is already running.
+        guard !isPlaying, keepAlivePlayer == nil else { return }
         startSilentLoop()
     }
 
