@@ -9,7 +9,7 @@ struct HelpView: View {
 
     // All sections in order — used to build the full text for copying.
     private var sections: [(titleKey: String, bodyKey: String)] { [
-        ("What is NapStop?",                    "help.body.whatIsNapAlarm"),
+        ("What is GeoNap?",                     "help.body.whatIsNapAlarm"),
         ("Minimum Requirements",                "help.body.minimumRequirements"),
         ("Feature Summary",                     "help.body.featureSummary"),
         ("Typical use cases",                   "help.body.useCases"),
@@ -43,7 +43,7 @@ struct HelpView: View {
             VStack(alignment: .leading, spacing: 28) {
 
                 helpSection(symbol: "lightbulb",   color: .yellow,
-                            titleKey: "What is NapStop?",    bodyKey: "help.body.whatIsNapAlarm")
+                            titleKey: "What is GeoNap?",     bodyKey: "help.body.whatIsNapAlarm")
                 helpSection(symbol: "iphone.and.ipad", color: .gray,
                             titleKey: "Minimum Requirements", bodyKey: "help.body.minimumRequirements")
                 helpSection(symbol: "list.star",    color: .blue,
