@@ -120,8 +120,14 @@ enum GeoAlarmScheduler {
         // date can be rejected; +1s is a safe "immediate".)
         // TODO(device): confirm this fires reliably when scheduled from the brief
         // background execution window a CLRegion event grants.
-        let configuration = AlarmConfiguration(
-            schedule: .fixed(Date().addingTimeInterval(1)),
+        //
+        // NOTE: the config type is the NESTED AlarmKit.AlarmManager.AlarmConfiguration
+        // (there is no top-level `AlarmConfiguration`), and the schedule needs its
+        // explicit `Alarm.Schedule` base so `.fixed` resolves. `attributes` is typed
+        // AlarmAttributes<GeoAlarmMetadata>, which pins the config's Metadata generic.
+        let schedule: Alarm.Schedule = .fixed(Date().addingTimeInterval(1))
+        let configuration = AlarmKit.AlarmManager.AlarmConfiguration(
+            schedule: schedule,
             attributes: attributes
         )
 
