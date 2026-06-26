@@ -238,6 +238,7 @@ final class AlarmManager: NSObject, ObservableObject {
 
     func delete(alarm: NapAlarm) {
         DebugLogger.shared.log("Alarm deleted: '\(alarm.name)'", category: "AlarmManager")
+        GeoAlarmScheduler.cancel(id: alarm.id)   // dismiss any presented AlarmKit alarm
         stopMonitoring(alarm)
         SpotlightManager.shared.deindex(alarm)
         modelContext?.delete(alarm)
@@ -325,8 +326,14 @@ final class AlarmManager: NSObject, ObservableObject {
             CrashReporter.log("Alarm triggered: \(alarms[index].name) (\(event.rawValue))")
             CrashReporter.setKey("lastTriggeredAlarm", value: alarms[index].name)
             DebugLogger.shared.log("🔔 Alarm TRIGGERED: '\(alarms[index].name)' event=\(event.rawValue) triggerCount=\(alarms[index].triggerCount) regionID=\(regionID)", category: "AlarmManager")
-            fireNotification(for: alarms[index])
-            startAlarmRinging(for: alarms[index])
+            // AlarmKit migration (iOS 26+): present the alarm via the system alarm
+            // engine instead of the legacy notification + AVAudioPlayer loop. The
+            // OS owns the lock-screen Stop/Snooze UI and the alert cuts through
+            // silent mode / Focus. Capture Sendable primitives before the Task —
+            // NapAlarm (SwiftData model) is not Sendable.
+            let firingID    = alarms[index].id
+            let firingTitle = alarms[index].name
+            Task { await GeoAlarmScheduler.fire(id: firingID, title: firingTitle) }
             queueAutoNotify(for: alarms[index])
             scheduleWindowEndGuard(for: alarms[index])
             save()
@@ -344,6 +351,7 @@ final class AlarmManager: NSObject, ObservableObject {
             $0.isRepeating &&
             $0.regionEvent != event        // opposite direction
         }) {
+            GeoAlarmScheduler.cancel(id: alarms[index].id)   // clear the prior AlarmKit alert before re-arming
             alarms[index].state = .active
             save()
             startMonitoring(alarms[index])   // keep iOS monitoring the region

@@ -66,6 +66,10 @@ struct RootView: View {
                 locationManager.requestAlwaysAuthorization()
                 alarmManager.reregisterAllRegions()
                 alarmManager.requestNotificationPermission()
+                // AlarmKit (iOS 26+): prompt for alarm permission so a geofence
+                // fire can present a system alarm. Lazily re-checked before each
+                // fire, but requesting at launch surfaces the prompt early.
+                Task { await GeoAlarmScheduler.ensureAuthorized() }
             }
             // When the app returns to the foreground, clean up any windowed alarms
             // whose active window ended while the app was suspended/terminated
