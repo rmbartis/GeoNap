@@ -173,9 +173,9 @@
 /* HelpView body text */
 "help.body.minimumRequirements" = "GeoNap is designed for the following Apple devices and operating systems:
 
-• iPhone — iOS 17.0 or later
-• iPad — iPadOS 17.0 or later
-• Apple Watch — watchOS 10.0 or later (companion features)
+• iPhone — iOS 26.0 or later
+• iPad — iPadOS 26.0 or later
+• Apple Watch — watchOS 26.0 or later (companion features)
 
 An internet connection is required for Transit Alarm feed downloads. All other alarm functions work fully offline.
 

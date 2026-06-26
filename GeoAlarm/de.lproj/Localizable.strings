@@ -151,9 +151,9 @@
 /* HelpView body text */
 "help.body.minimumRequirements" = "GeoNap ist für folgende Apple-Geräte und Betriebssysteme ausgelegt:
 
-• iPhone — iOS 17.0 oder neuer
-• iPad — iPadOS 17.0 oder neuer
-• Apple Watch — watchOS 10.0 oder neuer (Begleitfunktionen)
+• iPhone — iOS 26.0 oder neuer
+• iPad — iPadOS 26.0 oder neuer
+• Apple Watch — watchOS 26.0 oder neuer (Begleitfunktionen)
 
 Für den Download von Fahrplandaten ist eine Internetverbindung erforderlich. Alle anderen Alarmfunktionen funktionieren vollständig offline.
 

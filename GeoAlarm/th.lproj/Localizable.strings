@@ -151,9 +151,9 @@
 // MARK: - HelpView Body Text
 "help.body.minimumRequirements" = "GeoNap ออกแบบมาสำหรับอุปกรณ์และระบบปฏิบัติการ Apple ต่อไปนี้:
 
-• iPhone — iOS 17.0 หรือใหม่กว่า
-• iPad — iPadOS 17.0 หรือใหม่กว่า
-• Apple Watch — watchOS 10.0 หรือใหม่กว่า (ฟีเจอร์ companion)
+• iPhone — iOS 26.0 หรือใหม่กว่า
+• iPad — iPadOS 26.0 หรือใหม่กว่า
+• Apple Watch — watchOS 26.0 หรือใหม่กว่า (ฟีเจอร์ companion)
 
 ต้องมีการเชื่อมต่ออินเทอร์เน็ตสำหรับการดาวน์โหลดข้อมูลระบบขนส่งสาธารณะ ฟังก์ชันการแจ้งเตือนอื่นๆ ทั้งหมดทำงานได้ออฟไลน์
 

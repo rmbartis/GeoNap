@@ -151,9 +151,9 @@
 /* HelpView body text */
 "help.body.minimumRequirements" = "GeoNap está diseñado para los siguientes dispositivos y sistemas operativos de Apple:
 
-• iPhone — iOS 17.0 o posterior
-• iPad — iPadOS 17.0 o posterior
-• Apple Watch — watchOS 10.0 o posterior (funciones de acompañante)
+• iPhone — iOS 26.0 o posterior
+• iPad — iPadOS 26.0 o posterior
+• Apple Watch — watchOS 26.0 o posterior (funciones de acompañante)
 
 Se requiere conexión a internet para descargar los datos de alarmas de tránsito. Todas las demás funciones de alarma funcionan sin conexión.
 

@@ -84,17 +84,27 @@ enum GeoAlarmScheduler {
     ///   - title: short alarm name shown on the lock screen (keep it brief — the
     ///            compact banner truncates long titles).
     ///
-    /// INCREMENT 1 SCOPE — deliberately minimal to maximize first-build success:
-    /// a stop-button-only alert with the default alarm sound and no optional
-    /// configuration. Two things are intentionally deferred because sources
-    /// disagree on their exact API and they're the most likely compile breakers:
-    ///   • Snooze — needs a `secondaryButton` + `secondaryButtonBehavior`, but the
-    ///     enum case differs across docs (`.snooze` vs `.countdown`). Add once
-    ///     verified against the SDK you build with.
-    ///   • Custom sound — `sound:` / `AlertSound.named(...)`; AlarmKit rejects
-    ///     .aiff and the bundled .wav files may not load (.mp3 works). Convert and
-    ///     wire in later. For now the system default alarm sound plays.
-    static func fire(id: UUID, title: String) async {
+    /// - Parameters:
+    ///   - soundName: filename of a bundled `.wav` (e.g. "Train Horn.wav") that
+    ///     `installBundledSoundsIfNeeded()` copied into Library/Sounds. `nil` for
+    ///     system presets (vibrate/default) → the default alarm sound.
+    ///   - snoozeMinutes: how long the Snooze button postpones the alarm
+    ///     (AlarmKit re-arms after `countdownDuration.postAlert`).
+    ///
+    /// ⚠️ FIRST-BUILD FIXUP POINTS (can't compile here; verify against the SDK):
+    ///   • `secondaryButtonBehavior: .countdown` is the documented snooze mechanism
+    ///     (re-arm after postAlert). If the SDK names it `.snooze`, change it.
+    ///   • `AlertConfiguration.AlertSound` — some sources reference it bare as
+    ///     `AlertSound`. If "cannot find AlertConfiguration", drop the prefix.
+    ///   • `sound:` and `countdownDuration:` are extra labeled params on the
+    ///     AlarmConfiguration initializer.
+    ///   • WAV playback: AlarmKit reliably plays `.caf`/`.mp3`; `.wav` support is
+    ///     unconfirmed. If a bundled tone is silent ON DEVICE, convert it to `.caf`
+    ///     (and pass that filename) — the rest of the pipeline is unchanged.
+    static func fire(id: UUID,
+                     title: String,
+                     soundName: String? = nil,
+                     snoozeMinutes: Int = 10) async {
         guard await ensureAuthorized() else {
             DebugLogger.shared.log("AlarmKit not authorized — alarm '\(title)' not presented", category: "AlarmKit")
             return
@@ -105,10 +115,17 @@ enum GeoAlarmScheduler {
             textColor: .white,
             systemImageName: "stop.fill"
         )
+        let snoozeButton = AlarmButton(
+            text: "Snooze",
+            textColor: .white,
+            systemImageName: "zzz"
+        )
 
         let alert = AlarmPresentation.Alert(
             title: LocalizedStringResource(stringLiteral: title),
-            stopButton: stopButton
+            stopButton: stopButton,
+            secondaryButton: snoozeButton,
+            secondaryButtonBehavior: .countdown   // re-arms the alarm after postAlert (snooze)
         )
 
         let attributes = AlarmAttributes<GeoAlarmMetadata>(
@@ -116,24 +133,28 @@ enum GeoAlarmScheduler {
             tintColor: .accentColor
         )
 
+        // User-selected sound. A bundled .wav lives in Library/Sounds (installed at
+        // launch); system presets fall back to the default alarm sound.
+        let alertSound: AlertConfiguration.AlertSound = soundName.map { .named($0) } ?? .default
+
         // Fixed alarm 1 second out so it alerts right away. (An exact-now or past
-        // date can be rejected; +1s is a safe "immediate".)
-        // TODO(device): confirm this fires reliably when scheduled from the brief
-        // background execution window a CLRegion event grants.
-        //
-        // NOTE: the config type is the NESTED AlarmKit.AlarmManager.AlarmConfiguration
-        // (there is no top-level `AlarmConfiguration`), and the schedule needs its
-        // explicit `Alarm.Schedule` base so `.fixed` resolves. `attributes` is typed
-        // AlarmAttributes<GeoAlarmMetadata>, which pins the config's Metadata generic.
+        // date can be rejected; +1s is a safe "immediate".) Config type is the
+        // NESTED AlarmKit.AlarmManager.AlarmConfiguration; schedule needs its
+        // explicit Alarm.Schedule base so `.fixed` resolves.
         let schedule: Alarm.Schedule = .fixed(Date().addingTimeInterval(1))
         let configuration = AlarmKit.AlarmManager.AlarmConfiguration(
             schedule: schedule,
-            attributes: attributes
+            attributes: attributes,
+            sound: alertSound,
+            countdownDuration: Alarm.CountdownDuration(
+                preAlert: nil,
+                postAlert: TimeInterval(snoozeMinutes * 60)
+            )
         )
 
         do {
             _ = try await AlarmKit.AlarmManager.shared.schedule(id: id, configuration: configuration)
-            DebugLogger.shared.log("AlarmKit alarm presented: '\(title)' (id=\(id))", category: "AlarmKit")
+            DebugLogger.shared.log("AlarmKit alarm presented: '\(title)' sound=\(soundName ?? "default") (id=\(id))", category: "AlarmKit")
         } catch {
             DebugLogger.shared.log("AlarmKit schedule FAILED for '\(title)': \(error.localizedDescription)", category: "AlarmKit")
         }

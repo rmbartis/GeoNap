@@ -151,9 +151,9 @@
 // MARK: - HelpView Body Text
 "help.body.minimumRequirements" = "تم تصميم GeoNap للأجهزة وأنظمة التشغيل التالية من Apple:
 
-• iPhone — iOS 17.0 أو أحدث
-• iPad — iPadOS 17.0 أو أحدث
-• Apple Watch — watchOS 10.0 أو أحدث (ميزات مرافقة)
+• iPhone — iOS 26.0 أو أحدث
+• iPad — iPadOS 26.0 أو أحدث
+• Apple Watch — watchOS 26.0 أو أحدث (ميزات مرافقة)
 
 يلزم الاتصال بالإنترنت لتنزيل بيانات جداول وسائل النقل العام. جميع وظائف التنبيه الأخرى تعمل دون اتصال بالكامل.
 

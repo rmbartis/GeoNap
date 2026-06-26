@@ -151,9 +151,9 @@
 // MARK: - HelpView Body Text
 "help.body.minimumRequirements" = "GeoNap được thiết kế cho các thiết bị và hệ điều hành Apple sau:
 
-• iPhone — iOS 17.0 trở lên
-• iPad — iPadOS 17.0 trở lên
-• Apple Watch — watchOS 10.0 trở lên (tính năng đồng hành)
+• iPhone — iOS 26.0 trở lên
+• iPad — iPadOS 26.0 trở lên
+• Apple Watch — watchOS 26.0 trở lên (tính năng đồng hành)
 
 Cần kết nối internet để tải dữ liệu lịch trình giao thông công cộng. Tất cả các chức năng báo thức khác hoạt động hoàn toàn ngoại tuyến.
 

@@ -151,9 +151,9 @@
 // MARK: - HelpView Body Text
 "help.body.minimumRequirements" = "GeoNap निम्नलिखित Apple डिवाइस और ऑपरेटिंग सिस्टम के लिए डिज़ाइन किया गया है:
 
-• iPhone — iOS 17.0 या बाद का
-• iPad — iPadOS 17.0 या बाद का
-• Apple Watch — watchOS 10.0 या बाद का (साथी सुविधाएँ)
+• iPhone — iOS 26.0 या बाद का
+• iPad — iPadOS 26.0 या बाद का
+• Apple Watch — watchOS 26.0 या बाद का (साथी सुविधाएँ)
 
 ट्रांज़िट अलार्म फ़ीड डाउनलोड करने के लिए इंटरनेट कनेक्शन आवश्यक है। अन्य सभी अलार्म फ़ंक्शन पूरी तरह ऑफ़लाइन काम करते हैं।
 

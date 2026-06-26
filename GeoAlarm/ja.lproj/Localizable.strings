@@ -151,9 +151,9 @@
 // MARK: - HelpView Body Text
 "help.body.minimumRequirements" = "GeoNap は以下の Apple デバイスおよびオペレーティングシステムに対応しています：
 
-• iPhone — iOS 17.0 以降
-• iPad — iPadOS 17.0 以降
-• Apple Watch — watchOS 10.0 以降（コンパニオン機能）
+• iPhone — iOS 26.0 以降
+• iPad — iPadOS 26.0 以降
+• Apple Watch — watchOS 26.0 以降（コンパニオン機能）
 
 交通機関のアラームフィードのダウンロードにはインターネット接続が必要です。その他のアラーム機能はすべてオフラインで完全に動作します。
 

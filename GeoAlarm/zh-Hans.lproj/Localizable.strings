@@ -151,9 +151,9 @@
 // MARK: - HelpView Body Text
 "help.body.minimumRequirements" = "GeoNap 适用于以下 Apple 设备和操作系统：
 
-• iPhone — iOS 17.0 或更高版本
-• iPad — iPadOS 17.0 或更高版本
-• Apple Watch — watchOS 10.0 或更高版本（伴侣功能）
+• iPhone — iOS 26.0 或更高版本
+• iPad — iPadOS 26.0 或更高版本
+• Apple Watch — watchOS 26.0 或更高版本（伴侣功能）
 
 下载交通提醒数据需要网络连接。其他所有提醒功能均可完全离线使用。
 

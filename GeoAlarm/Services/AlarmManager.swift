@@ -333,7 +333,11 @@ final class AlarmManager: NSObject, ObservableObject {
             // NapAlarm (SwiftData model) is not Sendable.
             let firingID    = alarms[index].id
             let firingTitle = alarms[index].name
-            Task { await GeoAlarmScheduler.fire(id: firingID, title: firingTitle) }
+            // System presets (vibrate/default) → nil → AlarmKit default sound;
+            // a bundled .wav passes its filename (installed in Library/Sounds).
+            let firingSound = alarms[index].notificationSound
+            let firingSoundName: String? = firingSound.isSystem ? nil : firingSound.id
+            Task { await GeoAlarmScheduler.fire(id: firingID, title: firingTitle, soundName: firingSoundName) }
             queueAutoNotify(for: alarms[index])
             scheduleWindowEndGuard(for: alarms[index])
             save()
