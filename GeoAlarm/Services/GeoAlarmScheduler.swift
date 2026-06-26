@@ -133,16 +133,20 @@ enum GeoAlarmScheduler {
             tintColor: .accentColor
         )
 
-        // User-selected sound. A bundled .wav lives in Library/Sounds (installed at
-        // launch); system presets fall back to the default alarm sound.
-        // (Sound type is the bare AlarmKit `AlertSound`, not `AlertConfiguration.AlertSound`.)
-        let alertSound: AlertSound = soundName.map { .named($0) } ?? .default
+        // CUSTOM SOUND TEMPORARILY OMITTED (default alarm sound plays):
+        // The AlarmKit sound type is SDK-version-specific — confirmed sources use
+        // BOTH `AlertConfiguration.AlertSound` (Xcode 26.0-era) and bare `AlertSound`
+        // (later), and NEITHER resolved against this SDK. To re-enable custom WAV,
+        // autocomplete the `sound:` parameter of AlarmConfiguration in Xcode to get
+        // the exact type, then restore:
+        //     let alertSound: <ExactType> = soundName.map { .named($0) } ?? .default
+        // and add `, sound: alertSound` to the configuration below. `soundName` is
+        // still threaded in (see the log line) so only this block needs changing.
 
         // Fixed alarm 1 second out so it alerts right away. (An exact-now or past
         // date can be rejected; +1s is a safe "immediate".) Config type is the
         // NESTED AlarmKit.AlarmManager.AlarmConfiguration; schedule needs its
-        // explicit Alarm.Schedule base so `.fixed` resolves. Initializer argument
-        // order is countdownDuration → schedule → attributes → sound.
+        // explicit Alarm.Schedule base. Arg order: countdownDuration → schedule → attributes.
         let schedule: Alarm.Schedule = .fixed(Date().addingTimeInterval(1))
         let configuration = AlarmKit.AlarmManager.AlarmConfiguration(
             countdownDuration: Alarm.CountdownDuration(
@@ -150,8 +154,7 @@ enum GeoAlarmScheduler {
                 postAlert: TimeInterval(snoozeMinutes * 60)
             ),
             schedule: schedule,
-            attributes: attributes,
-            sound: alertSound
+            attributes: attributes
         )
 
         do {
