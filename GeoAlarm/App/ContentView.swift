@@ -96,19 +96,11 @@ struct ContentView: View {
         )) {
             OnboardingView()
         }
-        // Full-screen alarm ringing view — shown whenever a geo-alarm fires.
-        // Dismissed by the user sliding the dismiss slider (or via snooze).
-        .fullScreenCover(item: $alarmManager.firingAlarm) { alarm in
-            AlarmFiringView(
-                alarm: alarm,
-                onDismiss: { alarmManager.dismissFiringAlarm() },
-                onSnooze:  { alarmManager.snooze(alarm, minutes: 10) }
-            )
-            .environmentObject(alarmManager)
-            .environment(\.languageBundle, languageManager.currentBundle)
-        }
-        // Contact notification compose sheet — presented when the user taps
-        // "Notify Contact" on a fired alarm notification and the app comes foreground.
+        // Alarm presentation (lock screen, sound, Stop/Snooze) is owned by AlarmKit
+        // (see GeoAlarmScheduler) — no in-app full-screen ringing view is needed.
+        //
+        // Contact notification compose sheet — presented when an alarm with
+        // Auto-Notify contacts fires and the app comes to the foreground.
         .sheet(isPresented: $showMessageCompose) {
             if let msg = alarmManager.pendingContactMessage {
                 MessageComposeView(message: msg) {

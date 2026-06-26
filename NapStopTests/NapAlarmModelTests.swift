@@ -142,11 +142,6 @@ final class SoundRegressionTests: XCTestCase {
             "UIBackgroundModes must include 'remote-notification'. Found: \(modes)")
     }
 
-    /// 'audio' must be in UIBackgroundModes so AlarmAudioPlayer can keep looping
-    /// even when the app is backgrounded by a geo-event.
-    func test_infoPlist_hasAudioBackgroundMode() {
-        let modes = Bundle.main.infoDictionary?["UIBackgroundModes"] as? [String] ?? []
-        XCTAssertTrue(modes.contains("audio"),
-            "UIBackgroundModes must include 'audio' for looping alarm sound in background. Found: \(modes)")
-    }
+    // ('audio' background-mode test removed — AlarmKit owns alarm sound now, so
+    //  the app no longer needs the audio background mode.)
 }

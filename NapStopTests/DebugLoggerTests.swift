@@ -202,19 +202,7 @@ final class AlarmManagerDebugLogTests: XCTestCase {
                       "Re-arming must log the alarm name. entries: \(logger.recentEntries.map(\.message))")
     }
 
-    // MARK: snooze
-
-    func test_snooze_logsEntry() {
-        let alarm = makeAlarm(name: "Snooze Test")
-        alarm.state = .triggered
-        sut.add(alarm: alarm)
-        logger.clearLog()
-
-        sut.snooze(alarm, minutes: 10)
-
-        XCTAssertTrue(logger.hasEntry(containing: "Snooze Test"),
-                      "snooze() must log the alarm name. entries: \(logger.recentEntries.map(\.message))")
-    }
+    // (snooze logging test removed — snooze is now owned by AlarmKit, not AlarmManager.)
 
     // MARK: Each action produces at least one entry
 

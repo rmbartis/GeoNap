@@ -65,7 +65,6 @@ struct RootView: View {
                 alarmManager.locationManager = locationManager
                 locationManager.requestAlwaysAuthorization()
                 alarmManager.reregisterAllRegions()
-                alarmManager.requestNotificationPermission()
                 // AlarmKit (iOS 26+): prompt for alarm permission so a geofence
                 // fire can present a system alarm. Lazily re-checked before each
                 // fire, but requesting at launch surfaces the prompt early.
