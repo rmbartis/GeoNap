@@ -135,21 +135,23 @@ enum GeoAlarmScheduler {
 
         // User-selected sound. A bundled .wav lives in Library/Sounds (installed at
         // launch); system presets fall back to the default alarm sound.
-        let alertSound: AlertConfiguration.AlertSound = soundName.map { .named($0) } ?? .default
+        // (Sound type is the bare AlarmKit `AlertSound`, not `AlertConfiguration.AlertSound`.)
+        let alertSound: AlertSound = soundName.map { .named($0) } ?? .default
 
         // Fixed alarm 1 second out so it alerts right away. (An exact-now or past
         // date can be rejected; +1s is a safe "immediate".) Config type is the
         // NESTED AlarmKit.AlarmManager.AlarmConfiguration; schedule needs its
-        // explicit Alarm.Schedule base so `.fixed` resolves.
+        // explicit Alarm.Schedule base so `.fixed` resolves. Initializer argument
+        // order is countdownDuration → schedule → attributes → sound.
         let schedule: Alarm.Schedule = .fixed(Date().addingTimeInterval(1))
         let configuration = AlarmKit.AlarmManager.AlarmConfiguration(
-            schedule: schedule,
-            attributes: attributes,
-            sound: alertSound,
             countdownDuration: Alarm.CountdownDuration(
                 preAlert: nil,
                 postAlert: TimeInterval(snoozeMinutes * 60)
-            )
+            ),
+            schedule: schedule,
+            attributes: attributes,
+            sound: alertSound
         )
 
         do {
