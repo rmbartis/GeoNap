@@ -126,6 +126,16 @@ enum CuratedFeeds {
             routeTypes: "Commuter Rail"
         ),
         CuratedFeed(
+            name: "PATH",
+            region: "USA · New York",
+            // Port Authority Trans-Hudson (NY ⇄ NJ). PANYNJ has no stable keyless
+            // direct ZIP, so we use the freely accessible Trillium-hosted mirror
+            // (no API key / registration). Verified June 2026.
+            // NOTE: NJ Transit rail/bus still omitted — see header (account login).
+            feedURL: "https://data.trilliumtransit.com/gtfs/path-nj-us/path-nj-us.zip",
+            routeTypes: "Rapid Transit · Rail"
+        ),
+        CuratedFeed(
             name: "Valley Metro",
             region: "USA · Phoenix",
             // City of Phoenix Open Data portal (ArcGIS). Resource ID is stable.
