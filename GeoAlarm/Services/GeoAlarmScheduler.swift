@@ -39,10 +39,13 @@ nonisolated struct GeoAlarmMetadata: AlarmMetadata {
 /// Thin async wrapper around `AlarmKit.AlarmManager` for presenting and
 /// cancelling geo-triggered alarms. All methods take Sendable primitives (never
 /// the SwiftData `NapAlarm` model) so they can be called across actor boundaries.
+// ⚠️ ENTITLEMENT: in addition to NSAlarmKitUsageDescription, AlarmKit needs the
+//    "AlarmKit" capability added in the target's Signing & Capabilities. Some
+//    sources report Apple also gates it behind an entitlement request in the
+//    Developer portal; without it, the APIs below can throw authorization errors
+//    even after the user taps Allow. Verify this in Xcode before assuming a
+//    silent failure is a code bug.
 enum GeoAlarmScheduler {
-
-    /// Default snooze length, in minutes, for the alert's secondary button.
-    static let defaultSnoozeMinutes = 10
 
     // MARK: - Authorization
 
@@ -80,59 +83,46 @@ enum GeoAlarmScheduler {
     ///   - id: the NapAlarm's UUID (reused as the AlarmKit alarm id).
     ///   - title: short alarm name shown on the lock screen (keep it brief — the
     ///            compact banner truncates long titles).
-    ///   - snoozeMinutes: how long the Snooze (secondary) button postpones the alarm.
-    static func fire(id: UUID,
-                     title: String,
-                     snoozeMinutes: Int = defaultSnoozeMinutes) async {
+    ///
+    /// INCREMENT 1 SCOPE — deliberately minimal to maximize first-build success:
+    /// a stop-button-only alert with the default alarm sound and no optional
+    /// configuration. Two things are intentionally deferred because sources
+    /// disagree on their exact API and they're the most likely compile breakers:
+    ///   • Snooze — needs a `secondaryButton` + `secondaryButtonBehavior`, but the
+    ///     enum case differs across docs (`.snooze` vs `.countdown`). Add once
+    ///     verified against the SDK you build with.
+    ///   • Custom sound — `sound:` / `AlertSound.named(...)`; AlarmKit rejects
+    ///     .aiff and the bundled .wav files may not load (.mp3 works). Convert and
+    ///     wire in later. For now the system default alarm sound plays.
+    static func fire(id: UUID, title: String) async {
         guard await ensureAuthorized() else {
             DebugLogger.shared.log("AlarmKit not authorized — alarm '\(title)' not presented", category: "AlarmKit")
             return
         }
 
-        // Stop button. NOTE: `stopButton` was deprecated in iOS 26.1 (Stop became
-        // a slide-to-stop gesture). It still compiles and is required by the 26.0
-        // initializer, so we keep providing it. TODO(26.1): migrate to the newer
-        // AlarmPresentation.Alert initializer once the project drops 26.0 support.
         let stopButton = AlarmButton(
             text: "Stop",
             textColor: .white,
             systemImageName: "stop.fill"
         )
-        // Snooze via the secondary button with `.countdown` behavior: AlarmKit
-        // re-arms the alarm after `countdownDuration.postAlert` with no app code.
-        // (A secondary button WITHOUT a behavior throws at schedule time.)
-        let snoozeButton = AlarmButton(
-            text: "Snooze",
-            textColor: .white,
-            systemImageName: "zzz"
-        )
 
         let alert = AlarmPresentation.Alert(
             title: LocalizedStringResource(stringLiteral: title),
-            stopButton: stopButton,
-            secondaryButton: snoozeButton,
-            secondaryButtonBehavior: .countdown
+            stopButton: stopButton
         )
 
         let attributes = AlarmAttributes<GeoAlarmMetadata>(
             presentation: AlarmPresentation(alert: alert),
-            metadata: GeoAlarmMetadata(),
             tintColor: .accentColor
         )
 
-        // Schedule a fixed alarm 1 second out so it alerts right away. (A past or
-        // exact-now date can be rejected; +1s is a safe "immediate".)
+        // Fixed alarm 1 second out so it alerts right away. (An exact-now or past
+        // date can be rejected; +1s is a safe "immediate".)
         // TODO(device): confirm this fires reliably when scheduled from the brief
         // background execution window a CLRegion event grants.
-        let configuration = AlarmKit.AlarmManager.AlarmConfiguration(
+        let configuration = AlarmConfiguration(
             schedule: .fixed(Date().addingTimeInterval(1)),
-            attributes: attributes,
-            // TODO(sound): AlarmKit AlertSound rejects .aiff and reportedly the
-            // bundled .wav files may not load; .mp3 works. Using the system default
-            // for now — wire custom NotificationSound files in once converted/verified.
-            sound: .default,
-            countdownDuration: .init(preAlert: nil,
-                                     postAlert: TimeInterval(snoozeMinutes * 60))
+            attributes: attributes
         )
 
         do {
@@ -148,12 +138,15 @@ enum GeoAlarmScheduler {
     /// Cancels a presented/scheduled alarm by id. Call when the user stops or
     /// deletes the alarm, or when a repeating alarm re-arms.
     /// (AlarmKit has no cancel-all; cancel each id individually.)
+    ///
+    /// Fire-and-forget on a detached Task: sources disagree on whether
+    /// `cancel(id:)` is sync, throwing, and/or async, so `try? await` is used
+    /// deliberately — it compiles against all of those shapes (any unused
+    /// try/await degrades to a harmless warning, never a build error).
     static func cancel(id: UUID) {
-        do {
-            try AlarmKit.AlarmManager.shared.cancel(id: id)
-            DebugLogger.shared.log("AlarmKit alarm cancelled (id=\(id))", category: "AlarmKit")
-        } catch {
-            DebugLogger.shared.log("AlarmKit cancel failed (id=\(id)): \(error.localizedDescription)", category: "AlarmKit")
+        Task {
+            try? await AlarmKit.AlarmManager.shared.cancel(id: id)
+            DebugLogger.shared.log("AlarmKit cancel requested (id=\(id))", category: "AlarmKit")
         }
     }
 }
