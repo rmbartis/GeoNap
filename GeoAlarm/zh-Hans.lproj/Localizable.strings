@@ -359,3 +359,5 @@
 "You're already inside this alarm's area. An arrival alarm only fires when you ENTER — it won't trigger until you leave and come back." = "你已在此闹钟区域内。到达闹钟只有在你“进入”时才会触发；需先离开再返回才会生效。";
 "Apple Home Automation" = "Apple 家庭自动化";
 "help.body.appleAutomation" = "GeoNap 与 Apple HomeKit 和“快捷指令”App 集成，让你一到家家里就准备就绪：开灯、设定温度、拉开窗帘。\n\n设置：\n1. 打开“快捷指令”App → 自动化 → + → 个人自动化。\n2. 选择“当我到达某地”→ 设置为与 GeoNap 家庭闹钟相同的位置。\n3. 添加“家庭”操作：选择灯光、恒温器或整套场景（例如“欢迎回家”）。\n4. 保存。自动化在后台运行，无需任何操作。\n\n如需同时响起闹钟声：\n5. 在 GeoNap 中编辑家庭闹钟 → 运行快捷指令 → 输入快捷指令名称。\n6. GeoNap 会同时响起声音并打开该快捷指令。\n\n适用于任何兼容 HomeKit 的设备：\n• 灯光与灯光场景\n• 制热与制冷（恒温器）\n• 空调\n• 门锁\n• 窗帘与遮阳帘\n• 风扇与通风\n• “家庭”App 中的任意“到家”场景";
+"Weekdays" = "工作日";
+"Weekends" = "周末";

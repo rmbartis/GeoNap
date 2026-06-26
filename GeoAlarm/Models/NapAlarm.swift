@@ -84,16 +84,20 @@ final class NapAlarm {
     /// True when all 7 days are active (default state).
     var isEveryDay: Bool { activeDaysRaw == 127 || activeDays == Set(1...7) }
 
-    /// Short human-readable label, e.g. "Mon–Fri" or "Weekends" or "M W F".
-    var activeDaysLabel: String? {
+    /// Localized day-of-week summary (e.g. "Mon Tue Thu Fri", "月 火 木 金", "Weekdays").
+    /// Pass the in-app `locale` (for the system's localized weekday symbols) and the
+    /// in-app `bundle` (for the "Weekdays"/"Weekends" labels), so it follows the
+    /// language chosen inside the app, not just the device language.
+    func activeDaysLabel(locale: Locale, bundle: Bundle) -> String? {
         guard !isEveryDay else { return nil }
-        let days = activeDays.sorted()
         let weekdays: Set<Int> = [2, 3, 4, 5, 6]
         let weekend:  Set<Int> = [1, 7]
-        if activeDays == weekdays { return "Weekdays" }
-        if activeDays == weekend  { return "Weekends" }
-        let symbols = ["Su","Mo","Tu","We","Th","Fr","Sa"]
-        return days.map { symbols[$0 - 1] }.joined(separator: " ")
+        if activeDays == weekdays { return NSLocalizedString("Weekdays", bundle: bundle, comment: "") }
+        if activeDays == weekend  { return NSLocalizedString("Weekends", bundle: bundle, comment: "") }
+        var cal = Calendar(identifier: .gregorian)
+        cal.locale = locale
+        let symbols = cal.shortWeekdaySymbols   // index 0 = Sunday … 6 = Saturday, localized
+        return activeDays.sorted().map { symbols[$0 - 1] }.joined(separator: " ")
     }
 
     // MARK: - Sound

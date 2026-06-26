@@ -103,7 +103,7 @@ struct AlarmDetailView: View {
                         Text(window)
                     }
                 }
-                if let daysLabel = alarm.activeDaysLabel {
+                if let daysLabel = alarm.activeDaysLabel(locale: Locale(identifier: LanguageManager.shared.currentLanguage.rawValue), bundle: bundle) {
                     LabeledContent(NSLocalizedString("Active days", bundle: bundle, comment: "")) {
                         Text(daysLabel)
                     }

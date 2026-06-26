@@ -133,7 +133,7 @@ struct AlarmRowView: View {
                             Text(window)
                                 .foregroundColor(.purple)
                         }
-                        if let daysLabel = alarm.activeDaysLabel {
+                        if let daysLabel = alarm.activeDaysLabel(locale: Locale(identifier: LanguageManager.shared.currentLanguage.rawValue), bundle: bundle) {
                             HStack(spacing: 3) {
                                 Image(systemName: "calendar")
                                 Text(daysLabel)

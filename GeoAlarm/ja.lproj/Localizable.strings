@@ -359,3 +359,5 @@
 "You're already inside this alarm's area. An arrival alarm only fires when you ENTER — it won't trigger until you leave and come back." = "すでにこのアラームのエリア内にいます。到着アラームは円に「入った」ときだけ鳴ります。いったん出て戻るまで作動しません。";
 "Apple Home Automation" = "Apple ホームのオートメーション";
 "help.body.appleAutomation" = "GeoNap は Apple HomeKit とショートカット App と連携し、到着した瞬間に家を整えます。照明オン、温度設定、ブラインドを開く、など。\n\n設定:\n1. ショートカット App を開く → オートメーション → + → 個人用オートメーション。\n2. 「到着」を選択 → GeoNap の自宅アラームと同じ場所を設定。\n3. ホームのアクションを追加：照明、サーモスタット、またはシーン全体（例：「おかえりなさい」）。\n4. 保存。オートメーションはバックグラウンドで実行され、操作は不要です。\n\nアラーム音も鳴らすには:\n5. GeoNap で自宅アラームを編集 → ショートカットを実行 → ショートカット名を入力。\n6. GeoNap が音を鳴らすと同時にショートカットを開きます。\n\nHomeKit 対応の機器で動作します:\n• 照明と照明シーン\n• 暖房・冷房（サーモスタット）\n• エアコン\n• ドアの鍵\n• ブラインドやシェード\n• 扇風機・換気\n• ホーム App の「帰宅」シーン";
+"Weekdays" = "平日";
+"Weekends" = "週末";
