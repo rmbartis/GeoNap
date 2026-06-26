@@ -51,7 +51,8 @@ final class LocationSearchService: NSObject, ObservableObject {
         let search  = MKLocalSearch(request: request)
         do {
             let response = try await search.start()
-            return response.mapItems.first?.placemark.coordinate
+            // iOS 26: MKMapItem.placemark is deprecated — use .location.
+            return response.mapItems.first?.location.coordinate
         } catch {
             print("📍 LocationSearchService resolve error: \(error.localizedDescription)")
             return nil
@@ -71,7 +72,8 @@ final class LocationSearchService: NSObject, ObservableObject {
         do {
             let response = try await search.start()
             isSearching = false
-            return response.mapItems.first?.placemark.coordinate
+            // iOS 26: MKMapItem.placemark is deprecated — use .location.
+            return response.mapItems.first?.location.coordinate
         } catch {
             print("📍 LocationSearchService searchByText error: \(error.localizedDescription)")
             isSearching = false

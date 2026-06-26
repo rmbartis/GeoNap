@@ -3,6 +3,7 @@
 
 import AppIntents
 import CoreLocation
+import MapKit
 import SwiftData
 
 struct CreateAlarmIntent: AppIntent {
@@ -40,12 +41,12 @@ struct CreateAlarmIntent: AppIntent {
 
     func perform() async throws -> some IntentResult & ProvidesDialog {
 
-        // 1. Geocode the location string
-        let geocoder   = CLGeocoder()
-        let placemarks = try await geocoder.geocodeAddressString(locationQuery)
-
-        guard let placemark = placemarks.first,
-              let location  = placemark.location else {
+        // 1. Geocode the location string.
+        //    iOS 26: MapKit's MKGeocodingRequest replaces the deprecated
+        //    CLGeocoder.geocodeAddressString. `location` is the MKMapItem's
+        //    CLLocation, so the coordinate usage below is unchanged.
+        guard let request = MKGeocodingRequest(addressString: locationQuery),
+              let location = try await request.mapItems.first?.location else {
             throw $locationQuery.needsValueError(
                 "Couldn't find that location. Try a more specific address."
             )

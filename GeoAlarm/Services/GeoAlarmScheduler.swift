@@ -145,14 +145,13 @@ enum GeoAlarmScheduler {
     /// deletes the alarm, or when a repeating alarm re-arms.
     /// (AlarmKit has no cancel-all; cancel each id individually.)
     ///
-    /// Fire-and-forget on a detached Task: sources disagree on whether
-    /// `cancel(id:)` is sync, throwing, and/or async, so `try? await` is used
-    /// deliberately — it compiles against all of those shapes (any unused
-    /// try/await degrades to a harmless warning, never a build error).
+    /// `cancel(id:)` is synchronous and throwing in the iOS 26 SDK.
     static func cancel(id: UUID) {
-        Task {
-            try? await AlarmKit.AlarmManager.shared.cancel(id: id)
-            DebugLogger.shared.log("AlarmKit cancel requested (id=\(id))", category: "AlarmKit")
+        do {
+            try AlarmKit.AlarmManager.shared.cancel(id: id)
+            DebugLogger.shared.log("AlarmKit alarm cancelled (id=\(id))", category: "AlarmKit")
+        } catch {
+            DebugLogger.shared.log("AlarmKit cancel failed (id=\(id)): \(error.localizedDescription)", category: "AlarmKit")
         }
     }
 }
