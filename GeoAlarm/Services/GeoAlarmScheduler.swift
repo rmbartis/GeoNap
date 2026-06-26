@@ -25,7 +25,8 @@
 
 import Foundation
 import AlarmKit
-import SwiftUI   // Color for tintColor / button colors
+import ActivityKit   // AlertConfiguration.AlertSound lives in ActivityKit, not AlarmKit
+import SwiftUI       // Color for tintColor / button colors
 
 /// Metadata attached to every geo-alarm. AlarmKit requires a concrete
 /// `AlarmMetadata` type even when empty; the generic can't be inferred without it.
@@ -133,20 +134,19 @@ enum GeoAlarmScheduler {
             tintColor: .accentColor
         )
 
-        // CUSTOM SOUND TEMPORARILY OMITTED (default alarm sound plays):
-        // The AlarmKit sound type is SDK-version-specific — confirmed sources use
-        // BOTH `AlertConfiguration.AlertSound` (Xcode 26.0-era) and bare `AlertSound`
-        // (later), and NEITHER resolved against this SDK. To re-enable custom WAV,
-        // autocomplete the `sound:` parameter of AlarmConfiguration in Xcode to get
-        // the exact type, then restore:
-        //     let alertSound: <ExactType> = soundName.map { .named($0) } ?? .default
-        // and add `, sound: alertSound` to the configuration below. `soundName` is
-        // still threaded in (see the log line) so only this block needs changing.
+        // User-selected sound. The AlarmKit `sound:` parameter takes ActivityKit's
+        // AlertConfiguration.AlertSound (hence `import ActivityKit`). A bundled .wav
+        // is installed in Library/Sounds at launch and referenced by filename;
+        // system presets (vibrate/default) fall back to the default alarm sound.
+        // NOTE (device-only): if a custom tone is silent on a real device, try the
+        // name WITHOUT the ".wav" extension, or convert the file to .caf — AlarmKit's
+        // custom-sound format support is stricter than UNNotificationSound's.
+        let alertSound: AlertConfiguration.AlertSound = soundName.map { .named($0) } ?? .default
 
         // Fixed alarm 1 second out so it alerts right away. (An exact-now or past
         // date can be rejected; +1s is a safe "immediate".) Config type is the
         // NESTED AlarmKit.AlarmManager.AlarmConfiguration; schedule needs its
-        // explicit Alarm.Schedule base. Arg order: countdownDuration → schedule → attributes.
+        // explicit Alarm.Schedule base. Arg order: countdownDuration → schedule → attributes → sound.
         let schedule: Alarm.Schedule = .fixed(Date().addingTimeInterval(1))
         let configuration = AlarmKit.AlarmManager.AlarmConfiguration(
             countdownDuration: Alarm.CountdownDuration(
@@ -154,7 +154,8 @@ enum GeoAlarmScheduler {
                 postAlert: TimeInterval(snoozeMinutes * 60)
             ),
             schedule: schedule,
-            attributes: attributes
+            attributes: attributes,
+            sound: alertSound
         )
 
         do {
