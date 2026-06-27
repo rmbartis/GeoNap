@@ -136,8 +136,11 @@ enum GeoAlarmScheduler {
 
         // User-selected sound. The AlarmKit `sound:` parameter takes ActivityKit's
         // AlertConfiguration.AlertSound (hence `import ActivityKit`). A bundled .wav
-        // is installed in Library/Sounds at launch and referenced by filename;
-        // system presets (vibrate/default) fall back to the default alarm sound.
+        // (and the reserved "_Silence.wav" used for Vibrate Only) is installed in
+        // Library/Sounds at launch and referenced by filename. The caller maps the
+        // selection via `NotificationSound.alarmKitSoundName`: "Vibrate Only" passes
+        // the silent tone (haptics, no audible sound), "Default" passes nil → the
+        // AlarmKit default tone here.
         // NOTE (device-only): if a custom tone is silent on a real device, try the
         // name WITHOUT the ".wav" extension, or convert the file to .caf — AlarmKit's
         // custom-sound format support is stricter than UNNotificationSound's.

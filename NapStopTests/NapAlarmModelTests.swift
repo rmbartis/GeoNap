@@ -123,6 +123,26 @@ final class SoundRegressionTests: XCTestCase {
             ".vibrate must produce nil UNNotificationSound (vibration only)")
     }
 
+    // MARK: AlarmKit sound mapping (regression: Vibrate Only must not ring)
+
+    func test_vibrate_alarmKitSound_isSilentTone() {
+        // Vibrate Only must map to the silent tone, NOT nil — nil makes the
+        // scheduler fall back to AlarmKit's audible default sound.
+        XCTAssertEqual(NotificationSound.vibrate.alarmKitSoundName,
+                       NotificationSound.silentTone,
+            "Vibrate Only must use the silent tone so the alarm only vibrates")
+    }
+
+    func test_defaultAndCritical_alarmKitSound_isNil() {
+        XCTAssertNil(NotificationSound.default.alarmKitSoundName)
+        XCTAssertNil(NotificationSound.critical.alarmKitSoundName)
+    }
+
+    func test_bundledSound_alarmKitSound_isFilename() {
+        let s = NotificationSound(id: "Boat Horn.wav")
+        XCTAssertEqual(s.alarmKitSoundName, "Boat Horn.wav")
+    }
+
     func test_defaultAndCritical_ids_areDistinct() {
         XCTAssertNotEqual(NotificationSound.default.id, NotificationSound.critical.id)
     }

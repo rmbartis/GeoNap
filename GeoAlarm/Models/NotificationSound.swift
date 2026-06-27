@@ -24,8 +24,32 @@ struct NotificationSound: Identifiable, Hashable, Codable {
     /// user-facing sound picker (see `bundledSounds`).
     static let defaultLoopTone = "_DefaultAlarm.wav"
 
+    /// Bundled WAV of pure digital silence, used for the "Vibrate Only" option
+    /// under AlarmKit. AlarmKit always presents an alert *with* a sound (its
+    /// `AlertSound` has no "none" case), but the system alarm still vibrates,
+    /// so handing it a silent tone yields haptics-only — i.e. vibrate only.
+    /// The leading "_" keeps it out of the user-facing picker (see `bundledSounds`).
+    static let silentTone = "_Silence.wav"
+
     private static let systemIDs: Set<String> = ["vibrate", "default", "critical"]
     var isSystem: Bool { Self.systemIDs.contains(id) }
+
+    // MARK: - AlarmKit sound mapping
+    /// Filename to hand AlarmKit's `AlertSound.named(_:)`, or `nil` to use
+    /// AlarmKit's built-in default alarm tone.
+    ///
+    /// - `vibrate`  → the reserved silent tone, so the alarm vibrates without an
+    ///   audible sound. (Previously `vibrate` collapsed to `nil` → `.default`,
+    ///   which made "Vibrate Only" ring out loud — the bug this fixes.)
+    /// - `default` / `critical` → `nil` → AlarmKit default tone.
+    /// - bundled `.wav` → its own filename.
+    var alarmKitSoundName: String? {
+        switch id {
+        case "vibrate":           return Self.silentTone
+        case "default", "critical": return nil
+        default:                  return id
+        }
+    }
 
     // MARK: - Display name (English fallback / localization key for bundled sounds)
     var displayName: String {
@@ -144,7 +168,10 @@ struct NotificationSound: Identifiable, Hashable, Codable {
         guard let libraryURL = fm.urls(for: .libraryDirectory, in: .userDomainMask).first else { return }
         let soundsDir = libraryURL.appendingPathComponent("Sounds", isDirectory: true)
         try? fm.createDirectory(at: soundsDir, withIntermediateDirectories: true)
-        for sound in bundledSounds {
+        // Reserved tones are excluded from `bundledSounds` (the user-facing list),
+        // but the silent tone still has to be on disk for AlarmKit's `.named(_:)`
+        // lookup to resolve it for "Vibrate Only" alarms.
+        for sound in bundledSounds + [NotificationSound(id: Self.silentTone)] {
             guard let srcURL = sound.bundleURL else { continue }
             let dstURL = soundsDir.appendingPathComponent(sound.id)
             guard !fm.fileExists(atPath: dstURL.path) else { continue }
