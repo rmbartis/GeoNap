@@ -10,6 +10,7 @@ struct SettingsView: View {
     @AppStorage(AppStorageKey.timeFormat)    private var timeFormatRaw    = TimeFormat.twelveHour.rawValue
     @AppStorage(AppStorageKey.coordFormat)   private var coordFormatRaw   = CoordFormat.dd.rawValue
     @AppStorage(AppStorageKey.debugLogging)  private var debugLoggingEnabled = false
+    @AppStorage(AppStorageKey.autoSMSAutomationEnabled) private var autoSMSAutomationEnabled = false
 
     @EnvironmentObject private var languageManager: LanguageManager
     @Environment(\.languageBundle) private var bundle
@@ -407,6 +408,17 @@ struct SettingsView: View {
 
     private var autoSMSSection: some View {
         Section {
+            // Hands-free switch: when on, the app suppresses its own pre-filled
+            // compose sheet because the Shortcuts automation sends the SMS instead.
+            Toggle(isOn: $autoSMSAutomationEnabled) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("settings.autoSMS.automationToggle", bundle: bundle)
+                    Text("settings.autoSMS.automationToggleHelp", bundle: bundle)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            }
+
             // Step-by-step instructions
             VStack(alignment: .leading, spacing: 10) {
                 Text("settings.autoSMS.description", bundle: bundle)

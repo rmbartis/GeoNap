@@ -27,6 +27,7 @@
 "Latitude" = "緯度";
 "Longitude" = "経度";
 "Search above or tap the map to set a location" = "上で検索するか、マップをタップして場所を設定";
+"Waiting for GPS lock…" = "GPSの取得を待っています…";
 "Schedule" = "スケジュール";
 "Repeat" = "繰り返し";
 "Auto-resets after you leave — fires again every trip" = "エリアを出ると自動リセット — 毎回のトリップで発動";
@@ -190,7 +191,7 @@
 
 "help.body.soundVibrate" = "各アラームには独自のサウンド設定があり、作成時または編集時にサウンド / バイブで選択します。\n\nシステムオプション：\n• バイブのみ — 音なし。静かな環境に最適。\n• デフォルト — 標準のiOS通知音。\n• 緊急 — サイレントモードとおやすみモードを無視してフル音量で再生。\n\n内蔵の旅行サウンド：\n• 船のホーン · ケーブルカーのベル · 蒸気機関車 · ヨットのベル · 着陸音 · 空港チャイム\n\n各設定はアラームと一緒に保存され、鳴るたびに再生されます。";
 
-"help.body.siri" = "GeoNapはSiriとショートカットAppに対応しています。設定は不要です。\n\n• 「GeoNapを作成」— Siriが名前・場所・トリガー方向を尋ね、アラームを保存します。\n• 「GeoNapを有効にする」— Siriが保存済みのアラームを表示します。再度有効にするものを選びます。\n• 「GeoNapを無効にする」— 上記と同様ですが、アラームを無効化します。\n• 「GeoNapで連絡先に通知」— 最後に作動したアラームの定型メッセージ本文を返します。個人用オートメーションでの使用を想定しています（下記参照）。\n\n個人用オートメーションで承認なしにSMSを送信:\n「GeoNapで連絡先に通知」ショートカットをiOSのショートカットと組み合わせると、自動通知メッセージを完全に自動で送信できます — 作成画面も「送信をタップ」も不要です。\n\n詳しい手順は「設定 → 自動SMS（承認不要）」をご覧ください。\n\nすべてのショートカットは、iOSのショートカットAppのGeoNapセクションでも確認・カスタマイズできます。";
+"help.body.siri" = "GeoNapはSiriとショートカットAppに対応しています。設定は不要です。\n\n• 「GeoNapを作成」— Siriが名前・場所・トリガー方向を尋ね、アラームを保存します。\n• 「GeoNapを有効にする」— Siriが保存済みのアラームを表示します。再度有効にするものを選びます。\n• 「GeoNapを無効にする」— 上記と同様ですが、アラームを無効化します。\n• 「GeoNapで連絡先に通知」— 最後に作動したアラームの定型メッセージ本文を返します。個人用オートメーションでの使用を想定しています（下記参照）。\n\n個人用オートメーションで承認なしにSMSを送信:\n「GeoNapで連絡先に通知」ショートカットをiOSのショートカットと組み合わせると、作成画面も「送信をタップ」も不要で自動通知メッセージを送信できます。iOSには通知トリガーがないため、オートメーションは「GeoNapを開いたとき」を使用し、アラーム後に次にGeoNapを開いたときにSMSが送信されます。\n\n詳しい手順は「設定 → 自動SMS（承認不要）」をご覧ください。\n\nすべてのショートカットは、iOSのショートカットAppのGeoNapセクションでも確認・カスタマイズできます。";
 
 "help.body.settings" = "アラームリスト左上の歯車アイコンから設定を開きます。各設定の横にある ⓘ をタップすると詳細な説明が表示されます。
 
@@ -319,10 +320,10 @@
 
 /* Auto-SMS section (SettingsView) */
 "Auto-SMS (No Approval Needed)" = "自動SMS（承認不要）";
-"settings.autoSMS.description" = "アラームが作動したとき自動的にSMSを送信 — 作成画面なし、送信ボタンのタップ不要。";
+"settings.autoSMS.description" = "自動通知のSMSをハンズフリーで送信 — 作成画面なし、送信タップなし。iOSは完全にバックグラウンドでは送信できないため、アラーム後に次にGeoNapを開いたときに送信されます。";
 "settings.autoSMS.setupTitle" = "ショートカットアプリでの初回設定：";
-"settings.autoSMS.step1" = "ショートカット → オートメーション → ＋ をタップ";
-"settings.autoSMS.step2" = "\u{201C}App\u{201D} を選択 → GeoNap を選択 → \u{201C}通知を受信\u{201D}";
+"settings.autoSMS.step1" = "ショートカットを開く → オートメーション → + をタップ → 個人用オートメーションを作成";
+"settings.autoSMS.step2" = "トリガー一覧で「App」をタップ（検索ではなくトリガー）→ 選択 → GeoNap → 開いたとき → 次へ";
 "settings.autoSMS.step3a" = "\u{201C}新規空のオートメーション\u{201D} をタップし、アクションを追加：";
 "settings.autoSMS.step3b" = "\u{201C}GeoNap で連絡先に通知\u{201D}";
 "settings.autoSMS.step4a" = "2番目のアクションを追加：\u{201C}メッセージを送信\u{201D}";
@@ -330,8 +331,9 @@
 "settings.autoSMS.step4c" = "受信者 → ＋ をタップして連絡先を選択";
 "settings.autoSMS.step5" = "\u{201C}実行前に確認\u{201D} をオフ → 完了";
 "Open Shortcuts App" = "ショートカットアプリを開く";
-"settings.autoSMS.footer" = "GeoNap対応のすべてのデバイスで利用可能（iOS 16以降）。ショートカットの\u{201C}メッセージを送信\u{201D}アクションを使ってオートメーションが静かに実行されます — メッセージは標準のメッセージアプリであなたから送信されたように表示されます。";
-
+"settings.autoSMS.footer" = "iOS 16以降で対応。iOSには通知トリガーがないため、オートメーションは「GeoNapを開いたとき」を使用します。SMSはアラーム後に次にGeoNapを開いたときに送信されます。アプリが独自の作成画面も表示しないように、上のスイッチをオンにしてください。";
+"settings.autoSMS.automationToggleHelp" = "アプリ内のメッセージ画面を省略します。アラーム後にGeoNapを開くと、オートメーションがハンズフリーでSMSを送信します。";
+"settings.autoSMS.automationToggle" = "ショートカットのオートメーションを設定済み";
 /* AlarmFiringView */
 "Snooze 10 min" = "10分スヌーズ";
 "Slide to dismiss" = "スライドして解除";

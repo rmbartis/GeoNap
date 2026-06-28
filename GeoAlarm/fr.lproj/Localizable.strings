@@ -27,6 +27,7 @@
 "Latitude" = "Latitude";
 "Longitude" = "Longitude";
 "Search above or tap the map to set a location" = "Recherchez ci-dessus ou touchez la carte pour définir un lieu";
+"Waiting for GPS lock…" = "Recherche du signal GPS…";
 "Schedule" = "Planning";
 "Repeat" = "Répéter";
 "Auto-resets after you leave — fires again every trip" = "Se réinitialise après votre départ — se déclenche à chaque trajet";
@@ -182,7 +183,7 @@ Le bouton Enregistrer est désactivé jusqu'à ce qu'un nom soit saisi et qu'un 
 "help.body.timeWindow" = "Une fenêtre horaire limite quand une alarme peut se déclencher. Par exemple, une fenêtre de 07:00–09:00 signifie que l'alarme ne se déclenche que pendant vos heures de trajet matinal.\n\nUne étiquette de résumé sous les sélecteurs indique exactement la durée, par ex. « Active 2 hrs · 7:00 – 9:00 ».\n\nLes fenêtres de nuit sont prises en charge (par ex. 22:00–06:00). Quand De est plus tard que Jusqu'à, l'alarme est active jusqu'à minuit et le lendemain matin. Le résumé devient orange et affiche « jour suivant ».";
 "help.body.transitAlarms" = "Les alarmes de transport se connectent aux horaires de transports en commun pour configurer une alarme à un arrêt exact sans saisir de coordonnées GPS.\n\nAppuyez sur + → Alarme de transport pour ouvrir l'assistant :\n\n1. Agence — Choisissez dans la liste intégrée (SNCF, RATP, Amtrak et plus), ou saisissez n'importe quelle URL de flux GTFS public.\n2. Ligne — Parcourez ou recherchez des lignes. Chacune affiche son type (Train, Métro, Bus, Ferry, etc.).\n3. Arrêt — Tous les arrêts sont listés triés par distance depuis votre position actuelle.\n4. Confirmer — Vérifiez agence, ligne et arrêt, puis définissez le nom, le rayon, le sens de déclenchement et le son.";
 "help.body.soundVibrate" = "Chaque alarme a son propre réglage de son choisi dans Son / Vibration.\n\nOptions système :\n• Vibration uniquement — sans audio ; idéal pour les environnements silencieux.\n• Par défaut — le son de notification standard d'iOS.\n• Critique — joue à plein volume, contournant le mode silence et Ne pas déranger.\n\nSons de voyage inclus :\n• Corne de brume · Cloche de tramway · Train à vapeur · Cloche de voilier · Atterrissage d'avion · Carillon d'aéroport";
-"help.body.siri" = "GeoNap est compatible avec Siri et l'app Raccourcis — sans configuration.\n\n• « Créer un GeoNap » — Siri demande un nom, un lieu et le sens du déclencheur, puis enregistre l'alarme.\n• « Activer mon GeoNap » — Siri affiche vos alarmes enregistrées ; choisissez-en une à réactiver.\n• « Désactiver mon GeoNap » — Comme ci-dessus, mais désactive l'alarme.\n• « Prévenir mes contacts via GeoNap » — Renvoie le message pré-rempli de la dernière alarme déclenchée. Conçu pour une Automatisation personnelle (voir ci-dessous).\n\nEnvoyer des SMS sans validation via une Automatisation personnelle :\nAssociez le raccourci « Prévenir mes contacts via GeoNap » à Raccourcis iOS pour envoyer les messages de notification automatique de façon entièrement automatique — sans fenêtre de rédaction ni appui sur Envoyer.\n\nVoir Réglages → Auto-SMS (sans validation) pour la configuration détaillée.\n\nVous pouvez aussi retrouver et personnaliser tous les raccourcis dans l'app Raccourcis iOS, à la section GeoNap.";
+"help.body.siri" = "GeoNap est compatible avec Siri et l'app Raccourcis — sans configuration.\n\n• « Créer un GeoNap » — Siri demande un nom, un lieu et le sens du déclencheur, puis enregistre l'alarme.\n• « Activer mon GeoNap » — Siri affiche vos alarmes enregistrées ; choisissez-en une à réactiver.\n• « Désactiver mon GeoNap » — Comme ci-dessus, mais désactive l'alarme.\n• « Prévenir mes contacts via GeoNap » — Renvoie le message pré-rempli de la dernière alarme déclenchée. Conçu pour une Automatisation personnelle (voir ci-dessous).\n\nEnvoyer des SMS sans validation via une Automatisation personnelle :\nAssociez le raccourci « Prévenir mes contacts via GeoNap » à Raccourcis iOS pour envoyer les messages de notification automatique sans fenêtre de rédaction ni appui sur Envoyer. iOS n’a pas de déclencheur de notification ; l’automatisation utilise « Lorsque GeoNap est ouverte » : le SMS est envoyé à la prochaine ouverture de GeoNap après une alarme.\n\nVoir Réglages → Auto-SMS (sans validation) pour la configuration détaillée.\n\nVous pouvez aussi retrouver et personnaliser tous les raccourcis dans l'app Raccourcis iOS, à la section GeoNap.";
 "help.body.settings" = "Ouvrez Paramètres depuis l'icône d'engrenage dans le coin supérieur gauche. Appuyez sur ⓘ à côté de n'importe quel paramètre pour une explication détaillée.
 
 • Distance — basculer entre métrique (mètres / km) et impérial (pieds / miles).
@@ -302,10 +303,10 @@ Consultez Reglages - Auto-SMS (Sans approbation) pour les instructions etape par
 
 /* Auto-SMS section (SettingsView) */
 "Auto-SMS (No Approval Needed)" = "Auto-SMS (Sans approbation)";
-"settings.autoSMS.description" = "Envoie des SMS automatiquement quand une alarme se déclenche — sans fenêtre de composition, sans appuyer sur Envoyer.";
+"settings.autoSMS.description" = "Envoyez le SMS d’Auto-Notification sans les mains : sans fenêtre de rédaction ni appui sur Envoyer. iOS ne peut pas l’envoyer entièrement en arrière-plan ; il est donc envoyé à la prochaine ouverture de GeoNap après une alarme.";
 "settings.autoSMS.setupTitle" = "Configuration unique dans l'app Raccourcis :";
-"settings.autoSMS.step1" = "Ouvrir Raccourcis → Automatisation → appuyer sur +";
-"settings.autoSMS.step2" = "Choisir \u{AB}App\u{BB} → sélectionner GeoNap → \u{AB}Reçoit une notification\u{BB}";
+"settings.autoSMS.step1" = "Ouvrez Raccourcis → Automatisation → touchez + → Créer une automatisation perso";
+"settings.autoSMS.step2" = "Dans la liste des déclencheurs, touchez App (un déclencheur, PAS une recherche) → Choisir → GeoNap → Est ouverte → Suivant";
 "settings.autoSMS.step3a" = "Appuyer sur \u{AB}Nouvelle automatisation vide\u{BB}, puis ajouter l'action :";
 "settings.autoSMS.step3b" = "\u{AB}Notifier les contacts via GeoNap\u{BB}";
 "settings.autoSMS.step4a" = "Ajouter une deuxième action : \u{AB}Envoyer un message\u{BB}";
@@ -313,8 +314,9 @@ Consultez Reglages - Auto-SMS (Sans approbation) pour les instructions etape par
 "settings.autoSMS.step4c" = "Destinataires → appuyer sur + et choisir vos contacts";
 "settings.autoSMS.step5" = "Désactiver \u{AB}Demander avant d'exécuter\u{BB} → Terminé";
 "Open Shortcuts App" = "Ouvrir Raccourcis";
-"settings.autoSMS.footer" = "Compatible avec tous les appareils GeoNap (iOS 16 et ultérieur). L'automatisation s'exécute silencieusement via l'action \u{AB}Envoyer un message\u{BB} de Raccourcis — les messages apparaissent comme venant de vous dans l'app Messages standard.";
-
+"settings.autoSMS.footer" = "Compatible avec iOS 16 et versions ultérieures. iOS n’a pas de déclencheur de notification ; l’automatisation utilise donc « Lorsque GeoNap est ouverte » : le SMS est envoyé à la prochaine ouverture de GeoNap après une alarme. Activez le commutateur ci-dessus pour que l’app n’affiche pas aussi sa propre fenêtre de rédaction.";
+"settings.autoSMS.automationToggleHelp" = "Ignore la fenêtre Messages dans l’app : l’automatisation envoie le SMS sans les mains quand vous ouvrez GeoNap après une alarme.";
+"settings.autoSMS.automationToggle" = "J’ai configuré l’automatisation Raccourcis";
 /* AlarmFiringView */
 "Snooze 10 min" = "Reporter 10 min";
 "Slide to dismiss" = "Faire glisser pour arrêter";

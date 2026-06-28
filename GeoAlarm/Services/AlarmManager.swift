@@ -285,13 +285,23 @@ final class AlarmManager: NSObject, ObservableObject {
         var body = "[\(direction)] I \(verb) \(alarm.name) at \(timeStr)."
         if !alarm.note.isEmpty { body += " \(alarm.note)" }
 
-        pendingContactMessage = ContactMessage(phones: phones, body: body)
+        // Persist body + fire time for NotifyContactsIntent — lets the Shortcuts
+        // "When GeoNap Is Opened" automation read the message and send SMS without
+        // a compose sheet. The timestamp drives the intent's freshness guard.
+        let defaults = UserDefaults.standard
+        defaults.set(body, forKey: AutoNotifyDefaultsKey.pendingBody)
+        defaults.set(Date().timeIntervalSince1970, forKey: AutoNotifyDefaultsKey.pendingBodyTimestamp)
 
-        // Persist body for NotifyContactsIntent — lets a Shortcuts Personal
-        // Automation read the message and send SMS without a compose sheet.
-        UserDefaults.standard.set(body, forKey: AutoNotifyDefaultsKey.pendingBody)
-
-        DebugLogger.shared.log("Auto-Notify: SMS compose queued at alarm fire (\(phones.count) contact(s))", category: "AlarmManager")
+        // If the user runs the hands-free Shortcuts automation, suppress the in-app
+        // pre-filled compose sheet so the message isn't both auto-sent AND shown.
+        // Otherwise queue the one-tap compose sheet for the next foreground.
+        let automationActive = defaults.bool(forKey: AppStorageKey.autoSMSAutomationEnabled)
+        if automationActive {
+            DebugLogger.shared.log("Auto-Notify: body queued for Shortcuts automation; in-app sheet suppressed (\(phones.count) contact(s))", category: "AlarmManager")
+        } else {
+            pendingContactMessage = ContactMessage(phones: phones, body: body)
+            DebugLogger.shared.log("Auto-Notify: SMS compose queued at alarm fire (\(phones.count) contact(s))", category: "AlarmManager")
+        }
     }
 
     /// Builds an Auto-Notify payload (alarmID + optional phones/body).

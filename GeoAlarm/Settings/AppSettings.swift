@@ -157,4 +157,9 @@ enum AppStorageKey {
     /// JSON-encoded [NotifyContact] default list for the Auto-Notify feature.
     /// Pre-filled into per-alarm contact lists when Auto-Notify is first enabled.
     static let defaultNotifyContacts = "defaultNotifyContacts"
+    /// User has set up the Shortcuts "When GeoNap Is Opened" automation that sends
+    /// Auto-Notify SMS hands-free. When true, the app suppresses its own pre-filled
+    /// Messages compose sheet so the two paths don't both fire (the automation
+    /// sends silently the next time the app is opened after an alarm).
+    static let autoSMSAutomationEnabled = "autoSMSAutomationEnabled"
 }

@@ -27,6 +27,7 @@
 "Latitude" = "Breitengrad";
 "Longitude" = "Längengrad";
 "Search above or tap the map to set a location" = "Oben suchen oder auf die Karte tippen";
+"Waiting for GPS lock…" = "Warten auf GPS-Signal…";
 "Schedule" = "Zeitplan";
 "Repeat" = "Wiederholen";
 "Auto-resets after you leave — fires again every trip" = "Setzt sich beim Verlassen zurück — löst bei jeder Fahrt aus";
@@ -182,7 +183,7 @@ Die Schaltfläche Speichern ist deaktiviert, bis ein Name und ein Standort festg
 "help.body.timeWindow" = "Ein Zeitfenster begrenzt, wann ein Alarm ausgelöst werden darf. Zum Beispiel bedeutet ein Fenster von 07:00–09:00 Uhr, dass der Alarm nur während Ihrer morgendlichen Pendelzeiten ausgelöst wird.\n\nEine Zusammenfassungsbezeichnung unter den Auswahlfeldern zeigt die genaue Dauer, z. B. „Aktiv 2 Std. · 7:00 – 9:00 Uhr\".\n\nNächtliche Fenster werden unterstützt (z. B. 22:00–06:00 Uhr). Wenn Von später als Bis ist, ist der Alarm bis Mitternacht und bis zum nächsten Morgen aktiv.";
 "help.body.transitAlarms" = "Transit-Alarme verbinden sich mit öffentlichen Fahrplänen, damit Sie einen Alarm an einer genauen Haltestelle stellen können.\n\nTippen Sie auf + → Transit-Alarm, um den Assistenten zu öffnen:\n\n1. Agentur — Wählen Sie aus der integrierten Liste (Deutsche Bahn, BVG, Amtrak und mehr) oder geben Sie eine öffentliche GTFS-URL ein.\n2. Route — Routen durchsuchen oder suchen. Jede zeigt ihren Typ.\n3. Haltestelle — Alle Haltestellen nach Entfernung sortiert aufgelistet.\n4. Bestätigen — Agentur, Route und Haltestelle überprüfen, dann Name, Radius und Auslöserrichtung festlegen.";
 "help.body.soundVibrate" = "Jeder Alarm hat seine eigene Toneinstellung unter Ton / Vibration.\n\nSystemoptionen:\n• Nur Vibration — kein Audio; ideal für ruhige Umgebungen.\n• Standard — der Standard-iOS-Benachrichtigungston.\n• Kritisch — spielt bei voller Lautstärke ab, umgeht den Stummschaltmodus.\n\nMitgelieferte Reiseklänge:\n• Schiffshorn · Straßenbahnklingel · Dampflok · Segelbootglocke · Flugzeuglandung · Flughafen-Signalton";
-"help.body.siri" = "GeoNap unterstützt Siri und die Kurzbefehle-App – ohne Einrichtung.\n\n• „GeoNap erstellen\" — Siri fragt nach Name, Ort und Auslöserichtung und sichert dann den Alarm.\n• „Meinen GeoNap aktivieren\" — Siri zeigt deine gesicherten Alarme; wähle einen zum erneuten Aktivieren.\n• „Meinen GeoNap deaktivieren\" — Wie oben, deaktiviert aber den Alarm.\n• „Meine Kontakte über GeoNap benachrichtigen\" — Gibt den vorausgefüllten Nachrichtentext des zuletzt ausgelösten Alarms zurück. Für eine persönliche Automation gedacht (siehe unten).\n\nSMS ohne Bestätigung über eine persönliche Automation senden:\nKombiniere den Kurzbefehl „Kontakte über GeoNap benachrichtigen\" mit iOS-Kurzbefehlen, um Auto-Benachrichtigungen vollautomatisch zu senden – ohne Verfassen-Fenster, ohne auf Senden zu tippen.\n\nSiehe Einstellungen → Auto-SMS (ohne Bestätigung) für die vollständige Schritt-für-Schritt-Anleitung.\n\nDu findest und bearbeitest alle Kurzbefehle auch in der iOS-Kurzbefehle-App im Bereich GeoNap.";
+"help.body.siri" = "GeoNap unterstützt Siri und die Kurzbefehle-App – ohne Einrichtung.\n\n• „GeoNap erstellen\" — Siri fragt nach Name, Ort und Auslöserichtung und sichert dann den Alarm.\n• „Meinen GeoNap aktivieren\" — Siri zeigt deine gesicherten Alarme; wähle einen zum erneuten Aktivieren.\n• „Meinen GeoNap deaktivieren\" — Wie oben, deaktiviert aber den Alarm.\n• „Meine Kontakte über GeoNap benachrichtigen\" — Gibt den vorausgefüllten Nachrichtentext des zuletzt ausgelösten Alarms zurück. Für eine persönliche Automation gedacht (siehe unten).\n\nSMS ohne Bestätigung über eine persönliche Automation senden:\nKombiniere den Kurzbefehl „Kontakte über GeoNap benachrichtigen\" mit iOS-Kurzbefehlen, um Auto-Benachrichtigungen ohne Verfassen-Fenster und ohne Tippen auf „Senden“ zu senden. iOS hat keinen Benachrichtigungs-Auslöser, daher nutzt die Automation „Wenn GeoNap geöffnet wird“ – die SMS wird beim nächsten Öffnen von GeoNap nach einem Alarm gesendet.\n\nSiehe Einstellungen → Auto-SMS (ohne Bestätigung) für die vollständige Schritt-für-Schritt-Anleitung.\n\nDu findest und bearbeitest alle Kurzbefehle auch in der iOS-Kurzbefehle-App im Bereich GeoNap.";
 "help.body.settings" = "Öffnen Sie Einstellungen über das Zahnradsymbol oben links. Tippen Sie auf ⓘ neben einer Einstellung für eine detaillierte Erklärung.
 
 • Entfernung — zwischen metrisch (Meter / km) und imperial (Fuß / Meilen) wechseln.
@@ -298,10 +299,10 @@ Die Schaltfläche Speichern ist deaktiviert, bis ein Name und ein Standort festg
 
 /* Auto-SMS section (SettingsView) */
 "Auto-SMS (No Approval Needed)" = "Auto-SMS (Keine Bestätigung erforderlich)";
-"settings.autoSMS.description" = "SMS automatisch senden, wenn ein Alarm auslöst — kein Verfassensfenster, kein Tippen auf Senden.";
+"settings.autoSMS.description" = "SMS der Auto-Benachrichtigung freihändig senden – ohne Verfassen-Fenster, ohne Tippen auf „Senden“. iOS kann sie nicht vollständig im Hintergrund senden, daher wird sie beim nächsten Öffnen von GeoNap nach einem Alarm gesendet.";
 "settings.autoSMS.setupTitle" = "Einmalige Einrichtung in der Kurzbefehle-App:";
-"settings.autoSMS.step1" = "Kurzbefehle öffnen → Automation → + tippen";
-"settings.autoSMS.step2" = "\u{201E}App\u{201C} wählen → GeoNap auswählen → \u{201E}Erhält eine Benachrichtigung\u{201C}";
+"settings.autoSMS.step1" = "Shortcuts öffnen → Automation → auf + tippen → Persönliche Automation erstellen";
+"settings.autoSMS.step2" = "In der Auslöser-Liste auf App tippen (ein Auslöser, KEINE Suche) → Auswählen → GeoNap → Wird geöffnet → Weiter";
 "settings.autoSMS.step3a" = "\u{201E}Neue leere Automation\u{201C} tippen, dann Aktion hinzufügen:";
 "settings.autoSMS.step3b" = "\u{201E}Kontakte über GeoNap benachrichtigen\u{201C}";
 "settings.autoSMS.step4a" = "Zweite Aktion hinzufügen: \u{201E}Nachricht senden\u{201C}";
@@ -309,8 +310,9 @@ Die Schaltfläche Speichern ist deaktiviert, bis ein Name und ein Standort festg
 "settings.autoSMS.step4c" = "Empfänger → + tippen und Kontakte auswählen";
 "settings.autoSMS.step5" = "\u{201E}Vor dem Ausführen fragen\u{201C} deaktivieren → Fertig";
 "Open Shortcuts App" = "Kurzbefehle-App öffnen";
-"settings.autoSMS.footer" = "Wird auf allen GeoNap-kompatiblen Geräten unterstützt (iOS 16 und höher). Die Automation läuft lautlos über die Aktion \u{201E}Nachricht senden\u{201C} der Kurzbefehle-App — Nachrichten erscheinen als von Ihnen gesendet in der Standard-Nachrichten-App.";
-
+"settings.autoSMS.footer" = "Unterstützt ab iOS 16. iOS hat keinen Benachrichtigungs-Auslöser, daher nutzt die Automation „Wenn GeoNap geöffnet wird“ – die SMS wird beim nächsten Öffnen von GeoNap nach einem Alarm gesendet. Aktiviere den Schalter oben, damit die App nicht zusätzlich ihr eigenes Verfassen-Fenster zeigt.";
+"settings.autoSMS.automationToggleHelp" = "Überspringt das Mitteilungen-Fenster in der App – die Automation sendet die SMS freihändig, wenn du GeoNap nach einem Alarm öffnest.";
+"settings.autoSMS.automationToggle" = "Shortcuts-Automation eingerichtet";
 /* AlarmFiringView */
 "Snooze 10 min" = "10 Min. schlummern";
 "Slide to dismiss" = "Zum Beenden wischen";

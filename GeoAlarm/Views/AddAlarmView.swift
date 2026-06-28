@@ -37,6 +37,9 @@ struct AddAlarmView: View {
     @State private var coordLonEntry   = ""
     @State private var coordEntryError: String? = nil
     @State private var showCoordEntry  = false
+    /// Set after the GPS-lock wait runs too long, so the spinner falls back to the
+    /// manual hint instead of spinning forever (e.g. indoors with no fix).
+    @State private var gpsLockTimedOut = false
 
     /// Slider binding in the user's chosen unit; viewModel.radius always stores metres.
     private var radiusInUnit: Binding<Double> {
@@ -161,6 +164,17 @@ struct AddAlarmView: View {
                 .frame(height: 220)
                 .clipShape(RoundedRectangle(cornerRadius: 10))
                 .listRowInsets(EdgeInsets(top: 8, leading: 8, bottom: 8, trailing: 8))
+                // Backstop so the "Waiting for GPS lock…" indicator can't spin
+                // forever (e.g. indoors): after 20s, fall back to the manual hint.
+                // Restarts whenever the waiting state flips; cancels on lock.
+                .task(id: isWaitingForGPSLock) {
+                    guard isWaitingForGPSLock else { return }
+                    gpsLockTimedOut = false
+                    try? await Task.sleep(for: .seconds(20))
+                    if !Task.isCancelled && isWaitingForGPSLock {
+                        gpsLockTimedOut = true
+                    }
+                }
 
                 // MARK: Manual coordinate entry
                 DisclosureGroup(
@@ -255,6 +269,14 @@ struct AddAlarmView: View {
                                    value: CoordinateParser.format(latitude: viewModel.latitude, format: coordFormat))
                     LabeledContent(NSLocalizedString("Longitude", bundle: bundle, comment: ""),
                                    value: CoordinateParser.format(longitude: viewModel.longitude, format: coordFormat))
+                } else if isWaitingForGPSLock && !gpsLockTimedOut {
+                    HStack(spacing: 6) {
+                        ProgressView()
+                            .controlSize(.small)
+                        Text("Waiting for GPS lock…", bundle: bundle)
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
                 } else {
                     HStack(spacing: 6) {
                         Image(systemName: "mappin.slash")
@@ -672,6 +694,20 @@ struct AddAlarmView: View {
             DebugLogger.shared.log("Alarm created: '\(alarm.name)' lat=\(alarm.latitude) lon=\(alarm.longitude) radius=\(Int(alarm.radius))m event=\(alarm.regionEvent.rawValue) repeat=\(alarm.isRepeating) sound=\(alarm.notificationSound.rawValue) autoNotify=\(alarm.notifyContact)", category: "UI")
         }
         dismiss()
+    }
+
+    /// True while a brand-new alarm is still waiting for a usable GPS fix to
+    /// auto-centre its pin: location is authorized and available, the user hasn't
+    /// set a location yet, and no fresh/accurate fix has arrived. Drives the
+    /// "Waiting for GPS lock…" indicator; clears automatically once a good fix
+    /// lands (which auto-fills the centre and sets `hasLocation`).
+    private var isWaitingForGPSLock: Bool {
+        existingAlarm == nil
+        && !viewModel.hasLocation
+        && !locationManager.isLocationUnavailable
+        && (locationManager.authorizationStatus == .authorizedWhenInUse
+            || locationManager.authorizationStatus == .authorizedAlways)
+        && freshCurrentLocation() == nil
     }
 
     /// Returns the user's location only if the fix is recent and accurate. A stale

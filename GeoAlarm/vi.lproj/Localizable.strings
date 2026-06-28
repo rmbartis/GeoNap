@@ -27,6 +27,7 @@
 "Latitude" = "Vĩ độ";
 "Longitude" = "Kinh độ";
 "Search above or tap the map to set a location" = "Tìm kiếm bên trên hoặc nhấn vào bản đồ để đặt vị trí";
+"Waiting for GPS lock…" = "Đang chờ tín hiệu GPS…";
 "Schedule" = "Lịch trình";
 "Repeat" = "Lặp lại";
 "Auto-resets after you leave — fires again every trip" = "Tự đặt lại khi bạn rời đi — kích hoạt mỗi chuyến đi";
@@ -190,7 +191,7 @@ Nút Lưu bị tắt cho đến khi nhập tên và ghim vị trí. iOS cho phé
 
 "help.body.soundVibrate" = "Mỗi báo thức có cài đặt âm thanh riêng được chọn trong Âm thanh / Rung khi tạo hoặc chỉnh sửa.\n\nTùy chọn hệ thống:\n• Chỉ rung — không có âm thanh; lý tưởng cho môi trường yên tĩnh.\n• Mặc định — âm thanh thông báo iOS tiêu chuẩn.\n• Khẩn cấp — phát ở âm lượng tối đa, bỏ qua chế độ im lặng và Không làm phiền.\n\nÂm thanh du lịch tích hợp:\n• Còi tàu thuyền · Chuông xe cáp · Tàu hơi nước · Chuông thuyền buồm · Máy bay hạ cánh · Chuông sân bay\n\nMỗi cài đặt được lưu cùng báo thức và phát mỗi khi nó kêu.";
 
-"help.body.siri" = "GeoNap hỗ trợ Siri và ứng dụng Phím tắt — không cần thiết lập.\n\n• “Tạo một GeoNap” — Siri hỏi tên, vị trí và hướng kích hoạt, rồi lưu báo thức.\n• “Bật GeoNap của tôi” — Siri hiển thị các báo thức đã lưu; chọn một để bật lại.\n• “Tắt GeoNap của tôi” — Giống như trên, nhưng vô hiệu hóa báo thức.\n• “Thông báo cho liên hệ của tôi qua GeoNap” — Trả về nội dung tin nhắn soạn sẵn của báo thức kêu gần nhất. Được thiết kế để dùng trong Tự động hóa cá nhân (xem bên dưới).\n\nGửi SMS không cần phê duyệt bằng Tự động hóa cá nhân:\nKết hợp phím tắt “Thông báo cho liên hệ qua GeoNap” với Phím tắt của iOS để gửi tin nhắn Tự động thông báo hoàn toàn tự động — không cần màn hình soạn, không cần chạm Gửi.\n\nXem Cài đặt → Auto-SMS (không cần phê duyệt) để biết các bước thiết lập đầy đủ.\n\nBạn cũng có thể tìm và tùy chỉnh tất cả phím tắt trong ứng dụng Phím tắt của iOS, trong mục GeoNap.";
+"help.body.siri" = "GeoNap hỗ trợ Siri và ứng dụng Phím tắt — không cần thiết lập.\n\n• “Tạo một GeoNap” — Siri hỏi tên, vị trí và hướng kích hoạt, rồi lưu báo thức.\n• “Bật GeoNap của tôi” — Siri hiển thị các báo thức đã lưu; chọn một để bật lại.\n• “Tắt GeoNap của tôi” — Giống như trên, nhưng vô hiệu hóa báo thức.\n• “Thông báo cho liên hệ của tôi qua GeoNap” — Trả về nội dung tin nhắn soạn sẵn của báo thức kêu gần nhất. Được thiết kế để dùng trong Tự động hóa cá nhân (xem bên dưới).\n\nGửi SMS không cần phê duyệt bằng Tự động hóa cá nhân:\nKết hợp phím tắt “Thông báo cho liên hệ qua GeoNap” với Phím tắt của iOS để gửi tin nhắn Tự động thông báo mà không cần màn hình soạn và không cần chạm Gửi. iOS không có trình kích hoạt theo thông báo, nên tự động hóa dùng “Khi GeoNap được mở” — SMS được gửi vào lần tiếp theo bạn mở GeoNap sau khi báo thức kêu.\n\nXem Cài đặt → Auto-SMS (không cần phê duyệt) để biết các bước thiết lập đầy đủ.\n\nBạn cũng có thể tìm và tùy chỉnh tất cả phím tắt trong ứng dụng Phím tắt của iOS, trong mục GeoNap.";
 
 "help.body.settings" = "Mở Cài đặt từ biểu tượng bánh răng ở góc trên bên trái của danh sách báo thức. Nhấn ⓘ bên cạnh bất kỳ cài đặt nào để xem giải thích chi tiết.
 
@@ -323,10 +324,10 @@ Xem Cai dat - SMS Tu dong (Khong can phe duyet) de biet huong dan tung buoc.\n\n
 
 /* Auto-SMS section (SettingsView) */
 "Auto-SMS (No Approval Needed)" = "SMS Tự động (Không cần phê duyệt)";
-"settings.autoSMS.description" = "Tự động gửi SMS khi báo thức kích hoạt — không có cửa sổ soạn thảo, không cần nhấn Gửi.";
+"settings.autoSMS.description" = "Gửi SMS Tự động báo rảnh tay — không có trang soạn, không chạm Gửi. iOS không thể gửi hoàn toàn ở chế độ nền, nên tin được gửi vào lần tiếp theo bạn mở GeoNap sau khi báo thức kêu.";
 "settings.autoSMS.setupTitle" = "Thiết lập một lần trong app Phím tắt:";
-"settings.autoSMS.step1" = "Mở Phím tắt → Tự động hóa → nhấn +";
-"settings.autoSMS.step2" = "Chọn \u{201C}App\u{201D} → chọn GeoNap → \u{201C}Nhận thông báo\u{201D}";
+"settings.autoSMS.step1" = "Mở Phím tắt → Tự động hóa → chạm + → Tạo tự động hóa cá nhân";
+"settings.autoSMS.step2" = "Trong danh sách trình kích hoạt, chạm App (là trình kích hoạt, KHÔNG phải ô tìm kiếm) → Chọn → GeoNap → Được mở → Tiếp";
 "settings.autoSMS.step3a" = "Nhấn \u{201C}Tự động hóa trống mới\u{201D}, sau đó thêm hành động:";
 "settings.autoSMS.step3b" = "\u{201C}Thông báo liên hệ qua GeoNap\u{201D}";
 "settings.autoSMS.step4a" = "Thêm hành động thứ hai: \u{201C}Gửi tin nhắn\u{201D}";
@@ -334,8 +335,9 @@ Xem Cai dat - SMS Tu dong (Khong can phe duyet) de biet huong dan tung buoc.\n\n
 "settings.autoSMS.step4c" = "Người nhận → nhấn + và chọn liên hệ của bạn";
 "settings.autoSMS.step5" = "Tắt \u{201C}Hỏi trước khi chạy\u{201D} → Xong";
 "Open Shortcuts App" = "Mở app Phím tắt";
-"settings.autoSMS.footer" = "Hỗ trợ trên tất cả thiết bị tương thích GeoNap (iOS 16 trở lên). Tự động hóa chạy im lặng bằng hành động \u{201C}Gửi tin nhắn\u{201D} của Phím tắt — tin nhắn hiển thị như gửi từ bạn trong app Tin nhắn tiêu chuẩn.";
-
+"settings.autoSMS.footer" = "Hỗ trợ iOS 16 trở lên. iOS không có trình kích hoạt theo thông báo, nên tự động hóa dùng “Khi GeoNap được mở” — SMS được gửi vào lần tiếp theo bạn mở GeoNap sau khi báo thức kêu. Bật công tắc ở trên để ứng dụng không hiển thị thêm trang soạn tin của riêng nó.";
+"settings.autoSMS.automationToggleHelp" = "Bỏ qua trang Tin nhắn trong ứng dụng — tự động hóa gửi SMS rảnh tay khi bạn mở GeoNap sau khi báo thức kêu.";
+"settings.autoSMS.automationToggle" = "Tôi đã thiết lập tự động hóa Phím tắt";
 /* AlarmFiringView */
 "Snooze 10 min" = "Báo lại 10 phút";
 "Slide to dismiss" = "Trượt để tắt";

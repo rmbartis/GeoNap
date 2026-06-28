@@ -27,6 +27,7 @@
 "Latitude" = "Latitude";
 "Longitude" = "Longitude";
 "Search above or tap the map to set a location" = "Pesquise acima ou toque no mapa para definir uma localização";
+"Waiting for GPS lock…" = "Aguardando sinal de GPS…";
 "Schedule" = "Agendamento";
 "Repeat" = "Repetir";
 "Auto-resets after you leave — fires again every trip" = "Reinicia automaticamente ao sair — dispara em cada viagem";
@@ -190,7 +191,7 @@ O botão Salvar fica desativado até que um nome seja inserido e uma localizaç�
 
 "help.body.soundVibrate" = "Cada alarme tem sua própria configuração de som escolhida em Som / Vibrar ao criar ou editar.\n\nOpções do sistema:\n• Apenas Vibrar — sem áudio; ideal para ambientes silenciosos.\n• Padrão — o som padrão de notificação do iOS.\n• Crítico — toca em volume máximo, ignorando o modo silencioso e o Não Perturbe.\n\nSons de viagem incluídos:\n• Buzina de navio · Sino de bondinho · Trem a vapor · Sino de veleiro · Pouso de avião · Sinal de aeroporto\n\nCada configuração é salva com seu alarme e toca sempre que ele dispara.";
 
-"help.body.siri" = "O GeoNap é compatível com a Siri e o app Atalhos — sem configuração.\n\n• «Criar um GeoNap» — a Siri pergunta nome, local e direção do acionador e salva o alarme.\n• «Ativar meu GeoNap» — a Siri mostra seus alarmes salvos; escolha um para reativar.\n• «Desativar meu GeoNap» — igual ao anterior, mas desativa o alarme.\n• «Notificar meus contatos pelo GeoNap» — retorna o texto pré-preenchido do último alarme acionado. Feito para uso em uma Automação pessoal (veja abaixo).\n\nEnviar SMS sem aprovação usando uma Automação pessoal:\nCombine o atalho «Notificar contatos pelo GeoNap» com os Atalhos do iOS para enviar mensagens de notificação automática de forma totalmente automática — sem tela de redação e sem tocar em Enviar.\n\nVeja Ajustes → Auto-SMS (sem aprovação) para a configuração completa, passo a passo.\n\nVocê também pode encontrar e personalizar todos os atalhos no app Atalhos do iOS, na seção GeoNap.";
+"help.body.siri" = "O GeoNap é compatível com a Siri e o app Atalhos — sem configuração.\n\n• «Criar um GeoNap» — a Siri pergunta nome, local e direção do acionador e salva o alarme.\n• «Ativar meu GeoNap» — a Siri mostra seus alarmes salvos; escolha um para reativar.\n• «Desativar meu GeoNap» — igual ao anterior, mas desativa o alarme.\n• «Notificar meus contatos pelo GeoNap» — retorna o texto pré-preenchido do último alarme acionado. Feito para uso em uma Automação pessoal (veja abaixo).\n\nEnviar SMS sem aprovação usando uma Automação pessoal:\nCombine o atalho «Notificar contatos pelo GeoNap» com os Atalhos do iOS para enviar mensagens de notificação automática sem tela de redação e sem tocar em Enviar. O iOS não tem um gatilho de notificação, então a automação usa «Quando o GeoNap é aberto»: o SMS é enviado na próxima vez que você abrir o GeoNap após um alarme.\n\nVeja Ajustes → Auto-SMS (sem aprovação) para a configuração completa, passo a passo.\n\nVocê também pode encontrar e personalizar todos os atalhos no app Atalhos do iOS, na seção GeoNap.";
 
 "help.body.settings" = "Abra as Configurações pelo ícone de engrenagem no canto superior esquerdo da lista de alarmes. Toque em ⓘ ao lado de qualquer configuração para uma explicação detalhada.
 
@@ -319,10 +320,10 @@ O botão Salvar fica desativado até que um nome seja inserido e uma localizaç�
 
 /* Auto-SMS section (SettingsView) */
 "Auto-SMS (No Approval Needed)" = "Auto-SMS (Sem aprovação necessária)";
-"settings.autoSMS.description" = "Envia SMS automaticamente quando um alarme é acionado — sem janela de composição, sem tocar em Enviar.";
+"settings.autoSMS.description" = "Envie o SMS de Notificação automática sem usar as mãos — sem folha de composição, sem tocar em Enviar. O iOS não consegue enviá-lo totalmente em segundo plano, então ele é enviado na próxima vez que você abrir o GeoNap após um alarme.";
 "settings.autoSMS.setupTitle" = "Configuração única na app Atalhos:";
-"settings.autoSMS.step1" = "Abrir Atalhos → Automatização → tocar em +";
-"settings.autoSMS.step2" = "Escolher \u{201C}App\u{201D} → selecionar GeoNap → \u{201C}Recebe uma notificação\u{201D}";
+"settings.autoSMS.step1" = "Abra Atalhos → Automação → toque em + → Criar automação pessoal";
+"settings.autoSMS.step2" = "Na lista de gatilhos toque em App (um gatilho, NÃO uma busca) → Escolher → GeoNap → É aberto → Avançar";
 "settings.autoSMS.step3a" = "Tocar em \u{201C}Nova automatização em branco\u{201D}, depois adicionar ação:";
 "settings.autoSMS.step3b" = "\u{201C}Notificar contactos via GeoNap\u{201D}";
 "settings.autoSMS.step4a" = "Adicionar segunda ação: \u{201C}Enviar mensagem\u{201D}";
@@ -330,8 +331,9 @@ O botão Salvar fica desativado até que um nome seja inserido e uma localizaç�
 "settings.autoSMS.step4c" = "Destinatários → tocar em + e escolher os seus contactos";
 "settings.autoSMS.step5" = "Desativar \u{201C}Perguntar antes de executar\u{201D} → Concluído";
 "Open Shortcuts App" = "Abrir app Atalhos";
-"settings.autoSMS.footer" = "Suportado em todos os dispositivos compatíveis com GeoNap (iOS 16 ou posterior). A automatização é executada silenciosamente usando a ação \u{201C}Enviar mensagem\u{201D} dos Atalhos — as mensagens aparecem como enviadas por si na app Mensagens padrão.";
-
+"settings.autoSMS.footer" = "Compatível com iOS 16 e posterior. O iOS não tem um gatilho de notificação, então a automação usa “Quando o GeoNap é aberto”: o SMS é enviado na próxima vez que você abrir o GeoNap após um alarme. Ative a opção acima para que o app não mostre também a sua própria folha de composição.";
+"settings.autoSMS.automationToggleHelp" = "Ignora a folha do Mensagens no app — a automação envia o SMS sem usar as mãos quando você abre o GeoNap após um alarme.";
+"settings.autoSMS.automationToggle" = "Já configurei a automação do Atalhos";
 /* AlarmFiringView */
 "Snooze 10 min" = "Adiar 10 min";
 "Slide to dismiss" = "Deslizar para desligar";

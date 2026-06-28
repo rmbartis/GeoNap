@@ -4,16 +4,21 @@
 //
 // Designed for use in a Shortcuts Personal Automation:
 //
-//   Trigger : When I receive a notification from GeoNap
+//   Trigger : App → GeoNap → "Is Opened"   (iOS has no "app received a
+//             notification" trigger; "Is Opened" is the only app trigger, so
+//             the SMS is sent the next time GeoNap is opened after an alarm)
 //   Action 1: "Notify Contacts via NapAlarm"   ← this intent
-//             → output: message body String
+//             → output: message body String (empty/throws if no FRESH alarm,
+//               so opening the app for any other reason sends nothing)
 //   Action 2: "Send Message"
 //             Message    → "Body" from Action 1
 //             Recipients → pick your contacts (configured once at setup)
 //   Setting : Run Without Asking  ✓
 //
-// With that automation in place, iOS sends the SMS automatically every
-// time a NapAlarm fires — no compose sheet, no tap required.
+// With that automation in place — and the "I've set up the Shortcuts automation"
+// switch enabled in Settings so the in-app compose sheet is suppressed — iOS
+// sends the SMS with no compose sheet and no Send tap the next time the user
+// opens GeoNap after an alarm fires (within the freshness window).
 
 import AppIntents
 import Foundation
@@ -24,6 +29,14 @@ import Foundation
 
 enum AutoNotifyDefaultsKey {
     static let pendingBody = "autoNotify_pendingBody"
+    /// Unix time (TimeInterval) when `pendingBody` was last written, i.e. when an
+    /// alarm last fired. Used to reject stale bodies so opening the app casually
+    /// (long after an alarm) doesn't resend an old message.
+    static let pendingBodyTimestamp = "autoNotify_pendingBodyTimestamp"
+    /// How recently an alarm must have fired for the Shortcuts automation to send.
+    /// Covers the normal gap between the alarm firing and the user opening the app;
+    /// beyond this the pending body is treated as stale and ignored.
+    static let freshnessWindow: TimeInterval = 15 * 60   // 15 minutes
 }
 
 // MARK: - Intent
@@ -47,16 +60,28 @@ struct NotifyContactsIntent: AppIntent {
 
     func perform() async throws -> some IntentResult & ReturnsValue<String> {
         let defaults = UserDefaults.standard
-        // Use the literal directly — avoids @MainActor isolation inference
+        // Use the literals directly — avoids @MainActor isolation inference
         // that affects AutoNotifyDefaultsKey when accessed from a non-isolated context.
-        let key = "autoNotify_pendingBody"
+        let key      = "autoNotify_pendingBody"
+        let tsKey    = "autoNotify_pendingBodyTimestamp"
+        let window: TimeInterval = 15 * 60   // keep in sync with AutoNotifyDefaultsKey.freshnessWindow
 
         guard let body = defaults.string(forKey: key), !body.isEmpty else {
             throw IntentError.noPendingNotification
         }
 
-        // Clear so a stale body isn't re-used before the next alarm fires.
+        // Freshness guard: only send if an alarm fired within the window. This is
+        // what makes the "When GeoNap Is Opened" automation safe — opening the app
+        // for any other reason finds a stale (or already-cleared) body and sends
+        // nothing. Clear the body either way so it's one-shot per alarm.
+        let firedAt = defaults.double(forKey: tsKey)   // 0 if never set
+        let age = Date().timeIntervalSince1970 - firedAt
         defaults.removeObject(forKey: key)
+        defaults.removeObject(forKey: tsKey)
+
+        guard firedAt > 0, age <= window else {
+            throw IntentError.noPendingNotification
+        }
 
         return .result(value: body)
     }
