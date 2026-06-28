@@ -28,6 +28,7 @@ struct AddAlarmView: View {
     @AppStorage(AppStorageKey.distanceUnit) private var distanceUnitRaw  = DistanceUnit.imperial.rawValue
     @AppStorage(AppStorageKey.timeFormat)   private var timeFormatRaw    = TimeFormat.twelveHour.rawValue
     @AppStorage(AppStorageKey.coordFormat)  private var coordFormatRaw   = CoordFormat.dd.rawValue
+    @AppStorage(AppStorageKey.defaultTriggerMode) private var defaultTriggerModeRaw = TriggerMode.distance.rawValue
     private var distanceUnit: DistanceUnit { DistanceUnit(rawValue: distanceUnitRaw) ?? .imperial }
     private var timeFormat:   TimeFormat   { TimeFormat(rawValue: timeFormatRaw)     ?? .twelveHour }
     private var coordFormat:  CoordFormat  { CoordFormat(rawValue: coordFormatRaw)   ?? .dd }
@@ -301,16 +302,41 @@ struct AddAlarmView: View {
                 }
                 .pickerStyle(.segmented)
 
-                VStack(alignment: .leading, spacing: 4) {
-                    HStack {
-                        Text("Radius", bundle: bundle)
-                        Spacer()
-                        Text(distanceUnit.formatted(meters: viewModel.radius))
-                            .foregroundColor(.secondary)
+                // Distance (radius) vs Time (minutes before arrival)
+                Picker(selection: $viewModel.triggerMode) {
+                    ForEach(TriggerMode.allCases) { mode in
+                        Text(NSLocalizedString(mode.localizationKey, bundle: bundle, comment: "")).tag(mode)
                     }
-                    Slider(value: radiusInUnit,
-                           in: distanceUnit.sliderRange,
-                           step: distanceUnit.sliderStep)
+                } label: {
+                    Text("trigger.mode.label", bundle: bundle)
+                }
+                .pickerStyle(.segmented)
+
+                if viewModel.triggerMode == .distance {
+                    VStack(alignment: .leading, spacing: 4) {
+                        HStack {
+                            Text("Radius", bundle: bundle)
+                            Spacer()
+                            Text(distanceUnit.formatted(meters: viewModel.radius))
+                                .foregroundColor(.secondary)
+                        }
+                        Slider(value: radiusInUnit,
+                               in: distanceUnit.sliderRange,
+                               step: distanceUnit.sliderStep)
+                    }
+                } else {
+                    Stepper(value: $viewModel.leadTimeMinutes, in: 1...60) {
+                        HStack {
+                            Text("trigger.leadTime.label", bundle: bundle)
+                            Spacer()
+                            Text(String(format: NSLocalizedString("trigger.leadTime.value", bundle: bundle, comment: ""),
+                                        viewModel.leadTimeMinutes))
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                    Text("trigger.leadTime.help", bundle: bundle)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
                 }
             } header: {
                 Text("Trigger", bundle: bundle)
@@ -542,6 +568,8 @@ struct AddAlarmView: View {
                 // expected. Runs once so returning from a sub-sheet won't wipe input.
                 didInitNewAlarm = true
                 viewModel.reset()
+                // Honor the Settings default for the trigger input mode on new alarms.
+                viewModel.triggerMode = TriggerMode(rawValue: defaultTriggerModeRaw) ?? .distance
                 autofillCurrentLocationIfNeeded()
             }
         }

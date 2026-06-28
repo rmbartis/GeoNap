@@ -27,6 +27,10 @@ final class LocationManager: NSObject, ObservableObject {
     var onRegionEntered: ((String) -> Void)?
     var onRegionExited:  ((String) -> Void)?
 
+    /// Closure called on every location fix. Set by AlarmManager to feed the
+    /// ETA engine while a time-based alarm is in its final-approach window.
+    var onLocationUpdate: ((CLLocation) -> Void)?
+
     // MARK: - Init
 
     override init() {
@@ -51,6 +55,26 @@ final class LocationManager: NSObject, ObservableObject {
 
     func stopUpdatingLocation() {
         manager.stopUpdatingLocation()
+    }
+
+    // MARK: - Continuous background tracking (time-based alarms)
+
+    /// Enable continuous background location updates for the final-approach ETA
+    /// tracking of a time-based alarm. Requires the "location" UIBackgroundMode
+    /// (present) and Always authorization. Higher battery cost — only call while
+    /// approaching a time-based alarm's destination, and pair with `stopContinuousUpdates()`.
+    func startContinuousUpdates() {
+        manager.allowsBackgroundLocationUpdates = true
+        manager.pausesLocationUpdatesAutomatically = false
+        manager.startUpdatingLocation()
+        DebugLogger.shared.log("Continuous background location updates ENABLED (time-based approach)", category: "Location")
+    }
+
+    /// Drop the background-update privilege so updates suspend again in the
+    /// background (foreground streaming continues for the map/current location).
+    func stopContinuousUpdates() {
+        manager.allowsBackgroundLocationUpdates = false
+        DebugLogger.shared.log("Continuous background location updates DISABLED", category: "Location")
     }
 
     // MARK: - Region monitoring
@@ -109,6 +133,8 @@ extension LocationManager: CLLocationManagerDelegate {
             self.currentLocation = loc
             // A fresh fix means hardware is working — clear any unavailable flag.
             self.isLocationUnavailable = false
+            // Feed the ETA engine (no-op unless a time-based alarm is approaching).
+            self.onLocationUpdate?(loc)
         }
         // Log only occasionally (every ~100 m change) to avoid flooding the file
         DebugLogger.shared.log("Location fix: (\(String(format: "%.5f", loc.coordinate.latitude)), \(String(format: "%.5f", loc.coordinate.longitude))) accuracy=\(Int(loc.horizontalAccuracy))m speed=\(Int(loc.speed))m/s", category: "Location")

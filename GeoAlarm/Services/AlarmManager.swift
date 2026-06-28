@@ -95,7 +95,9 @@ final class AlarmManager: NSObject, ObservableObject {
             toInsert = NapAlarm(
                 id: alarm.id, name: alarm.name,
                 latitude: alarm.latitude, longitude: alarm.longitude,
-                radius: alarm.radius, regionEvent: alarm.regionEvent,
+                radius: alarm.radius,
+                triggerMode: alarm.triggerMode, leadTimeMinutes: alarm.leadTimeMinutes,
+                regionEvent: alarm.regionEvent,
                 state: .inactive, note: alarm.note,
                 isRepeating: alarm.isRepeating,
                 hasTimeWindow: alarm.hasTimeWindow,
@@ -140,6 +142,8 @@ final class AlarmManager: NSObject, ObservableObject {
         existing.latitude          = alarm.latitude
         existing.longitude         = alarm.longitude
         existing.radius            = alarm.radius
+        existing.triggerMode       = alarm.triggerMode
+        existing.leadTimeMinutes   = alarm.leadTimeMinutes
         existing.regionEvent       = alarm.regionEvent
         existing.note              = alarm.note
         existing.isRepeating       = alarm.isRepeating
@@ -185,11 +189,23 @@ final class AlarmManager: NSObject, ObservableObject {
     // MARK: - Region monitoring helpers
 
     private func startMonitoring(_ alarm: NapAlarm) {
+        // Inner ring: distance alarms fire on it directly; time alarms use it as the
+        // proximity backstop if GPS/ETA can't fire (tunnels, lost fixes).
         locationManager?.startMonitoring(region: alarm.clRegion)
+        // Time alarms additionally monitor an outer "warm-up" ring; entering it
+        // starts continuous-GPS ETA tracking for the final approach.
+        // NOTE: time alarms consume TWO of iOS's 20 region slots.
+        if alarm.triggerMode == .time {
+            locationManager?.startMonitoring(region: alarm.outerWarmupRegion)
+        }
     }
 
     private func stopMonitoring(_ alarm: NapAlarm) {
         locationManager?.stopMonitoring(region: alarm.clRegion)
+        if alarm.triggerMode == .time {
+            locationManager?.stopMonitoring(region: alarm.outerWarmupRegion)
+            stopETATracking(alarm.id)
+        }
     }
 
     /// Re-register all active alarms — call on launch or after permission grant.
@@ -208,9 +224,79 @@ final class AlarmManager: NSObject, ObservableObject {
         locationManager?.onRegionExited = { [weak self] id in
             self?.handleRegionEvent(regionID: id, event: .onExit)
         }
+        locationManager?.onLocationUpdate = { [weak self] loc in
+            self?.handleLocationUpdate(loc)
+        }
+    }
+
+    // MARK: - Time-based (ETA) tracking
+
+    /// Per-alarm ETA estimators, keyed by alarm id. Non-empty only while one or
+    /// more time-based alarms are inside their outer warm-up ring (final approach).
+    private var etaEstimators: [UUID: ETAEstimator] = [:]
+
+    /// Begin continuous-GPS ETA tracking for a time-based alarm whose outer ring
+    /// was just entered.
+    private func beginETATracking(_ alarm: NapAlarm) {
+        guard etaEstimators[alarm.id] == nil else { return }   // already tracking
+        etaEstimators[alarm.id] = ETAEstimator()
+        locationManager?.startContinuousUpdates()
+        DebugLogger.shared.log("⏱️ ETA tracking started for '\(alarm.name)' — entered warm-up ring (lead=\(alarm.leadTimeMinutes)m)", category: "AlarmManager")
+    }
+
+    private func stopETATracking(_ id: UUID) {
+        guard etaEstimators[id] != nil else { return }
+        etaEstimators[id] = nil
+        if etaEstimators.isEmpty { locationManager?.stopContinuousUpdates() }
+    }
+
+    /// Feed every fix into the active estimators and fire when ETA ≤ lead time.
+    private func handleLocationUpdate(_ loc: CLLocation) {
+        guard !etaEstimators.isEmpty else { return }
+        for id in Array(etaEstimators.keys) {
+            guard var est = etaEstimators[id],
+                  let alarm = alarms.first(where: { $0.id == id }) else { stopETATracking(id); continue }
+            est.add(loc)
+            etaEstimators[id] = est
+            guard alarm.isActive, alarm.isWithinWindow() else { continue }
+            if est.shouldFire(to: alarm.coordinate, leadTimeMinutes: alarm.leadTimeMinutes) {
+                fireTimeBased(alarm, eta: est.eta(to: alarm.coordinate))
+            }
+        }
+    }
+
+    /// Fire a time-based alarm from the ETA path (mirrors the region-event fire).
+    private func fireTimeBased(_ alarm: NapAlarm, eta: TimeInterval?) {
+        alarm.state = .triggered
+        alarm.lastTriggeredAt = Date()
+        alarm.triggerCount += 1
+        let etaStr = eta.map { "\(Int($0))s" } ?? "n/a"
+        CrashReporter.log("Alarm triggered (time-based): \(alarm.name) ETA=\(etaStr)")
+        DebugLogger.shared.log("🔔 Alarm TRIGGERED (time-based): '\(alarm.name)' ETA≈\(etaStr) lead=\(alarm.leadTimeMinutes)m", category: "AlarmManager")
+        let firingID = alarm.id
+        let firingTitle = alarm.name
+        let firingSoundName = alarm.notificationSound.alarmKitSoundName
+        Task { await GeoAlarmScheduler.fire(id: firingID, title: firingTitle, soundName: firingSoundName) }
+        queueAutoNotify(for: alarm)
+        scheduleWindowEndGuard(for: alarm)
+        save()
+        // Done: tear down this alarm's rings + tracking (non-repeating).
+        stopMonitoring(alarm)
+        stopETATracking(alarm.id)
     }
 
     func handleRegionEvent(regionID: String, event: RegionEvent) {
+
+        // Outer warm-up ring of a time-based alarm: entering it starts continuous
+        // ETA tracking. It never fires the alarm itself (the ETA loop / inner ring do).
+        if regionID.hasSuffix(NapAlarm.warmupRegionSuffix) {
+            let baseID = String(regionID.dropLast(NapAlarm.warmupRegionSuffix.count))
+            if event == .onEntry,
+               let alarm = alarms.first(where: { $0.id.uuidString == baseID && $0.isActive && $0.triggerMode == .time }) {
+                beginETATracking(alarm)
+            }
+            return
+        }
 
         // Opportunistic backstop: any region event means the app is awake, so
         // clean up windowed alarms whose window ended while we were suspended.

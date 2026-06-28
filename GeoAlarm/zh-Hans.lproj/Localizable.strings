@@ -363,3 +363,13 @@
 "help.body.appleAutomation" = "GeoNap 与 Apple HomeKit 和“快捷指令”App 集成，让你一到家家里就准备就绪：开灯、设定温度、拉开窗帘。\n\n设置：\n1. 打开“快捷指令”App → 自动化 → + → 个人自动化。\n2. 选择“当我到达某地”→ 设置为与 GeoNap 家庭闹钟相同的位置。\n3. 添加“家庭”操作：选择灯光、恒温器或整套场景（例如“欢迎回家”）。\n4. 保存。自动化在后台运行，无需任何操作。\n\n如需同时响起闹钟声：\n5. 在 GeoNap 中编辑家庭闹钟 → 运行快捷指令 → 输入快捷指令名称。\n6. GeoNap 会同时响起声音并打开该快捷指令。\n\n适用于任何兼容 HomeKit 的设备：\n• 灯光与灯光场景\n• 制热与制冷（恒温器）\n• 空调\n• 门锁\n• 窗帘与遮阳帘\n• 风扇与通风\n• “家庭”App 中的任意“到家”场景";
 "Weekdays" = "工作日";
 "Weekends" = "周末";
+
+
+/* Time-based alarms (trigger mode) */
+"trigger.mode.distance" = "距离（半径）";
+"trigger.mode.time" = "时间（到达前）";
+"trigger.mode.label" = "触发方式";
+"trigger.leadTime.label" = "到达前叫醒我";
+"trigger.leadTime.value" = "%d 分钟";
+"trigger.leadTime.help" = "根据你的出行速度，在到达目的地前大约这么多分钟触发。";
+"trigger.mode.footer" = "选择新闹钟的设置方式。时间模式会根据你的出行速度估算，在到达前的设定分钟数叫醒你——临近时会使用更多 GPS 和电量。现有闹钟保留各自的设置。";

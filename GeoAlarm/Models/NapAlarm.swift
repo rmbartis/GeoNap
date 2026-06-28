@@ -22,6 +22,33 @@ enum RegionEvent: String, Codable, CaseIterable {
     case onExit  = "On Departure"
 }
 
+/// How an alarm's trigger is defined:
+///   - `.distance`: fixed-radius geofence (the original behavior).
+///   - `.time`: fire ~`leadTimeMinutes` before arrival, using a rolling-average
+///     speed → ETA (hybrid model — see docs/time-based-alarms-design.md).
+enum TriggerMode: String, Codable, CaseIterable, Identifiable {
+    case distance
+    case time
+
+    var id: String { rawValue }
+
+    /// Localization key for the picker label.
+    var localizationKey: String {
+        switch self {
+        case .distance: return "trigger.mode.distance"
+        case .time:     return "trigger.mode.time"
+        }
+    }
+
+    /// English fallback label (also the key registered in Localizable.strings).
+    var englishLabel: String {
+        switch self {
+        case .distance: return "Distance (radius)"
+        case .time:     return "Time (before arrival)"
+        }
+    }
+}
+
 // MARK: - Model
 
 @Model
@@ -32,6 +59,13 @@ final class NapAlarm {
     var latitude: Double = 0
     var longitude: Double = 0
     var radius: Double = 200
+
+    // MARK: - Trigger mode (distance vs. time)
+    // Stored as a raw string for SwiftData/CloudKit compatibility. Additive +
+    // defaulted so existing alarms migrate as `.distance` (unchanged behavior).
+    var triggerModeRaw: String = TriggerMode.distance.rawValue
+    /// Minutes before estimated arrival to fire, when `triggerMode == .time`.
+    var leadTimeMinutes: Int = 5
 
     // Enums stored as raw strings for SwiftData / CloudKit compatibility
     var regionEventRaw: String = RegionEvent.onEntry.rawValue
@@ -163,6 +197,33 @@ final class NapAlarm {
         set { regionEventRaw = newValue.rawValue }
     }
 
+    var triggerMode: TriggerMode {
+        get { TriggerMode(rawValue: triggerModeRaw) ?? .distance }
+        set { triggerModeRaw = newValue.rawValue }
+    }
+
+    /// Minutes of continuous-GPS "warm-up" granted before the earliest possible
+    /// fire, so the rolling-average speed has time to stabilize. The outer ring is
+    /// sized for `leadTime + warmup`, i.e. tracking begins this many minutes before
+    /// the alarm could fire (per Bob: "5 min + the time the user set").
+    static let gpsWarmupMinutes = 5
+
+    /// Outer "get close" geofence radius (metres) for a time-based alarm: the
+    /// distance covered at `capSpeed` over (lead time + GPS warm-up), clamped to
+    /// sane bounds. Crossing this ring wakes the app to begin continuous ETA
+    /// tracking (hybrid model). For distance alarms this is unused.
+    /// - Parameters:
+    ///   - capSpeed: assumed max approach speed in m/s (default ≈144 km/h).
+    ///   - warmupMinutes: continuous-GPS lead before the fire window (default 5).
+    func outerRingRadius(capSpeed: Double = 40,
+                         warmupMinutes: Int = NapAlarm.gpsWarmupMinutes,
+                         minRadius: Double = 300,
+                         maxRadius: Double = 30_000) -> Double {
+        let totalMinutes = Double(leadTimeMinutes + warmupMinutes)
+        let raw = capSpeed * totalMinutes * 60
+        return min(max(raw, minRadius), maxRadius)
+    }
+
     var state: AlarmState {
         get { AlarmState(rawValue: stateRaw) ?? .active }
         set { stateRaw = newValue.rawValue }
@@ -184,6 +245,23 @@ final class NapAlarm {
         )
         region.notifyOnEntry = (regionEvent == .onEntry) || isRepeating
         region.notifyOnExit  = (regionEvent == .onExit)  || isRepeating
+        return region
+    }
+
+    /// Identifier suffix that marks the outer "warm-up" ring of a time-based alarm,
+    /// distinguishing it from the inner proximity ring (which keeps the bare UUID).
+    static let warmupRegionSuffix = ":warmup"
+
+    /// Outer "get close" ring for a time-based alarm. Entering it wakes the app to
+    /// start continuous GPS + ETA tracking (hybrid model). notifyOnEntry only.
+    var outerWarmupRegion: CLCircularRegion {
+        let region = CLCircularRegion(
+            center: CLLocationCoordinate2D(latitude: latitude, longitude: longitude),
+            radius: outerRingRadius(),
+            identifier: id.uuidString + Self.warmupRegionSuffix
+        )
+        region.notifyOnEntry = true
+        region.notifyOnExit  = false
         return region
     }
 
@@ -232,6 +310,8 @@ final class NapAlarm {
         latitude: Double,
         longitude: Double,
         radius: Double = 200,
+        triggerMode: TriggerMode = .distance,
+        leadTimeMinutes: Int = 5,
         regionEvent: RegionEvent = .onEntry,
         state: AlarmState = .active,
         note: String = "",
@@ -258,6 +338,8 @@ final class NapAlarm {
         self.latitude = latitude
         self.longitude = longitude
         self.radius = radius
+        self.triggerModeRaw = triggerMode.rawValue
+        self.leadTimeMinutes = leadTimeMinutes
         self.regionEventRaw = regionEvent.rawValue
         self.stateRaw = state.rawValue
         self.note = note

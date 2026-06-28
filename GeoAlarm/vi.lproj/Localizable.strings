@@ -367,3 +367,13 @@ Xem Cai dat - SMS Tu dong (Khong can phe duyet) de biet huong dan tung buoc.\n\n
 "help.body.appleAutomation" = "GeoNap tích hợp với Apple HomeKit và ứng dụng Phím tắt để nhà bạn sẵn sàng ngay khi bạn về: bật đèn, đặt nhiệt độ, mở rèm.\n\nThiết lập:\n1. Mở ứng dụng Phím tắt → Tự động hóa → + → Tự động hóa cá nhân.\n2. Chọn \"Khi đến một địa điểm\" → đặt cùng vị trí với báo thức ở nhà trong GeoNap.\n3. Thêm thao tác Nhà: đèn, bộ điều nhiệt, hoặc cả một cảnh (ví dụ \"Chào mừng về nhà\").\n4. Lưu. Tự động hóa chạy ở chế độ nền — không cần chạm gì cả.\n\nĐể cũng có âm báo thức:\n5. Trong GeoNap, sửa báo thức ở nhà → Chạy phím tắt → nhập tên phím tắt.\n6. GeoNap phát âm báo thức và mở phím tắt cùng lúc.\n\nHoạt động với mọi thiết bị tương thích HomeKit:\n• Đèn và cảnh ánh sáng\n• Sưởi và làm mát (bộ điều nhiệt)\n• Điều hòa không khí\n• Khóa cửa\n• Rèm và mành cửa sổ\n• Quạt và thông gió\n• Bất kỳ cảnh \"Về đến nhà\" nào trong ứng dụng Nhà";
 "Weekdays" = "Ngày trong tuần";
 "Weekends" = "Cuối tuần";
+
+
+/* Time-based alarms (trigger mode) */
+"trigger.mode.distance" = "Khoảng cách (bán kính)";
+"trigger.mode.time" = "Thời gian (trước khi đến)";
+"trigger.mode.label" = "Kích hoạt theo";
+"trigger.leadTime.label" = "Đánh thức trước khi đến";
+"trigger.leadTime.value" = "%d phút";
+"trigger.leadTime.help" = "Kích hoạt khoảng số phút này trước khi bạn đến nơi, dựa trên tốc độ di chuyển của bạn.";
+"trigger.mode.footer" = "Chọn cách thiết lập báo thức mới. Chế độ thời gian đánh thức bạn trước khi đến một số phút đã đặt, ước tính theo tốc độ di chuyển — và dùng nhiều GPS và pin hơn khi bạn đến gần. Báo thức hiện có giữ thiết lập riêng của chúng.";

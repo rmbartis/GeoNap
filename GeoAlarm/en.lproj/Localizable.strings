@@ -352,3 +352,13 @@ The Save button is disabled until a name has been entered and a location has bee
 "You're already inside this alarm's area. An arrival alarm only fires when you ENTER — it won't trigger until you leave and come back." = "You're already inside this alarm's area. An arrival alarm only fires when you ENTER — it won't trigger until you leave and come back.";
 "Weekdays" = "Weekdays";
 "Weekends" = "Weekends";
+
+
+/* Time-based alarms (trigger mode) */
+"trigger.mode.distance" = "Distance (radius)";
+"trigger.mode.time" = "Time (before arrival)";
+"trigger.mode.label" = "Trigger by";
+"trigger.leadTime.label" = "Wake me before arrival";
+"trigger.leadTime.value" = "%d min";
+"trigger.leadTime.help" = "Fires roughly this many minutes before you reach the destination, based on your travel speed.";
+"trigger.mode.footer" = "Choose how new alarms are set up. Time mode wakes you a set number of minutes before you arrive, estimated from your travel speed — it uses more GPS and battery as you approach. Existing alarms keep their own setting.";

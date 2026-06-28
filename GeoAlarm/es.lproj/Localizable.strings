@@ -342,3 +342,13 @@ El botón Guardar está desactivado hasta que hayas ingresado un nombre y fijado
 "help.body.appleAutomation" = "GeoNap se integra con Apple HomeKit y la app Atajos para que tu casa esté lista en cuanto llegues: luces encendidas, temperatura ajustada, persianas abiertas.\n\nConfiguración:\n1. Abre la app Atajos → Automatización → + → Automatización personal.\n2. Elige Al llegar a un lugar → usa la misma ubicación que tu alarma de casa en GeoNap.\n3. Añade acciones de Casa: luces, termostato o una escena completa (p. ej. \"Bienvenido a casa\").\n4. Guarda. La automatización se ejecuta en segundo plano, sin tener que tocar nada.\n\nPara que también suene una alarma:\n5. En GeoNap, edita tu alarma de casa → Ejecutar atajo → escribe el nombre del atajo.\n6. GeoNap hace sonar la alarma y abre el atajo a la vez.\n\nFunciona con cualquier dispositivo compatible con HomeKit:\n• Luces y escenas de luz\n• Calefacción y refrigeración (termostato)\n• Aire acondicionado\n• Cerraduras de puertas\n• Persianas y estores\n• Ventiladores y ventilación\n• Cualquier escena \"Llegar a casa\" en la app Casa";
 "Weekdays" = "Días laborables";
 "Weekends" = "Fines de semana";
+
+
+/* Time-based alarms (trigger mode) */
+"trigger.mode.distance" = "Distancia (radio)";
+"trigger.mode.time" = "Tiempo (antes de llegar)";
+"trigger.mode.label" = "Activar por";
+"trigger.leadTime.label" = "Despiértame antes de llegar";
+"trigger.leadTime.value" = "%d min";
+"trigger.leadTime.help" = "Se activa aproximadamente estos minutos antes de llegar al destino, según tu velocidad de viaje.";
+"trigger.mode.footer" = "Elige cómo se configuran las alarmas nuevas. El modo de tiempo te despierta un número fijo de minutos antes de llegar, estimado por tu velocidad de viaje, y usa más GPS y batería al acercarte. Las alarmas existentes conservan su propio ajuste.";

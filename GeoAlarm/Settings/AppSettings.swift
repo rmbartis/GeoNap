@@ -162,4 +162,7 @@ enum AppStorageKey {
     /// Messages compose sheet so the two paths don't both fire (the automation
     /// sends silently the next time the app is opened after an alarm).
     static let autoSMSAutomationEnabled = "autoSMSAutomationEnabled"
+    /// Default trigger input mode for the alarm-creation screen: "distance" (radius)
+    /// or "time" (minutes before arrival). Stored as TriggerMode.rawValue.
+    static let defaultTriggerMode = "defaultTriggerMode"
 }

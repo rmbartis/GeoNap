@@ -13,6 +13,8 @@ final class AlarmViewModel: ObservableObject {
     @Published var latitude: Double = 0
     @Published var longitude: Double = 0
     @Published var radius: Double = 200
+    @Published var triggerMode: TriggerMode = .distance
+    @Published var leadTimeMinutes: Int = 5
     @Published var regionEvent: RegionEvent = .onEntry
     @Published var isRepeating: Bool = false
 
@@ -97,6 +99,8 @@ final class AlarmViewModel: ObservableObject {
         latitude          = alarm.latitude
         longitude         = alarm.longitude
         radius            = alarm.radius
+        triggerMode       = alarm.triggerMode
+        leadTimeMinutes   = alarm.leadTimeMinutes
         regionEvent       = alarm.regionEvent
         isRepeating       = alarm.isRepeating
         activeDays        = alarm.activeDays
@@ -146,6 +150,8 @@ final class AlarmViewModel: ObservableObject {
             alarm.latitude          = latitude
             alarm.longitude         = longitude
             alarm.radius            = radius
+            alarm.triggerMode       = triggerMode
+            alarm.leadTimeMinutes   = leadTimeMinutes
             alarm.regionEvent       = regionEvent
             alarm.note              = note
             alarm.isRepeating       = isRepeating
@@ -166,6 +172,8 @@ final class AlarmViewModel: ObservableObject {
             latitude: latitude,
             longitude: longitude,
             radius: radius,
+            triggerMode: triggerMode,
+            leadTimeMinutes: leadTimeMinutes,
             regionEvent: regionEvent,
             state: .active,
             note: note,
@@ -198,6 +206,8 @@ final class AlarmViewModel: ObservableObject {
         latitude          = 0
         longitude         = 0
         radius            = 200
+        triggerMode       = .distance
+        leadTimeMinutes   = 5
         regionEvent       = .onEntry
         isRepeating       = false
         activeDays        = Set(1...7)

@@ -346,3 +346,13 @@ Consultez Reglages - Auto-SMS (Sans approbation) pour les instructions etape par
 "help.body.appleAutomation" = "GeoNap s'intègre à Apple HomeKit et à l'app Raccourcis pour que votre maison soit prête dès votre arrivée : lumières allumées, température réglée, volets ouverts.\n\nConfiguration :\n1. Ouvrez l'app Raccourcis → Automatisation → + → Automatisation personnelle.\n2. Choisissez Arriver à un lieu → utilisez le même lieu que votre alarme « maison » dans GeoNap.\n3. Ajoutez des actions Maison : lumières, thermostat ou une scène complète (p. ex. « Bienvenue à la maison »).\n4. Enregistrez. L'automatisation s'exécute en arrière-plan, sans aucune action.\n\nPour avoir aussi une alarme sonore :\n5. Dans GeoNap, modifiez votre alarme « maison » → Exécuter le raccourci → saisissez le nom du raccourci.\n6. GeoNap déclenche l'alarme sonore et ouvre le raccourci en même temps.\n\nFonctionne avec tout appareil compatible HomeKit :\n• Lumières et scènes lumineuses\n• Chauffage et climatisation (thermostat)\n• Climatisation\n• Serrures de porte\n• Volets et stores\n• Ventilateurs et ventilation\n• Toute scène « Arriver à la maison » dans l'app Maison";
 "Weekdays" = "Jours de semaine";
 "Weekends" = "Week-ends";
+
+
+/* Time-based alarms (trigger mode) */
+"trigger.mode.distance" = "Distance (rayon)";
+"trigger.mode.time" = "Temps (avant l'arrivée)";
+"trigger.mode.label" = "Déclencher par";
+"trigger.leadTime.label" = "Me réveiller avant l'arrivée";
+"trigger.leadTime.value" = "%d min";
+"trigger.leadTime.help" = "Se déclenche environ ce nombre de minutes avant d'atteindre la destination, selon votre vitesse de déplacement.";
+"trigger.mode.footer" = "Choisissez comment les nouvelles alarmes sont configurées. Le mode Temps vous réveille un nombre de minutes défini avant l'arrivée, estimé d'après votre vitesse de déplacement — il consomme plus de GPS et de batterie à l'approche. Les alarmes existantes conservent leur propre réglage.";

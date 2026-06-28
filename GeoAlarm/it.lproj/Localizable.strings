@@ -341,3 +341,13 @@ Il pulsante Salva è disabilitato finché non hai inserito un nome e fissato una
 "help.body.appleAutomation" = "GeoNap si integra con Apple HomeKit e l'app Comandi rapidi così la tua casa è pronta appena arrivi: luci accese, temperatura impostata, tapparelle aperte.\n\nConfigurazione:\n1. Apri l'app Comandi rapidi → Automazione → + → Automazione personale.\n2. Scegli Arrivo in un luogo → usa lo stesso luogo della tua sveglia di casa in GeoNap.\n3. Aggiungi azioni Casa: luci, termostato o un'intera scena (es. \"Bentornato a casa\").\n4. Salva. L'automazione viene eseguita in background, senza toccare nulla.\n\nPer avere anche un suono di sveglia:\n5. In GeoNap, modifica la sveglia di casa → Esegui comando rapido → inserisci il nome del comando.\n6. GeoNap fa suonare la sveglia e apre il comando rapido contemporaneamente.\n\nFunziona con qualsiasi dispositivo compatibile con HomeKit:\n• Luci e scene luminose\n• Riscaldamento e raffrescamento (termostato)\n• Aria condizionata\n• Serrature delle porte\n• Tapparelle e tende\n• Ventilatori e ventilazione\n• Qualsiasi scena \"Arrivo a casa\" nell'app Casa";
 "Weekdays" = "Giorni feriali";
 "Weekends" = "Fine settimana";
+
+
+/* Time-based alarms (trigger mode) */
+"trigger.mode.distance" = "Distanza (raggio)";
+"trigger.mode.time" = "Tempo (prima dell'arrivo)";
+"trigger.mode.label" = "Attiva per";
+"trigger.leadTime.label" = "Svegliami prima dell'arrivo";
+"trigger.leadTime.value" = "%d min";
+"trigger.leadTime.help" = "Si attiva all'incirca questi minuti prima di raggiungere la destinazione, in base alla tua velocità di viaggio.";
+"trigger.mode.footer" = "Scegli come vengono impostate le nuove sveglie. La modalità Tempo ti sveglia un numero prestabilito di minuti prima dell'arrivo, stimato dalla tua velocità di viaggio, e usa più GPS e batteria quando ti avvicini. Le sveglie esistenti mantengono la propria impostazione.";

@@ -11,6 +11,7 @@ struct SettingsView: View {
     @AppStorage(AppStorageKey.coordFormat)   private var coordFormatRaw   = CoordFormat.dd.rawValue
     @AppStorage(AppStorageKey.debugLogging)  private var debugLoggingEnabled = false
     @AppStorage(AppStorageKey.autoSMSAutomationEnabled) private var autoSMSAutomationEnabled = false
+    @AppStorage(AppStorageKey.defaultTriggerMode) private var defaultTriggerModeRaw = TriggerMode.distance.rawValue
 
     @EnvironmentObject private var languageManager: LanguageManager
     @Environment(\.languageBundle) private var bundle
@@ -25,6 +26,7 @@ struct SettingsView: View {
 
     // Info popover state — one Bool per setting row
     @State private var infoDistance    = false
+    @State private var infoTriggerMode = false
     @State private var infoCoords      = false
     @State private var infoClock       = false
     @State private var infoLanguage    = false
@@ -87,6 +89,28 @@ struct SettingsView: View {
                     Text("Units", bundle: bundle)
                 } footer: {
                     Text("DD = Decimal Degrees  ·  DMS = Degrees Minutes Seconds  ·  DDM = Degrees Decimal Minutes", bundle: bundle)
+                }
+
+                // MARK: Alarm Trigger
+                Section {
+                    Picker(selection: $defaultTriggerModeRaw) {
+                        ForEach(TriggerMode.allCases) { mode in
+                            Text(NSLocalizedString(mode.localizationKey, bundle: bundle, comment: ""))
+                                .tag(mode.rawValue)
+                        }
+                    } label: {
+                        SettingInfoLabel(
+                            title: "Trigger by",
+                            isPresented: $infoTriggerMode,
+                            helpTitle: "Alarm trigger",
+                            helpBody: "Sets how new alarms are defined on the creation screen.\n\n• Distance (radius) — fire when you get within a set distance of the location (the original behavior).\n• Time (before arrival) — fire a chosen number of minutes before you arrive, estimated from your travel speed.\n\nTime mode briefly uses extra GPS as you approach the destination, which uses more battery. Existing alarms keep their own setting."
+                        )
+                    }
+                    .pickerStyle(.segmented)
+                } header: {
+                    Text("Alarm Trigger", bundle: bundle)
+                } footer: {
+                    Text("trigger.mode.footer", bundle: bundle)
                 }
 
                 // MARK: Time
