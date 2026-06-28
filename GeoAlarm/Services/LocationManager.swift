@@ -64,10 +64,21 @@ final class LocationManager: NSObject, ObservableObject {
     /// (present) and Always authorization. Higher battery cost — only call while
     /// approaching a time-based alarm's destination, and pair with `stopContinuousUpdates()`.
     func startContinuousUpdates() {
-        manager.allowsBackgroundLocationUpdates = true
-        manager.pausesLocationUpdatesAutomatically = false
+        // `allowsBackgroundLocationUpdates = true` throws an NSException (crash) unless
+        // UIBackgroundModes contains "location" AND the app has Always authorization.
+        // Guard both so a misconfigured build/permission state degrades to foreground-
+        // only tracking instead of crashing.
+        let bgModes = Bundle.main.object(forInfoDictionaryKey: "UIBackgroundModes") as? [String] ?? []
+        let authorized = authorizationStatus == .authorizedAlways || authorizationStatus == .authorizedWhenInUse
+        let canBackground = bgModes.contains("location") && authorized
+        if canBackground {
+            manager.allowsBackgroundLocationUpdates = true
+            manager.pausesLocationUpdatesAutomatically = false
+            DebugLogger.shared.log("Continuous background location updates ENABLED (time-based approach)", category: "Location")
+        } else {
+            DebugLogger.shared.log("Background location NOT enabled (UIBackgroundModes contains location=\(bgModes.contains("location")), auth=\(authorizationStatus.debugDescription)) — foreground-only ETA tracking", category: "Location")
+        }
         manager.startUpdatingLocation()
-        DebugLogger.shared.log("Continuous background location updates ENABLED (time-based approach)", category: "Location")
     }
 
     /// Drop the background-update privilege so updates suspend again in the
@@ -79,11 +90,20 @@ final class LocationManager: NSObject, ObservableObject {
 
     // MARK: - Region monitoring
 
-    func startMonitoring(region: CLCircularRegion) {
+    func startMonitoring(region inputRegion: CLCircularRegion) {
         guard CLLocationManager.isMonitoringAvailable(for: CLCircularRegion.self) else {
             print("⚠️ Region monitoring unavailable on this device.")
-            DebugLogger.shared.log("Region monitoring unavailable on this device — cannot monitor '\(region.identifier)'", category: "Location")
+            DebugLogger.shared.log("Region monitoring unavailable on this device — cannot monitor '\(inputRegion.identifier)'", category: "Location")
             return
+        }
+        // Clamp to the OS maximum so a large time-based outer ring can't be rejected.
+        var region = inputRegion
+        let maxDist = manager.maximumRegionMonitoringDistance
+        if maxDist > 0, inputRegion.radius > maxDist {
+            region = CLCircularRegion(center: inputRegion.center, radius: maxDist, identifier: inputRegion.identifier)
+            region.notifyOnEntry = inputRegion.notifyOnEntry
+            region.notifyOnExit  = inputRegion.notifyOnExit
+            DebugLogger.shared.log("Region '\(inputRegion.identifier)' radius \(Int(inputRegion.radius))m clamped to OS max \(Int(maxDist))m", category: "Location")
         }
         manager.startMonitoring(for: region)
         DebugLogger.shared.log("Start monitoring region: id=\(region.identifier) center=(\(region.center.latitude),\(region.center.longitude)) radius=\(Int(region.radius))m notifyOnEntry=\(region.notifyOnEntry) notifyOnExit=\(region.notifyOnExit) totalMonitored=\(manager.monitoredRegions.count + 1)", category: "Location")
