@@ -144,7 +144,18 @@ enum GeoAlarmScheduler {
         // NOTE (device-only): if a custom tone is silent on a real device, try the
         // name WITHOUT the ".wav" extension, or convert the file to .caf — AlarmKit's
         // custom-sound format support is stricter than UNNotificationSound's.
+        #if targetEnvironment(simulator)
+        // The iOS 26 Simulator's ToneLibrary crashes SpringBoard (SIGABRT,
+        // unrecognized selector in -[TLAlertQueuePlayerController
+        // _prepareAudioEnvironmentForStateDescriptor:]) when an AlarmKit alarm
+        // fires with a CUSTOM (.named) sound — including the "_Silence.wav" tone
+        // used for Vibrate Only. This is an Apple Simulator bug in the alarm tone
+        // engine, not in GeoNap. Force the system default tone in the Simulator so
+        // geofence / ETA testing isn't blocked; real devices keep the user's choice.
+        let alertSound: AlertConfiguration.AlertSound = .default
+        #else
         let alertSound: AlertConfiguration.AlertSound = soundName.map { .named($0) } ?? .default
+        #endif
 
         // Fixed alarm 1 second out so it alerts right away. (An exact-now or past
         // date can be rejected; +1s is a safe "immediate".) Config type is the
