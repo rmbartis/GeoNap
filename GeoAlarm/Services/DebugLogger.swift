@@ -38,6 +38,15 @@ final class DebugLogger {
         }
     }
 
+    /// Writes a fresh session header (device + app + build) if logging is enabled.
+    /// Call once at app launch so every run in the log is stamped with the build it
+    /// ran on — important when a user keeps logging on across an app update, so the
+    /// build line always matches what Settings → About → "Build" shows.
+    func beginSessionIfEnabled() {
+        guard isEnabled else { return }
+        writeSessionHeader()
+    }
+
     // MARK: - File path
 
     /// The URL of the log file — `Documents/GeoNapDebug.log`.
@@ -151,7 +160,11 @@ final class DebugLogger {
                        ?? "NapAlarm"
         let version  = bundle.infoDictionary?["CFBundleShortVersionString"] as? String ?? "?"
         let build    = bundle.infoDictionary?["CFBundleVersion"] as? String ?? "?"
-        let buildTS  = bundle.infoDictionary?["BuildTimestamp"] as? String ?? "?"
+        // The exact build identifier shown to the user in Settings → About → "Build".
+        // Use Build.timestamp (auto-generated each build) so a log a user sends always
+        // matches the build string they can read off their screen. The Info.plist
+        // "BuildTimestamp" key is a placeholder that isn't reliably populated.
+        let userBuild = Build.timestamp
         let ios      = device.systemVersion
         let model    = device.model
         let name     = device.name         // user's device name
@@ -164,7 +177,7 @@ final class DebugLogger {
         NapAlarm Debug Log — Session started \(iso.string(from: Date()))
         \(separator)
         App:      \(appName) \(version) (build \(build))
-        BuildTS:  \(buildTS)
+        Build:    \(userBuild)
         Device:   \(model) — \(name)
         iOS:      \(ios)
         Locale:   \(locale)   TZ: \(tz)

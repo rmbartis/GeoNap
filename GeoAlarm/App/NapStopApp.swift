@@ -42,6 +42,11 @@ struct NapStopApp: App {
                 // Pass the selected .lproj bundle so every Text("key", bundle: bundle)
                 // call resolves strings in the chosen language.
                 .environment(\.languageBundle, languageManager.currentBundle)
+                // REQUIRED on iOS 26: changing only the environment bundle does not
+                // re-resolve already-rendered Text(_:bundle:) views, so the visible
+                // language wouldn't change until relaunch. Re-id'ing the view tree on
+                // language change forces a full rebuild so every string re-resolves.
+                .id(languageManager.currentLanguage)
         }
         .modelContainer(container)
     }
@@ -58,6 +63,9 @@ struct RootView: View {
     var body: some View {
         ContentView()
             .onAppear {
+                // Stamp a fresh session header (with the current build) at launch so
+                // every run in the debug log is tied to the build it ran on.
+                DebugLogger.shared.beginSessionIfEnabled()
                 // Copy bundled WAV sounds into Library/Sounds so UNNotificationSound(named:)
                 // can find them. Must run before any alarm can fire.
                 NotificationSound.installBundledSoundsIfNeeded()
