@@ -98,11 +98,17 @@ struct AlarmRowView: View {
                     .font(.body.bold())
                     .foregroundColor(alarm.isActive ? .primary : .secondary)
 
-                // Row 1: radius · trigger type
+                // Row 1: radius (distance) or lead time (time) · trigger type
                 HStack(spacing: 6) {
                     HStack(spacing: 3) {
-                        Text(distanceUnit.formatted(meters: alarm.radius))
-                        Image(systemName: "arrow.up.left.and.arrow.down.right")
+                        if alarm.triggerMode == .time {
+                            Text(String(format: NSLocalizedString("trigger.leadTime.value", bundle: bundle, comment: ""),
+                                        alarm.leadTimeMinutes))
+                            Image(systemName: "timer")
+                        } else {
+                            Text(distanceUnit.formatted(meters: alarm.radius))
+                            Image(systemName: "arrow.up.left.and.arrow.down.right")
+                        }
                     }
                     Text("·")
                     Text(NSLocalizedString(alarm.regionEvent.rawValue, bundle: bundle, comment: ""))

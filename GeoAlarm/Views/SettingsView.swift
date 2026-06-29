@@ -137,7 +137,15 @@ struct SettingsView: View {
                 Section {
                     Picker(selection: Binding(
                         get: { languageManager.currentLanguage },
-                        set: { languageManager.setLanguage($0) }
+                        set: { newLang in
+                            // Flag BEFORE the change so the .id() rebuild (which
+                            // dismisses this sheet) is followed by ContentView
+                            // re-presenting Settings — keeping the user in place.
+                            if newLang != languageManager.currentLanguage {
+                                languageManager.pendingReturnToSettings = true
+                            }
+                            languageManager.setLanguage(newLang)
+                        }
                     )) {
                         ForEach(AppLanguage.allCases) { lang in
                             Label {

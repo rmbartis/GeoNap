@@ -90,8 +90,15 @@ struct AlarmDetailView: View {
                 LabeledContent(NSLocalizedString("Trigger", bundle: bundle, comment: "")) {
                     Text(NSLocalizedString(alarm.regionEvent.rawValue, bundle: bundle, comment: ""))
                 }
-                LabeledContent(NSLocalizedString("Radius", bundle: bundle, comment: "")) {
-                    Text(distanceUnit.formatted(meters: alarm.radius))
+                if alarm.triggerMode == .time {
+                    LabeledContent(NSLocalizedString("trigger.leadTime.label", bundle: bundle, comment: "")) {
+                        Text(String(format: NSLocalizedString("trigger.leadTime.value", bundle: bundle, comment: ""),
+                                    alarm.leadTimeMinutes))
+                    }
+                } else {
+                    LabeledContent(NSLocalizedString("Radius", bundle: bundle, comment: "")) {
+                        Text(distanceUnit.formatted(meters: alarm.radius))
+                    }
                 }
                 if alarm.isRepeating {
                     LabeledContent(NSLocalizedString("Repeat", bundle: bundle, comment: "")) {

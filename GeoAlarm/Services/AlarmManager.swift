@@ -197,6 +197,17 @@ final class AlarmManager: NSObject, ObservableObject {
         // NOTE: time alarms consume TWO of iOS's 20 region slots.
         if alarm.triggerMode == .time {
             locationManager?.startMonitoring(region: alarm.outerWarmupRegion)
+            // If we're ALREADY inside the outer ring (the alarm was created close to
+            // the destination, the ring is large, or we relaunched mid-trip), iOS
+            // delivers NO "entered" event — so ETA tracking would never start and the
+            // alarm would fall through to the 200 m inner backstop (firing ~seconds
+            // out instead of the requested lead time). Start tracking now in that case.
+            if let here = locationManager?.currentLocation {
+                let dest = CLLocation(latitude: alarm.latitude, longitude: alarm.longitude)
+                if here.distance(from: dest) <= alarm.outerRingRadius() {
+                    beginETATracking(alarm)
+                }
+            }
         }
     }
 

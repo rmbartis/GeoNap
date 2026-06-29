@@ -135,6 +135,14 @@ final class LanguageManager: ObservableObject {
 
     @Published private(set) var currentLanguage: AppLanguage
 
+    /// Set when the language is changed FROM the Settings screen. Because changing
+    /// the language re-ids the whole view tree (forcing every label to re-localize),
+    /// the Settings sheet is torn down and the user lands back on the home screen.
+    /// ContentView reads this flag on reappear and re-presents Settings so the user
+    /// stays where they were. Not @Published — it's consumed in onAppear, not in a
+    /// render path. Survives the rebuild because LanguageManager is a singleton.
+    var pendingReturnToSettings = false
+
     private init() {
         let saved   = UserDefaults.standard.string(forKey: AppStorageKey.appLanguage)
         let sysCode = Locale.current.language.languageCode?.identifier ?? "en"

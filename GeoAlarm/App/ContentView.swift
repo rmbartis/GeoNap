@@ -96,6 +96,14 @@ struct ContentView: View {
         )) {
             OnboardingView()
         }
+        // After a language change re-ids the view tree (dismissing the Settings
+        // sheet and landing on home), re-present Settings so the user stays put.
+        .onAppear {
+            if languageManager.pendingReturnToSettings {
+                languageManager.pendingReturnToSettings = false
+                showSettings = true
+            }
+        }
         // Alarm presentation (lock screen, sound, Stop/Snooze) is owned by AlarmKit
         // (see GeoAlarmScheduler) — no in-app full-screen ringing view is needed.
         //
