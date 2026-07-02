@@ -5,11 +5,16 @@
 # Jobs
 # ────
 # unit-tests   Runs on every push + PR.
-#              Executes all NapStopTests EXCEPT the GTFS network tests.
+#              Executes the WHOLE NapStopTests target EXCEPT the two GTFS
+#              network suites (GTFSFeedURLTests / GTFSParserTests), which have
+#              their own jobs. Using -only-testing:NapStopTests + -skip-testing
+#              (rather than a hand-maintained per-class allow-list) guarantees
+#              newly added test classes — e.g. ETAEstimatorTests, LocalizationTests
+#              — are picked up automatically instead of silently dropping out.
 #              Covers alarm model, view-model validation, AlarmManager CRUD,
-#              notification userInfo embedding, Auto-Notify recovery, and
-#              sound/Info.plist regression guards.
-#              Requires no network access. Completes in ~2 min.
+#              time-based/ETA engine, sound→AlarmKit mapping, Auto-Notify,
+#              localization integrity, and sound/Info.plist regression guards.
+#              Requires no network access. Completes in ~2-3 min.
 #
 # url-checks   Runs on every push + PR.
 #              Executes GTFSFeedURLTests — lightweight HEAD/range-GET checks
@@ -77,11 +82,9 @@ jobs:
             -project GeoAlarm.xcodeproj \
             -scheme GeoNap \
             -destination 'platform=iOS Simulator,name=iPhone 16' \
-            -only-testing:NapStopTests/NapAlarmModelTests \
-            -only-testing:NapStopTests/AlarmViewModelTests \
-            -only-testing:NapStopTests/AlarmManagerTests \
-            -only-testing:NapStopTests/SoundRegressionTests \
-            -only-testing:NapStopTests/AutoNotifyTests \
+            -only-testing:NapStopTests \
+            -skip-testing:NapStopTests/GTFSFeedURLTests \
+            -skip-testing:NapStopTests/GTFSParserTests \
             CODE_SIGN_IDENTITY="" \
             CODE_SIGNING_REQUIRED=NO \
             | xcpretty --color --report junit --output test-results-unit.xml

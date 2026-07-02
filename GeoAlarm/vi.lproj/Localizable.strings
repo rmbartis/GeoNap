@@ -137,6 +137,28 @@
 "Airplane Landing" = "Máy bay hạ cánh";
 "Airport Chime" = "Chuông sân bay";
 
+"Calendar Scanning" = "Quét lịch";
+"Scan Calendars for Trips" = "Quét lịch để tìm chuyến đi";
+"Scan Mode" = "Chế độ quét";
+"Notify Me About New Trips" = "Thông báo cho tôi về chuyến đi mới";
+"Look Ahead (days)" = "Số ngày xem trước";
+"Scan Behavior" = "Cách thức quét";
+"Calendars" = "Lịch";
+"Scan Now" = "Quét ngay";
+"Calendar Access Needed" = "Cần quyền truy cập lịch";
+"Open Settings" = "Mở Cài đặt";
+"Select Calendars to Scan" = "Chọn lịch để quét";
+"Continue" = "Tiếp tục";
+"Calendar Access" = "Quyền truy cập lịch";
+"calendarScan.mode.automatic" = "Tự động";
+"calendarScan.mode.manualOnly" = "Chỉ thủ công";
+"settings.calendarScan.mainFooter" = "Khi bật, GeoNap sẽ quét các lịch bạn chọn bên dưới để tìm sự kiện sắp tới có địa điểm và đề xuất báo thức dựa trên vị trí cho chúng. Mặc định tắt — sẽ không có gì được quét cho đến khi bạn bật tính năng này.";
+"settings.calendarScan.behaviorFooter" = "Tự động sẽ quét định kỳ trong nền. Chỉ thủ công chỉ quét khi bạn chạm vào Quét ngay.";
+"settings.calendarScan.accessDeniedFooter" = "GeoNap cần quyền truy cập lịch để tìm chuyến đi. Mở Cài đặt và cho phép GeoNap truy cập lịch để tiếp tục.";
+"settings.calendarScan.firstRunFooter" = "Theo mặc định, chỉ lịch chính của bạn được chọn. Hãy bật bất kỳ lịch nào khác mà bạn muốn GeoNap quét.";
+"privacy.body.calendarAccess" = "Nếu bạn bật Quét lịch trong Cài đặt, GeoNap sẽ đọc các sự kiện từ những lịch bạn chọn để tìm các chuyến đi sắp tới có địa điểm — ví dụ như chuyến bay, tàu hỏa hoặc cuộc họp. Việc này diễn ra hoàn toàn trên thiết bị của bạn: dữ liệu lịch không bao giờ được tải lên, lưu trữ bên ngoài ứng dụng, hoặc chia sẻ với bên thứ ba. Chỉ văn bản địa điểm của sự kiện tiềm năng được gửi đến dịch vụ mã hóa địa lý của Apple để chuyển đổi thành tọa độ bản đồ, giống như cách cắm ghim thủ công đã hoạt động trong GeoNap. Quét lịch mặc định tắt; bạn có thể tắt bất kỳ lúc nào trong Cài đặt → Quét lịch, và thu hồi hoàn toàn quyền truy cập lịch trong Cài đặt iOS → Quyền riêng tư & Bảo mật → Lịch → GeoNap.";
+"help.body.calendarScanning" = "Quét lịch sẽ tìm trong các lịch bạn chọn để phát hiện sự kiện sắp tới có địa điểm — chuyến bay, tàu hỏa, cuộc họp — và đề xuất báo thức dựa trên vị trí cho từng sự kiện.\n\nTính năng này mặc định tắt. Để bật:\n\n1. Mở Cài đặt → Quét lịch.\n2. Bật Quét lịch để tìm chuyến đi và cấp quyền truy cập lịch khi được yêu cầu.\n3. Lần đầu tiên, bạn sẽ chọn lịch nào để bao gồm — theo mặc định chỉ lịch chính của bạn được chọn.\n4. Chọn Tự động để quét định kỳ trong nền, hoặc Chỉ thủ công để chỉ quét khi bạn chạm Quét ngay.\n5. Bật Thông báo cho tôi về chuyến đi mới để nhận thông báo khi quét tìm thấy ứng viên mới.\n\nDữ liệu lịch được đọc hoàn toàn trên thiết bị của bạn và không bao giờ được tải lên hay chia sẻ. Xem Quyền riêng tư & Chia sẻ vị trí → Quyền truy cập lịch để biết thêm chi tiết.";
+
 "Help" = "Trợ giúp";
 "What is GeoNap?" = "GeoNap là gì?";
 "Typical use cases" = "Các trường hợp sử dụng thông thường";

@@ -4,6 +4,10 @@
 <dict>
 	<key>NSAlarmKitUsageDescription</key>
 	<string>GeoAlarm uses alarms so it can wake you with a sound and a lock-screen alert when you reach your stop — even in silent mode or Focus.</string>
+	<key>NSCalendarsFullAccessUsageDescription</key>
+	<string>GeoNap can scan your calendars for upcoming trips (flights, trains, meetings with a location) so it can suggest location-based alarms for them. This is off by default and only runs if you turn it on in Settings → Calendar Scanning.</string>
+	<key>NSCalendarsUsageDescription</key>
+	<string>GeoNap can scan your calendars for upcoming trips so it can suggest location-based alarms for them. This is off by default and only runs if you turn it on in Settings → Calendar Scanning.</string>
 	<key>UIFileSharingEnabled</key>
 	<true/>
 	<key>LSSupportsOpeningDocumentsInPlace</key>

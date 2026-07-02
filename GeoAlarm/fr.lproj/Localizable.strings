@@ -137,6 +137,28 @@
 "Airplane Landing" = "Atterrissage d'avion";
 "Airport Chime" = "Carillon d'aéroport";
 
+"Calendar Scanning" = "Analyse du calendrier";
+"Scan Calendars for Trips" = "Analyser les calendriers pour des trajets";
+"Scan Mode" = "Mode d'analyse";
+"Notify Me About New Trips" = "Me notifier des nouveaux trajets";
+"Look Ahead (days)" = "Anticipation (jours)";
+"Scan Behavior" = "Comportement de l'analyse";
+"Calendars" = "Calendriers";
+"Scan Now" = "Analyser maintenant";
+"Calendar Access Needed" = "Accès au calendrier requis";
+"Open Settings" = "Ouvrir Réglages";
+"Select Calendars to Scan" = "Sélectionner les calendriers à analyser";
+"Continue" = "Continuer";
+"Calendar Access" = "Accès au calendrier";
+"calendarScan.mode.automatic" = "Automatique";
+"calendarScan.mode.manualOnly" = "Manuel uniquement";
+"settings.calendarScan.mainFooter" = "Lorsque cette option est activée, GeoNap analyse les calendriers que vous choisissez ci-dessous à la recherche d'événements à venir comportant un lieu, et suggère des alarmes basées sur la localisation pour ceux-ci. Désactivé par défaut — rien n'est analysé tant que vous ne l'activez pas.";
+"settings.calendarScan.behaviorFooter" = "Automatique analyse périodiquement en arrière-plan. Manuel uniquement analyse seulement lorsque vous appuyez sur Analyser maintenant.";
+"settings.calendarScan.accessDeniedFooter" = "GeoNap a besoin d'accéder au calendrier pour rechercher des trajets. Ouvrez Réglages et autorisez l'accès au calendrier pour GeoNap afin de continuer.";
+"settings.calendarScan.firstRunFooter" = "Seul votre calendrier principal est sélectionné par défaut. Activez tout autre calendrier que vous souhaitez voir analysé par GeoNap.";
+"privacy.body.calendarAccess" = "Si vous activez l'Analyse du calendrier dans Réglages, GeoNap lit les événements des calendriers que vous choisissez afin de repérer les trajets à venir comportant un lieu — par exemple un vol, un train ou une réunion. Cela se déroule entièrement sur votre appareil : les données du calendrier ne sont jamais téléchargées, stockées en dehors de l'app, ni partagées avec des tiers. Seul le texte du lieu d'un événement candidat est envoyé au service de géocodage d'Apple pour le convertir en coordonnées cartographiques, de la même manière que le fait déjà le placement manuel d'une épingle dans GeoNap. L'Analyse du calendrier est désactivée par défaut ; vous pouvez la désactiver à tout moment dans Réglages → Analyse du calendrier, et révoquer entièrement l'accès au calendrier dans Réglages iOS → Confidentialité et sécurité → Calendriers → GeoNap.";
+"help.body.calendarScanning" = "L'Analyse du calendrier parcourt les calendriers que vous choisissez à la recherche d'événements à venir comportant un lieu — un vol, un train, une réunion — et suggère une alarme basée sur la localisation pour chacun d'eux.\n\nCette fonctionnalité est désactivée par défaut. Pour l'activer :\n\n1. Ouvrez Réglages → Analyse du calendrier.\n2. Activez Analyser les calendriers pour des trajets et autorisez l'accès au calendrier lorsque demandé.\n3. La première fois, vous choisirez quels calendriers inclure — seul votre calendrier principal est coché par défaut.\n4. Choisissez Automatique pour analyser périodiquement en arrière-plan, ou Manuel uniquement pour analyser seulement lorsque vous appuyez sur Analyser maintenant.\n5. Activez Me notifier des nouveaux trajets pour recevoir une notification lorsqu'une analyse trouve un nouveau candidat.\n\nLes données du calendrier sont lues entièrement sur votre appareil et ne sont jamais téléchargées ni partagées. Consultez Confidentialité et partage de localisation → Accès au calendrier pour plus de détails.";
+
 "Help" = "Aide";
 "What is GeoNap?" = "Qu'est-ce que GeoNap ?";
 "Typical use cases" = "Cas d'utilisation typiques";

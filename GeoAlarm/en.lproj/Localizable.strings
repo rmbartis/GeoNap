@@ -155,6 +155,29 @@
 "When this alarm fires, a message with your location will be sent to all listed contacts automatically." = "When this alarm fires, a message with your location will be sent to all listed contacts automatically.";
 "Contacts listed here are pre-filled when you enable Auto-Notify on a new alarm. When an alarm fires, all listed contacts are messaged automatically. You can adjust the list per-alarm." = "Contacts listed here are pre-filled when you enable Auto-Notify on a new alarm. When an alarm fires, all listed contacts are messaged automatically. You can adjust the list per-alarm.";
 
+/* Calendar Scanning (Settings + Help + Privacy) */
+"Calendar Scanning" = "Calendar Scanning";
+"Scan Calendars for Trips" = "Scan Calendars for Trips";
+"Scan Mode" = "Scan Mode";
+"Notify Me About New Trips" = "Notify Me About New Trips";
+"Look Ahead (days)" = "Look Ahead (days)";
+"Scan Behavior" = "Scan Behavior";
+"Calendars" = "Calendars";
+"Scan Now" = "Scan Now";
+"Calendar Access Needed" = "Calendar Access Needed";
+"Open Settings" = "Open Settings";
+"Select Calendars to Scan" = "Select Calendars to Scan";
+"Continue" = "Continue";
+"Calendar Access" = "Calendar Access";
+"calendarScan.mode.automatic" = "Automatic";
+"calendarScan.mode.manualOnly" = "Manual Only";
+"settings.calendarScan.mainFooter" = "When enabled, GeoNap scans the calendars you choose below for upcoming events with a location and suggests location-based alarms for them. Off by default — nothing is scanned until you turn this on.";
+"settings.calendarScan.behaviorFooter" = "Automatic scans run periodically in the background. Manual Only scans only when you tap Scan Now.";
+"settings.calendarScan.accessDeniedFooter" = "GeoNap needs Calendar access to scan for trips. Open Settings and allow Calendar access for GeoNap to continue.";
+"settings.calendarScan.firstRunFooter" = "Only your primary calendar is selected by default. Turn on any other calendars you'd like GeoNap to scan.";
+"privacy.body.calendarAccess" = "If you turn on Calendar Scanning in Settings, GeoNap reads events from the calendars you choose to look for upcoming trips with a location — for example a flight, train, or meeting. This happens entirely on your device: calendar data is never uploaded, stored outside the app, or shared with third parties. Only the location text of a candidate event is sent to Apple's geocoding service to convert it into map coordinates, the same way manually dropping a pin already works in GeoNap. Calendar Scanning is off by default; you can turn it off at any time in Settings → Calendar Scanning, and revoke calendar access entirely in iOS Settings → Privacy & Security → Calendars → GeoNap.";
+"help.body.calendarScanning" = "Calendar Scanning looks through the calendars you choose for upcoming events that have a location — a flight, a train, a meeting — and suggests a location-based alarm for each one.\n\nThis feature is off by default. To turn it on:\n\n1. Open Settings → Calendar Scanning.\n2. Turn on Scan Calendars for Trips and grant Calendar access when asked.\n3. The first time, you'll choose which calendars to include — only your primary calendar is checked by default.\n4. Choose Automatic to scan periodically in the background, or Manual Only to scan only when you tap Scan Now.\n5. Turn on Notify Me About New Trips to get a notification when a scan finds a new candidate.\n\nCalendar data is read entirely on your device and is never uploaded or shared. See Privacy & Location Sharing → Calendar Access for details.";
+
 /* HelpView section titles */
 "Help" = "Help";
 "What is GeoNap?" = "What is GeoNap?";

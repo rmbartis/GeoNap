@@ -37,6 +37,9 @@ struct PrivacyView: View {
                 privacySection(icon: "trash.fill",         iconColor: .orange,
                                titleKey: "Deleting Your Data",     bodyKey: "privacy.body.dataDeletion")
                 Divider()
+                privacySection(icon: "calendar.badge.clock", iconColor: .mint,
+                               titleKey: "Calendar Access",        bodyKey: "privacy.body.calendarAccess")
+                Divider()
 
                 // MARK: Contact
                 VStack(alignment: .leading, spacing: 8) {

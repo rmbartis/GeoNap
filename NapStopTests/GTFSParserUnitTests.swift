@@ -336,7 +336,7 @@ final class CuratedFeedsIntegrityTests: XCTestCase {
     func test_feedCount_isExpected() {
         // Update this number when feeds are added or removed intentionally.
         // It acts as a tripwire against accidental deletions.
-        XCTAssertEqual(feeds.count, 29,
-                       "Expected 29 curated feeds. Update this test if the list changes intentionally.")
+        XCTAssertEqual(feeds.count, 30,
+                       "Expected 30 curated feeds. Update this test if the list changes intentionally.")
     }
 }

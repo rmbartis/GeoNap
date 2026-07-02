@@ -229,8 +229,11 @@ enum CuratedFeeds {
         CuratedFeed(
             name: "Calgary Transit",
             region: "Canada · Calgary",
-            // Direct attachment URL from Open Calgary portal (Socrata). blobId verified May 2026.
-            feedURL: "https://data.calgary.ca/api/views/npk7-z3bj/files/5bd6ab18-b1e5-44be-8915-cf0d4d7ddce0?filename=CT_GTFS.zip",
+            // Direct attachment URL from Open Calgary portal (Socrata). blobId verified Jul 2026
+            // via https://data.calgary.ca/api/views/npk7-z3bj.json (previous blobId 404'd after
+            // the dataset owner re-uploaded the file — Socrata attachment blobIds are not stable
+            // across re-uploads, only the dataset id npk7-z3bj is).
+            feedURL: "https://data.calgary.ca/api/views/npk7-z3bj/files/22358c02-123f-4f43-96d2-3be8757d5742?filename=CT_GTFS.zip",
             routeTypes: "Bus · Rail"
         ),
 

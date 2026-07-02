@@ -209,7 +209,7 @@ final class ActiveDaysTests: XCTestCase {
     }
 
     func test_default_activeDaysLabel_isNil() {
-        XCTAssertNil(alarm().activeDaysLabel,
+        XCTAssertNil(alarm().activeDaysLabel(locale: Locale(identifier: "en_US"), bundle: .main),
                      "All-day alarms must return nil label")
     }
 
@@ -282,20 +282,20 @@ final class ActiveDaysTests: XCTestCase {
     func test_activeDaysLabel_weekdays() {
         let a = alarm()
         a.activeDays = Set(2...6)
-        XCTAssertEqual(a.activeDaysLabel, "Weekdays")
+        XCTAssertEqual(a.activeDaysLabel(locale: Locale(identifier: "en_US"), bundle: .main), "Weekdays")
     }
 
     func test_activeDaysLabel_weekends() {
         let a = alarm()
         a.activeDays = [1, 7]
-        XCTAssertEqual(a.activeDaysLabel, "Weekends")
+        XCTAssertEqual(a.activeDaysLabel(locale: Locale(identifier: "en_US"), bundle: .main), "Weekends")
     }
 
     func test_activeDaysLabel_customAbbreviations() {
         // Mon + Wed + Fri = weekdays 2, 4, 6
         let a = alarm()
         a.activeDays = [2, 4, 6]
-        let label = a.activeDaysLabel ?? ""
+        let label = a.activeDaysLabel(locale: Locale(identifier: "en_US"), bundle: .main) ?? ""
         XCTAssertTrue(label.contains("Mo"), "Label must contain Mo")
         XCTAssertTrue(label.contains("We"), "Label must contain We")
         XCTAssertTrue(label.contains("Fr"), "Label must contain Fr")
@@ -305,7 +305,7 @@ final class ActiveDaysTests: XCTestCase {
     func test_activeDaysLabel_nilWhenEveryDay() {
         let a = alarm()
         a.activeDaysRaw = 127
-        XCTAssertNil(a.activeDaysLabel)
+        XCTAssertNil(a.activeDaysLabel(locale: Locale(identifier: "en_US"), bundle: .main))
     }
 
     // MARK: Round-trip

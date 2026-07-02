@@ -14,12 +14,13 @@ struct HelpView: View {
         ("Creating an alarm",                   "help.body.creatingAlarm"),
         ("Trigger: distance or time",           "help.body.timeBased"),
         ("Radius",                              "help.body.radius"),
+        ("Transit Alarms",                      "help.body.transitAlarms"),
+        ("Calendar Scanning",                   "help.body.calendarScanning"),
         ("Repeat",                              "help.body.repeat"),
         ("Active time window",                  "help.body.timeWindow"),
-        ("Transit Alarms",                      "help.body.transitAlarms"),
-        ("Auto-Notify",                         "help.body.autoNotify"),
         ("Notifications",                       "help.body.notifications"),
         ("Alarm sound / vibrate",               "help.body.soundVibrate"),
+        ("Auto-Notify",                         "help.body.autoNotify"),
         ("Siri & Shortcuts",                    "help.body.siri"),
         ("Apple Home Automation",               "help.body.appleAutomation"),
         ("Managing alarms",                     "help.body.managingAlarms"),
@@ -53,18 +54,20 @@ struct HelpView: View {
                             titleKey: "Trigger: distance or time", bodyKey: "help.body.timeBased")
                 helpSection(symbol: "arrow.up.left.and.arrow.down.right", color: .teal,
                             titleKey: "Radius",               bodyKey: "help.body.radius")
+                helpSection(symbol: "tram.fill",    color: .teal,
+                            titleKey: "Transit Alarms",       bodyKey: "help.body.transitAlarms")
+                helpSection(symbol: "calendar.badge.clock", color: .mint,
+                            titleKey: "Calendar Scanning",    bodyKey: "help.body.calendarScanning")
                 helpSection(symbol: "repeat",       color: .indigo,
                             titleKey: "Repeat",               bodyKey: "help.body.repeat")
                 helpSection(symbol: "clock",        color: .purple,
                             titleKey: "Active time window",   bodyKey: "help.body.timeWindow")
-                helpSection(symbol: "tram.fill",    color: .teal,
-                            titleKey: "Transit Alarms",       bodyKey: "help.body.transitAlarms")
-                helpSection(symbol: "message.badge.filled.fill", color: .green,
-                            titleKey: "Auto-Notify",          bodyKey: "help.body.autoNotify")
                 helpSection(symbol: "bell.badge",   color: .red,
                             titleKey: "Notifications",        bodyKey: "help.body.notifications")
                 helpSection(symbol: "bell.badge.waveform", color: .pink,
                             titleKey: "Alarm sound / vibrate", bodyKey: "help.body.soundVibrate")
+                helpSection(symbol: "message.badge.filled.fill", color: .green,
+                            titleKey: "Auto-Notify",          bodyKey: "help.body.autoNotify")
                 helpSection(symbol: "mic",          color: .indigo,
                             titleKey: "Siri & Shortcuts",     bodyKey: "help.body.siri")
                 helpSection(symbol: "house.fill",   color: .orange,

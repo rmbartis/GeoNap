@@ -75,15 +75,28 @@ struct NotifyContactsIntent: AppIntent {
         // for any other reason finds a stale (or already-cleared) body and sends
         // nothing. Clear the body either way so it's one-shot per alarm.
         let firedAt = defaults.double(forKey: tsKey)   // 0 if never set
-        let age = Date().timeIntervalSince1970 - firedAt
         defaults.removeObject(forKey: key)
         defaults.removeObject(forKey: tsKey)
 
-        guard firedAt > 0, age <= window else {
+        guard Self.isFresh(firedAt: firedAt,
+                           now: Date().timeIntervalSince1970,
+                           window: window) else {
             throw IntentError.noPendingNotification
         }
 
         return .result(value: body)
+    }
+
+    /// Pure freshness decision, extracted so it can be unit-tested without
+    /// constructing an AppIntent or invoking `perform()`. A pending body is
+    /// "fresh" when an alarm actually fired (`firedAt > 0`) and it did so no
+    /// longer than `window` seconds ago. Behaviour-preserving with the inline
+    /// guard that previously lived in `perform()`.
+    static func isFresh(firedAt: TimeInterval,
+                        now: TimeInterval,
+                        window: TimeInterval) -> Bool {
+        guard firedAt > 0 else { return false }
+        return (now - firedAt) <= window
     }
 }
 

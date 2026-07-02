@@ -137,6 +137,28 @@
 "Airplane Landing" = "Flugzeuglandung";
 "Airport Chime" = "Flughafen-Klang";
 
+"Calendar Scanning" = "Kalenderabgleich";
+"Scan Calendars for Trips" = "Kalender nach Reisen durchsuchen";
+"Scan Mode" = "Scanmodus";
+"Notify Me About New Trips" = "Bei neuen Reisen benachrichtigen";
+"Look Ahead (days)" = "Vorlaufzeit (Tage)";
+"Scan Behavior" = "Scanverhalten";
+"Calendars" = "Kalender";
+"Scan Now" = "Jetzt scannen";
+"Calendar Access Needed" = "Kalenderzugriff erforderlich";
+"Open Settings" = "Einstellungen öffnen";
+"Select Calendars to Scan" = "Zu durchsuchende Kalender auswählen";
+"Continue" = "Weiter";
+"Calendar Access" = "Kalenderzugriff";
+"calendarScan.mode.automatic" = "Automatisch";
+"calendarScan.mode.manualOnly" = "Nur manuell";
+"settings.calendarScan.mainFooter" = "Wenn aktiviert, durchsucht GeoNap die unten ausgewählten Kalender nach bevorstehenden Terminen mit einem Ort und schlägt dafür standortbasierte Alarme vor. Standardmäßig deaktiviert — es wird nichts durchsucht, bis du dies aktivierst.";
+"settings.calendarScan.behaviorFooter" = "Automatisch scannt regelmäßig im Hintergrund. Nur manuell scannt nur, wenn du auf Jetzt scannen tippst.";
+"settings.calendarScan.accessDeniedFooter" = "GeoNap benötigt Kalenderzugriff, um nach Reisen zu suchen. Öffne die Einstellungen und erlaube GeoNap den Kalenderzugriff, um fortzufahren.";
+"settings.calendarScan.firstRunFooter" = "Standardmäßig ist nur dein primärer Kalender ausgewählt. Aktiviere weitere Kalender, die GeoNap durchsuchen soll.";
+"privacy.body.calendarAccess" = "Wenn du den Kalenderabgleich in den Einstellungen aktivierst, liest GeoNap Termine aus den von dir ausgewählten Kalendern, um bevorstehende Reisen mit einem Ort zu finden — zum Beispiel einen Flug, eine Zugfahrt oder ein Treffen. Dies geschieht vollständig auf deinem Gerät: Kalenderdaten werden niemals hochgeladen, außerhalb der App gespeichert oder an Dritte weitergegeben. Nur der Ortstext eines möglichen Termins wird an Apples Geokodierungsdienst gesendet, um ihn in Kartenkoordinaten umzuwandeln — genauso wie beim manuellen Setzen einer Nadel in GeoNap. Der Kalenderabgleich ist standardmäßig deaktiviert; du kannst ihn jederzeit unter Einstellungen → Kalenderabgleich ausschalten und den Kalenderzugriff vollständig in den iOS-Einstellungen → Datenschutz & Sicherheit → Kalender → GeoNap widerrufen.";
+"help.body.calendarScanning" = "Der Kalenderabgleich durchsucht die von dir ausgewählten Kalender nach bevorstehenden Terminen mit einem Ort — ein Flug, eine Zugfahrt, ein Treffen — und schlägt dafür jeweils einen standortbasierten Alarm vor.\n\nDiese Funktion ist standardmäßig deaktiviert. So aktivierst du sie:\n\n1. Öffne Einstellungen → Kalenderabgleich.\n2. Aktiviere Kalender nach Reisen durchsuchen und erlaube bei Bedarf den Kalenderzugriff.\n3. Beim ersten Mal wählst du aus, welche Kalender einbezogen werden sollen — standardmäßig ist nur dein primärer Kalender aktiviert.\n4. Wähle Automatisch, um regelmäßig im Hintergrund zu scannen, oder Nur manuell, um nur beim Tippen auf Jetzt scannen zu scannen.\n5. Aktiviere Bei neuen Reisen benachrichtigen, um eine Benachrichtigung zu erhalten, wenn ein Scan einen neuen Vorschlag findet.\n\nKalenderdaten werden ausschließlich auf deinem Gerät gelesen und niemals hochgeladen oder weitergegeben. Weitere Informationen findest du unter Datenschutz & Standortfreigabe → Kalenderzugriff.";
+
 "Help" = "Hilfe";
 "What is GeoNap?" = "Was ist GeoNap?";
 "Typical use cases" = "Typische Anwendungsfälle";

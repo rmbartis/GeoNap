@@ -137,6 +137,28 @@
 "Airplane Landing" = "Pouso de avião";
 "Airport Chime" = "Sino de aeroporto";
 
+"Calendar Scanning" = "Verificação de calendário";
+"Scan Calendars for Trips" = "Verificar calendários em busca de viagens";
+"Scan Mode" = "Modo de verificação";
+"Notify Me About New Trips" = "Notificar-me sobre novas viagens";
+"Look Ahead (days)" = "Antecedência (dias)";
+"Scan Behavior" = "Comportamento da verificação";
+"Calendars" = "Calendários";
+"Scan Now" = "Verificar agora";
+"Calendar Access Needed" = "Acesso ao calendário necessário";
+"Open Settings" = "Abrir Ajustes";
+"Select Calendars to Scan" = "Selecionar calendários para verificar";
+"Continue" = "Continuar";
+"Calendar Access" = "Acesso ao calendário";
+"calendarScan.mode.automatic" = "Automático";
+"calendarScan.mode.manualOnly" = "Somente manual";
+"settings.calendarScan.mainFooter" = "Quando ativado, o GeoNap verifica os calendários escolhidos abaixo em busca de próximos eventos com uma localização e sugere alarmes baseados em localização para eles. Desativado por padrão — nada é verificado até que você ative isso.";
+"settings.calendarScan.behaviorFooter" = "Automático verifica periodicamente em segundo plano. Somente manual verifica apenas quando você toca em Verificar agora.";
+"settings.calendarScan.accessDeniedFooter" = "O GeoNap precisa de acesso ao calendário para procurar viagens. Abra os Ajustes e permita o acesso ao calendário para o GeoNap continuar.";
+"settings.calendarScan.firstRunFooter" = "Apenas seu calendário principal é selecionado por padrão. Ative quaisquer outros calendários que deseja que o GeoNap verifique.";
+"privacy.body.calendarAccess" = "Se você ativar a Verificação de calendário nos Ajustes, o GeoNap lê eventos dos calendários que você escolher para procurar próximas viagens com uma localização — por exemplo, um voo, um trem ou uma reunião. Isso acontece inteiramente no seu dispositivo: os dados do calendário nunca são enviados para servidores, armazenados fora do app ou compartilhados com terceiros. Apenas o texto de localização de um evento candidato é enviado ao serviço de geocodificação da Apple para convertê-lo em coordenadas de mapa, da mesma forma que já funciona ao definir manualmente um pino no GeoNap. A Verificação de calendário é desativada por padrão; você pode desativá-la a qualquer momento em Ajustes → Verificação de calendário, e revogar totalmente o acesso ao calendário em Ajustes do iOS → Privacidade e Segurança → Calendários → GeoNap.";
+"help.body.calendarScanning" = "A Verificação de calendário examina os calendários que você escolher em busca de próximos eventos com uma localização — um voo, um trem, uma reunião — e sugere um alarme baseado em localização para cada um deles.\n\nEsse recurso é desativado por padrão. Para ativá-lo:\n\n1. Abra Ajustes → Verificação de calendário.\n2. Ative Verificar calendários em busca de viagens e conceda acesso ao calendário quando solicitado.\n3. Na primeira vez, você escolherá quais calendários incluir — apenas seu calendário principal é marcado por padrão.\n4. Escolha Automático para verificar periodicamente em segundo plano, ou Somente manual para verificar apenas quando tocar em Verificar agora.\n5. Ative Notificar-me sobre novas viagens para receber uma notificação quando uma verificação encontrar um novo candidato.\n\nOs dados do calendário são lidos inteiramente no seu dispositivo e nunca são enviados ou compartilhados. Consulte Privacidade e Compartilhamento de Localização → Acesso ao calendário para mais detalhes.";
+
 "Help" = "Ajuda";
 "What is GeoNap?" = "O que é o GeoNap?";
 "Typical use cases" = "Casos de uso típicos";

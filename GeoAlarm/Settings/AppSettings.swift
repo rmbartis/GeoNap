@@ -142,6 +142,33 @@ enum CoordFormat: String, CaseIterable, Identifiable {
     }
 }
 
+// MARK: - Calendar Scan Mode
+
+/// Whether calendar scanning runs automatically in the background or only
+/// when the user explicitly taps "Scan Now" in Settings.
+enum CalendarScanMode: String, CaseIterable, Identifiable {
+    case automatic
+    case manualOnly
+
+    var id: String { rawValue }
+
+    /// Localization key for the picker label.
+    var localizationKey: String {
+        switch self {
+        case .automatic:  return "calendarScan.mode.automatic"
+        case .manualOnly: return "calendarScan.mode.manualOnly"
+        }
+    }
+
+    /// English fallback label (also the key registered in Localizable.strings).
+    var englishLabel: String {
+        switch self {
+        case .automatic:  return "Automatic"
+        case .manualOnly: return "Manual Only"
+        }
+    }
+}
+
 // MARK: - AppStorage Keys
 
 enum AppStorageKey {
@@ -165,4 +192,24 @@ enum AppStorageKey {
     /// Default trigger input mode for the alarm-creation screen: "distance" (radius)
     /// or "time" (minutes before arrival). Stored as TriggerMode.rawValue.
     static let defaultTriggerMode = "defaultTriggerMode"
+
+    // MARK: Calendar Scanning
+    // All calendar-scan keys default to "off"/empty — scanning is strictly
+    // opt-in. calendarScanEnabled MUST default to false.
+
+    /// Master switch for the Calendar Scanning feature. Defaults to false —
+    /// the user must explicitly turn this on.
+    static let calendarScanEnabled = "calendarScanEnabled"
+    /// CalendarScanMode.rawValue — "automatic" or "manualOnly".
+    static let calendarScanModeRaw = "calendarScanModeRaw"
+    /// Whether a local notification is sent when a background scan finds new
+    /// trip candidates. Independent of calendarScanModeRaw.
+    static let calendarScanNotifyOnResults = "calendarScanNotifyOnResults"
+    /// How many days ahead the scan looks for events. Defaults to 14.
+    static let calendarScanLookaheadDays = "calendarScanLookaheadDays"
+    /// JSON-encoded Set<String> of EKCalendar.calendarIdentifier values the
+    /// user has opted in to scanning.
+    static let calendarScanEnabledCalendarIDs = "calendarScanEnabledCalendarIDs"
+    /// Whether the first-run "select calendars" sheet has been completed.
+    static let calendarScanHasCompletedFirstRun = "calendarScanHasCompletedFirstRun"
 }

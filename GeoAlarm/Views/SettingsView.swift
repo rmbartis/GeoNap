@@ -210,6 +210,17 @@ struct SettingsView: View {
                 // MARK: Auto-SMS (Shortcuts automation)
                 autoSMSSection
 
+                // MARK: Calendar Scanning
+                Section {
+                    NavigationLink(destination: CalendarScanSettingsView()) {
+                        Label {
+                            Text("Calendar Scanning", bundle: bundle)
+                        } icon: {
+                            Image(systemName: "calendar.badge.clock")
+                        }
+                    }
+                }
+
                 // MARK: Help & Legal
                 Section {
                     NavigationLink(destination: HelpView()) {

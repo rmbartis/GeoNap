@@ -137,6 +137,28 @@
 "Airplane Landing" = "Atterraggio aereo";
 "Airport Chime" = "Carillon aeroporto";
 
+"Calendar Scanning" = "Scansione calendario";
+"Scan Calendars for Trips" = "Scansiona i calendari per i viaggi";
+"Scan Mode" = "Modalità di scansione";
+"Notify Me About New Trips" = "Notificami i nuovi viaggi";
+"Look Ahead (days)" = "Giorni di anticipo";
+"Scan Behavior" = "Comportamento della scansione";
+"Calendars" = "Calendari";
+"Scan Now" = "Scansiona ora";
+"Calendar Access Needed" = "Accesso al calendario necessario";
+"Open Settings" = "Apri Impostazioni";
+"Select Calendars to Scan" = "Seleziona i calendari da scansionare";
+"Continue" = "Continua";
+"Calendar Access" = "Accesso al calendario";
+"calendarScan.mode.automatic" = "Automatica";
+"calendarScan.mode.manualOnly" = "Solo manuale";
+"settings.calendarScan.mainFooter" = "Se attivata, GeoNap analizza i calendari scelti qui sotto alla ricerca di eventi imminenti con una posizione e suggerisce allarmi basati sulla posizione per essi. Disattivata per impostazione predefinita: non viene analizzato nulla finché non la attivi.";
+"settings.calendarScan.behaviorFooter" = "Automatica esegue la scansione periodicamente in background. Solo manuale esegue la scansione solo quando tocchi Scansiona ora.";
+"settings.calendarScan.accessDeniedFooter" = "GeoNap necessita dell'accesso al calendario per cercare i viaggi. Apri Impostazioni e consenti l'accesso al calendario per GeoNap per continuare.";
+"settings.calendarScan.firstRunFooter" = "Per impostazione predefinita è selezionato solo il calendario principale. Attiva eventuali altri calendari che desideri far scansionare a GeoNap.";
+"privacy.body.calendarAccess" = "Se attivi la Scansione calendario in Impostazioni, GeoNap legge gli eventi dei calendari che scegli per cercare viaggi imminenti con una posizione, ad esempio un volo, un treno o una riunione. Tutto ciò avviene interamente sul tuo dispositivo: i dati del calendario non vengono mai caricati, memorizzati al di fuori dell'app o condivisi con terze parti. Solo il testo della posizione di un evento candidato viene inviato al servizio di geocodifica di Apple per convertirlo in coordinate sulla mappa, allo stesso modo in cui già funziona l'inserimento manuale di un pin in GeoNap. La Scansione calendario è disattivata per impostazione predefinita; puoi disattivarla in qualsiasi momento in Impostazioni → Scansione calendario, e revocare completamente l'accesso al calendario in Impostazioni iOS → Privacy e sicurezza → Calendari → GeoNap.";
+"help.body.calendarScanning" = "La Scansione calendario analizza i calendari che scegli alla ricerca di eventi imminenti con una posizione — un volo, un treno, una riunione — e suggerisce un allarme basato sulla posizione per ciascuno di essi.\n\nQuesta funzione è disattivata per impostazione predefinita. Per attivarla:\n\n1. Apri Impostazioni → Scansione calendario.\n2. Attiva Scansiona i calendari per i viaggi e concedi l'accesso al calendario quando richiesto.\n3. La prima volta sceglierai quali calendari includere: per impostazione predefinita è selezionato solo il calendario principale.\n4. Scegli Automatica per eseguire la scansione periodicamente in background, oppure Solo manuale per eseguirla solo quando tocchi Scansiona ora.\n5. Attiva Notificami i nuovi viaggi per ricevere una notifica quando una scansione trova un nuovo candidato.\n\nI dati del calendario vengono letti interamente sul tuo dispositivo e non vengono mai caricati o condivisi. Consulta Privacy e condivisione della posizione → Accesso al calendario per maggiori dettagli.";
+
 "Help" = "Guida";
 "What is GeoNap?" = "Cos'è GeoNap?";
 "Typical use cases" = "Casi d'uso tipici";

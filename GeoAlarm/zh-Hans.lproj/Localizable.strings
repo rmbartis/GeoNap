@@ -137,6 +137,28 @@
 "Airplane Landing" = "飞机降落";
 "Airport Chime" = "机场提示音";
 
+"Calendar Scanning" = "日历扫描";
+"Scan Calendars for Trips" = "扫描日历以查找行程";
+"Scan Mode" = "扫描模式";
+"Notify Me About New Trips" = "有新行程时通知我";
+"Look Ahead (days)" = "提前天数";
+"Scan Behavior" = "扫描方式";
+"Calendars" = "日历";
+"Scan Now" = "立即扫描";
+"Calendar Access Needed" = "需要日历访问权限";
+"Open Settings" = "打开设置";
+"Select Calendars to Scan" = "选择要扫描的日历";
+"Continue" = "继续";
+"Calendar Access" = "日历访问权限";
+"calendarScan.mode.automatic" = "自动";
+"calendarScan.mode.manualOnly" = "仅手动";
+"settings.calendarScan.mainFooter" = "启用后，GeoNap 会扫描下方所选日历中即将到来的带有地点的事件，并为其提议基于位置的闹钟。默认关闭——在你开启此功能之前不会进行任何扫描。";
+"settings.calendarScan.behaviorFooter" = "自动模式会在后台定期扫描。仅手动模式只在你点击立即扫描时才会扫描。";
+"settings.calendarScan.accessDeniedFooter" = "GeoNap 需要日历访问权限才能查找行程。请打开设置并允许 GeoNap 访问日历以继续。";
+"settings.calendarScan.firstRunFooter" = "默认情况下仅选中你的主日历。请开启你希望 GeoNap 扫描的其他日历。";
+"privacy.body.calendarAccess" = "如果你在设置中开启日历扫描，GeoNap 会读取你所选日历中的事件，以查找带有地点的即将到来的行程——例如航班、火车或会议。此过程完全在你的设备上进行：日历数据永远不会被上传、存储在应用之外，或与第三方共享。只有候选事件的地点文本会被发送给 Apple 的地理编码服务，以将其转换为地图坐标，这与在 GeoNap 中手动放置图钉的方式相同。日历扫描默认关闭；你可以随时在设置 → 日历扫描中将其关闭，并可在 iOS 设置 → 隐私与安全性 → 日历 → GeoNap 中完全撤销日历访问权限。";
+"help.body.calendarScanning" = "日历扫描会在你选择的日历中查找带有地点的即将到来的事件——航班、火车、会议——并为每个事件提议一个基于位置的闹钟。\n\n此功能默认关闭。要开启它：\n\n1. 打开设置 → 日历扫描。\n2. 开启扫描日历以查找行程，并在提示时授予日历访问权限。\n3. 首次使用时，你将选择要包含哪些日历——默认情况下仅选中你的主日历。\n4. 选择自动以在后台定期扫描，或选择仅手动以仅在你点击立即扫描时扫描。\n5. 开启有新行程时通知我，以便在扫描发现新的候选行程时收到通知。\n\n日历数据完全在你的设备上读取，永远不会被上传或共享。详情请参阅隐私与位置共享 → 日历访问权限。";
+
 "Help" = "帮助";
 "What is GeoNap?" = "GeoNap 是什么？";
 "Typical use cases" = "典型使用场景";
