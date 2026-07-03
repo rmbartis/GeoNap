@@ -46,7 +46,7 @@
 "New Alarm" = "Báo thức mới";
 "Edit Alarm" = "Chỉnh sửa báo thức";
 "Please enter a name for this alarm." = "Vui lòng nhập tên cho báo thức này.";
-"Radius must be at least 50 metres." = "Bán kính phải ít nhất 50 mét.";
+"Radius must be at least 200 metres." = "Bán kính phải ít nhất 200 mét.";
 "Please pick a valid location on the map." = "Vui lòng chọn vị trí hợp lệ trên bản đồ.";
 "Window start and end time cannot be the same." = "Thời gian bắt đầu và kết thúc không thể giống nhau.";
 "Auto-Notify is on but has no contact. Add a contact or turn off Auto-Notify." = "Tự động thông báo đang bật nhưng chưa có liên hệ nào. Thêm liên hệ hoặc tắt Tự động thông báo.";

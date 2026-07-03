@@ -46,7 +46,7 @@
 "New Alarm" = "นาฬิกาปลุกใหม่";
 "Edit Alarm" = "แก้ไขนาฬิกาปลุก";
 "Please enter a name for this alarm." = "กรุณาป้อนชื่อสำหรับนาฬิกาปลุกนี้";
-"Radius must be at least 50 metres." = "รัศมีต้องมีอย่างน้อย 50 เมตร";
+"Radius must be at least 200 metres." = "รัศมีต้องมีอย่างน้อย 200 เมตร";
 "Please pick a valid location on the map." = "กรุณาเลือกตำแหน่งที่ถูกต้องบนแผนที่";
 "Window start and end time cannot be the same." = "เวลาเริ่มต้นและสิ้นสุดต้องไม่เหมือนกัน";
 "Auto-Notify is on but has no contact. Add a contact or turn off Auto-Notify." = "เปิดการแจ้งเตือนอัตโนมัติไว้แต่ยังไม่มีผู้ติดต่อ เพิ่มผู้ติดต่อหรือปิดการแจ้งเตือนอัตโนมัติ";

@@ -44,11 +44,18 @@ enum DistanceUnit: String, CaseIterable, Identifiable {
         }
     }
 
-    /// Slider range expressed in this unit (maps to 50 m … 2 000 m).
+    /// Slider range expressed in this unit (maps to 200 m … 5 000 m).
+    /// Imperial lower bound is 655 ft (not the "round" 656 ft = 200 m × 3.28084)
+    /// because it's the smallest integer ft value whose exact metre equivalent
+    /// (199.644 m) still rounds up to a valid 200 m against
+    /// `AlarmViewModel.isValid`/`buildAlarm()`'s `radius.rounded() >= 200`
+    /// check — 654 ft (199.339 m) rounds down to 199 and would be invalid. So
+    /// the slider's leftmost position is never a silently-disabled Save button
+    /// (Bob, 2026-07-05; same pattern as the old 164 ft minimum this replaces).
     var sliderRange: ClosedRange<Double> {
         switch self {
-        case .metric:   return 50...2000
-        case .imperial: return 164...6562   // ≈ 50 ft … 6 562 ft
+        case .metric:   return 200...5000
+        case .imperial: return 655...16404   // ≈ 200 ft … 16 404 ft
         }
     }
 

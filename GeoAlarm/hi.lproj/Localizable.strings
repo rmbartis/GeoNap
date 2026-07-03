@@ -46,7 +46,7 @@
 "New Alarm" = "नया अलार्म";
 "Edit Alarm" = "अलार्म संपादित करें";
 "Please enter a name for this alarm." = "कृपया इस अलार्म के लिए नाम दर्ज करें।";
-"Radius must be at least 50 metres." = "त्रिज्या कम से कम 50 मीटर होनी चाहिए।";
+"Radius must be at least 200 metres." = "त्रिज्या कम से कम 200 मीटर होनी चाहिए।";
 "Please pick a valid location on the map." = "कृपया मानचित्र पर एक वैध स्थान चुनें।";
 "Window start and end time cannot be the same." = "विंडो प्रारंभ और समाप्ति समय एक समान नहीं हो सकते।";
 "Auto-Notify is on but has no contact. Add a contact or turn off Auto-Notify." = "स्वतः-सूचना चालू है लेकिन कोई संपर्क नहीं है। संपर्क जोड़ें या स्वतः-सूचना बंद करें।";

@@ -37,10 +37,11 @@ final class NapAlarmModelTests: XCTestCase {
         XCTAssertEqual(alarm.clRegion.center.longitude, -122.5, accuracy: 0.00001)
     }
 
-    func test_clRegion_enforces50mMinimum() {
-        // Radii below 50 m are clamped to 50 m
+    func test_clRegion_enforces200mMinimum() {
+        // Radii below 200 m are clamped to 200 m (Bob, 2026-07-05: minimum
+        // raised from 50 m to 200 m — see AppSettings.DistanceUnit.sliderRange).
         let alarm = NapAlarm(name: "Tiny", latitude: 0, longitude: 0, radius: 10)
-        XCTAssertEqual(alarm.clRegion.radius, 50)
+        XCTAssertEqual(alarm.clRegion.radius, 200)
     }
 
     func test_clRegion_notifyOnEntry_whenEventIsEntry() {

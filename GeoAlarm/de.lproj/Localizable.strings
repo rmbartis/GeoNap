@@ -46,7 +46,7 @@
 "New Alarm" = "Neuer Alarm";
 "Edit Alarm" = "Alarm bearbeiten";
 "Please enter a name for this alarm." = "Bitte einen Namen für diesen Alarm eingeben.";
-"Radius must be at least 50 metres." = "Der Radius muss mindestens 50 Meter betragen.";
+"Radius must be at least 200 metres." = "Der Radius muss mindestens 200 Meter betragen.";
 "Please pick a valid location on the map." = "Bitte einen gültigen Standort auf der Karte auswählen.";
 "Window start and end time cannot be the same." = "Start- und Endzeit dürfen nicht identisch sein.";
 "Auto-Notify is on but has no contact. Add a contact or turn off Auto-Notify." = "Die automatische Benachrichtigung ist aktiviert, aber es ist kein Kontakt vorhanden. Füge einen Kontakt hinzu oder deaktiviere die automatische Benachrichtigung.";

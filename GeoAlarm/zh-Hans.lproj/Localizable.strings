@@ -46,7 +46,7 @@
 "New Alarm" = "新建闹钟";
 "Edit Alarm" = "编辑闹钟";
 "Please enter a name for this alarm." = "请为此闹钟输入名称。";
-"Radius must be at least 50 metres." = "半径必须至少为 50 米。";
+"Radius must be at least 200 metres." = "半径必须至少为 200 米。";
 "Please pick a valid location on the map." = "请在地图上选择有效位置。";
 "Window start and end time cannot be the same." = "开始和结束时间不能相同。";
 "Auto-Notify is on but has no contact. Add a contact or turn off Auto-Notify." = "自动通知已开启，但没有联系人。请添加联系人或关闭自动通知。";

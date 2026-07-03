@@ -34,7 +34,7 @@ struct MapPickerView: View {
                             .foregroundStyle(.red)
                     }
 
-                    MapCircle(center: coord, radius: max(radius, 50))
+                    MapCircle(center: coord, radius: max(radius, 200))
                         .foregroundStyle(.blue.opacity(0.15))
                         .stroke(.blue.opacity(0.6), lineWidth: 1.5)
                 }

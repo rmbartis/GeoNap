@@ -46,7 +46,7 @@
 "New Alarm" = "تنبيه جديد";
 "Edit Alarm" = "تعديل التنبيه";
 "Please enter a name for this alarm." = "الرجاء إدخال اسم لهذا التنبيه.";
-"Radius must be at least 50 metres." = "يجب أن يكون النطاق 50 مترًا على الأقل.";
+"Radius must be at least 200 metres." = "يجب أن يكون النطاق 200 متر على الأقل.";
 "Please pick a valid location on the map." = "الرجاء اختيار موقع صالح على الخريطة.";
 "Window start and end time cannot be the same." = "لا يمكن أن يكون وقت البدء والانتهاء متطابقَين.";
 "Auto-Notify is on but has no contact. Add a contact or turn off Auto-Notify." = "الإشعار التلقائي مفعّل ولكن لا توجد جهة اتصال. أضف جهة اتصال أو أوقف الإشعار التلقائي.";

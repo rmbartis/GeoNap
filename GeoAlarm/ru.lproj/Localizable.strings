@@ -46,7 +46,7 @@
 "New Alarm" = "Новый будильник";
 "Edit Alarm" = "Изменить будильник";
 "Please enter a name for this alarm." = "Пожалуйста, введите название для этого будильника.";
-"Radius must be at least 50 metres." = "Радиус должен быть не менее 50 метров.";
+"Radius must be at least 200 metres." = "Радиус должен быть не менее 200 метров.";
 "Please pick a valid location on the map." = "Пожалуйста, выберите допустимое местоположение на карте.";
 "Window start and end time cannot be the same." = "Время начала и окончания не могут совпадать.";
 "Auto-Notify is on but has no contact. Add a contact or turn off Auto-Notify." = "Автоуведомление включено, но контакт не указан. Добавьте контакт или отключите автоуведомление.";

@@ -63,7 +63,7 @@ final class AlarmViewModel: ObservableObject {
 
     var isValid: Bool {
         !name.trimmingCharacters(in: .whitespaces).isEmpty &&
-        radius.rounded() >= 50 &&          // round to avoid imperial unit conversion drift (164 ft = 49.99 m)
+        radius.rounded() >= 200 &&         // round to avoid imperial unit conversion drift (655 ft = 199.64 m)
         (latitude != 0 || longitude != 0) &&
         CLLocationCoordinate2DIsValid(CLLocationCoordinate2D(latitude: latitude, longitude: longitude)) &&
         !hasAutoNotifyWithNoContacts
@@ -134,8 +134,8 @@ final class AlarmViewModel: ObservableObject {
             validationError = "Please enter a name for this alarm."
             return nil
         }
-        guard radius.rounded() >= 50 else {
-            validationError = "Radius must be at least 50 metres."
+        guard radius.rounded() >= 200 else {
+            validationError = "Radius must be at least 200 metres."
             return nil
         }
         guard CLLocationCoordinate2DIsValid(coordinate) else {

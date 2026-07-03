@@ -34,7 +34,7 @@ final class AlarmViewModelTests: XCTestCase {
         sut.name      = "Test"
         sut.latitude  = 40.0
         sut.longitude = -74.0
-        sut.radius    = 10   // below 50 m
+        sut.radius    = 10   // below 200 m
         XCTAssertFalse(sut.isValid)
     }
 
@@ -51,7 +51,7 @@ final class AlarmViewModelTests: XCTestCase {
         sut.name      = "Home"
         sut.latitude  = 37.7749
         sut.longitude = -122.4194
-        sut.radius    = 150
+        sut.radius    = 250
         XCTAssertTrue(sut.isValid)
     }
 
@@ -135,7 +135,7 @@ final class AlarmViewModelTests: XCTestCase {
         sut.name      = "Home"
         sut.latitude  = 37.7749
         sut.longitude = -122.4194
-        sut.radius    = 150
+        sut.radius    = 250
         sut.notifyContact     = true
         sut.notifyContactList = []
         XCTAssertFalse(sut.isValid,
@@ -146,7 +146,7 @@ final class AlarmViewModelTests: XCTestCase {
         sut.name      = "Home"
         sut.latitude  = 37.7749
         sut.longitude = -122.4194
-        sut.radius    = 150
+        sut.radius    = 250
         sut.notifyContact     = true
         sut.notifyContactList = [NotifyContact(name: "Test Contact", value: "+15551234567")]
         XCTAssertTrue(sut.isValid)
@@ -156,7 +156,7 @@ final class AlarmViewModelTests: XCTestCase {
         sut.name      = "Home"
         sut.latitude  = 37.7749
         sut.longitude = -122.4194
-        sut.radius    = 150
+        sut.radius    = 250
         sut.notifyContact     = true
         sut.notifyContactList = []
 
@@ -169,7 +169,7 @@ final class AlarmViewModelTests: XCTestCase {
         sut.name      = "Home"
         sut.latitude  = 37.7749
         sut.longitude = -122.4194
-        sut.radius    = 150
+        sut.radius    = 250
         sut.notifyContact     = true
         sut.notifyContactList = [NotifyContact(name: "Test Contact", value: "+15551234567")]
 
@@ -318,57 +318,74 @@ final class AlarmViewModelTests: XCTestCase {
     }
 
     // MARK: - Radius boundary regression (imperial minimum)
+    // Minimum radius raised from 50 m to 200 m and max from 2000 m to 5000 m
+    // (Bob, 2026-07-05) — see AppSettings.DistanceUnit.sliderRange doc comment
+    // for why the imperial slider minimum is 655 ft, not the "round" 656 ft.
 
-    /// Regression: 164 ft × 0.3048 = 49.9872 m.
-    /// The old check `radius >= 50` treated this as INVALID because 49.987 < 50.
-    /// The fix uses `radius.rounded() >= 50` which rounds 49.987 → 50 → valid.
-    /// This test must stay green to prevent re-introducing the bug.
-    func test_isValid_at164ft_inMeters_isTrue() {
+    /// Regression: 655 ft × 0.3048 ≈ 199.644 m.
+    /// A naive check `radius >= 200` would treat this as INVALID because
+    /// 199.644 < 200. The fix uses `radius.rounded() >= 200` which rounds
+    /// 199.644 → 200 → valid. This test must stay green to prevent
+    /// re-introducing the bug the old 164 ft/50 m test guarded against.
+    func test_isValid_at655ft_inMeters_isTrue() {
         sut.name      = "Test"
         sut.latitude  = 40.0
         sut.longitude = -74.0
-        sut.radius    = DistanceUnit.imperial.toMeters(164)  // = 49.9872 m
+        sut.radius    = DistanceUnit.imperial.toMeters(655)  // ≈ 199.644 m
 
         XCTAssertTrue(sut.isValid,
-            "164 ft (≈49.99 m) must be valid — the Save button was incorrectly disabled at the minimum imperial slider value")
+            "655 ft (≈199.64 m) must be valid — the Save button was incorrectly disabled at the minimum imperial slider value")
     }
 
-    func test_buildAlarm_at164ft_succeeds() {
+    func test_buildAlarm_at655ft_succeeds() {
         sut.name      = "Station"
         sut.latitude  = 40.0
         sut.longitude = -74.0
-        sut.radius    = DistanceUnit.imperial.toMeters(164)
+        sut.radius    = DistanceUnit.imperial.toMeters(655)
 
         let alarm = sut.buildAlarm()
         XCTAssertNotNil(alarm,
-            "buildAlarm should succeed when radius is 164 ft — the minimum imperial slider value")
+            "buildAlarm should succeed when radius is 655 ft — the minimum imperial slider value")
     }
 
-    func test_isValid_below164ft_isFalse() {
-        // 155 ft = 47.24 m — well below the 50 m threshold even after rounding, should be invalid.
-        // (163 ft ≈ 49.68 m rounds to 50 m and is intentionally accepted by the rounding rule
-        //  that keeps 164 ft ≈ 49.99 m valid; use 155 ft to test a clearly out-of-range value.)
+    func test_isValid_below655ft_isFalse() {
+        // 630 ft ≈ 192.02 m — well below the 200 m threshold even after rounding.
+        // (654 ft ≈ 199.34 m rounds down to 199 m and is correctly rejected too,
+        //  but 630 ft avoids sitting right on the rounding edge, mirroring the
+        //  old 155 ft test's margin below 164 ft.)
         sut.name      = "Test"
         sut.latitude  = 40.0
         sut.longitude = -74.0
-        sut.radius    = DistanceUnit.imperial.toMeters(155)  // = 47.244 m
+        sut.radius    = DistanceUnit.imperial.toMeters(630)  // ≈ 192.02 m
 
         XCTAssertFalse(sut.isValid,
-            "155 ft (≈47.24 m) rounds to 47 m and should be invalid")
+            "630 ft (≈192.02 m) rounds to 192 m and should be invalid")
     }
 
     // MARK: - DistanceUnit conversion
 
     func test_distanceUnit_imperial_toMeters_164ft() {
-        // 164 ft × 0.3048 = 49.9872 m — verify the conversion is correct
+        // 164 ft × 0.3048 = 49.9872 m — verify the conversion arithmetic itself
+        // (independent of the current business-rule minimum/maximum).
         let meters = DistanceUnit.imperial.toMeters(164)
         XCTAssertEqual(meters, 49.9872, accuracy: 0.001)
     }
 
-    func test_distanceUnit_imperial_sliderMinimum_is164ft() {
-        // The imperial slider minimum must be 164 ft so that the slider can reach
-        // the radius limit in a single step.
-        XCTAssertEqual(DistanceUnit.imperial.sliderRange.lowerBound, 164,
-            "Imperial slider lower bound must be 164 ft (the minimum that rounds to 50 m)")
+    func test_distanceUnit_imperial_sliderMinimum_is655ft() {
+        // The imperial slider minimum must be 655 ft so that the slider can
+        // reach the radius minimum in a single step without landing on a
+        // silently-invalid value.
+        XCTAssertEqual(DistanceUnit.imperial.sliderRange.lowerBound, 655,
+            "Imperial slider lower bound must be 655 ft (the minimum that rounds to 200 m)")
+    }
+
+    func test_distanceUnit_imperial_sliderMaximum_is16404ft() {
+        // The imperial slider maximum must match the 5000 m metric maximum.
+        XCTAssertEqual(DistanceUnit.imperial.sliderRange.upperBound, 16404,
+            "Imperial slider upper bound must be 16 404 ft (≈ 5000 m)")
+    }
+
+    func test_distanceUnit_metric_sliderRange_is200to5000() {
+        XCTAssertEqual(DistanceUnit.metric.sliderRange, 200...5000)
     }
 }

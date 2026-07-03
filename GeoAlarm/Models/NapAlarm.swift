@@ -249,7 +249,7 @@ final class NapAlarm {
     var clRegion: CLCircularRegion {
         let region = CLCircularRegion(
             center: CLLocationCoordinate2D(latitude: latitude, longitude: longitude),
-            radius: max(radius, 50),
+            radius: max(radius, 200),
             identifier: id.uuidString
         )
         region.notifyOnEntry = (regionEvent == .onEntry) || isRepeating

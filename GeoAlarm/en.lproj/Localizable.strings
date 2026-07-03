@@ -49,7 +49,7 @@
 "New Alarm" = "New Alarm";
 "Edit Alarm" = "Edit Alarm";
 "Please enter a name for this alarm." = "Please enter a name for this alarm.";
-"Radius must be at least 50 metres." = "Radius must be at least 50 metres.";
+"Radius must be at least 200 metres." = "Radius must be at least 200 metres.";
 "Please pick a valid location on the map." = "Please pick a valid location on the map.";
 "Window start and end time cannot be the same." = "Window start and end time cannot be the same.";
 "Auto-Notify is on but has no contact. Add a contact or turn off Auto-Notify." = "Auto-Notify is on but has no contact. Add a contact or turn off Auto-Notify.";

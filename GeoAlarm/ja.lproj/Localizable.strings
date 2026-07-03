@@ -46,7 +46,7 @@
 "New Alarm" = "新しいアラーム";
 "Edit Alarm" = "アラームを編集";
 "Please enter a name for this alarm." = "アラームの名前を入力してください。";
-"Radius must be at least 50 metres." = "半径は50メートル以上必要です。";
+"Radius must be at least 200 metres." = "半径は200メートル以上必要です。";
 "Please pick a valid location on the map." = "マップで有効な場所を選択してください。";
 "Window start and end time cannot be the same." = "開始時刻と終了時刻を同じにすることはできません。";
 "Auto-Notify is on but has no contact. Add a contact or turn off Auto-Notify." = "自動通知はオンですが、連絡先がありません。連絡先を追加するか、自動通知をオフにしてください。";
