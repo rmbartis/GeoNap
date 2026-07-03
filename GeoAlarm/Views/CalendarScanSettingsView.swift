@@ -4,7 +4,6 @@
 // alarms. Strictly opt-in — calendarScanEnabled defaults to false.
 
 import SwiftUI
-import EventKit
 
 struct CalendarScanSettingsView: View {
 
@@ -17,8 +16,19 @@ struct CalendarScanSettingsView: View {
 
     @StateObject private var scanService = CalendarScanService()
     @Environment(\.languageBundle) private var bundle
+    @EnvironmentObject private var alarmManager: AlarmManager
 
     @State private var showFirstRunSheet = false
+
+    // MARK: - Phase 2/3: scan pipeline state
+    @State private var isScanning = false
+    /// The current pending-review list — candidates found by a scan (manual
+    /// or background) that the user hasn't yet added or declined. Loaded from
+    /// CalendarScanCandidateStore on appear so a background scan's results
+    /// are visible without requiring a fresh "Scan Now" tap (Phase 3).
+    @State private var candidates: [CalendarTripCandidate] = []
+    @State private var showReviewSheet = false
+    @State private var showNoResultsAlert = false
 
     private var scanMode: CalendarScanMode {
         CalendarScanMode(rawValue: scanModeRaw) ?? .automatic
@@ -55,9 +65,16 @@ struct CalendarScanSettingsView: View {
                             Text("Scan Mode", bundle: bundle)
                         }
                         .pickerStyle(.segmented)
+                        .onChange(of: scanModeRaw) {
+                            CalendarScanBackgroundTask.scheduleNextRefresh()
+                        }
 
                         Toggle(isOn: $notifyOnResults) {
                             Text("Notify Me About New Trips", bundle: bundle)
+                        }
+                        .onChange(of: notifyOnResults) {
+                            guard notifyOnResults else { return }
+                            Task { await CalendarScanNotifier.requestAuthorizationIfNeeded() }
                         }
 
                         Stepper(value: $lookaheadDays, in: 1...60) {
@@ -80,13 +97,25 @@ struct CalendarScanSettingsView: View {
                         }
 
                         Button {
-                            // Phase 2: triggers an on-demand scan of enabled
-                            // calendars and surfaces trip candidates for review.
-                            // No-op placeholder for Phase 1.
+                            runScanNow()
                         } label: {
-                            Text("Scan Now", bundle: bundle)
+                            HStack {
+                                Text("Scan Now", bundle: bundle)
+                                if isScanning {
+                                    Spacer()
+                                    ProgressView()
+                                }
+                            }
                         }
-                        .disabled(enabledCalendarIDs.isEmpty)
+                        .disabled(enabledCalendarIDs.isEmpty || isScanning)
+
+                        if !candidates.isEmpty {
+                            Button {
+                                showReviewSheet = true
+                            } label: {
+                                Text(String(format: NSLocalizedString("settings.calendarScan.reviewPendingButton", bundle: bundle, comment: ""), candidates.count))
+                            }
+                        }
                     } header: {
                         Text("Calendars", bundle: bundle)
                     }
@@ -110,9 +139,16 @@ struct CalendarScanSettingsView: View {
         .navigationTitle(Text("Calendar Scanning", bundle: bundle))
         .navigationBarTitleDisplayMode(.inline)
         .onAppear {
+            candidates = CalendarScanCandidateStore.loadPending()
             if scanEnabled && scanService.isAuthorized {
                 scanService.refreshSourceGroups()
             }
+        }
+        .onChange(of: scanEnabled) {
+            CalendarScanBackgroundTask.scheduleNextRefresh()
+        }
+        .onChange(of: enabledCalendarIDsRaw) {
+            CalendarScanBackgroundTask.scheduleNextRefresh()
         }
         .sheet(isPresented: $showFirstRunSheet, onDismiss: {
             hasCompletedFirstRun = true
@@ -120,6 +156,80 @@ struct CalendarScanSettingsView: View {
             CalendarFirstRunSheet(scanService: scanService,
                                    enabledCalendarIDsRaw: $enabledCalendarIDsRaw)
         }
+        .sheet(isPresented: $showReviewSheet) {
+            CalendarTripCandidateReviewSheet(
+                candidates: candidates,
+                onAdd: { candidate in decide(.added, for: candidate) },
+                onDecline: { candidate in decide(.declined, for: candidate) }
+            )
+        }
+        .alert(Text("settings.calendarScan.noResultsTitle", bundle: bundle), isPresented: $showNoResultsAlert) {
+            Button {
+                showNoResultsAlert = false
+            } label: {
+                Text("OK", bundle: bundle)
+            }
+        } message: {
+            Text("settings.calendarScan.noResultsMessage", bundle: bundle)
+        }
+    }
+
+    // MARK: - Scan Now
+
+    private func runScanNow() {
+        isScanning = true
+        Task {
+            let found = await scanService.scanForCandidates(
+                enabledCalendarIDs: enabledCalendarIDs,
+                lookaheadDays: lookaheadDays
+            )
+            let existingPending = CalendarScanCandidateStore.loadPending()
+            let handled = CalendarScanCandidateStore.loadHandled()
+            let result = CalendarScanCandidateMerger.mergeScanResults(found: found, existingPending: existingPending, handled: handled)
+            CalendarScanCandidateStore.savePending(result.pending)
+            CalendarScanCandidateStore.saveHandled(result.handled)
+
+            isScanning = false
+            candidates = result.pending
+            if result.pending.isEmpty {
+                showNoResultsAlert = true
+            } else {
+                showReviewSheet = true
+            }
+        }
+    }
+
+    /// Records the user's decision on a candidate (add or decline), persists
+    /// it via CalendarScanCandidateMerger so it won't be re-offered unless the
+    /// event's location later changes, and — for an add — creates the alarm.
+    private func decide(_ action: CalendarScanCandidateAction, for candidate: CalendarTripCandidate) {
+        if action == .added {
+            alarmManager.add(alarm: napAlarm(from: candidate))
+        }
+        let handled = CalendarScanCandidateStore.loadHandled()
+        let (updatedPending, updatedHandled) = CalendarScanCandidateMerger.applyDecision(
+            action, to: candidate, pending: candidates, handled: handled
+        )
+        CalendarScanCandidateStore.savePending(updatedPending)
+        CalendarScanCandidateStore.saveHandled(updatedHandled)
+        candidates = updatedPending
+    }
+
+    /// Builds a plain-vanilla NapAlarm from a scan candidate — sensible
+    /// defaults (200 m radius, on-arrival, non-repeating). The user can edit
+    /// any of these afterward from the normal alarm list, same as any other
+    /// alarm; there's no separate "calendar alarm" type (mirrors the
+    /// isTransitAlarm pattern's decision to feed into the same NapAlarm
+    /// model rather than a parallel one).
+    private func napAlarm(from candidate: CalendarTripCandidate) -> NapAlarm {
+        NapAlarm(
+            name: candidate.title.isEmpty ? candidate.locationTitle : candidate.title,
+            latitude: candidate.latitude,
+            longitude: candidate.longitude,
+            radius: 200,
+            regionEvent: .onEntry,
+            note: candidate.locationTitle
+        )
     }
 
     // MARK: - Toggle handling
@@ -242,6 +352,105 @@ private struct CalendarFirstRunSheet: View {
         }
         let seeded = Set(primaryGroup.calendars.map(\.id))
         enabledCalendarIDsRaw = CalendarScanStorage.encodeStringSet(seeded)
+    }
+}
+
+// MARK: - Trip candidate review sheet (Phase 2/3)
+
+/// Lists the trips currently awaiting a decision — found by the most recent
+/// scan, manual or background (Phase 3 persists this list, so it also shows
+/// candidates a background scan found before the user opened this screen).
+/// Each row can be added as a normal alarm (+) or declined (X); either way it
+/// leaves the pending list immediately via the parent's callbacks, which also
+/// record the decision so it isn't re-offered unless the event's location
+/// later changes.
+private struct CalendarTripCandidateReviewSheet: View {
+    /// Not @State — owned by the parent (CalendarScanSettingsView). Acting on
+    /// a candidate calls back via `onAdd`/`onDecline`, which updates the
+    /// parent's array; SwiftUI re-renders this sheet's content closure on
+    /// that change, so the list updates without this view needing its own
+    /// copy of the data.
+    let candidates: [CalendarTripCandidate]
+    let onAdd: (CalendarTripCandidate) -> Void
+    let onDecline: (CalendarTripCandidate) -> Void
+
+    @Environment(\.dismiss) private var dismiss
+    @Environment(\.languageBundle) private var bundle
+
+    private static let dateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        formatter.timeStyle = .short
+        return formatter
+    }()
+
+    var body: some View {
+        NavigationStack {
+            Group {
+                if candidates.isEmpty {
+                    ContentUnavailableView {
+                        Label {
+                            Text("settings.calendarScan.noResultsTitle", bundle: bundle)
+                        } icon: {
+                            Image(systemName: "calendar.badge.checkmark")
+                        }
+                    }
+                } else {
+                    List {
+                        ForEach(candidates) { candidate in
+                            row(for: candidate)
+                        }
+                    }
+                }
+            }
+            .navigationTitle(Text("settings.calendarScan.reviewTitle", bundle: bundle))
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button {
+                        dismiss()
+                    } label: {
+                        Text("Done", bundle: bundle)
+                    }
+                }
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func row(for candidate: CalendarTripCandidate) -> some View {
+        HStack {
+            VStack(alignment: .leading, spacing: 2) {
+                Text(candidate.title.isEmpty ? candidate.locationTitle : candidate.title)
+                    .font(.headline)
+                Text(candidate.locationTitle)
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                Text(Self.dateFormatter.string(from: candidate.startDate))
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            Spacer()
+            Button {
+                onDecline(candidate)
+            } label: {
+                Image(systemName: "xmark.circle")
+                    .font(.title2)
+                    .foregroundStyle(.secondary)
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel(Text("settings.calendarScan.declineCandidateAccessibilityLabel", bundle: bundle))
+
+            Button {
+                onAdd(candidate)
+            } label: {
+                Image(systemName: "plus.circle.fill")
+                    .font(.title2)
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel(Text("settings.calendarScan.addCandidateAccessibilityLabel", bundle: bundle))
+        }
+        .padding(.vertical, 4)
     }
 }
 

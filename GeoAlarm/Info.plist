@@ -16,6 +16,11 @@
 	<array>
 		<string>remote-notification</string>
 		<string>location</string>
+		<string>fetch</string>
+	</array>
+	<key>BGTaskSchedulerPermittedIdentifiers</key>
+	<array>
+		<string>com.rmbartis.GeoNap.calendarScanRefresh</string>
 	</array>
 	<key>NSUserActivityTypes</key>
 	<array>

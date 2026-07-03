@@ -136,13 +136,35 @@ final class GTFSFeedURLTests: XCTestCase {
         )
     }
 
-    /// Calls `reachabilityStatus` and retries on transient 5xx server errors.
-    /// 4xx errors (bad URL / access denied) are returned immediately without retrying.
+    /// Network-level errors (timeout, connection lost, DNS hiccup, etc.) that are worth
+    /// retrying rather than failing outright — these reflect transient network conditions,
+    /// not a broken feed URL.
+    private static let retryableURLErrorCodes: Set<URLError.Code> = [
+        .timedOut,
+        .networkConnectionLost,
+        .notConnectedToInternet,
+        .cannotFindHost,
+        .cannotConnectToHost,
+        .dnsLookupFailed,
+    ]
+
+    /// Calls `reachabilityStatus` and retries on transient 5xx server errors as well as
+    /// transient network-level errors (timeouts, dropped connections). 4xx errors
+    /// (bad URL / access denied) are returned immediately without retrying.
     /// Retry delays are exponential: 2 s, 4 s, … (base × 2^attempt).
     private func reachabilityStatusWithRetry(for url: URL, session: URLSession) async throws -> Int {
         var lastStatus: Int = 0
         for attempt in 0...maxRetries {
-            lastStatus = try await reachabilityStatus(for: url, session: session)
+            do {
+                lastStatus = try await reachabilityStatus(for: url, session: session)
+            } catch let urlError as URLError where Self.retryableURLErrorCodes.contains(urlError.code) {
+                if attempt < maxRetries {
+                    let delay = retryBaseDelay * (1 << attempt)  // 2 s, 4 s
+                    try await Task.sleep(nanoseconds: delay)
+                    continue
+                }
+                throw urlError
+            }
             if (200...299).contains(lastStatus) { return lastStatus }   // success
             if (400...499).contains(lastStatus) { return lastStatus }   // client error — don't retry
             // 5xx transient server error — wait, then retry (unless this was the last attempt).

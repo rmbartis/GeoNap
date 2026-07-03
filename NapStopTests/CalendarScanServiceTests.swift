@@ -4,11 +4,19 @@
 //   • CalendarSourceGroup.isPrimaryCandidate — Option C default-seed heuristic
 //   • CalendarScanService.label(forSourceTypeRaw:) — EKSourceType display labels
 //   • CalendarScanMode — rawValue/localizationKey/englishLabel mapping
+//   • CalendarScanService.isScannable(sourceTypeRaw:) — Birthdays/Holidays filter (Phase 2)
+//   • CalendarScanService.scanDateRange(from:lookaheadDays:calendar:) — look-ahead window math (Phase 2)
+//   • CalendarScanLocationExtractor.extract(from:) — structuredLocation-first, geocode-fallback logic (Phase 2)
+//   • CalendarTripCandidate.coordinate — computed CLLocationCoordinate2D (Phase 2)
 //
 // No EventKit permission or live calendar access is exercised here — those
 // require a real device/simulator with calendar data and are out of scope
 // for CI. This mirrors the "pure logic only" convention used elsewhere in
-// this test target (see DebugLoggerTests's in-memory-only assertions).
+// this test target (see DebugLoggerTests's in-memory-only assertions). The
+// Phase 2 pipeline (scanForCandidates) touches EKEventStore/CLGeocoder
+// directly and is intentionally left untested here for the same reason —
+// only the pure extraction/date-range/filtering logic it calls into is
+// covered.
 
 import XCTest
 import EventKit
@@ -170,8 +178,256 @@ final class CalendarScanAppStorageKeyTests: XCTestCase {
             AppStorageKey.calendarScanLookaheadDays,
             AppStorageKey.calendarScanEnabledCalendarIDs,
             AppStorageKey.calendarScanHasCompletedFirstRun,
+            AppStorageKey.calendarScanPendingCandidatesJSON,
+            AppStorageKey.calendarScanHandledCandidatesJSON,
         ]
         XCTAssertTrue(keys.allSatisfy { !$0.isEmpty })
         XCTAssertEqual(Set(keys).count, keys.count, "AppStorage keys must be unique")
+    }
+}
+
+// MARK: - CalendarScanService.isScannable(sourceTypeRaw:) (Phase 2)
+
+/// Regression guard for Bob's 2026-07-02 decision to drop the synthetic
+/// .birthdays source (Birthdays + Holidays calendars) from the scan picker,
+/// since neither calendar ever carries a usable location.
+final class CalendarScanServiceIsScannableTests: XCTestCase {
+
+    func test_birthdays_isNotScannable() {
+        XCTAssertFalse(CalendarScanService.isScannable(sourceTypeRaw: EKSourceType.birthdays.rawValue))
+    }
+
+    func test_local_isScannable() {
+        XCTAssertTrue(CalendarScanService.isScannable(sourceTypeRaw: EKSourceType.local.rawValue))
+    }
+
+    func test_calDAV_isScannable() {
+        XCTAssertTrue(CalendarScanService.isScannable(sourceTypeRaw: EKSourceType.calDAV.rawValue))
+    }
+
+    func test_exchange_isScannable() {
+        XCTAssertTrue(CalendarScanService.isScannable(sourceTypeRaw: EKSourceType.exchange.rawValue))
+    }
+
+    func test_subscribed_isScannable() {
+        XCTAssertTrue(CalendarScanService.isScannable(sourceTypeRaw: EKSourceType.subscribed.rawValue))
+    }
+
+    func test_mobileMe_isScannable() {
+        XCTAssertTrue(CalendarScanService.isScannable(sourceTypeRaw: EKSourceType.mobileMe.rawValue))
+    }
+
+    func test_unknownRawValue_isScannable() {
+        // EKSourceType(rawValue:) returns nil for unrecognized raw values,
+        // and nil != .birthdays, so unknown types default to scannable
+        // rather than silently being dropped.
+        XCTAssertTrue(CalendarScanService.isScannable(sourceTypeRaw: 9999))
+    }
+}
+
+// MARK: - CalendarScanService.isScannable(calendarTitle:) (Phase 3)
+
+/// Regression guard for Bob's 2026-07-02 follow-up: "US Holidays" (a plain
+/// .subscribed calendar, not the synthetic .birthdays source) was still
+/// showing up in the live app's calendar picker and needed removing too.
+final class CalendarScanServiceCalendarTitleScannableTests: XCTestCase {
+
+    func test_usHolidays_isNotScannable() {
+        XCTAssertFalse(CalendarScanService.isScannable(calendarTitle: "US Holidays"))
+    }
+
+    func test_holidaysInCountry_isNotScannable() {
+        XCTAssertFalse(CalendarScanService.isScannable(calendarTitle: "Holidays in United States"))
+    }
+
+    func test_match_isCaseInsensitive() {
+        XCTAssertFalse(CalendarScanService.isScannable(calendarTitle: "hOlIdAy Calendar"))
+    }
+
+    func test_ordinaryCalendarName_isScannable() {
+        XCTAssertTrue(CalendarScanService.isScannable(calendarTitle: "Work"))
+        XCTAssertTrue(CalendarScanService.isScannable(calendarTitle: "Family"))
+        XCTAssertTrue(CalendarScanService.isScannable(calendarTitle: "Travel"))
+    }
+
+    func test_emptyTitle_isScannable() {
+        XCTAssertTrue(CalendarScanService.isScannable(calendarTitle: ""))
+    }
+}
+
+// MARK: - CalendarScanService.scanDateRange(from:lookaheadDays:calendar:) (Phase 2)
+
+final class CalendarScanServiceDateRangeTests: XCTestCase {
+
+    private let calendar = Calendar(identifier: .gregorian)
+
+    func test_zeroLookaheadDays_returnsNil() {
+        XCTAssertNil(CalendarScanService.scanDateRange(from: Date(), lookaheadDays: 0, calendar: calendar))
+    }
+
+    func test_negativeLookaheadDays_returnsNil() {
+        XCTAssertNil(CalendarScanService.scanDateRange(from: Date(), lookaheadDays: -5, calendar: calendar))
+    }
+
+    func test_positiveLookaheadDays_startEqualsNow() {
+        let now = Date()
+        let range = CalendarScanService.scanDateRange(from: now, lookaheadDays: 14, calendar: calendar)
+        XCTAssertEqual(range?.start, now)
+    }
+
+    func test_fourteenDayLookahead_endIsFourteenDaysLater() {
+        let now = Date()
+        guard let range = CalendarScanService.scanDateRange(from: now, lookaheadDays: 14, calendar: calendar) else {
+            return XCTFail("Expected a non-nil range for a positive lookahead")
+        }
+        let expectedEnd = calendar.date(byAdding: .day, value: 14, to: now)
+        XCTAssertEqual(range.end, expectedEnd)
+    }
+
+    func test_oneDayLookahead_endIsOneDayLater() {
+        let now = Date()
+        guard let range = CalendarScanService.scanDateRange(from: now, lookaheadDays: 1, calendar: calendar) else {
+            return XCTFail("Expected a non-nil range for a positive lookahead")
+        }
+        let expectedEnd = calendar.date(byAdding: .day, value: 1, to: now)
+        XCTAssertEqual(range.end, expectedEnd)
+    }
+}
+
+// MARK: - CalendarScanLocationExtractor.extract(from:) (Phase 2)
+
+final class CalendarScanLocationExtractorTests: XCTestCase {
+
+    func test_validStructuredLocation_preferredOverPlainLocation() {
+        let input = CalendarEventLocationInput(
+            structuredLocationTitle: "Union Station",
+            structuredLocationLatitude: 43.6452,
+            structuredLocationLongitude: -79.3806,
+            plainLocation: "Some other address"
+        )
+        let result = CalendarScanLocationExtractor.extract(from: input)
+        XCTAssertEqual(result?.title, "Union Station")
+        XCTAssertEqual(result?.latitude, 43.6452)
+        XCTAssertEqual(result?.longitude, -79.3806)
+        XCTAssertEqual(result?.source, .structured)
+    }
+
+    func test_structuredLocationWithoutTitle_fallsBackToPlainLocationForTitle() {
+        let input = CalendarEventLocationInput(
+            structuredLocationTitle: nil,
+            structuredLocationLatitude: 43.6452,
+            structuredLocationLongitude: -79.3806,
+            plainLocation: "123 Front St"
+        )
+        let result = CalendarScanLocationExtractor.extract(from: input)
+        XCTAssertEqual(result?.title, "123 Front St")
+        XCTAssertEqual(result?.source, .structured)
+    }
+
+    func test_structuredLocationWithBlankTitleAndNoPlainLocation_producesEmptyTitle() {
+        let input = CalendarEventLocationInput(
+            structuredLocationTitle: "   ",
+            structuredLocationLatitude: 43.6452,
+            structuredLocationLongitude: -79.3806,
+            plainLocation: nil
+        )
+        let result = CalendarScanLocationExtractor.extract(from: input)
+        XCTAssertEqual(result?.title, "")
+        XCTAssertEqual(result?.source, .structured)
+    }
+
+    func test_zeroZeroStructuredCoordinate_treatedAsInvalid_fallsBackToPlainLocation() {
+        // (0, 0) is a real coordinate off the coast of Africa but is almost
+        // always a sentinel/uninitialized value from a mis-tagged event —
+        // fall back to geocoding the plain-text location instead.
+        let input = CalendarEventLocationInput(
+            structuredLocationTitle: "Bad Tag",
+            structuredLocationLatitude: 0,
+            structuredLocationLongitude: 0,
+            plainLocation: "456 King St"
+        )
+        let result = CalendarScanLocationExtractor.extract(from: input)
+        XCTAssertEqual(result?.title, "456 King St")
+        XCTAssertNil(result?.latitude)
+        XCTAssertNil(result?.longitude)
+        XCTAssertEqual(result?.source, .geocoded)
+    }
+
+    func test_zeroZeroStructuredCoordinateAndNoPlainLocation_returnsNil() {
+        let input = CalendarEventLocationInput(
+            structuredLocationTitle: "Bad Tag",
+            structuredLocationLatitude: 0,
+            structuredLocationLongitude: 0,
+            plainLocation: nil
+        )
+        XCTAssertNil(CalendarScanLocationExtractor.extract(from: input))
+    }
+
+    func test_onlyPlainLocation_producesGeocodedSourceWithNilCoordinates() {
+        let input = CalendarEventLocationInput(plainLocation: "789 Bay St")
+        let result = CalendarScanLocationExtractor.extract(from: input)
+        XCTAssertEqual(result?.title, "789 Bay St")
+        XCTAssertNil(result?.latitude)
+        XCTAssertNil(result?.longitude)
+        XCTAssertEqual(result?.source, .geocoded)
+    }
+
+    func test_plainLocation_isTrimmedOfWhitespace() {
+        let input = CalendarEventLocationInput(plainLocation: "  789 Bay St  \n")
+        let result = CalendarScanLocationExtractor.extract(from: input)
+        XCTAssertEqual(result?.title, "789 Bay St")
+    }
+
+    func test_blankPlainLocationAndNoStructuredLocation_returnsNil() {
+        let input = CalendarEventLocationInput(plainLocation: "   ")
+        XCTAssertNil(CalendarScanLocationExtractor.extract(from: input))
+    }
+
+    func test_noLocationDataAtAll_returnsNil() {
+        let input = CalendarEventLocationInput()
+        XCTAssertNil(CalendarScanLocationExtractor.extract(from: input))
+    }
+
+    func test_onlyOneOfLatLonPresent_ignoresStructuredLocation_fallsBackToPlain() {
+        // A partially-populated structuredLocation (e.g. latitude without
+        // longitude) should never be treated as valid.
+        let input = CalendarEventLocationInput(
+            structuredLocationTitle: "Half Tagged",
+            structuredLocationLatitude: 43.6452,
+            structuredLocationLongitude: nil,
+            plainLocation: "Fallback Address"
+        )
+        let result = CalendarScanLocationExtractor.extract(from: input)
+        XCTAssertEqual(result?.title, "Fallback Address")
+        XCTAssertEqual(result?.source, .geocoded)
+    }
+
+    /// `notes` is intentionally excluded as a location source (Bob's Phase 2
+    /// design decision, 2026-07-02) — structurally guaranteed here since
+    /// CalendarEventLocationInput has no `notes` field at all, so there's no
+    /// runtime path by which it could leak into extraction.
+    func test_eventLocationInput_hasNoNotesField() {
+        let mirror = Mirror(reflecting: CalendarEventLocationInput())
+        let fieldNames = mirror.children.compactMap(\.label)
+        XCTAssertFalse(fieldNames.contains("notes"))
+    }
+}
+
+// MARK: - CalendarTripCandidate.coordinate (Phase 2)
+
+final class CalendarTripCandidateTests: XCTestCase {
+
+    func test_coordinate_matchesLatitudeAndLongitudeFields() {
+        let candidate = CalendarTripCandidate(
+            id: "evt-1",
+            title: "Flight to YYZ",
+            startDate: Date(),
+            calendarID: "cal-1",
+            locationTitle: "Pearson Airport",
+            latitude: 43.6777,
+            longitude: -79.6248
+        )
+        XCTAssertEqual(candidate.coordinate.latitude, 43.6777)
+        XCTAssertEqual(candidate.coordinate.longitude, -79.6248)
     }
 }

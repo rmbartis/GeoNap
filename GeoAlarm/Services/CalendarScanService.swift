@@ -10,6 +10,8 @@
 import Foundation
 import Combine
 import EventKit
+import CoreLocation
+import MapKit
 
 // MARK: - CalendarSourceGroup
 
@@ -44,6 +46,97 @@ struct CalendarInfo: Identifiable, Equatable {
     let id: String          // EKCalendar.calendarIdentifier
     let title: String
     let colorHex: String?
+}
+
+// MARK: - Trip candidates (Phase 2 scan pipeline)
+
+/// A single alarm candidate produced by scanning calendars for events with a
+/// resolvable location. Nothing is persisted until the user explicitly adds
+/// it as an alarm from the review sheet — the scan itself never creates
+/// alarms.
+struct CalendarTripCandidate: Identifiable, Equatable, Codable {
+    /// EKEvent.eventIdentifier, or a generated UUID string for the rare event
+    /// that doesn't have one (EventKit marks it optional).
+    let id: String
+    let title: String
+    let startDate: Date
+    let calendarID: String
+    /// Human-readable location label, pre-filled as the new alarm's name.
+    let locationTitle: String
+    let latitude: Double
+    let longitude: Double
+
+    var coordinate: CLLocationCoordinate2D {
+        CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+    }
+}
+
+/// Where a candidate's coordinate came from — informational, useful for
+/// logging why a particular event was or wasn't included.
+enum CalendarScanLocationSource: Equatable {
+    /// Event had `structuredLocation` with its own `CLLocation` — no
+    /// geocoding needed, and generally the more trustworthy of the two.
+    case structured
+    /// Event only had a plain-text `location` string; needs geocoding.
+    case geocoded
+}
+
+/// The subset of an EKEvent's location-related fields the extractor needs,
+/// pulled into a plain struct so extraction can be unit tested without a
+/// live EventKit store (mirrors the "pure logic only" convention used
+/// elsewhere in this test target).
+struct CalendarEventLocationInput: Equatable {
+    let structuredLocationTitle: String?
+    let structuredLocationLatitude: Double?
+    let structuredLocationLongitude: Double?
+    let plainLocation: String?
+
+    init(structuredLocationTitle: String? = nil,
+         structuredLocationLatitude: Double? = nil,
+         structuredLocationLongitude: Double? = nil,
+         plainLocation: String? = nil) {
+        self.structuredLocationTitle = structuredLocationTitle
+        self.structuredLocationLatitude = structuredLocationLatitude
+        self.structuredLocationLongitude = structuredLocationLongitude
+        self.plainLocation = plainLocation
+    }
+}
+
+/// Result of extracting a usable location from an event. `latitude`/`longitude`
+/// are nil when `source == .geocoded` and geocoding hasn't run yet — the
+/// caller (CalendarScanService.scanForCandidates) resolves it via CLGeocoder.
+struct CalendarExtractedLocation: Equatable {
+    let title: String
+    let latitude: Double?
+    let longitude: Double?
+    let source: CalendarScanLocationSource
+}
+
+/// Pure, EventKit-free location-extraction logic. Kept as a standalone enum
+/// (rather than a CalendarScanService instance method) so it's trivially
+/// unit testable with no dependency on a live EKEventStore.
+enum CalendarScanLocationExtractor {
+
+    /// Extracts the best available location from an event, preferring the
+    /// geo-tagged `structuredLocation` over the plain-text `location` field.
+    /// `notes` is intentionally never consulted — free-text parsing there is
+    /// too high a false-positive risk (Bob's Phase 2 design decision, 2026-07-02).
+    static func extract(from input: CalendarEventLocationInput) -> CalendarExtractedLocation? {
+        if let lat = input.structuredLocationLatitude, let lon = input.structuredLocationLongitude,
+           CLLocationCoordinate2DIsValid(CLLocationCoordinate2D(latitude: lat, longitude: lon)),
+           !(lat == 0 && lon == 0) {
+            let structuredTitle = input.structuredLocationTitle?.trimmingCharacters(in: .whitespacesAndNewlines)
+            let plainTitle = input.plainLocation?.trimmingCharacters(in: .whitespacesAndNewlines)
+            let resolvedTitle = (structuredTitle?.isEmpty == false ? structuredTitle : nil)
+                ?? (plainTitle?.isEmpty == false ? plainTitle : nil)
+                ?? ""
+            return CalendarExtractedLocation(title: resolvedTitle, latitude: lat, longitude: lon, source: .structured)
+        }
+        if let plain = input.plainLocation?.trimmingCharacters(in: .whitespacesAndNewlines), !plain.isEmpty {
+            return CalendarExtractedLocation(title: plain, latitude: nil, longitude: nil, source: .geocoded)
+        }
+        return nil
+    }
 }
 
 // MARK: - Persistence helpers
@@ -109,6 +202,18 @@ final class CalendarScanService: ObservableObject {
     /// Refreshes `sourceGroups` from the current set of EKCalendars, grouped
     /// by EKSource. Call after access is granted and whenever the first-run
     /// sheet or Settings screen appears, in case calendars changed.
+    ///
+    /// Sources where `isScannable(sourceTypeRaw:)` is false are dropped
+    /// entirely — currently just the synthetic `.birthdays` source, which
+    /// bundles the "Birthdays" calendar and (iOS 17+) the "Holidays" calendar.
+    /// Neither ever carries a usable location, so offering them in the
+    /// calendar picker is pure noise (Bob, 2026-07-02).
+    ///
+    /// Individual calendars failing `isScannable(calendarTitle:)` are also
+    /// dropped — this catches holiday calendars EventKit doesn't tag with a
+    /// dedicated source type, e.g. iOS's auto-added "US Holidays" under a
+    /// generic `.subscribed` source (Bob spotted this in the live app and
+    /// asked for it to be removed too, 2026-07-02).
     func refreshSourceGroups() {
         guard isAuthorized else {
             sourceGroups = []
@@ -121,6 +226,8 @@ final class CalendarScanService: ObservableObject {
             // calendar that (unexpectedly) has no owning source rather than
             // crashing or silently mis-grouping it.
             guard let source = cal.source else { continue }
+            guard CalendarScanService.isScannable(sourceTypeRaw: source.sourceType.rawValue) else { continue }
+            guard CalendarScanService.isScannable(calendarTitle: cal.title) else { continue }
             let info = CalendarInfo(
                 id: cal.calendarIdentifier,
                 title: cal.title,
@@ -162,6 +269,105 @@ final class CalendarScanService: ObservableObject {
         case .mobileMe:     return "iCloud (MobileMe)"
         default:            return "Other"
         }
+    }
+
+    /// Whether a calendar source should be offered for scanning. Excludes the
+    /// synthetic `.birthdays` source — it contains the "Birthdays" calendar
+    /// and, on iOS 17+, the "Holidays" calendar, neither of which ever have a
+    /// location. Every other source type is scannable.
+    nonisolated static func isScannable(sourceTypeRaw raw: Int) -> Bool {
+        EKSourceType(rawValue: raw) != .birthdays
+    }
+
+    /// Whether an individual calendar should be offered for scanning, by
+    /// title. Unlike Birthdays, holiday calendars aren't always tagged with a
+    /// dedicated EKSourceType — iOS commonly auto-adds one (e.g. "US
+    /// Holidays") as a plain `.subscribed` calendar, which `isScannable(sourceTypeRaw:)`
+    /// has no way to catch. Holiday entries never carry a location either, so
+    /// name-matching is the only signal available here.
+    ///
+    /// This is a case-insensitive substring match on "holiday" — English
+    /// only. A calendar named "Feiertage" (German), "Jours fériés" (French),
+    /// etc. would slip through; broadening this to match localized names
+    /// would need a per-language list and hasn't been done. A calendar with
+    /// "holiday" in its name for an unrelated reason (e.g. a legitimate
+    /// "Holiday Party Planning" calendar with real venues) would also be
+    /// excluded — an accepted false-positive per Bob (2026-07-02), since
+    /// holiday calendars are common and planning calendars with that exact
+    /// wording are not.
+    nonisolated static func isScannable(calendarTitle title: String) -> Bool {
+        !title.localizedCaseInsensitiveContains("holiday")
+    }
+
+    // MARK: - Scan pipeline (Phase 2)
+
+    /// The [start, end) date range a scan should search, given "now" and a
+    /// look-ahead window in days. Pulled out as a pure function so the
+    /// look-ahead math is unit testable without touching EventKit.
+    nonisolated static func scanDateRange(from now: Date, lookaheadDays: Int, calendar: Calendar = .current) -> (start: Date, end: Date)? {
+        guard lookaheadDays > 0 else { return nil }
+        guard let end = calendar.date(byAdding: .day, value: lookaheadDays, to: now) else { return nil }
+        return (now, end)
+    }
+
+    /// Scans the given calendars for upcoming events with a resolvable
+    /// location, within `lookaheadDays` of now. Geocodes events that only
+    /// have a plain-text `location` (no `structuredLocation`) one at a time
+    /// via CLGeocoder; events whose location can't be resolved — including
+    /// geocoding failures — are silently skipped rather than surfaced as
+    /// broken candidates.
+    ///
+    /// Nothing is persisted here — this only produces candidates for the
+    /// caller's review sheet. Declined-candidate tracking/re-offer and
+    /// background (BGAppRefreshTask) scanning are Phase 3, not implemented
+    /// yet.
+    func scanForCandidates(enabledCalendarIDs: Set<String>, lookaheadDays: Int) async -> [CalendarTripCandidate] {
+        guard isAuthorized, !enabledCalendarIDs.isEmpty else { return [] }
+
+        let calendars = store.calendars(for: .event).filter { enabledCalendarIDs.contains($0.calendarIdentifier) }
+        guard !calendars.isEmpty else { return [] }
+
+        guard let range = CalendarScanService.scanDateRange(from: Date(), lookaheadDays: lookaheadDays) else { return [] }
+        let predicate = store.predicateForEvents(withStart: range.start, end: range.end, calendars: calendars)
+        let events = store.events(matching: predicate)
+
+        var candidates: [CalendarTripCandidate] = []
+
+        for event in events {
+            let input = CalendarEventLocationInput(
+                structuredLocationTitle: event.structuredLocation?.title,
+                structuredLocationLatitude: event.structuredLocation?.geoLocation?.coordinate.latitude,
+                structuredLocationLongitude: event.structuredLocation?.geoLocation?.coordinate.longitude,
+                plainLocation: event.location
+            )
+            guard let extracted = CalendarScanLocationExtractor.extract(from: input) else { continue }
+
+            var lat = extracted.latitude
+            var lon = extracted.longitude
+            if extracted.source == .geocoded {
+                // CLGeocoder.geocodeAddressString(_:) was deprecated in iOS 26 in
+                // favor of MapKit's request-based geocoding API.
+                guard let request = MKGeocodingRequest(addressString: extracted.title),
+                      let mapItems = try? await request.mapItems,
+                      let coordinate = mapItems.first?.location.coordinate else { continue }
+                lat = coordinate.latitude
+                lon = coordinate.longitude
+            }
+            guard let resolvedLat = lat, let resolvedLon = lon else { continue }
+
+            candidates.append(CalendarTripCandidate(
+                id: event.eventIdentifier ?? UUID().uuidString,
+                title: event.title ?? "",
+                startDate: event.startDate,
+                calendarID: event.calendar?.calendarIdentifier ?? "",
+                locationTitle: extracted.title,
+                latitude: resolvedLat,
+                longitude: resolvedLon
+            ))
+        }
+
+        DebugLogger.shared.log("Calendar scan found \(candidates.count) candidate(s) with resolvable locations.", category: "CalendarScan")
+        return candidates
     }
 }
 

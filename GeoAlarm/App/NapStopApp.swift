@@ -4,6 +4,7 @@
 import SwiftUI
 import SwiftData
 import CoreSpotlight
+import BackgroundTasks
 
 @main
 struct NapStopApp: App {
@@ -31,6 +32,11 @@ struct NapStopApp: App {
 
     init() {
         CrashReporter.log("App launched")
+        // Must happen before anything reads these UserDefaults keys directly
+        // (e.g. CalendarScanBackgroundTask, which runs outside any View and
+        // can't rely on @AppStorage's in-memory-only default). See
+        // AppStorageKey.registerCalendarScanDefaults() for why this is needed.
+        AppStorageKey.registerCalendarScanDefaults()
     }
 
     var body: some Scene {
@@ -49,6 +55,15 @@ struct NapStopApp: App {
                 .id(languageManager.currentLanguage)
         }
         .modelContainer(container)
+        // Phase 3: periodic background re-scan of the user's calendars when
+        // Scan Mode is Automatic. The identifier must match Info.plist's
+        // BGTaskSchedulerPermittedIdentifiers exactly. This scene modifier
+        // handles registering the task handler with the OS; scheduling
+        // (deciding WHEN to ask for the next run) is CalendarScanBackgroundTask's
+        // job, triggered at launch below and after relevant Settings changes.
+        .backgroundTask(.appRefresh(CalendarScanBackgroundTask.identifier)) {
+            await CalendarScanBackgroundTask.run()
+        }
     }
 }
 
@@ -77,6 +92,10 @@ struct RootView: View {
                 // fire can present a system alarm. Lazily re-checked before each
                 // fire, but requesting at launch surfaces the prompt early.
                 Task { await GeoAlarmScheduler.ensureAuthorized() }
+                // Phase 3: (re-)submit the next Calendar Scanning background
+                // refresh request. No-ops internally unless scanning is
+                // enabled and Scan Mode is Automatic.
+                CalendarScanBackgroundTask.scheduleNextRefresh()
             }
             // When the app returns to the foreground, clean up any windowed alarms
             // whose active window ended while the app was suspended/terminated

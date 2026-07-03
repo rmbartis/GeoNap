@@ -212,4 +212,31 @@ enum AppStorageKey {
     static let calendarScanEnabledCalendarIDs = "calendarScanEnabledCalendarIDs"
     /// Whether the first-run "select calendars" sheet has been completed.
     static let calendarScanHasCompletedFirstRun = "calendarScanHasCompletedFirstRun"
+    /// JSON-encoded [CalendarTripCandidate] — trips found by the most recent
+    /// scan (manual or background) that the user hasn't yet added or declined.
+    /// Persisted so a background scan's results survive until the user next
+    /// opens Settings → Calendar Scanning (Phase 3).
+    static let calendarScanPendingCandidatesJSON = "calendarScanPendingCandidatesJSON"
+    /// JSON-encoded [String: CalendarScanHandledRecord] keyed by candidate id —
+    /// every candidate the user has already added or declined, plus the
+    /// location snapshot it had at that time. On each scan, a candidate whose
+    /// location snapshot no longer matches its handled record is treated as
+    /// new again (Phase 3 re-offer-on-change behavior).
+    static let calendarScanHandledCandidatesJSON = "calendarScanHandledCandidatesJSON"
+
+    /// Registers UserDefaults defaults for the calendar-scan keys whose
+    /// @AppStorage default isn't `false`/`0`/`""`. SwiftUI's @AppStorage
+    /// returns its `= value` default when a key is absent, but never writes
+    /// that default back to UserDefaults — so code that reads
+    /// UserDefaults.standard directly (e.g. CalendarScanBackgroundTask,
+    /// running outside any View) would otherwise see `false`/`0` for a
+    /// never-touched key instead of the value the Settings UI actually shows.
+    /// Call once at app launch, before anything reads these keys.
+    static func registerCalendarScanDefaults() {
+        UserDefaults.standard.register(defaults: [
+            calendarScanNotifyOnResults: true,
+            calendarScanLookaheadDays: 14,
+            calendarScanModeRaw: CalendarScanMode.automatic.rawValue,
+        ])
+    }
 }
