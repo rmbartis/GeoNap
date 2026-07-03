@@ -49,6 +49,7 @@
 "Radius must be at least 50 metres." = "O raio deve ser de pelo menos 50 metros.";
 "Please pick a valid location on the map." = "Por favor, escolha uma localização válida no mapa.";
 "Window start and end time cannot be the same." = "O horário de início e fim não podem ser iguais.";
+"Auto-Notify is on but has no contact. Add a contact or turn off Auto-Notify." = "A notificação automática está ativada, mas não há nenhum contato. Adicione um contato ou desative a notificação automática.";
 
 "Notify a Contact" = "Notificar um contato";
 "Send a message when this alarm fires" = "Enviar uma mensagem quando este alarme disparar";
@@ -152,8 +153,14 @@
 "Calendar Access" = "Acesso ao calendário";
 "calendarScan.mode.automatic" = "Automático";
 "calendarScan.mode.manualOnly" = "Somente manual";
+"calendarScan.refreshInterval.oneHour" = "1 hora — Mais frequente";
+"calendarScan.refreshInterval.twoHours" = "2 horas — Frequente";
+"calendarScan.refreshInterval.fourHours" = "4 horas — Equilibrado";
+"calendarScan.refreshInterval.eightHours" = "8 horas — Melhor duração da bateria";
+"settings.calendarScan.refreshIntervalLabel" = "Intervalo de atualização";
 "settings.calendarScan.mainFooter" = "Quando ativado, o GeoNap verifica os calendários escolhidos abaixo em busca de próximos eventos com uma localização e sugere alarmes baseados em localização para eles. Desativado por padrão — nada é verificado até que você ative isso.";
 "settings.calendarScan.behaviorFooter" = "Automático verifica periodicamente em segundo plano. Somente manual verifica apenas quando você toca em Verificar agora.";
+"settings.calendarScan.behaviorFooterAutomatic" = "Automático verifica periodicamente em segundo plano. Somente manual verifica apenas quando você toca em Verificar agora. O intervalo de atualização define o momento mais cedo em que uma verificação pode ser executada — o iOS decide o momento real, então as verificações reais podem ocorrer com menos frequência do que o selecionado.";
 "settings.calendarScan.accessDeniedFooter" = "O GeoNap precisa de acesso ao calendário para procurar viagens. Abra os Ajustes e permita o acesso ao calendário para o GeoNap continuar.";
 "settings.calendarScan.firstRunFooter" = "Apenas seu calendário principal é selecionado por padrão. Ative quaisquer outros calendários que deseja que o GeoNap verifique.";
 "settings.calendarScan.noResultsTitle" = "Nenhuma viagem encontrada";
@@ -165,7 +172,7 @@
 "settings.calendarScan.notificationTitle" = "Novas viagens encontradas";
 "settings.calendarScan.notificationBody" = "O GeoNap encontrou %d nova(s) viagem(ns) com localização. Revise-as em Ajustes → Verificação de calendário.";
 "privacy.body.calendarAccess" = "Se você ativar a Verificação de calendário nos Ajustes, o GeoNap lê eventos dos calendários que você escolher para procurar próximas viagens com uma localização — por exemplo, um voo, um trem ou uma reunião. Isso acontece inteiramente no seu dispositivo: os dados do calendário nunca são enviados para servidores, armazenados fora do app ou compartilhados com terceiros. Apenas o texto de localização de um evento candidato é enviado ao serviço de geocodificação da Apple para convertê-lo em coordenadas de mapa, da mesma forma que já funciona ao definir manualmente um pino no GeoNap. A Verificação de calendário é desativada por padrão; você pode desativá-la a qualquer momento em Ajustes → Verificação de calendário, e revogar totalmente o acesso ao calendário em Ajustes do iOS → Privacidade e Segurança → Calendários → GeoNap.";
-"help.body.calendarScanning" = "A Verificação de calendário examina os calendários que você escolher em busca de próximos eventos com uma localização — um voo, um trem, uma reunião — e sugere um alarme baseado em localização para cada um deles.\n\nEsse recurso é desativado por padrão. Para ativá-lo:\n\n1. Abra Ajustes → Verificação de calendário.\n2. Ative Verificar calendários em busca de viagens e conceda acesso ao calendário quando solicitado.\n3. Na primeira vez, você escolherá quais calendários incluir — apenas seu calendário principal é marcado por padrão.\n4. Escolha Automático para verificar periodicamente em segundo plano, ou Somente manual para verificar apenas quando tocar em Verificar agora.\n5. Ative Notificar-me sobre novas viagens para receber uma notificação quando uma verificação encontrar um novo candidato.\n6. Após uma verificação, toque em Revisar viagens pendentes para ver o que o GeoNap encontrou. Toque no botão + para adicionar uma viagem como alarme, ou no X para recusá-la — viagens recusadas não serão sugeridas novamente, a menos que sua localização mude.\n\nO GeoNap lista apenas os calendários já configurados no seu iPhone. Para verificar uma conta do Outlook, Google ou outra conta externa, adicione-a primeiro em Ajustes → Calendário → Contas; ela aparecerá aqui automaticamente. Os calendários de Aniversários e Feriados são excluídos automaticamente, pois nunca têm uma localização para verificar.\n\nOs dados do calendário são lidos inteiramente no seu dispositivo e nunca são enviados ou compartilhados. Consulte Privacidade e Compartilhamento de Localização → Acesso ao calendário para mais detalhes.";
+"help.body.calendarScanning" = "A Verificação de calendário examina os calendários que você escolher em busca de próximos eventos com uma localização — um voo, um trem, uma reunião — e sugere um alarme baseado em localização para cada um deles.\n\nEsse recurso é desativado por padrão. Para ativá-lo:\n\n1. Abra Ajustes → Verificação de calendário.\n2. Ative Verificar calendários em busca de viagens e conceda acesso ao calendário quando solicitado.\n3. Na primeira vez, você escolherá quais calendários incluir — apenas seu calendário principal é marcado por padrão.\n4. Escolha Automático para verificar periodicamente em segundo plano, ou Somente manual para verificar apenas quando tocar em Verificar agora. No modo Automático, use Intervalo de atualização para escolher a frequência — de 1 a 8 horas — lembrando que o iOS decide o momento real.\n5. Ative Notificar-me sobre novas viagens para receber uma notificação quando uma verificação encontrar um novo candidato.\n6. Após uma verificação, toque em Revisar viagens pendentes para ver o que o GeoNap encontrou. Toque no botão + para adicionar uma viagem como alarme, ou no X para recusá-la — viagens recusadas não serão sugeridas novamente, a menos que sua localização mude.\n\nO GeoNap lista apenas os calendários já configurados no seu iPhone. Para verificar uma conta do Outlook, Google ou outra conta externa, adicione-a primeiro em Ajustes → Calendário → Contas; ela aparecerá aqui automaticamente. Os calendários de Aniversários e Feriados são excluídos automaticamente, pois nunca têm uma localização para verificar.\n\nOs dados do calendário são lidos inteiramente no seu dispositivo e nunca são enviados ou compartilhados. Consulte Privacidade e Compartilhamento de Localização → Acesso ao calendário para mais detalhes.";
 
 "Help" = "Ajuda";
 "What is GeoNap?" = "O que é o GeoNap?";
@@ -378,6 +385,7 @@ O botão Salvar fica desativado até que um nome seja inserido e uma localizaç�
 "Save Anyway" = "Salvar mesmo assim";
 "Check alarm location" = "Verifique o local do alarme";
 "Add at least one contact to enable Auto-Notify." = "Adicione pelo menos um contato para ativar a notificação automática.";
+"Add a contact or turn off Auto-Notify to save this alarm." = "Adicione um contato ou desative a notificação automática para salvar este alarme.";
 "No contacts saved for this alarm." = "Nenhum contato salvo para este alarme.";
 "Phone number (e.g. +1 555-1234)." = "Número de telefone (ex.: +1 555-1234).";
 "Select the language you'd like to use in GeoNap. You can change this at any time in Settings." = "Escolha o idioma que deseja usar no GeoNap. Você pode alterá-lo a qualquer momento em Ajustes.";

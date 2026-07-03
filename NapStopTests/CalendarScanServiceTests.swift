@@ -9,6 +9,8 @@
 //   • CalendarScanLocationExtractor.extract(from:) — structuredLocation-first, geocode-fallback logic (Phase 2)
 //   • CalendarTripCandidate.coordinate — computed CLLocationCoordinate2D (Phase 2)
 //   • CalendarScanGeocodeRetrier.geocodeWithRetry(...) — retry-on-failure logic (2026-07-03)
+//   • CalendarScanRefreshInterval — rawValue/localizationKey/englishLabel mapping,
+//     resolve(storedMinutes:) fallback behavior (2026-07-04)
 //
 // No EventKit permission or live calendar access is exercised here — those
 // require a real device/simulator with calendar data and are out of scope
@@ -159,6 +161,75 @@ final class CalendarScanModeTests: XCTestCase {
     func test_initFromRawValue_roundTrips() {
         for mode in CalendarScanMode.allCases {
             XCTAssertEqual(CalendarScanMode(rawValue: mode.rawValue), mode)
+        }
+    }
+}
+
+// MARK: - CalendarScanRefreshInterval
+//
+// Regression guard for the user-configurable background-refresh interval
+// (Bob, 2026-07-04): a picker in Settings lets the user choose how often
+// Automatic Calendar Scanning is *allowed* to refresh (1/2/4/8 hours), backed
+// by CalendarScanBackgroundTask reading CalendarScanRefreshInterval instead
+// of a hardcoded 4-hour constant.
+
+final class CalendarScanRefreshIntervalTests: XCTestCase {
+
+    func test_allCases_hasExactlyFourOptions() {
+        XCTAssertEqual(CalendarScanRefreshInterval.allCases.count, 4)
+    }
+
+    func test_rawValuesAreMinutes() {
+        XCTAssertEqual(CalendarScanRefreshInterval.oneHour.rawValue, 60)
+        XCTAssertEqual(CalendarScanRefreshInterval.twoHours.rawValue, 120)
+        XCTAssertEqual(CalendarScanRefreshInterval.fourHours.rawValue, 240)
+        XCTAssertEqual(CalendarScanRefreshInterval.eightHours.rawValue, 480)
+    }
+
+    func test_timeInterval_convertsMinutesToSeconds() {
+        XCTAssertEqual(CalendarScanRefreshInterval.oneHour.timeInterval, 3600)
+        XCTAssertEqual(CalendarScanRefreshInterval.twoHours.timeInterval, 7200)
+        XCTAssertEqual(CalendarScanRefreshInterval.fourHours.timeInterval, 14400)
+        XCTAssertEqual(CalendarScanRefreshInterval.eightHours.timeInterval, 28800)
+    }
+
+    func test_localizationKeysAndEnglishLabels() {
+        XCTAssertEqual(CalendarScanRefreshInterval.oneHour.localizationKey, "calendarScan.refreshInterval.oneHour")
+        XCTAssertEqual(CalendarScanRefreshInterval.oneHour.englishLabel, "1 Hour — Most Frequent")
+        XCTAssertEqual(CalendarScanRefreshInterval.twoHours.localizationKey, "calendarScan.refreshInterval.twoHours")
+        XCTAssertEqual(CalendarScanRefreshInterval.twoHours.englishLabel, "2 Hours — Frequent")
+        XCTAssertEqual(CalendarScanRefreshInterval.fourHours.localizationKey, "calendarScan.refreshInterval.fourHours")
+        XCTAssertEqual(CalendarScanRefreshInterval.fourHours.englishLabel, "4 Hours — Balanced")
+        XCTAssertEqual(CalendarScanRefreshInterval.eightHours.localizationKey, "calendarScan.refreshInterval.eightHours")
+        XCTAssertEqual(CalendarScanRefreshInterval.eightHours.englishLabel, "8 Hours — Best Battery Life")
+    }
+
+    func test_default_isFourHours() {
+        // Must match CalendarScanBackgroundTask's old hardcoded 4-hour
+        // constant so nobody's behavior silently changes on upgrade.
+        XCTAssertEqual(CalendarScanRefreshInterval.default, .fourHours)
+    }
+
+    func test_resolve_validStoredMinutes_returnsMatchingCase() {
+        for interval in CalendarScanRefreshInterval.allCases {
+            XCTAssertEqual(CalendarScanRefreshInterval.resolve(storedMinutes: interval.rawValue), interval)
+        }
+    }
+
+    func test_resolve_zeroOrMissing_fallsBackToDefault() {
+        // 0 is what UserDefaults.integer(forKey:) returns for an absent key —
+        // e.g. an install from before this feature existed.
+        XCTAssertEqual(CalendarScanRefreshInterval.resolve(storedMinutes: 0), .default)
+    }
+
+    func test_resolve_corruptValue_fallsBackToDefault() {
+        XCTAssertEqual(CalendarScanRefreshInterval.resolve(storedMinutes: 999), .default)
+        XCTAssertEqual(CalendarScanRefreshInterval.resolve(storedMinutes: -30), .default)
+    }
+
+    func test_initFromRawValue_roundTrips() {
+        for interval in CalendarScanRefreshInterval.allCases {
+            XCTAssertEqual(CalendarScanRefreshInterval(rawValue: interval.rawValue), interval)
         }
     }
 }

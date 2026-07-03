@@ -65,7 +65,20 @@ final class AlarmViewModel: ObservableObject {
         !name.trimmingCharacters(in: .whitespaces).isEmpty &&
         radius.rounded() >= 50 &&          // round to avoid imperial unit conversion drift (164 ft = 49.99 m)
         (latitude != 0 || longitude != 0) &&
-        CLLocationCoordinate2DIsValid(CLLocationCoordinate2D(latitude: latitude, longitude: longitude))
+        CLLocationCoordinate2DIsValid(CLLocationCoordinate2D(latitude: latitude, longitude: longitude)) &&
+        !hasAutoNotifyWithNoContacts
+    }
+
+    /// True when Auto-Notify is toggled on but there's nobody to notify — the
+    /// toggle's `didSet` already tries to auto-fill from Settings → Auto-Notify
+    /// Defaults the moment it's switched on, so this can only be true when
+    /// there are no global defaults configured AND the user hasn't added a
+    /// per-alarm contact either. Gates both `isValid` (disables Save/Update in
+    /// real time) and `buildAlarm()` (hard-blocks with `validationError` as a
+    /// defense-in-depth backstop) so an alarm can't silently save with Auto-Notify
+    /// on and nobody to actually notify (Bob, 2026-07-04).
+    var hasAutoNotifyWithNoContacts: Bool {
+        notifyContact && notifyContactList.isEmpty
     }
 
     /// True once the user has explicitly picked a map location (rules out the (0,0) default).
@@ -138,6 +151,10 @@ final class AlarmViewModel: ObservableObject {
                 validationError = "Window start and end time cannot be the same."
                 return nil
             }
+        }
+        guard !hasAutoNotifyWithNoContacts else {
+            validationError = "Auto-Notify is on but has no contact. Add a contact or turn off Auto-Notify."
+            return nil
         }
 
         // When editing, mutate the existing SwiftData-managed object in place.

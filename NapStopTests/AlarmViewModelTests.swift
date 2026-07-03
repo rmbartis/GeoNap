@@ -106,6 +106,78 @@ final class AlarmViewModelTests: XCTestCase {
         XCTAssertEqual(alarm?.name, "Airport")
     }
 
+    // MARK: - Auto-Notify guard (hasAutoNotifyWithNoContacts)
+    // Regression coverage for the Auto-Notify-with-no-contact guard: toggling
+    // Auto-Notify on with nobody to notify must block both isValid (real-time
+    // Save/Update disable) and buildAlarm() (hard block with validationError),
+    // per Bob's request that the user "needs to add a contact or disable the
+    // option" (2026-07-04).
+
+    func test_hasAutoNotifyWithNoContacts_false_whenNotifyContactOff() {
+        sut.notifyContact     = false
+        sut.notifyContactList = []
+        XCTAssertFalse(sut.hasAutoNotifyWithNoContacts)
+    }
+
+    func test_hasAutoNotifyWithNoContacts_true_whenOnWithEmptyList() {
+        sut.notifyContact     = true
+        sut.notifyContactList = []
+        XCTAssertTrue(sut.hasAutoNotifyWithNoContacts)
+    }
+
+    func test_hasAutoNotifyWithNoContacts_false_whenOnWithContact() {
+        sut.notifyContact     = true
+        sut.notifyContactList = [NotifyContact(name: "Test Contact", value: "+15551234567")]
+        XCTAssertFalse(sut.hasAutoNotifyWithNoContacts)
+    }
+
+    func test_isValid_false_whenAutoNotifyOnWithNoContacts() {
+        sut.name      = "Home"
+        sut.latitude  = 37.7749
+        sut.longitude = -122.4194
+        sut.radius    = 150
+        sut.notifyContact     = true
+        sut.notifyContactList = []
+        XCTAssertFalse(sut.isValid,
+            "Save/Update must be disabled while Auto-Notify is on with nobody to notify")
+    }
+
+    func test_isValid_true_whenAutoNotifyOnWithContact() {
+        sut.name      = "Home"
+        sut.latitude  = 37.7749
+        sut.longitude = -122.4194
+        sut.radius    = 150
+        sut.notifyContact     = true
+        sut.notifyContactList = [NotifyContact(name: "Test Contact", value: "+15551234567")]
+        XCTAssertTrue(sut.isValid)
+    }
+
+    func test_buildAlarm_returnsNil_andSetsError_whenAutoNotifyOnWithNoContacts() {
+        sut.name      = "Home"
+        sut.latitude  = 37.7749
+        sut.longitude = -122.4194
+        sut.radius    = 150
+        sut.notifyContact     = true
+        sut.notifyContactList = []
+
+        let alarm = sut.buildAlarm()
+        XCTAssertNil(alarm)
+        XCTAssertNotNil(sut.validationError)
+    }
+
+    func test_buildAlarm_succeeds_whenAutoNotifyOnWithContact() {
+        sut.name      = "Home"
+        sut.latitude  = 37.7749
+        sut.longitude = -122.4194
+        sut.radius    = 150
+        sut.notifyContact     = true
+        sut.notifyContactList = [NotifyContact(name: "Test Contact", value: "+15551234567")]
+
+        let alarm = sut.buildAlarm()
+        XCTAssertNotNil(alarm)
+        XCTAssertNil(sut.validationError)
+    }
+
     // MARK: - load (edit mode)
 
     func test_load_populatesFields() {

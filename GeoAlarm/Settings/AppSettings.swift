@@ -169,6 +169,61 @@ enum CalendarScanMode: String, CaseIterable, Identifiable {
     }
 }
 
+// MARK: - Calendar Scan Refresh Interval
+
+/// User-configurable earliest-refresh interval for Automatic Calendar
+/// Scanning background refreshes. Raw value is minutes, stored directly in
+/// AppStorageKey.calendarScanRefreshIntervalMinutes.
+///
+/// This is the *earliest* the OS is allowed to run the next scan, not a
+/// guarantee — BGTaskScheduler decides actual timing based on usage
+/// patterns, battery, and Low Power Mode, and in practice a low-engagement
+/// app may see real runs land far later than this value regardless of what's
+/// picked here. The picker label pairs each option with a frequency/battery
+/// hint rather than promising precision, and the Settings footer calls this
+/// out explicitly (Bob, 2026-07-04).
+enum CalendarScanRefreshInterval: Int, CaseIterable, Identifiable {
+    case oneHour = 60
+    case twoHours = 120
+    case fourHours = 240
+    case eightHours = 480
+
+    var id: Int { rawValue }
+
+    /// Matches the background task's previous hardcoded constant, so nobody's
+    /// behavior changes until they explicitly open Settings and pick something else.
+    static let `default`: CalendarScanRefreshInterval = .fourHours
+
+    /// Resolves a raw stored minutes value to a valid case, falling back to
+    /// `.default` for 0/missing/corrupt values (e.g. before this setting
+    /// existed) rather than producing a zero or negative interval.
+    static func resolve(storedMinutes: Int) -> CalendarScanRefreshInterval {
+        CalendarScanRefreshInterval(rawValue: storedMinutes) ?? .default
+    }
+
+    var timeInterval: TimeInterval { TimeInterval(rawValue * 60) }
+
+    /// Localization key for the picker label (time + frequency/battery hint).
+    var localizationKey: String {
+        switch self {
+        case .oneHour:    return "calendarScan.refreshInterval.oneHour"
+        case .twoHours:   return "calendarScan.refreshInterval.twoHours"
+        case .fourHours:  return "calendarScan.refreshInterval.fourHours"
+        case .eightHours: return "calendarScan.refreshInterval.eightHours"
+        }
+    }
+
+    /// English fallback label (also the key registered in Localizable.strings).
+    var englishLabel: String {
+        switch self {
+        case .oneHour:    return "1 Hour — Most Frequent"
+        case .twoHours:   return "2 Hours — Frequent"
+        case .fourHours:  return "4 Hours — Balanced"
+        case .eightHours: return "8 Hours — Best Battery Life"
+        }
+    }
+}
+
 // MARK: - AppStorage Keys
 
 enum AppStorageKey {
@@ -230,6 +285,11 @@ enum AppStorageKey {
     /// called opportunistically (e.g. on every app foreground) — see
     /// CalendarScanRefreshScheduling.shouldSubmit (Bob, 2026-07-03).
     static let calendarScanNextRefreshEarliestDate = "calendarScanNextRefreshEarliestDate"
+    /// CalendarScanRefreshInterval.rawValue (minutes) — the earliest-refresh
+    /// interval for Automatic mode's background scans. Defaults to 240 (4h),
+    /// matching the previous hardcoded constant. User-configurable via a
+    /// picker in Settings → Calendar Scanning → Scan Behavior (Bob, 2026-07-04).
+    static let calendarScanRefreshIntervalMinutes = "calendarScanRefreshIntervalMinutes"
 
     /// Registers UserDefaults defaults for the calendar-scan keys whose
     /// @AppStorage default isn't `false`/`0`/`""`. SwiftUI's @AppStorage
@@ -244,6 +304,7 @@ enum AppStorageKey {
             calendarScanNotifyOnResults: true,
             calendarScanLookaheadDays: 14,
             calendarScanModeRaw: CalendarScanMode.automatic.rawValue,
+            calendarScanRefreshIntervalMinutes: CalendarScanRefreshInterval.default.rawValue,
         ])
     }
 }

@@ -86,6 +86,15 @@ struct TransitAlarmView: View {
     @State private var showContactPicker: Bool             = false
     @State private var showManualEntry:   Bool             = false
 
+    /// True when Auto-Notify is toggled on but there's nobody to notify.
+    /// Mirrors `AlarmViewModel.hasAutoNotifyWithNoContacts` — this view keeps
+    /// its own local state rather than sharing `AlarmViewModel`, so the same
+    /// guard has to be duplicated here to gate both the Create Alarm button
+    /// and `saveAlarm()` (Bob, 2026-07-04).
+    private var hasAutoNotifyWithNoContacts: Bool {
+        notifyContact && notifyContactList.isEmpty
+    }
+
     @StateObject private var service = GTFSService()
 
     /// Radius binding in the user's chosen unit; radius always stores metres.
@@ -539,13 +548,14 @@ struct TransitAlarmView: View {
                         Label("Add Manually", systemImage: "plus.circle")
                     }
 
-                    if notifyContactList.isEmpty {
+                    if hasAutoNotifyWithNoContacts {
                         HStack(spacing: 6) {
-                            Image(systemName: "exclamationmark.circle")
-                                .foregroundColor(.orange)
-                            Text("Add at least one contact to enable Auto-Notify.", bundle: bundle)
+                            Image(systemName: "exclamationmark.circle.fill")
+                                .foregroundColor(.red)
+                            Text("Add a contact or turn off Auto-Notify to save this alarm.",
+                                 bundle: bundle)
                                 .font(.caption)
-                                .foregroundColor(.secondary)
+                                .foregroundColor(.red)
                         }
                     }
                 }
@@ -576,7 +586,8 @@ struct TransitAlarmView: View {
                     Text("Create Alarm", bundle: bundle)
                         .frame(maxWidth: .infinity)
                 }
-                .disabled(alarmName.trimmingCharacters(in: .whitespaces).isEmpty)
+                .disabled(alarmName.trimmingCharacters(in: .whitespaces).isEmpty
+                          || hasAutoNotifyWithNoContacts)
             }
         }
     }
@@ -742,6 +753,10 @@ struct TransitAlarmView: View {
 
     private func saveAlarm() {
         guard let stop = selectedStop else { return }
+        // Defense-in-depth backstop — the Create Alarm button is already
+        // disabled in this state, but guard the actual save too (mirrors
+        // AlarmViewModel.buildAlarm()'s hard block; Bob, 2026-07-04).
+        guard !hasAutoNotifyWithNoContacts else { return }
         let alarm = NapAlarm(
             name: alarmName.trimmingCharacters(in: .whitespaces),
             latitude: stop.latitude,

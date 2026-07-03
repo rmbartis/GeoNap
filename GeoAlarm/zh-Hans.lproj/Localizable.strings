@@ -49,6 +49,7 @@
 "Radius must be at least 50 metres." = "半径必须至少为 50 米。";
 "Please pick a valid location on the map." = "请在地图上选择有效位置。";
 "Window start and end time cannot be the same." = "开始和结束时间不能相同。";
+"Auto-Notify is on but has no contact. Add a contact or turn off Auto-Notify." = "自动通知已开启，但没有联系人。请添加联系人或关闭自动通知。";
 
 "Notify a Contact" = "通知联系人";
 "Send a message when this alarm fires" = "闹钟触发时发送消息";
@@ -152,8 +153,14 @@
 "Calendar Access" = "日历访问权限";
 "calendarScan.mode.automatic" = "自动";
 "calendarScan.mode.manualOnly" = "仅手动";
+"calendarScan.refreshInterval.oneHour" = "1 小时 — 最频繁";
+"calendarScan.refreshInterval.twoHours" = "2 小时 — 频繁";
+"calendarScan.refreshInterval.fourHours" = "4 小时 — 均衡";
+"calendarScan.refreshInterval.eightHours" = "8 小时 — 最佳电池续航";
+"settings.calendarScan.refreshIntervalLabel" = "刷新间隔";
 "settings.calendarScan.mainFooter" = "启用后，GeoNap 会扫描下方所选日历中即将到来的带有地点的事件，并为其提议基于位置的闹钟。默认关闭——在你开启此功能之前不会进行任何扫描。";
 "settings.calendarScan.behaviorFooter" = "自动模式会在后台定期扫描。仅手动模式只在你点击立即扫描时才会扫描。";
+"settings.calendarScan.behaviorFooterAutomatic" = "自动模式会在后台定期扫描。仅手动模式只在你点击立即扫描时才会扫描。刷新间隔设置的是扫描最早可以运行的时间——实际时间由 iOS 决定，因此实际扫描的频率可能低于所选间隔。";
 "settings.calendarScan.accessDeniedFooter" = "GeoNap 需要日历访问权限才能查找行程。请打开设置并允许 GeoNap 访问日历以继续。";
 "settings.calendarScan.firstRunFooter" = "默认情况下仅选中你的主日历。请开启你希望 GeoNap 扫描的其他日历。";
 "settings.calendarScan.noResultsTitle" = "未找到行程";
@@ -165,7 +172,7 @@
 "settings.calendarScan.notificationTitle" = "发现新行程";
 "settings.calendarScan.notificationBody" = "GeoNap 发现了 %d 个带有地点的新行程。请在设置 → 日历扫描中查看。";
 "privacy.body.calendarAccess" = "如果你在设置中开启日历扫描，GeoNap 会读取你所选日历中的事件，以查找带有地点的即将到来的行程——例如航班、火车或会议。此过程完全在你的设备上进行：日历数据永远不会被上传、存储在应用之外，或与第三方共享。只有候选事件的地点文本会被发送给 Apple 的地理编码服务，以将其转换为地图坐标，这与在 GeoNap 中手动放置图钉的方式相同。日历扫描默认关闭；你可以随时在设置 → 日历扫描中将其关闭，并可在 iOS 设置 → 隐私与安全性 → 日历 → GeoNap 中完全撤销日历访问权限。";
-"help.body.calendarScanning" = "日历扫描会在你选择的日历中查找带有地点的即将到来的事件——航班、火车、会议——并为每个事件提议一个基于位置的闹钟。\n\n此功能默认关闭。要开启它：\n\n1. 打开设置 → 日历扫描。\n2. 开启扫描日历以查找行程，并在提示时授予日历访问权限。\n3. 首次使用时，你将选择要包含哪些日历——默认情况下仅选中你的主日历。\n4. 选择自动以在后台定期扫描，或选择仅手动以仅在你点击立即扫描时扫描。\n5. 开启有新行程时通知我，以便在扫描发现新的候选行程时收到通知。\n6. 扫描后，点按查看待处理行程以查看 GeoNap 找到的内容。点按 + 按钮将行程添加为闹钟，或点按 X 拒绝它——被拒绝的行程除非地点发生变化，否则不会再次被推荐。\n\nGeoNap 只会列出你 iPhone 上已经设置好的日历。要扫描 Outlook、Google 或其他外部账户，请先在设置 → 日历 → 账户中添加该账户，之后它会自动出现在这里。生日和节假日日历会被自动排除，因为它们从不包含可供扫描的地点。\n\n日历数据完全在你的设备上读取，永远不会被上传或共享。详情请参阅隐私与位置共享 → 日历访问权限。";
+"help.body.calendarScanning" = "日历扫描会在你选择的日历中查找带有地点的即将到来的事件——航班、火车、会议——并为每个事件提议一个基于位置的闹钟。\n\n此功能默认关闭。要开启它：\n\n1. 打开设置 → 日历扫描。\n2. 开启扫描日历以查找行程，并在提示时授予日历访问权限。\n3. 首次使用时，你将选择要包含哪些日历——默认情况下仅选中你的主日历。\n4. 选择自动以在后台定期扫描，或选择仅手动以仅在你点击立即扫描时扫描。 在自动模式下，可通过刷新间隔选择扫描频率（1 到 8 小时），实际时间由 iOS 决定。\n5. 开启有新行程时通知我，以便在扫描发现新的候选行程时收到通知。\n6. 扫描后，点按查看待处理行程以查看 GeoNap 找到的内容。点按 + 按钮将行程添加为闹钟，或点按 X 拒绝它——被拒绝的行程除非地点发生变化，否则不会再次被推荐。\n\nGeoNap 只会列出你 iPhone 上已经设置好的日历。要扫描 Outlook、Google 或其他外部账户，请先在设置 → 日历 → 账户中添加该账户，之后它会自动出现在这里。生日和节假日日历会被自动排除，因为它们从不包含可供扫描的地点。\n\n日历数据完全在你的设备上读取，永远不会被上传或共享。详情请参阅隐私与位置共享 → 日历访问权限。";
 
 "Help" = "帮助";
 "What is GeoNap?" = "GeoNap 是什么？";
@@ -378,6 +385,7 @@
 "Save Anyway" = "仍然保存";
 "Check alarm location" = "检查闹钟位置";
 "Add at least one contact to enable Auto-Notify." = "添加至少一个联系人以启用自动通知。";
+"Add a contact or turn off Auto-Notify to save this alarm." = "请添加联系人或关闭自动通知以保存此闹钟。";
 "No contacts saved for this alarm." = "此闹钟没有已保存的联系人。";
 "Phone number (e.g. +1 555-1234)." = "电话号码（例如 +1 555-1234）。";
 "Select the language you'd like to use in GeoNap. You can change this at any time in Settings." = "选择你想在 GeoNap 中使用的语言。你可以随时在“设置”中更改。";

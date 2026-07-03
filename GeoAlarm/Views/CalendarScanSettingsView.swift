@@ -18,6 +18,7 @@ struct CalendarScanSettingsView: View {
     @AppStorage(AppStorageKey.calendarScanModeRaw)         private var scanModeRaw = CalendarScanMode.automatic.rawValue
     @AppStorage(AppStorageKey.calendarScanNotifyOnResults) private var notifyOnResults = true
     @AppStorage(AppStorageKey.calendarScanLookaheadDays)   private var lookaheadDays = 14
+    @AppStorage(AppStorageKey.calendarScanRefreshIntervalMinutes) private var refreshIntervalMinutes = CalendarScanRefreshInterval.default.rawValue
     @AppStorage(AppStorageKey.calendarScanEnabledCalendarIDs)     private var enabledCalendarIDsRaw = "[]"
     @AppStorage(AppStorageKey.calendarScanHasCompletedFirstRun)   private var hasCompletedFirstRun = false
 
@@ -76,6 +77,23 @@ struct CalendarScanSettingsView: View {
                             CalendarScanBackgroundTask.scheduleNextRefresh()
                         }
 
+                        if scanMode == .automatic {
+                            Picker(selection: $refreshIntervalMinutes) {
+                                ForEach(CalendarScanRefreshInterval.allCases) { interval in
+                                    Text(NSLocalizedString(interval.localizationKey, bundle: bundle, comment: ""))
+                                        .tag(interval.rawValue)
+                                }
+                            } label: {
+                                Text("settings.calendarScan.refreshIntervalLabel", bundle: bundle)
+                            }
+                            .onChange(of: refreshIntervalMinutes) {
+                                // Force: the user just explicitly changed their preference —
+                                // it should take effect immediately rather than waiting out
+                                // whatever window was already pending (Bob, 2026-07-04).
+                                CalendarScanBackgroundTask.scheduleNextRefresh(force: true)
+                            }
+                        }
+
                         Toggle(isOn: $notifyOnResults) {
                             Text("Notify Me About New Trips", bundle: bundle)
                         }
@@ -95,7 +113,9 @@ struct CalendarScanSettingsView: View {
                     } header: {
                         Text("Scan Behavior", bundle: bundle)
                     } footer: {
-                        Text("settings.calendarScan.behaviorFooter", bundle: bundle)
+                        Text(scanMode == .automatic
+                             ? "settings.calendarScan.behaviorFooterAutomatic"
+                             : "settings.calendarScan.behaviorFooter", bundle: bundle)
                     }
 
                     Section {

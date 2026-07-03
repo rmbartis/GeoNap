@@ -500,14 +500,14 @@ struct AddAlarmView: View {
                         Label("Add Manually", systemImage: "plus.circle")
                     }
 
-                    if viewModel.notifyContact && viewModel.notifyContactList.isEmpty {
+                    if viewModel.hasAutoNotifyWithNoContacts {
                         HStack(spacing: 6) {
-                            Image(systemName: "exclamationmark.circle")
-                                .foregroundColor(.orange)
-                            Text("Add at least one contact to enable Auto-Notify.",
+                            Image(systemName: "exclamationmark.circle.fill")
+                                .foregroundColor(.red)
+                            Text("Add a contact or turn off Auto-Notify to save this alarm.",
                                  bundle: bundle)
                                 .font(.caption)
-                                .foregroundColor(.secondary)
+                                .foregroundColor(.red)
                         }
                     }
                 }

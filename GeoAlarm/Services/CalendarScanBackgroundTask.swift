@@ -65,10 +65,15 @@ enum CalendarScanBackgroundTask {
     /// scene modifier — the OS silently drops mismatched requests.
     static let identifier = "com.rmbartis.GeoNap.calendarScanRefresh"
 
-    /// How far out to ask the OS to run the next scan. The OS treats this as
+    /// How far out to ask the OS to run the next scan, resolved from the
+    /// user's Settings → Calendar Scanning → Scan Behavior picker
+    /// (CalendarScanRefreshInterval; defaults to 4h). The OS treats this as
     /// an earliest-possible time, not a guarantee — actual execution is
-    /// opportunistic and system-scheduled.
-    private static let refreshInterval: TimeInterval = 4 * 60 * 60 // 4 hours
+    /// opportunistic and system-scheduled regardless of what's picked here.
+    private static var refreshInterval: TimeInterval {
+        let stored = UserDefaults.standard.integer(forKey: AppStorageKey.calendarScanRefreshIntervalMinutes)
+        return CalendarScanRefreshInterval.resolve(storedMinutes: stored).timeInterval
+    }
 
     // MARK: - Scheduling
 

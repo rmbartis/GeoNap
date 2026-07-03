@@ -49,6 +49,7 @@
 "Radius must be at least 50 metres." = "El radio debe ser de al menos 50 metros.";
 "Please pick a valid location on the map." = "Por favor elige una ubicación válida en el mapa.";
 "Window start and end time cannot be the same." = "La hora de inicio y fin no pueden ser iguales.";
+"Auto-Notify is on but has no contact. Add a contact or turn off Auto-Notify." = "La notificación automática está activada, pero no hay ningún contacto. Añade un contacto o desactiva la notificación automática.";
 
 "Notify a Contact" = "Notificar a un contacto";
 "Send a message when this alarm fires" = "Enviar un mensaje cuando se active esta alarma";
@@ -152,8 +153,14 @@
 "Calendar Access" = "Acceso al calendario";
 "calendarScan.mode.automatic" = "Automático";
 "calendarScan.mode.manualOnly" = "Solo manual";
+"calendarScan.refreshInterval.oneHour" = "1 hora — Más frecuente";
+"calendarScan.refreshInterval.twoHours" = "2 horas — Frecuente";
+"calendarScan.refreshInterval.fourHours" = "4 horas — Equilibrado";
+"calendarScan.refreshInterval.eightHours" = "8 horas — Mejor duración de batería";
+"settings.calendarScan.refreshIntervalLabel" = "Intervalo de actualización";
 "settings.calendarScan.mainFooter" = "Cuando está activado, GeoNap escanea los calendarios que elijas a continuación en busca de próximos eventos con una ubicación y sugiere alarmas basadas en ubicación para ellos. Desactivado de forma predeterminada: no se escanea nada hasta que lo actives.";
 "settings.calendarScan.behaviorFooter" = "Automático escanea periódicamente en segundo plano. Solo manual escanea únicamente cuando tocas Escanear ahora.";
+"settings.calendarScan.behaviorFooterAutomatic" = "Automático escanea periódicamente en segundo plano. Solo manual escanea únicamente cuando tocas Escanear ahora. El intervalo de actualización establece el momento más temprano en que puede ejecutarse un escaneo — iOS decide el momento real, por lo que los escaneos reales pueden ocurrir con menos frecuencia de la seleccionada.";
 "settings.calendarScan.accessDeniedFooter" = "GeoNap necesita acceso al calendario para buscar viajes. Abre Configuración y permite el acceso al calendario para GeoNap para continuar.";
 "settings.calendarScan.firstRunFooter" = "Solo tu calendario principal está seleccionado de forma predeterminada. Activa cualquier otro calendario que quieras que GeoNap escanee.";
 "settings.calendarScan.noResultsTitle" = "No se encontraron viajes";
@@ -165,7 +172,7 @@
 "settings.calendarScan.notificationTitle" = "Nuevos viajes encontrados";
 "settings.calendarScan.notificationBody" = "GeoNap encontró %d viaje(s) nuevo(s) con una ubicación. Revísalos en Configuración → Escaneo de calendario.";
 "privacy.body.calendarAccess" = "Si activas el Escaneo de calendario en Configuración, GeoNap lee eventos de los calendarios que elijas para buscar próximos viajes con una ubicación, por ejemplo un vuelo, un tren o una reunión. Esto ocurre completamente en tu dispositivo: los datos del calendario nunca se suben, se almacenan fuera de la app ni se comparten con terceros. Solo el texto de ubicación de un evento candidato se envía al servicio de geocodificación de Apple para convertirlo en coordenadas de mapa, tal como ya ocurre al colocar un pin manualmente en GeoNap. El Escaneo de calendario está desactivado de forma predeterminada; puedes desactivarlo en cualquier momento en Configuración → Escaneo de calendario, y revocar por completo el acceso al calendario en Configuración de iOS → Privacidad y seguridad → Calendarios → GeoNap.";
-"help.body.calendarScanning" = "El Escaneo de calendario revisa los calendarios que elijas en busca de próximos eventos que tengan una ubicación —un vuelo, un tren, una reunión— y sugiere una alarma basada en ubicación para cada uno.\n\nEsta función está desactivada de forma predeterminada. Para activarla:\n\n1. Abre Configuración → Escaneo de calendario.\n2. Activa Escanear calendarios en busca de viajes y concede acceso al calendario cuando se te solicite.\n3. La primera vez, elegirás qué calendarios incluir; solo tu calendario principal está marcado de forma predeterminada.\n4. Elige Automático para escanear periódicamente en segundo plano, o Solo manual para escanear únicamente cuando toques Escanear ahora.\n5. Activa Notificarme sobre nuevos viajes para recibir una notificación cuando un escaneo encuentre un nuevo candidato.\n6. Después de un escaneo, toca Revisar viajes pendientes para ver lo que GeoNap encontró. Toca el botón + para añadir un viaje como alarma, o la X para rechazarlo; los viajes rechazados no se volverán a sugerir a menos que su ubicación cambie.\n\nGeoNap solo muestra los calendarios ya configurados en tu iPhone. Para escanear una cuenta de Outlook, Google u otra cuenta externa, agrégala primero en Configuración → Calendario → Cuentas; después aparecerá aquí automáticamente. Los calendarios de Cumpleaños y Días festivos se excluyen automáticamente, ya que nunca tienen una ubicación que escanear.\n\nLos datos del calendario se leen completamente en tu dispositivo y nunca se suben ni se comparten. Consulta Privacidad y ubicación compartida → Acceso al calendario para más detalles.";
+"help.body.calendarScanning" = "El Escaneo de calendario revisa los calendarios que elijas en busca de próximos eventos que tengan una ubicación —un vuelo, un tren, una reunión— y sugiere una alarma basada en ubicación para cada uno.\n\nEsta función está desactivada de forma predeterminada. Para activarla:\n\n1. Abre Configuración → Escaneo de calendario.\n2. Activa Escanear calendarios en busca de viajes y concede acceso al calendario cuando se te solicite.\n3. La primera vez, elegirás qué calendarios incluir; solo tu calendario principal está marcado de forma predeterminada.\n4. Elige Automático para escanear periódicamente en segundo plano, o Solo manual para escanear únicamente cuando toques Escanear ahora. En modo Automático, usa Intervalo de actualización para elegir la frecuencia — de 1 a 8 horas — ten en cuenta que iOS decide el momento real.\n5. Activa Notificarme sobre nuevos viajes para recibir una notificación cuando un escaneo encuentre un nuevo candidato.\n6. Después de un escaneo, toca Revisar viajes pendientes para ver lo que GeoNap encontró. Toca el botón + para añadir un viaje como alarma, o la X para rechazarlo; los viajes rechazados no se volverán a sugerir a menos que su ubicación cambie.\n\nGeoNap solo muestra los calendarios ya configurados en tu iPhone. Para escanear una cuenta de Outlook, Google u otra cuenta externa, agrégala primero en Configuración → Calendario → Cuentas; después aparecerá aquí automáticamente. Los calendarios de Cumpleaños y Días festivos se excluyen automáticamente, ya que nunca tienen una ubicación que escanear.\n\nLos datos del calendario se leen completamente en tu dispositivo y nunca se suben ni se comparten. Consulta Privacidad y ubicación compartida → Acceso al calendario para más detalles.";
 
 "Help" = "Ayuda";
 "What is GeoNap?" = "¿Qué es GeoNap?";
@@ -357,6 +364,7 @@ El botón Guardar está desactivado hasta que hayas ingresado un nombre y fijado
 "Save Anyway" = "Guardar de todos modos";
 "Check alarm location" = "Comprueba la ubicación de la alarma";
 "Add at least one contact to enable Auto-Notify." = "Añade al menos un contacto para activar la notificación automática.";
+"Add a contact or turn off Auto-Notify to save this alarm." = "Añade un contacto o desactiva la notificación automática para guardar esta alarma.";
 "No contacts saved for this alarm." = "No hay contactos guardados para esta alarma.";
 "Phone number (e.g. +1 555-1234)." = "Número de teléfono (p. ej. +1 555-1234).";
 "Select the language you'd like to use in GeoNap. You can change this at any time in Settings." = "Elige el idioma que quieres usar en GeoNap. Puedes cambiarlo cuando quieras en Ajustes.";
