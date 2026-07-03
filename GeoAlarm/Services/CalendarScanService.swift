@@ -239,9 +239,17 @@ final class CalendarScanService: ObservableObject {
     private static let geocodeMaxRetries = 2
     private static let geocodeRetryDelay: UInt64 = 1_000_000_000 // 1 s
 
-    init(store: EKEventStore = EKEventStore(), geocoder: CalendarScanGeocoding = MapKitGeocoder()) {
+    // `geocoder` defaults to nil (rather than `= MapKitGeocoder()` as a default
+    // parameter value) and is resolved inside the init body instead. Default
+    // parameter expressions are evaluated in a nonisolated context regardless
+    // of the initializer's own actor isolation, and MapKitGeocoder's synthesized
+    // init() is inferred @MainActor (project-wide SWIFT_DEFAULT_ACTOR_ISOLATION),
+    // so using it as a default value produced a "main actor-isolated initializer
+    // called in a synchronous nonisolated context" warning. Building it here
+    // instead — inside this @MainActor init's body — sidesteps that entirely.
+    init(store: EKEventStore = EKEventStore(), geocoder: CalendarScanGeocoding? = nil) {
         self.store = store
-        self.geocoder = geocoder
+        self.geocoder = geocoder ?? MapKitGeocoder()
         self.authorizationStatus = EKEventStore.authorizationStatus(for: .event)
     }
 
