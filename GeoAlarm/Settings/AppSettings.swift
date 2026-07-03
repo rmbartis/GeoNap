@@ -223,6 +223,13 @@ enum AppStorageKey {
     /// location snapshot no longer matches its handled record is treated as
     /// new again (Phase 3 re-offer-on-change behavior).
     static let calendarScanHandledCandidatesJSON = "calendarScanHandledCandidatesJSON"
+    /// Date (encoded via UserDefaults' native Date support) of the
+    /// `earliestBeginDate` most recently submitted to BGTaskScheduler for the
+    /// background refresh request. Lets `scheduleNextRefresh()` tell whether a
+    /// request is already pending without resetting its window every time it's
+    /// called opportunistically (e.g. on every app foreground) — see
+    /// CalendarScanRefreshScheduling.shouldSubmit (Bob, 2026-07-03).
+    static let calendarScanNextRefreshEarliestDate = "calendarScanNextRefreshEarliestDate"
 
     /// Registers UserDefaults defaults for the calendar-scan keys whose
     /// @AppStorage default isn't `false`/`0`/`""`. SwiftUI's @AppStorage

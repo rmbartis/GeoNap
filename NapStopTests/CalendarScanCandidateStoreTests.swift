@@ -7,6 +7,8 @@
 //   • CalendarCandidateLocationSnapshot / CalendarScanHandledRecord Codable round-trip
 //   • CalendarScanBackgroundTask.identifier / CalendarScanNotifier.requestIdentifier /
 //     Notification.Name.calendarScanReviewRequested — cross-file identifier stability guards
+//   • CalendarScanRefreshScheduling.shouldSubmit(force:existingEarliestDate:now:) —
+//     background-refresh clock-reset-on-every-foreground fix (2026-07-03)
 //
 // All of the above are pure (no UserDefaults, no EventKit) so they're tested
 // directly, mirroring the "pure logic only" convention used throughout this
@@ -388,6 +390,51 @@ final class CalendarScanCandidateMergerApplyDecisionTests: XCTestCase {
 final class CalendarScanBackgroundTaskIdentifierTests: XCTestCase {
     func test_identifier_isStable() {
         XCTAssertEqual(CalendarScanBackgroundTask.identifier, "com.rmbartis.GeoNap.calendarScanRefresh")
+    }
+}
+
+// MARK: - CalendarScanRefreshScheduling
+//
+// Regression guard for the "clock keeps resetting on every app foreground"
+// fix (Bob, 2026-07-03): scheduleNextRefresh() used to unconditionally
+// cancel + resubmit with `earliestBeginDate = now + 4h` on every call,
+// including from RootView.onAppear, which fires on every foreground — not
+// just cold launch. For anyone who opens the app more than once every 4
+// hours, the window kept getting pushed out and the background scan could
+// never actually become eligible to run. shouldSubmit() is the pure decision
+// that fixes this: only submit a fresh request if none is pending yet, its
+// window has already opened, or the caller explicitly forces it.
+final class CalendarScanRefreshSchedulingTests: XCTestCase {
+    private let now = Date(timeIntervalSince1970: 1_800_000_000)
+
+    func test_noExistingRequest_submits() {
+        XCTAssertTrue(CalendarScanRefreshScheduling.shouldSubmit(force: false, existingEarliestDate: nil, now: now))
+    }
+
+    func test_existingRequestStillInFuture_doesNotResubmit() {
+        // This is the exact scenario that produced Bob's bug: a request is
+        // already pending 3 hours out, and scheduleNextRefresh() gets called
+        // again (e.g. app foregrounded) before that window opens.
+        let threeHoursOut = now.addingTimeInterval(3 * 60 * 60)
+        XCTAssertFalse(CalendarScanRefreshScheduling.shouldSubmit(force: false, existingEarliestDate: threeHoursOut, now: now))
+    }
+
+    func test_existingRequestInPast_resubmits() {
+        // The tracked date can lag reality (e.g. a run() that hasn't reached
+        // its own reschedule yet) — once the window has already opened, it's
+        // safe (and correct) to submit a fresh one.
+        let oneHourAgo = now.addingTimeInterval(-60 * 60)
+        XCTAssertTrue(CalendarScanRefreshScheduling.shouldSubmit(force: false, existingEarliestDate: oneHourAgo, now: now))
+    }
+
+    func test_existingRequestExactlyNow_resubmits() {
+        XCTAssertTrue(CalendarScanRefreshScheduling.shouldSubmit(force: false, existingEarliestDate: now, now: now))
+    }
+
+    func test_force_alwaysResubmitsRegardlessOfExistingDate() {
+        let farFuture = now.addingTimeInterval(3 * 60 * 60)
+        XCTAssertTrue(CalendarScanRefreshScheduling.shouldSubmit(force: true, existingEarliestDate: farFuture, now: now))
+        XCTAssertTrue(CalendarScanRefreshScheduling.shouldSubmit(force: true, existingEarliestDate: nil, now: now))
     }
 }
 
