@@ -7,6 +7,13 @@ import SwiftUI
 
 struct CalendarScanSettingsView: View {
 
+    /// When true, the pending-trips review sheet opens automatically as soon
+    /// as there's something to show. Used for the "new trips found"
+    /// notification deep link (ContentView presents this view with this set)
+    /// so tapping the notification lands the user directly on the
+    /// add/decline screen instead of just the Settings submenu (Bob, 2026-07-03).
+    var openReviewOnAppear: Bool = false
+
     @AppStorage(AppStorageKey.calendarScanEnabled)         private var scanEnabled = false
     @AppStorage(AppStorageKey.calendarScanModeRaw)         private var scanModeRaw = CalendarScanMode.automatic.rawValue
     @AppStorage(AppStorageKey.calendarScanNotifyOnResults) private var notifyOnResults = true
@@ -143,6 +150,9 @@ struct CalendarScanSettingsView: View {
             if scanEnabled && scanService.isAuthorized {
                 scanService.refreshSourceGroups()
             }
+            if openReviewOnAppear && !candidates.isEmpty {
+                showReviewSheet = true
+            }
         }
         .onChange(of: scanEnabled) {
             CalendarScanBackgroundTask.scheduleNextRefresh()
@@ -204,6 +214,14 @@ struct CalendarScanSettingsView: View {
     /// event's location later changes, and — for an add — creates the alarm.
     private func decide(_ action: CalendarScanCandidateAction, for candidate: CalendarTripCandidate) {
         if action == .added {
+            // If this same calendar event previously produced an alarm — e.g. its
+            // location changed since being added, which re-offers it as a fresh
+            // candidate — remove the stale alarm first so re-adding doesn't leave
+            // two alarms for one event (Bob, 2026-07-03).
+            if let stale = CalendarScanCandidateMerger.staleAlarm(for: candidate, in: alarmManager.alarms) {
+                DebugLogger.shared.log("Calendar Scanning: removing stale alarm '\(stale.name)' before re-adding updated event \(candidate.id)", category: "CalendarScan")
+                alarmManager.delete(alarm: stale)
+            }
             alarmManager.add(alarm: napAlarm(from: candidate))
         }
         let handled = CalendarScanCandidateStore.loadHandled()
@@ -228,7 +246,8 @@ struct CalendarScanSettingsView: View {
             longitude: candidate.longitude,
             radius: 200,
             regionEvent: .onEntry,
-            note: candidate.locationTitle
+            note: candidate.locationTitle,
+            calendarEventID: candidate.id
         )
     }
 

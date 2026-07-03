@@ -109,6 +109,17 @@ enum CalendarScanCandidateMerger {
         return Result(pending: pending, handled: updatedHandled, newlyPendingIDs: newlyPendingIDs)
     }
 
+    /// Finds the alarm (if any) previously created from the same calendar
+    /// event as `candidate` — i.e. whose `calendarEventID` matches
+    /// `candidate.id`. Called before re-adding a re-offered candidate (its
+    /// event's location changed since it was added) so the stale alarm can
+    /// be replaced instead of left behind as a duplicate. Pure — takes the
+    /// alarm list as a parameter rather than reaching into AlarmManager — so
+    /// it's testable without SwiftData or EventKit (Bob, 2026-07-03).
+    static func staleAlarm(for candidate: CalendarTripCandidate, in alarms: [NapAlarm]) -> NapAlarm? {
+        alarms.first { $0.calendarEventID == candidate.id }
+    }
+
     /// Records a user decision (add or decline) for a candidate: removes it
     /// from `pending` and stores its current location snapshot in `handled`
     /// so it won't be re-offered unless the location later changes.

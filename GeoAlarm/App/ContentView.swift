@@ -17,6 +17,7 @@ struct ContentView: View {
     @State private var showAddAlarm       = false
     @State private var showMessageCompose = false
     @State private var spotlightAlarm: NapAlarm? = nil
+    @State private var showCalendarScanReview = false
 
     var body: some View {
         NavigationStack {
@@ -30,6 +31,11 @@ struct ContentView: View {
                 }
                 .sheet(isPresented: $showTransitAlarm) {
                     TransitAlarmSheet()
+                }
+                .sheet(isPresented: $showCalendarScanReview) {
+                    NavigationStack {
+                        CalendarScanSettingsView(openReviewOnAppear: true)
+                    }
                 }
                 .navigationDestination(isPresented: $showAddAlarm) {
                     AddAlarmView()
@@ -127,6 +133,12 @@ struct ContentView: View {
             guard let uuid else { return }
             spotlightAlarm = alarmManager.alarms.first { $0.id == uuid }
             alarmManager.spotlightAlarmID = nil   // consume so back-navigation works
+        }
+        // Calendar Scanning "new trips found" notification deep link — see
+        // CalendarScanNotificationDelegate. Opens straight to the review
+        // sheet instead of just landing on the home screen.
+        .onReceive(NotificationCenter.default.publisher(for: .calendarScanReviewRequested)) { _ in
+            showCalendarScanReview = true
         }
     }
 }

@@ -10,11 +10,10 @@
 // describes notifications working ("local notifications entirely on-device
 // using iOS's UNUserNotificationCenter" — see privacy.body.notifications).
 //
-// Tapping the notification just opens the app (default system behavior) —
-// there's no deep link into the review sheet yet. The user reaches it via
-// Settings → Calendar Scanning → "Review Pending Trips". Wiring a direct deep
-// link is a reasonable follow-up but was left out of this pass to keep scope
-// contained.
+// Tapping the notification deep-links straight to the review sheet (see
+// CalendarScanNotificationDelegate below) — Settings → Calendar Scanning →
+// "Review Pending Trips" is still there as the manual route, but the
+// notification no longer just dumps the user on the home screen (Bob, 2026-07-03).
 
 import Foundation
 import UserNotifications
@@ -22,8 +21,10 @@ import UserNotifications
 enum CalendarScanNotifier {
 
     /// Fixed identifier so a second notification replaces the first rather
-    /// than stacking up multiple "new trips" banners.
-    private static let requestIdentifier = "com.rmbartis.GeoNap.calendarScanNewTrips"
+    /// than stacking up multiple "new trips" banners. Also used by
+    /// CalendarScanNotificationDelegate to recognize a tap on this specific
+    /// notification (internal, not private, so the delegate can see it).
+    static let requestIdentifier = "com.rmbartis.GeoNap.calendarScanNewTrips"
 
     /// Requests notification authorization if the user hasn't already decided
     /// (granted or denied). Safe to call repeatedly. Returns whether alerts
@@ -77,5 +78,45 @@ enum CalendarScanNotifier {
         } catch {
             DebugLogger.shared.log("Failed to post new-trips notification: \(error.localizedDescription)", category: "CalendarScan")
         }
+    }
+}
+
+// MARK: - Notification tap deep link
+
+extension Notification.Name {
+    /// Posted when the user taps the "new trips found" notification, so
+    /// ContentView can present the Calendar Scanning review sheet directly
+    /// instead of just opening to the home screen (Bob, 2026-07-03).
+    static let calendarScanReviewRequested = Notification.Name("com.rmbartis.GeoNap.calendarScanReviewRequested")
+}
+
+/// UNUserNotificationCenterDelegate for the Calendar Scanning "new trips
+/// found" notification. Two jobs:
+///   1. Still show the banner/sound if the notification arrives while the
+///      app is already in the foreground (system default is silent otherwise).
+///   2. On tap, post `.calendarScanReviewRequested` so ContentView opens
+///      straight to the review sheet rather than just the home screen.
+/// Assigned as UNUserNotificationCenter's delegate at app launch
+/// (NapStopApp.init) — must happen early enough to catch a cold-launch tap.
+final class CalendarScanNotificationDelegate: NSObject, UNUserNotificationCenterDelegate {
+
+    static let shared = CalendarScanNotificationDelegate()
+
+    func userNotificationCenter(_ center: UNUserNotificationCenter,
+                                 willPresent notification: UNNotification,
+                                 withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        completionHandler([.banner, .sound, .badge])
+    }
+
+    func userNotificationCenter(_ center: UNUserNotificationCenter,
+                                 didReceive response: UNNotificationResponse,
+                                 withCompletionHandler completionHandler: @escaping () -> Void) {
+        if response.notification.request.identifier == CalendarScanNotifier.requestIdentifier {
+            DispatchQueue.main.async {
+                DebugLogger.shared.log("New-trips notification tapped — deep-linking to review sheet.", category: "CalendarScan")
+                NotificationCenter.default.post(name: .calendarScanReviewRequested, object: nil)
+            }
+        }
+        completionHandler()
     }
 }

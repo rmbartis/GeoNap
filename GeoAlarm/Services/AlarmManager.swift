@@ -103,7 +103,8 @@ final class AlarmManager: NSObject, ObservableObject {
                 hasTimeWindow: alarm.hasTimeWindow,
                 windowStart: alarm.windowStart, windowEnd: alarm.windowEnd,
                 activeDays: alarm.activeDays,
-                notificationSound: alarm.notificationSound
+                notificationSound: alarm.notificationSound,
+                calendarEventID: alarm.calendarEventID
             )
             DebugLogger.shared.log("Alarm '\(alarm.name)' inserted as INACTIVE — region monitoring limit reached (\(Self.regionMonitoringLimit))", category: "AlarmManager")
         }

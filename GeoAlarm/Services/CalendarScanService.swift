@@ -139,6 +139,63 @@ enum CalendarScanLocationExtractor {
     }
 }
 
+// MARK: - Geocoding (injectable for testing)
+
+/// Abstraction over "resolve a text address to a coordinate, or fail." Lets
+/// the retry logic in CalendarScanGeocodeRetrier be unit tested with a fake
+/// that fails on command, without touching MapKit, the network, or any
+/// actual geocoding service (mirrors the EventKit-free testing convention
+/// used by CalendarScanLocationExtractor).
+protocol CalendarScanGeocoding {
+    func geocode(addressString: String) async -> CLLocationCoordinate2D?
+}
+
+/// Production geocoder — wraps MapKit's request-based geocoding API.
+/// CLGeocoder.geocodeAddressString(_:) was deprecated in iOS 26 in favor of
+/// this. A fresh MKGeocodingRequest per call, matching the "fresh request
+/// per attempt" pattern used for GTFS feed reachability retries.
+struct MapKitGeocoder: CalendarScanGeocoding {
+    func geocode(addressString: String) async -> CLLocationCoordinate2D? {
+        guard let request = MKGeocodingRequest(addressString: addressString),
+              let mapItems = try? await request.mapItems else { return nil }
+        return mapItems.first?.location.coordinate
+    }
+}
+
+/// Pure retry orchestration around a `CalendarScanGeocoding`, extracted as a
+/// standalone enum (rather than inline in scanForCandidates) so it's
+/// trivially unit testable with a fake geocoder — no live network or
+/// EventKit dependency (mirrors CalendarScanLocationExtractor's "pure logic
+/// only" convention).
+///
+/// A single failed geocoding attempt — a transient network hiccup, momentary
+/// MapKit service error — previously dropped the event silently for the
+/// whole scan; Bob observed a manual scan miss one of two events that a
+/// later automatic scan picked up cleanly, consistent with exactly this
+/// (2026-07-03).
+enum CalendarScanGeocodeRetrier {
+    /// Retries `geocoder.geocode(addressString:)` up to `maxRetries` extra
+    /// times (1 + maxRetries attempts total) before giving up. `retryDelay`
+    /// is nanoseconds between attempts — pass 0 in tests to skip the real
+    /// wait instead of injecting a fake clock.
+    static func geocodeWithRetry(
+        addressString: String,
+        geocoder: CalendarScanGeocoding,
+        maxRetries: Int,
+        retryDelay: UInt64
+    ) async -> CLLocationCoordinate2D? {
+        for attempt in 0...maxRetries {
+            if let coordinate = await geocoder.geocode(addressString: addressString) {
+                return coordinate
+            }
+            if attempt < maxRetries {
+                try? await Task.sleep(nanoseconds: retryDelay)
+            }
+        }
+        return nil
+    }
+}
+
 // MARK: - Persistence helpers
 
 /// JSON Set<String> encode/decode for the calendarScanEnabledCalendarIDs
@@ -172,11 +229,19 @@ final class CalendarScanService: ObservableObject {
     @Published private(set) var sourceGroups: [CalendarSourceGroup] = []
 
     private let store: EKEventStore
+    private let geocoder: CalendarScanGeocoding
 
     var isAuthorized: Bool { authorizationStatus == .fullAccess }
 
-    init(store: EKEventStore = EKEventStore()) {
+    /// Geocoding attempts (1 initial + this many retries) for a plain-text
+    /// event location before giving up on that event for this scan — see
+    /// CalendarScanGeocodeRetrier for the retry logic itself and its tests.
+    private static let geocodeMaxRetries = 2
+    private static let geocodeRetryDelay: UInt64 = 1_000_000_000 // 1 s
+
+    init(store: EKEventStore = EKEventStore(), geocoder: CalendarScanGeocoding = MapKitGeocoder()) {
         self.store = store
+        self.geocoder = geocoder
         self.authorizationStatus = EKEventStore.authorizationStatus(for: .event)
     }
 
@@ -345,11 +410,15 @@ final class CalendarScanService: ObservableObject {
             var lat = extracted.latitude
             var lon = extracted.longitude
             if extracted.source == .geocoded {
-                // CLGeocoder.geocodeAddressString(_:) was deprecated in iOS 26 in
-                // favor of MapKit's request-based geocoding API.
-                guard let request = MKGeocodingRequest(addressString: extracted.title),
-                      let mapItems = try? await request.mapItems,
-                      let coordinate = mapItems.first?.location.coordinate else { continue }
+                guard let coordinate = await CalendarScanGeocodeRetrier.geocodeWithRetry(
+                    addressString: extracted.title,
+                    geocoder: geocoder,
+                    maxRetries: Self.geocodeMaxRetries,
+                    retryDelay: Self.geocodeRetryDelay
+                ) else {
+                    DebugLogger.shared.log("Calendar scan: skipped '\(event.title ?? "")' — geocoding failed after \(Self.geocodeMaxRetries + 1) attempt(s) for '\(extracted.title)'", category: "CalendarScan")
+                    continue
+                }
                 lat = coordinate.latitude
                 lon = coordinate.longitude
             }

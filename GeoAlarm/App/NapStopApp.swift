@@ -5,6 +5,7 @@ import SwiftUI
 import SwiftData
 import CoreSpotlight
 import BackgroundTasks
+import UserNotifications
 
 @main
 struct NapStopApp: App {
@@ -37,6 +38,9 @@ struct NapStopApp: App {
         // can't rely on @AppStorage's in-memory-only default). See
         // AppStorageKey.registerCalendarScanDefaults() for why this is needed.
         AppStorageKey.registerCalendarScanDefaults()
+        // Must be set early to catch a cold-launch tap on the "new trips
+        // found" notification — see CalendarScanNotificationDelegate.
+        UNUserNotificationCenter.current().delegate = CalendarScanNotificationDelegate.shared
     }
 
     var body: some Scene {

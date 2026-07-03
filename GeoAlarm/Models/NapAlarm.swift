@@ -190,6 +190,15 @@ final class NapAlarm {
         set { transitRouteTypeRaw = newValue.map { String($0.rawValue) } }
     }
 
+    // MARK: - Calendar Scanning provenance
+
+    /// EKEvent.eventIdentifier this alarm was created from via Calendar
+    /// Scanning, or nil for alarms created any other way. Lets a later
+    /// re-scan — after the source event's location changes and it's
+    /// re-offered — replace this alarm instead of leaving a stale duplicate
+    /// behind. See CalendarScanSettingsView.decide(_:for:) (Bob, 2026-07-03).
+    var calendarEventID: String? = nil
+
     // MARK: - Enum accessors
 
     var regionEvent: RegionEvent {
@@ -331,7 +340,8 @@ final class NapAlarm {
         transitRouteName: String? = nil,
         transitStopName: String? = nil,
         transitRouteType: GTFSRouteType? = nil,
-        notificationSound: NotificationSound = .default
+        notificationSound: NotificationSound = .default,
+        calendarEventID: String? = nil
     ) {
         self.id = id
         self.name = name
@@ -360,6 +370,7 @@ final class NapAlarm {
         self.transitStopName = transitStopName
         self.transitRouteTypeRaw = transitRouteType.map { String($0.rawValue) }
         self.soundNameRaw = notificationSound.rawValue
+        self.calendarEventID = calendarEventID
     }
 }
 

@@ -8,15 +8,21 @@
 //   • CalendarScanService.scanDateRange(from:lookaheadDays:calendar:) — look-ahead window math (Phase 2)
 //   • CalendarScanLocationExtractor.extract(from:) — structuredLocation-first, geocode-fallback logic (Phase 2)
 //   • CalendarTripCandidate.coordinate — computed CLLocationCoordinate2D (Phase 2)
+//   • CalendarScanGeocodeRetrier.geocodeWithRetry(...) — retry-on-failure logic (2026-07-03)
 //
 // No EventKit permission or live calendar access is exercised here — those
 // require a real device/simulator with calendar data and are out of scope
 // for CI. This mirrors the "pure logic only" convention used elsewhere in
 // this test target (see DebugLoggerTests's in-memory-only assertions). The
-// Phase 2 pipeline (scanForCandidates) touches EKEventStore/CLGeocoder
-// directly and is intentionally left untested here for the same reason —
-// only the pure extraction/date-range/filtering logic it calls into is
-// covered.
+// Phase 2 pipeline (scanForCandidates) touches EKEventStore directly and is
+// intentionally left untested here for the same reason — only the pure
+// extraction/date-range/filtering logic it calls into is covered.
+//
+// The geocoding step is the one exception: CalendarScanGeocodeRetrier takes
+// a CalendarScanGeocoding protocol rather than calling MapKit directly, so
+// its retry behavior (Bob's 2026-07-03 fix for a manual scan silently
+// missing an event that a later scan picked up) IS fully covered below using
+// a fake geocoder — no network or MapKit dependency required.
 
 import XCTest
 import EventKit
@@ -429,5 +435,117 @@ final class CalendarTripCandidateTests: XCTestCase {
         )
         XCTAssertEqual(candidate.coordinate.latitude, 43.6777)
         XCTAssertEqual(candidate.coordinate.longitude, -79.6248)
+    }
+}
+
+// MARK: - CalendarScanGeocodeRetrier.geocodeWithRetry (2026-07-03)
+
+/// Fails a configurable number of times before succeeding (or never
+/// succeeds), and counts calls so tests can assert exactly how many attempts
+/// the retry loop made. `retryDelay: 0` in every test below skips the real
+/// backoff wait so this suite runs instantly.
+private actor FakeGeocoder: CalendarScanGeocoding {
+    private var failuresRemaining: Int
+    private(set) var callCount = 0
+    let coordinateOnSuccess: CLLocationCoordinate2D
+
+    init(failuresBeforeSuccess: Int, coordinateOnSuccess: CLLocationCoordinate2D = CLLocationCoordinate2D(latitude: 1, longitude: 1)) {
+        self.failuresRemaining = failuresBeforeSuccess
+        self.coordinateOnSuccess = coordinateOnSuccess
+    }
+
+    func geocode(addressString: String) async -> CLLocationCoordinate2D? {
+        callCount += 1
+        guard failuresRemaining <= 0 else {
+            failuresRemaining -= 1
+            return nil
+        }
+        return coordinateOnSuccess
+    }
+}
+
+/// Always fails — models an address that genuinely can't be geocoded (bad
+/// address) as opposed to a transient hiccup.
+private actor AlwaysFailingGeocoder: CalendarScanGeocoding {
+    private(set) var callCount = 0
+    func geocode(addressString: String) async -> CLLocationCoordinate2D? {
+        callCount += 1
+        return nil
+    }
+}
+
+final class CalendarScanGeocodeRetrierTests: XCTestCase {
+
+    func test_succeedsOnFirstAttempt_doesNotRetry() async {
+        let geocoder = FakeGeocoder(failuresBeforeSuccess: 0)
+        let result = await CalendarScanGeocodeRetrier.geocodeWithRetry(
+            addressString: "123 Main St", geocoder: geocoder, maxRetries: 2, retryDelay: 0
+        )
+        XCTAssertNotNil(result)
+        let calls = await geocoder.callCount
+        XCTAssertEqual(calls, 1)
+    }
+
+    func test_failsOnceThenSucceeds_retriesExactlyOnce() async {
+        // This is the exact scenario Bob hit: one transient failure that a
+        // second attempt (moments later) resolves cleanly.
+        let geocoder = FakeGeocoder(failuresBeforeSuccess: 1)
+        let result = await CalendarScanGeocodeRetrier.geocodeWithRetry(
+            addressString: "123 Main St", geocoder: geocoder, maxRetries: 2, retryDelay: 0
+        )
+        XCTAssertNotNil(result)
+        let calls = await geocoder.callCount
+        XCTAssertEqual(calls, 2, "First attempt failed, second succeeded — should stop retrying immediately on success")
+    }
+
+    func test_failsTwiceThenSucceeds_usesBothRetriesButStillSucceeds() async {
+        let geocoder = FakeGeocoder(failuresBeforeSuccess: 2)
+        let result = await CalendarScanGeocodeRetrier.geocodeWithRetry(
+            addressString: "123 Main St", geocoder: geocoder, maxRetries: 2, retryDelay: 0
+        )
+        XCTAssertNotNil(result)
+        let calls = await geocoder.callCount
+        XCTAssertEqual(calls, 3, "Two failures + one final successful attempt = 3 total")
+    }
+
+    func test_alwaysFails_givesUpAfterMaxRetriesPlusOne_returnsNil() async {
+        let geocoder = AlwaysFailingGeocoder()
+        let result = await CalendarScanGeocodeRetrier.geocodeWithRetry(
+            addressString: "123 Main St", geocoder: geocoder, maxRetries: 2, retryDelay: 0
+        )
+        XCTAssertNil(result, "A genuinely bad address should still be skipped, not retried forever")
+        let calls = await geocoder.callCount
+        XCTAssertEqual(calls, 3, "1 initial attempt + 2 retries = 3 total, then gives up")
+    }
+
+    func test_zeroMaxRetries_onlyTriesOnce() async {
+        let geocoder = AlwaysFailingGeocoder()
+        let result = await CalendarScanGeocodeRetrier.geocodeWithRetry(
+            addressString: "123 Main St", geocoder: geocoder, maxRetries: 0, retryDelay: 0
+        )
+        XCTAssertNil(result)
+        let calls = await geocoder.callCount
+        XCTAssertEqual(calls, 1)
+    }
+
+    func test_returnedCoordinate_matchesGeocodersResult() async {
+        let expected = CLLocationCoordinate2D(latitude: 43.6452, longitude: -79.3806)
+        let geocoder = FakeGeocoder(failuresBeforeSuccess: 0, coordinateOnSuccess: expected)
+        let result = await CalendarScanGeocodeRetrier.geocodeWithRetry(
+            addressString: "Union Station", geocoder: geocoder, maxRetries: 2, retryDelay: 0
+        )
+        XCTAssertEqual(result?.latitude, expected.latitude)
+        XCTAssertEqual(result?.longitude, expected.longitude)
+    }
+}
+
+// MARK: - MapKitGeocoder
+
+final class MapKitGeocoderTests: XCTestCase {
+    func test_conformsToCalendarScanGeocoding() {
+        // Compile-time guard: production code depends on this conformance to
+        // inject MapKitGeocoder as CalendarScanService's default geocoder.
+        let geocoder: CalendarScanGeocoding = MapKitGeocoder()
+        XCTAssertNotNil(geocoder)
     }
 }

@@ -2,7 +2,10 @@
 // Unit tests for Phase 3's dedup/re-offer logic:
 //   • CalendarScanCandidateMerger.mergeScanResults(found:existingPending:handled:)
 //   • CalendarScanCandidateMerger.applyDecision(_:to:pending:handled:)
+//   • CalendarScanCandidateMerger.staleAlarm(for:in:) — stale-alarm-on-re-add fix (2026-07-03)
 //   • CalendarCandidateLocationSnapshot / CalendarScanHandledRecord Codable round-trip
+//   • CalendarScanBackgroundTask.identifier / CalendarScanNotifier.requestIdentifier /
+//     Notification.Name.calendarScanReviewRequested — cross-file identifier stability guards
 //
 // All of the above are pure (no UserDefaults, no EventKit) so they're tested
 // directly, mirroring the "pure logic only" convention used throughout this
@@ -209,6 +212,51 @@ final class CalendarScanCandidateMergerTests: XCTestCase {
     }
 }
 
+// MARK: - CalendarScanCandidateMerger.staleAlarm
+
+/// Regression guard for the "old alarm not removed when the calendar event
+/// changes" bug Bob reported 2026-07-03: a re-offered candidate (its event's
+/// location changed since being added) needs its previous alarm found so it
+/// can be replaced instead of left as a duplicate.
+final class CalendarScanCandidateMergerStaleAlarmTests: XCTestCase {
+
+    func test_matchingCalendarEventID_isFound() {
+        let candidate = makeCandidate(id: "evt-1")
+        let alarm = NapAlarm(name: "Old Location", latitude: 1, longitude: 1, calendarEventID: "evt-1")
+        let result = CalendarScanCandidateMerger.staleAlarm(for: candidate, in: [alarm])
+        XCTAssertEqual(result?.name, "Old Location")
+    }
+
+    func test_noMatchingAlarm_returnsNil() {
+        let candidate = makeCandidate(id: "evt-1")
+        let alarm = NapAlarm(name: "Unrelated", latitude: 1, longitude: 1, calendarEventID: "evt-2")
+        XCTAssertNil(CalendarScanCandidateMerger.staleAlarm(for: candidate, in: [alarm]))
+    }
+
+    func test_ordinaryManuallyCreatedAlarms_areIgnored() {
+        // Alarms not created via Calendar Scanning have calendarEventID == nil
+        // and must never be matched, even against a malformed/empty candidate id.
+        let candidate = makeCandidate(id: "evt-1")
+        let manualAlarm = NapAlarm(name: "Manual Alarm", latitude: 1, longitude: 1)
+        XCTAssertNil(manualAlarm.calendarEventID)
+        XCTAssertNil(CalendarScanCandidateMerger.staleAlarm(for: candidate, in: [manualAlarm]))
+    }
+
+    func test_multipleAlarms_picksTheOneMatchingThisEvent() {
+        let candidate = makeCandidate(id: "evt-2")
+        let other = NapAlarm(name: "Other Event", latitude: 1, longitude: 1, calendarEventID: "evt-1")
+        let match = NapAlarm(name: "Right Event", latitude: 2, longitude: 2, calendarEventID: "evt-2")
+        let manual = NapAlarm(name: "Manual", latitude: 3, longitude: 3)
+        let result = CalendarScanCandidateMerger.staleAlarm(for: candidate, in: [other, match, manual])
+        XCTAssertEqual(result?.name, "Right Event")
+    }
+
+    func test_emptyAlarmList_returnsNil() {
+        let candidate = makeCandidate(id: "evt-1")
+        XCTAssertNil(CalendarScanCandidateMerger.staleAlarm(for: candidate, in: []))
+    }
+}
+
 // MARK: - CalendarScanCandidateMerger.applyDecision
 
 final class CalendarScanCandidateMergerApplyDecisionTests: XCTestCase {
@@ -255,5 +303,26 @@ final class CalendarScanCandidateMergerApplyDecisionTests: XCTestCase {
 final class CalendarScanBackgroundTaskIdentifierTests: XCTestCase {
     func test_identifier_isStable() {
         XCTAssertEqual(CalendarScanBackgroundTask.identifier, "com.rmbartis.GeoNap.calendarScanRefresh")
+    }
+}
+
+// MARK: - Notification tap deep link identifier stability
+//
+// Regression guard for the notification-tap deep link (Bob, 2026-07-03):
+// CalendarScanNotifier posts the "new trips found" notification under
+// `requestIdentifier`, and CalendarScanNotificationDelegate compares an
+// incoming tap's identifier against that same constant to decide whether to
+// post `.calendarScanReviewRequested`. A silent rename on either side would
+// break the deep link with no compiler error and no visible symptom besides
+// "tapping the notification does nothing."
+final class CalendarScanNotifierIdentifierTests: XCTestCase {
+    func test_requestIdentifier_isStable() {
+        XCTAssertEqual(CalendarScanNotifier.requestIdentifier, "com.rmbartis.GeoNap.calendarScanNewTrips")
+    }
+}
+
+final class CalendarScanReviewRequestedNotificationNameTests: XCTestCase {
+    func test_notificationName_isStable() {
+        XCTAssertEqual(Notification.Name.calendarScanReviewRequested.rawValue, "com.rmbartis.GeoNap.calendarScanReviewRequested")
     }
 }

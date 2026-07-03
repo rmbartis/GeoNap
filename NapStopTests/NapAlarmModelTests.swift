@@ -78,6 +78,23 @@ final class NapAlarmModelTests: XCTestCase {
         XCTAssertEqual(alarm.note,        "Don't miss check-in")
     }
 
+    // MARK: - Calendar Scanning provenance (calendarEventID)
+
+    func test_calendarEventID_defaultsToNil_forOrdinaryAlarms() {
+        let alarm = NapAlarm(name: "Test", latitude: 40.0, longitude: -74.0)
+        XCTAssertNil(alarm.calendarEventID)
+    }
+
+    func test_calendarEventID_isRetained_whenSetAtInit() {
+        let alarm = NapAlarm(
+            name: "Flight to YYZ",
+            latitude: 43.6777,
+            longitude: -79.6248,
+            calendarEventID: "EKEVENT-abc123"
+        )
+        XCTAssertEqual(alarm.calendarEventID, "EKEVENT-abc123")
+    }
+
     // MARK: - Equatable
     func test_equalityBasedOnID() {
         let id = UUID()
