@@ -3,6 +3,7 @@
 //   • CalendarScanCandidateMerger.mergeScanResults(found:existingPending:handled:)
 //   • CalendarScanCandidateMerger.applyDecision(_:to:pending:handled:)
 //   • CalendarScanCandidateMerger.staleAlarm(for:in:) — stale-alarm-on-re-add fix (2026-07-03)
+//   • CalendarScanCandidateMerger.reconcileHandled(_:existingAlarmEventIDs:) — deleted-alarm re-offer fix (2026-07-03)
 //   • CalendarCandidateLocationSnapshot / CalendarScanHandledRecord Codable round-trip
 //   • CalendarScanBackgroundTask.identifier / CalendarScanNotifier.requestIdentifier /
 //     Notification.Name.calendarScanReviewRequested — cross-file identifier stability guards
@@ -254,6 +255,90 @@ final class CalendarScanCandidateMergerStaleAlarmTests: XCTestCase {
     func test_emptyAlarmList_returnsNil() {
         let candidate = makeCandidate(id: "evt-1")
         XCTAssertNil(CalendarScanCandidateMerger.staleAlarm(for: candidate, in: []))
+    }
+}
+
+// MARK: - CalendarScanCandidateMerger.reconcileHandled
+
+/// Regression guard for the "deleted alarm's event never re-offered" bug Bob
+/// reported 2026-07-03: an "added" handled record must be cleared once its
+/// alarm no longer exists, so the next scan (manual or automatic) treats the
+/// event as new again instead of leaving it silently suppressed forever.
+final class CalendarScanCandidateMergerReconcileHandledTests: XCTestCase {
+
+    func test_addedRecordWithExistingAlarm_isKept() {
+        let handled: [String: CalendarScanHandledRecord] = [
+            "evt-1": CalendarScanHandledRecord(action: .added, snapshot: CalendarCandidateLocationSnapshot(locationTitle: "X", latitude: 1, longitude: 1))
+        ]
+        let result = CalendarScanCandidateMerger.reconcileHandled(handled, existingAlarmEventIDs: ["evt-1"])
+        XCTAssertNotNil(result["evt-1"])
+    }
+
+    func test_addedRecordWithDeletedAlarm_isRemoved() {
+        let handled: [String: CalendarScanHandledRecord] = [
+            "evt-1": CalendarScanHandledRecord(action: .added, snapshot: CalendarCandidateLocationSnapshot(locationTitle: "X", latitude: 1, longitude: 1))
+        ]
+        let result = CalendarScanCandidateMerger.reconcileHandled(handled, existingAlarmEventIDs: [])
+        XCTAssertNil(result["evt-1"], "The alarm for this event no longer exists — it should be eligible for re-offer")
+    }
+
+    func test_declinedRecord_isNeverRemoved_regardlessOfAlarmExistence() {
+        // Declines were never tied to any alarm, so alarm-existence is irrelevant to them.
+        let handled: [String: CalendarScanHandledRecord] = [
+            "evt-1": CalendarScanHandledRecord(action: .declined, snapshot: CalendarCandidateLocationSnapshot(locationTitle: "X", latitude: 1, longitude: 1))
+        ]
+        let result = CalendarScanCandidateMerger.reconcileHandled(handled, existingAlarmEventIDs: [])
+        XCTAssertNotNil(result["evt-1"])
+    }
+
+    func test_mixedRecords_onlyStaleAddedRecordsAreRemoved() {
+        let handled: [String: CalendarScanHandledRecord] = [
+            "kept-added":  CalendarScanHandledRecord(action: .added,    snapshot: CalendarCandidateLocationSnapshot(locationTitle: "A", latitude: 1, longitude: 1)),
+            "stale-added": CalendarScanHandledRecord(action: .added,    snapshot: CalendarCandidateLocationSnapshot(locationTitle: "B", latitude: 2, longitude: 2)),
+            "declined":    CalendarScanHandledRecord(action: .declined, snapshot: CalendarCandidateLocationSnapshot(locationTitle: "C", latitude: 3, longitude: 3)),
+        ]
+        let result = CalendarScanCandidateMerger.reconcileHandled(handled, existingAlarmEventIDs: ["kept-added"])
+        XCTAssertEqual(Set(result.keys), ["kept-added", "declined"])
+    }
+
+    func test_emptyHandled_returnsEmpty() {
+        XCTAssertTrue(CalendarScanCandidateMerger.reconcileHandled([:], existingAlarmEventIDs: ["evt-1"]).isEmpty)
+    }
+
+    func test_emptyExistingAlarms_removesAllAddedRecords() {
+        let handled: [String: CalendarScanHandledRecord] = [
+            "a": CalendarScanHandledRecord(action: .added, snapshot: CalendarCandidateLocationSnapshot(locationTitle: "A", latitude: 1, longitude: 1)),
+            "b": CalendarScanHandledRecord(action: .added, snapshot: CalendarCandidateLocationSnapshot(locationTitle: "B", latitude: 2, longitude: 2)),
+        ]
+        XCTAssertTrue(CalendarScanCandidateMerger.reconcileHandled(handled, existingAlarmEventIDs: []).isEmpty)
+    }
+
+    /// Integration-style test at the pure-logic level: reconciling a deleted
+    /// alarm's record, then feeding the result into mergeScanResults, should
+    /// re-surface the event as newly-pending — exactly what a subsequent
+    /// scan (manual or automatic) needs to do end-to-end.
+    func test_reconciledThenMerged_reOffersTheDeletedAlarmsEvent() {
+        let candidate = makeCandidate(id: "evt-1", locationTitle: "Union Station")
+        let handled: [String: CalendarScanHandledRecord] = [
+            "evt-1": CalendarScanHandledRecord(action: .added, snapshot: CalendarCandidateLocationSnapshot(candidate: candidate))
+        ]
+        let reconciled = CalendarScanCandidateMerger.reconcileHandled(handled, existingAlarmEventIDs: [])
+        let result = CalendarScanCandidateMerger.mergeScanResults(found: [candidate], existingPending: [], handled: reconciled)
+        XCTAssertEqual(result.pending.map(\.id), ["evt-1"])
+        XCTAssertEqual(result.newlyPendingIDs, ["evt-1"], "Should be treated as new again, same as a never-before-seen event")
+    }
+
+    /// Companion case: if the alarm still exists, reconciliation must be a
+    /// no-op and the event should stay suppressed as "already handled" —
+    /// guards against reconcileHandled over-clearing.
+    func test_reconciledThenMerged_stillSuppressesWhenAlarmStillExists() {
+        let candidate = makeCandidate(id: "evt-1", locationTitle: "Union Station")
+        let handled: [String: CalendarScanHandledRecord] = [
+            "evt-1": CalendarScanHandledRecord(action: .added, snapshot: CalendarCandidateLocationSnapshot(candidate: candidate))
+        ]
+        let reconciled = CalendarScanCandidateMerger.reconcileHandled(handled, existingAlarmEventIDs: ["evt-1"])
+        let result = CalendarScanCandidateMerger.mergeScanResults(found: [candidate], existingPending: [], handled: reconciled)
+        XCTAssertTrue(result.pending.isEmpty, "Alarm still exists — the event must stay suppressed")
     }
 }
 

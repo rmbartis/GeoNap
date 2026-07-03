@@ -26,6 +26,7 @@
 
 import Foundation
 import BackgroundTasks
+import SwiftData
 
 enum CalendarScanBackgroundTask {
 
@@ -104,7 +105,14 @@ enum CalendarScanBackgroundTask {
         let found = await service.scanForCandidates(enabledCalendarIDs: enabledIDs, lookaheadDays: lookaheadDays)
 
         let existingPending = CalendarScanCandidateStore.loadPending()
-        let handled = CalendarScanCandidateStore.loadHandled()
+        let rawHandled = CalendarScanCandidateStore.loadHandled()
+        // Same reconciliation as the manual "Scan Now" path (see
+        // CalendarScanSettingsView.runScanNow) — drop "added" records whose
+        // alarm was since deleted so that event can be re-offered. This runs
+        // outside the main app scene, with no AlarmManager instance to ask,
+        // so it fetches alarms via its own ModelContainer (Bob, 2026-07-03).
+        let existingAlarmEventIDs = existingCalendarEventIDs()
+        let handled = CalendarScanCandidateMerger.reconcileHandled(rawHandled, existingAlarmEventIDs: existingAlarmEventIDs)
         let result = CalendarScanCandidateMerger.mergeScanResults(found: found, existingPending: existingPending, handled: handled)
 
         CalendarScanCandidateStore.savePending(result.pending)
@@ -115,6 +123,25 @@ enum CalendarScanBackgroundTask {
         guard !result.newlyPendingIDs.isEmpty,
               UserDefaults.standard.bool(forKey: AppStorageKey.calendarScanNotifyOnResults) else { return }
         await CalendarScanNotifier.postNewTripsNotification(count: result.newlyPendingIDs.count, bundle: LanguageManager.shared.currentBundle)
+    }
+
+    /// The set of `calendarEventID` values currently in use by any saved
+    /// alarm. Opens its own ModelContainer against the same CloudKit-backed
+    /// store NapStopApp uses (via IntentModelContainer, the same helper
+    /// AppIntents/Siri Shortcuts use for the same "running outside the main
+    /// scene" reason) rather than reaching for a live AlarmManager, which
+    /// doesn't exist in a BGAppRefreshTask context.
+    @MainActor
+    private static func existingCalendarEventIDs() -> Set<String> {
+        do {
+            let container = try IntentModelContainer.make()
+            let context = ModelContext(container)
+            let alarms = try context.fetch(FetchDescriptor<NapAlarm>())
+            return Set(alarms.compactMap(\.calendarEventID))
+        } catch {
+            DebugLogger.shared.log("Background calendar scan: failed to fetch existing alarms for handled-reconciliation: \(error.localizedDescription)", category: "CalendarScan")
+            return []
+        }
     }
 
     /// Runs the exact same scan/merge/persist/notify pipeline as a real

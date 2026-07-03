@@ -194,7 +194,13 @@ struct CalendarScanSettingsView: View {
                 lookaheadDays: lookaheadDays
             )
             let existingPending = CalendarScanCandidateStore.loadPending()
-            let handled = CalendarScanCandidateStore.loadHandled()
+            let rawHandled = CalendarScanCandidateStore.loadHandled()
+            // Drop "added" records whose alarm was since deleted (from the
+            // normal alarm list, not this review sheet), so that event is
+            // eligible to be re-offered instead of staying silently
+            // suppressed forever (Bob, 2026-07-03).
+            let existingAlarmEventIDs = Set(alarmManager.alarms.compactMap(\.calendarEventID))
+            let handled = CalendarScanCandidateMerger.reconcileHandled(rawHandled, existingAlarmEventIDs: existingAlarmEventIDs)
             let result = CalendarScanCandidateMerger.mergeScanResults(found: found, existingPending: existingPending, handled: handled)
             CalendarScanCandidateStore.savePending(result.pending)
             CalendarScanCandidateStore.saveHandled(result.handled)

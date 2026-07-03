@@ -120,6 +120,25 @@ enum CalendarScanCandidateMerger {
         alarms.first { $0.calendarEventID == candidate.id }
     }
 
+    /// Drops "added" handled records whose alarm no longer exists — e.g. the
+    /// user deleted the alarm from the normal alarm list rather than
+    /// declining it here. Without this, a deleted alarm's source event stays
+    /// marked "handled" forever and is never re-offered by a future scan,
+    /// even though there's no longer any alarm for it. "declined" records
+    /// are left untouched — a decline was never tied to an alarm's existence
+    /// in the first place. Pure — takes the current alarms' calendarEventIDs
+    /// as a parameter, so callers (the manual scan and the background task,
+    /// which have no shared way to reach an alarm list) each supply their
+    /// own (Bob, 2026-07-03).
+    static func reconcileHandled(
+        _ handled: [String: CalendarScanHandledRecord],
+        existingAlarmEventIDs: Set<String>
+    ) -> [String: CalendarScanHandledRecord] {
+        handled.filter { id, record in
+            record.action != .added || existingAlarmEventIDs.contains(id)
+        }
+    }
+
     /// Records a user decision (add or decline) for a candidate: removes it
     /// from `pending` and stores its current location snapshot in `handled`
     /// so it won't be re-offered unless the location later changes.
