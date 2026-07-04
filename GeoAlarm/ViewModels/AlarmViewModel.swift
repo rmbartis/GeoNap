@@ -15,6 +15,9 @@ final class AlarmViewModel: ObservableObject {
     @Published var radius: Double = 200
     @Published var triggerMode: TriggerMode = .distance
     @Published var leadTimeMinutes: Int = 5
+    /// Opt-in, per-alarm. Only meaningful when `triggerMode == .time`. See
+    /// docs/dead-reckoning-design.md.
+    @Published var deadReckoningEnabled: Bool = false
     @Published var regionEvent: RegionEvent = .onEntry
     @Published var isRepeating: Bool = false
 
@@ -114,6 +117,7 @@ final class AlarmViewModel: ObservableObject {
         radius            = alarm.radius
         triggerMode       = alarm.triggerMode
         leadTimeMinutes   = alarm.leadTimeMinutes
+        deadReckoningEnabled = alarm.deadReckoningEnabled
         regionEvent       = alarm.regionEvent
         isRepeating       = alarm.isRepeating
         activeDays        = alarm.activeDays
@@ -169,6 +173,7 @@ final class AlarmViewModel: ObservableObject {
             alarm.radius            = radius
             alarm.triggerMode       = triggerMode
             alarm.leadTimeMinutes   = leadTimeMinutes
+            alarm.deadReckoningEnabled = deadReckoningEnabled
             alarm.regionEvent       = regionEvent
             alarm.note              = note
             alarm.isRepeating       = isRepeating
@@ -201,7 +206,8 @@ final class AlarmViewModel: ObservableObject {
             activeDays: activeDays,
             notifyContact: notifyContact,
             notifyContactsJSON: notifyContact ? notifyContactList.toJSON() : "",
-            notificationSound: notificationSound
+            notificationSound: notificationSound,
+            deadReckoningEnabled: deadReckoningEnabled
         )
     }
 
@@ -225,6 +231,7 @@ final class AlarmViewModel: ObservableObject {
         radius            = 200
         triggerMode       = .distance
         leadTimeMinutes   = 5
+        deadReckoningEnabled = false
         regionEvent       = .onEntry
         isRepeating       = false
         activeDays        = Set(1...7)

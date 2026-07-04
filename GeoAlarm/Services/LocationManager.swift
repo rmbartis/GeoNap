@@ -18,7 +18,12 @@ final class LocationManager: NSObject, ObservableObject {
     /// True when location hardware is unavailable — e.g. airplane mode with
     /// GPS disabled.  Distinct from authorization denial: the user has granted
     /// permission but the OS can't produce a fix right now.
-    @Published var isLocationUnavailable: Bool = false
+    @Published var isLocationUnavailable: Bool = false {
+        didSet {
+            guard oldValue != isLocationUnavailable else { return }
+            onLocationUnavailableChanged?(isLocationUnavailable)
+        }
+    }
 
     // MARK: - Internals
     private let manager: CLLocationManager
@@ -30,6 +35,11 @@ final class LocationManager: NSObject, ObservableObject {
     /// Closure called on every location fix. Set by AlarmManager to feed the
     /// ETA engine while a time-based alarm is in its final-approach window.
     var onLocationUpdate: ((CLLocation) -> Void)?
+
+    /// Closure called on every true→false / false→true transition of
+    /// `isLocationUnavailable`. Set by AlarmManager to start/stop dead-reckoning
+    /// bridging for signal-loss gaps (docs/dead-reckoning-design.md).
+    var onLocationUnavailableChanged: ((Bool) -> Void)?
 
     // MARK: - Init
 

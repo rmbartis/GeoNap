@@ -96,6 +96,46 @@ final class NapAlarmModelTests: XCTestCase {
         XCTAssertEqual(alarm.calendarEventID, "EKEVENT-abc123")
     }
 
+    // MARK: - Dead reckoning (docs/dead-reckoning-design.md)
+
+    func test_deadReckoningEnabled_defaultsToFalse() {
+        let alarm = NapAlarm(name: "Test", latitude: 40.0, longitude: -74.0)
+        XCTAssertFalse(alarm.deadReckoningEnabled,
+            "Must default to false so existing/migrated alarms are unaffected — opt-in only")
+    }
+
+    func test_deadReckoningEnabled_roundTripsAtInit() {
+        let alarm = NapAlarm(name: "Test", latitude: 40.0, longitude: -74.0,
+                              triggerMode: .time, leadTimeMinutes: 5,
+                              deadReckoningEnabled: true)
+        XCTAssertTrue(alarm.deadReckoningEnabled)
+    }
+
+    func test_deadReckoningGracePeriod_scalesWithLeadTime() {
+        // fraction 0.25 of the lead time, within [30, 180]s.
+        // 5 min lead → 5*60*0.25 = 75s.
+        XCTAssertEqual(NapAlarm.deadReckoningGracePeriod(leadTimeMinutes: 5), 75, accuracy: 0.01)
+        // 10 min lead → 10*60*0.25 = 150s.
+        XCTAssertEqual(NapAlarm.deadReckoningGracePeriod(leadTimeMinutes: 10), 150, accuracy: 0.01)
+    }
+
+    func test_deadReckoningGracePeriod_clampsToMinFloor() {
+        // 1 min lead → raw = 1*60*0.25 = 15s, below the 30s floor.
+        XCTAssertEqual(NapAlarm.deadReckoningGracePeriod(leadTimeMinutes: 1), 30, accuracy: 0.01)
+    }
+
+    func test_deadReckoningGracePeriod_clampsToMaxCeiling() {
+        // 60 min lead → raw = 60*60*0.25 = 900s, capped at 180s.
+        XCTAssertEqual(NapAlarm.deadReckoningGracePeriod(leadTimeMinutes: 60), 180, accuracy: 0.01)
+    }
+
+    func test_deadReckoningGracePeriod_respectsCustomBounds() {
+        XCTAssertEqual(
+            NapAlarm.deadReckoningGracePeriod(leadTimeMinutes: 5, fraction: 0.5, minSeconds: 10, maxSeconds: 60),
+            60, accuracy: 0.01,
+            "5 min * 0.5 * 60 = 150s, clamped to the custom 60s ceiling")
+    }
+
     // MARK: - Equatable
     func test_equalityBasedOnID() {
         let id = UUID()

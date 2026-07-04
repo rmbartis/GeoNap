@@ -93,6 +93,25 @@ struct ETAEstimator {
         return eta <= Double(leadTimeMinutes) * 60
     }
 
+    /// Rate (m/s) at which distance to `destination` is shrinking, based on the
+    /// last two accepted samples. Positive = closing in, negative = moving
+    /// away, nil when fewer than two samples are available. Deliberately does
+    /// NOT use `CLLocation.course` (frequently invalid at low speed / on many
+    /// devices) — this is a scalar closing-rate model, not true heading-based
+    /// dead reckoning. Snapshotted at the start of a signal-loss gap to drive
+    /// bounded extrapolation (docs/dead-reckoning-design.md §5/§8).
+    func closingRate(to destination: CLLocationCoordinate2D) -> Double? {
+        guard samples.count >= 2 else { return nil }
+        let a = samples[samples.count - 2]
+        let b = samples[samples.count - 1]
+        let dt = b.t.timeIntervalSince(a.t)
+        guard dt > 0 else { return nil }
+        let dest = CLLocation(latitude: destination.latitude, longitude: destination.longitude)
+        let distA = a.loc.distance(from: dest)
+        let distB = b.loc.distance(from: dest)
+        return (distA - distB) / dt
+    }
+
     // MARK: - Internal
 
     private mutating func prune(now: Date) {

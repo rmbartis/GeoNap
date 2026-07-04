@@ -13,6 +13,7 @@ struct HelpView: View {
         ("Typical use cases",                   "help.body.useCases"),
         ("Creating an alarm",                   "help.body.creatingAlarm"),
         ("Trigger: distance or time",           "help.body.timeBased"),
+        ("Dead Reckoning on Signal Loss",       "help.body.deadReckoning"),
         ("Radius",                              "help.body.radius"),
         ("Transit Alarms",                      "help.body.transitAlarms"),
         ("Calendar Scanning",                   "help.body.calendarScanning"),
@@ -52,6 +53,8 @@ struct HelpView: View {
                             titleKey: "Creating an alarm",    bodyKey: "help.body.creatingAlarm")
                 helpSection(symbol: "timer",        color: .mint,
                             titleKey: "Trigger: distance or time", bodyKey: "help.body.timeBased")
+                helpSection(symbol: "location.viewfinder", color: .cyan,
+                            titleKey: "Dead Reckoning on Signal Loss", bodyKey: "help.body.deadReckoning")
                 helpSection(symbol: "arrow.up.left.and.arrow.down.right", color: .teal,
                             titleKey: "Radius",               bodyKey: "help.body.radius")
                 helpSection(symbol: "tram.fill",    color: .teal,

@@ -79,6 +79,57 @@ final class ETAEstimatorTests: XCTestCase {
                        "Average of derived ~10 m/s and the initial 0 should be ~5 m/s")
     }
 
+    // MARK: - closingRate(to:) — dead reckoning input (docs/dead-reckoning-design.md)
+
+    func test_closingRate_nilWithFewerThanTwoSamples() {
+        var e = ETAEstimator()
+        XCTAssertNil(e.closingRate(to: dest), "No samples at all → nil")
+        e.add(fix(start.latitude, start.longitude, speed: 10, accuracy: 5, at: Date()))
+        XCTAssertNil(e.closingRate(to: dest), "A single sample has no delta to compute a rate from")
+    }
+
+    func test_closingRate_positiveWhenClosingIn() {
+        var e = ETAEstimator()
+        let t = Date()
+        // 1000 m out, then 900 m out 5 s later → closing at 20 m/s.
+        e.add(fix(40.0000, -74.0, speed: 20, accuracy: 5, at: t))
+        e.add(fix(40.0009, -74.0, speed: 20, accuracy: 5, at: t.addingTimeInterval(5)))
+        // ~1000 m -> ~900 m over 5 s ≈ 20 m/s closing.
+        let dest2 = CLLocationCoordinate2D(latitude: 40.0090, longitude: -74.0)
+        XCTAssertEqual(e.closingRate(to: dest2) ?? 0, 20, accuracy: 2)
+    }
+
+    func test_closingRate_negativeWhenMovingAway() {
+        var e = ETAEstimator()
+        let t = Date()
+        // Moving away from `dest`: starts exactly at `dest`, then 100 m south of it
+        // (i.e. toward `start`) 10 s later — distance to `dest` is increasing.
+        e.add(fix(40.0090, -74.0, speed: 10, accuracy: 5, at: t))
+        e.add(fix(40.0081, -74.0, speed: 10, accuracy: 5, at: t.addingTimeInterval(10)))
+        XCTAssertLessThan(e.closingRate(to: dest) ?? 0, 0,
+            "Distance to `dest` is increasing — closingRate must be negative")
+    }
+
+    func test_closingRate_doesNotUseCourse() {
+        // Regression guard: closingRate must be derived purely from the
+        // position/time delta between the last two samples, never from
+        // CLLocation.course (unreliable at low speed / on many devices —
+        // docs/dead-reckoning-design.md). A wildly wrong `course` value must
+        // not perturb the result.
+        var e = ETAEstimator()
+        let t = Date()
+        let a = CLLocation(coordinate: CLLocationCoordinate2D(latitude: 40.0000, longitude: -74.0),
+                            altitude: 0, horizontalAccuracy: 5, verticalAccuracy: 5,
+                            course: 270, speed: 20, timestamp: t)   // course points the "wrong" way
+        let b = CLLocation(coordinate: CLLocationCoordinate2D(latitude: 40.0009, longitude: -74.0),
+                            altitude: 0, horizontalAccuracy: 5, verticalAccuracy: 5,
+                            course: 45, speed: 20, timestamp: t.addingTimeInterval(5))
+        e.add(a); e.add(b)
+        let dest2 = CLLocationCoordinate2D(latitude: 40.0090, longitude: -74.0)
+        XCTAssertEqual(e.closingRate(to: dest2) ?? 0, 20, accuracy: 2,
+            "closingRate must reflect actual position deltas regardless of the (bogus) course values")
+    }
+
     // MARK: - NapAlarm trigger fields
 
     func test_triggerMode_defaultsToDistance() {

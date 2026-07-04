@@ -67,6 +67,14 @@ final class NapAlarm {
     /// Minutes before estimated arrival to fire, when `triggerMode == .time`.
     var leadTimeMinutes: Int = 5
 
+    /// Opt-in, per-alarm. Only meaningful when `triggerMode == .time`. When
+    /// continuous GPS drops out mid-approach, bridges a bounded grace period by
+    /// extrapolating from the last known closing rate instead of immediately
+    /// falling back to the inner proximity ring. Additive + defaulted so
+    /// existing alarms migrate as `false` (unchanged behavior). See
+    /// docs/dead-reckoning-design.md.
+    var deadReckoningEnabled: Bool = false
+
     // Enums stored as raw strings for SwiftData / CloudKit compatibility
     var regionEventRaw: String = RegionEvent.onEntry.rawValue
     var stateRaw: String = AlarmState.active.rawValue
@@ -233,6 +241,26 @@ final class NapAlarm {
         return min(max(raw, minRadius), maxRadius)
     }
 
+    /// Dead-reckoning grace period (seconds) — how long a signal-loss gap will
+    /// be bridged by extrapolation before giving up and reverting silently to
+    /// the inner proximity ring. Scales with the requested lead time (a longer
+    /// lead time implies a longer plausible final-approach phase, and thus a
+    /// plausibly longer dead zone), but is clamped to a sane range regardless:
+    /// never so short it can't bridge a typical brief tunnel, never so long
+    /// that a stale extrapolation is trusted well past the point it's useful.
+    /// Resolved per docs/dead-reckoning-design.md §14 (open question #1).
+    /// - Parameters:
+    ///   - fraction: portion of the lead time (in seconds) used as the cap.
+    ///   - minSeconds: floor, regardless of how short the lead time is.
+    ///   - maxSeconds: ceiling, regardless of how long the lead time is.
+    static func deadReckoningGracePeriod(leadTimeMinutes: Int,
+                                          fraction: Double = 0.25,
+                                          minSeconds: TimeInterval = 30,
+                                          maxSeconds: TimeInterval = 180) -> TimeInterval {
+        let raw = Double(leadTimeMinutes) * 60 * fraction
+        return min(max(raw, minSeconds), maxSeconds)
+    }
+
     var state: AlarmState {
         get { AlarmState(rawValue: stateRaw) ?? .active }
         set { stateRaw = newValue.rawValue }
@@ -341,7 +369,8 @@ final class NapAlarm {
         transitStopName: String? = nil,
         transitRouteType: GTFSRouteType? = nil,
         notificationSound: NotificationSound = .default,
-        calendarEventID: String? = nil
+        calendarEventID: String? = nil,
+        deadReckoningEnabled: Bool = false
     ) {
         self.id = id
         self.name = name
@@ -371,6 +400,7 @@ final class NapAlarm {
         self.transitRouteTypeRaw = transitRouteType.map { String($0.rawValue) }
         self.soundNameRaw = notificationSound.rawValue
         self.calendarEventID = calendarEventID
+        self.deadReckoningEnabled = deadReckoningEnabled
     }
 }
 

@@ -130,6 +130,38 @@ final class AlarmViewModelFieldTests: XCTestCase {
         XCTAssertNotNil(sut.validationError)
     }
 
+    // MARK: - buildAlarm: deadReckoningEnabled (docs/dead-reckoning-design.md)
+
+    func test_buildAlarm_preserves_deadReckoningEnabled_true() {
+        sut.triggerMode = .time
+        sut.deadReckoningEnabled = true
+        let alarm = sut.buildAlarm()
+        XCTAssertTrue(alarm?.deadReckoningEnabled ?? false,
+                      "buildAlarm must carry deadReckoningEnabled=true into the new NapAlarm")
+    }
+
+    func test_buildAlarm_preserves_deadReckoningEnabled_false() {
+        sut.triggerMode = .time
+        sut.deadReckoningEnabled = false
+        let alarm = sut.buildAlarm()
+        XCTAssertFalse(alarm?.deadReckoningEnabled ?? true)
+    }
+
+    func test_buildAlarm_editingExisting_updatesDeadReckoningEnabled() {
+        // The existing-alarm mutation branch of buildAlarm() is a separate
+        // code path from the new-NapAlarm branch above — cover it too.
+        let existing = NapAlarm(name: "Test Stop", latitude: 40.7527, longitude: -73.9772,
+                                 triggerMode: .time, leadTimeMinutes: 5,
+                                 deadReckoningEnabled: false)
+        sut.load(alarm: existing)
+        sut.deadReckoningEnabled = true
+
+        let alarm = sut.buildAlarm()
+
+        XCTAssertTrue(alarm?.deadReckoningEnabled ?? false,
+                      "Editing an existing alarm must update deadReckoningEnabled in place")
+    }
+
     // MARK: - buildAlarm: notificationSound
 
     func test_buildAlarm_preserves_notificationSound_critical() {
@@ -217,6 +249,16 @@ final class AlarmViewModelFieldTests: XCTestCase {
         XCTAssertEqual(sut.notifyContactList.first?.value, "+15550001111")
     }
 
+    // MARK: - load: deadReckoningEnabled
+
+    func test_load_populatesDeadReckoningEnabled() {
+        let existing = NapAlarm(name: "A", latitude: 40.0, longitude: -74.0,
+                                 triggerMode: .time, leadTimeMinutes: 5,
+                                 deadReckoningEnabled: true)
+        sut.load(alarm: existing)
+        XCTAssertTrue(sut.deadReckoningEnabled)
+    }
+
     // MARK: - reset: completeness
 
     func test_reset_clearsIsRepeating() {
@@ -249,6 +291,13 @@ final class AlarmViewModelFieldTests: XCTestCase {
         sut.reset()
         XCTAssertFalse(sut.notifyContact)
         XCTAssertTrue(sut.notifyContactList.isEmpty)
+    }
+
+    func test_reset_clearsDeadReckoningEnabled() {
+        sut.deadReckoningEnabled = true
+        sut.reset()
+        XCTAssertFalse(sut.deadReckoningEnabled,
+                       "reset() must return deadReckoningEnabled to its off-by-default state")
     }
 
     func test_reset_clearsValidationError() {

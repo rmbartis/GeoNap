@@ -14,6 +14,7 @@ struct AddAlarmView: View {
     @StateObject private var searchService = LocationSearchService()
     @State private var showContactPicker  = false
     @State private var showManualEntry    = false
+    @State private var showDeadReckoningInfo = false
 
     /// Runs the new-alarm initialisation (reset + current-location default) only
     /// once, so onAppear firing again after a sub-sheet doesn't wipe the form.
@@ -337,6 +338,30 @@ struct AddAlarmView: View {
                     Text("trigger.leadTime.help", bundle: bundle)
                         .font(.caption)
                         .foregroundColor(.secondary)
+
+                    Toggle(isOn: $viewModel.deadReckoningEnabled) {
+                        HStack(alignment: .top, spacing: 6) {
+                            VStack(alignment: .leading, spacing: 3) {
+                                Text("Dead Reckoning on Signal Loss", bundle: bundle)
+                                    .font(.body)
+                                Text("deadReckoning.toggle.subtitle", bundle: bundle)
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
+                            Button {
+                                showDeadReckoningInfo = true
+                            } label: {
+                                Image(systemName: "info.circle")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                            .buttonStyle(.plain)
+                            .popover(isPresented: $showDeadReckoningInfo, arrowEdge: .top) {
+                                DeadReckoningInfoSheet()
+                                    .presentationCompactAdaptation(.popover)
+                            }
+                        }
+                    }
                 }
             } header: {
                 Text("Trigger", bundle: bundle)
@@ -816,6 +841,37 @@ struct AddAlarmView: View {
     }
     .environmentObject(AlarmManager())
     .environmentObject(LocationManager())
+}
+
+// MARK: - Dead Reckoning info popover
+
+/// Explains the per-alarm "Dead Reckoning on Signal Loss" toggle in place, so a
+/// user can understand what it does and why it's off by default without
+/// leaving the creation screen. See docs/dead-reckoning-design.md.
+private struct DeadReckoningInfoSheet: View {
+    @Environment(\.languageBundle) private var bundle
+
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 12) {
+                HStack(spacing: 8) {
+                    Image(systemName: "info.circle.fill")
+                        .foregroundStyle(.blue)
+                        .font(.title3)
+                    Text("Dead Reckoning on Signal Loss", bundle: bundle)
+                        .font(.headline)
+                }
+                Text("deadReckoning.info.body", bundle: bundle)
+                    .font(.callout)
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            .padding(20)
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .frame(minWidth: 280, idealWidth: 320, maxWidth: 400,
+               minHeight: 160, idealHeight: 260, maxHeight: 420)
+    }
 }
 
 // MARK: - AddContactManuallySheet

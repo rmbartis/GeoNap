@@ -104,7 +104,8 @@ final class AlarmManager: NSObject, ObservableObject {
                 windowStart: alarm.windowStart, windowEnd: alarm.windowEnd,
                 activeDays: alarm.activeDays,
                 notificationSound: alarm.notificationSound,
-                calendarEventID: alarm.calendarEventID
+                calendarEventID: alarm.calendarEventID,
+                deadReckoningEnabled: alarm.deadReckoningEnabled
             )
             DebugLogger.shared.log("Alarm '\(alarm.name)' inserted as INACTIVE — region monitoring limit reached (\(Self.regionMonitoringLimit))", category: "AlarmManager")
         }
@@ -145,6 +146,7 @@ final class AlarmManager: NSObject, ObservableObject {
         existing.radius            = alarm.radius
         existing.triggerMode       = alarm.triggerMode
         existing.leadTimeMinutes   = alarm.leadTimeMinutes
+        existing.deadReckoningEnabled = alarm.deadReckoningEnabled
         existing.regionEvent       = alarm.regionEvent
         existing.note              = alarm.note
         existing.isRepeating       = alarm.isRepeating
@@ -246,6 +248,12 @@ final class AlarmManager: NSObject, ObservableObject {
         locationManager?.onLocationUpdate = { [weak self] loc in
             self?.handleLocationUpdate(loc)
         }
+        // Dead reckoning (opt-in, per-alarm): bridges brief signal-loss gaps
+        // for alarms with deadReckoningEnabled == true. See
+        // docs/dead-reckoning-design.md.
+        locationManager?.onLocationUnavailableChanged = { [weak self] isUnavailable in
+            self?.handleLocationAvailabilityChanged(isUnavailable)
+        }
     }
 
     // MARK: - Time-based (ETA) tracking
@@ -253,6 +261,30 @@ final class AlarmManager: NSObject, ObservableObject {
     /// Per-alarm ETA estimators, keyed by alarm id. Non-empty only while one or
     /// more time-based alarms are inside their outer warm-up ring (final approach).
     private var etaEstimators: [UUID: ETAEstimator] = [:]
+
+    /// Distinguishes whether a time-based fire came from a live GPS-derived ETA
+    /// or a dead-reckoning extrapolation during a signal-loss gap — logged
+    /// distinctly so an "this fired too early" report is diagnosable.
+    /// (docs/dead-reckoning-design.md)
+    enum TimeBasedFireSource: String { case liveGPS, deadReckoning }
+
+    /// Snapshot taken at the moment a signal-loss gap begins for a dead-reckoning-
+    /// enabled alarm. Extrapolation is a straight scalar projection from this
+    /// snapshot — deliberately NOT re-sampled during the gap (there's nothing to
+    /// re-sample). See docs/dead-reckoning-design.md §5.
+    private struct DeadReckoningSnapshot {
+        let gapStartedAt: Date
+        let lastDistance: CLLocationDistance
+        let closingRate: Double        // m/s; may be negative (moving away)
+        let lastSpeed: CLLocationSpeed
+        let minSpeed: CLLocationSpeed
+        let graceCap: TimeInterval
+    }
+
+    /// Per-alarm dead-reckoning state, populated only while a DR-enabled,
+    /// currently-tracked alarm is bridging an active signal-loss gap.
+    private var deadReckoning: [UUID: DeadReckoningSnapshot] = [:]
+    private var deadReckoningTimers: [UUID: Timer] = [:]
 
     /// Begin continuous-GPS ETA tracking for a time-based alarm whose outer ring
     /// was just entered.
@@ -264,9 +296,121 @@ final class AlarmManager: NSObject, ObservableObject {
     }
 
     private func stopETATracking(_ id: UUID) {
+        // Dead-reckoning bookkeeping must never outlive ETA tracking for this
+        // alarm — clear unconditionally before the early-return below.
+        deadReckoningTimers[id]?.invalidate()
+        deadReckoningTimers[id] = nil
+        deadReckoning[id] = nil
         guard etaEstimators[id] != nil else { return }
         etaEstimators[id] = nil
         if etaEstimators.isEmpty { locationManager?.stopContinuousUpdates() }
+    }
+
+    // MARK: - Dead reckoning (signal-loss bridging)
+
+    /// Reacts to LocationManager.isLocationUnavailable transitions. Internal
+    /// (not private) so the test target can drive it directly — mirrors the
+    /// handleRegionEvent/handleLocationUpdate test-seam convention.
+    func handleLocationAvailabilityChanged(_ isUnavailable: Bool) {
+        if isUnavailable {
+            beginDeadReckoningForTrackedAlarms()
+        } else {
+            // A fresh real fix is either already here or about to arrive via
+            // handleLocationUpdate — normal ETA tracking resumes on its own.
+            // Only the DR bridging state needs to be torn down.
+            clearAllDeadReckoning(reason: "real fix resumed")
+        }
+    }
+
+    /// Starts a bounded dead-reckoning snapshot for every currently-tracked,
+    /// DR-enabled alarm that doesn't already have one in progress. Guarding on
+    /// `deadReckoning[id] == nil` means a repeated/duplicate "unavailable"
+    /// signal can't reset an in-progress gap's clock and extend the grace
+    /// period indefinitely.
+    private func beginDeadReckoningForTrackedAlarms() {
+        for id in Array(etaEstimators.keys) {
+            guard deadReckoning[id] == nil,
+                  let alarm = alarms.first(where: { $0.id == id }),
+                  alarm.deadReckoningEnabled,
+                  let estimator = etaEstimators[id],
+                  let lastLocation = estimator.lastLocation,
+                  let closingRate = estimator.closingRate(to: alarm.coordinate),
+                  let lastSpeed = estimator.averageSpeed
+            else { continue }
+
+            let dest = CLLocation(latitude: alarm.latitude, longitude: alarm.longitude)
+            let snapshot = DeadReckoningSnapshot(
+                gapStartedAt: Date(),
+                lastDistance: lastLocation.distance(from: dest),
+                closingRate: closingRate,
+                lastSpeed: lastSpeed,
+                minSpeed: estimator.minSpeed,
+                graceCap: NapAlarm.deadReckoningGracePeriod(leadTimeMinutes: alarm.leadTimeMinutes)
+            )
+            deadReckoning[id] = snapshot
+            DebugLogger.shared.log("🛰️ Dead reckoning gap started for '\(alarm.name)' — bridging up to \(Int(snapshot.graceCap))s", category: "AlarmManager")
+
+            let timer = Timer.scheduledTimer(withTimeInterval: 5, repeats: true) { [weak self] _ in
+                guard let self else { return }
+                Task { @MainActor in self.evaluateDeadReckoning(for: id, now: Date()) }
+            }
+            deadReckoningTimers[id] = timer
+        }
+    }
+
+    /// Clears dead-reckoning state for every alarm. `isLocationUnavailable` is a
+    /// single, app-wide flag (there's only one CLLocationManager delivering
+    /// fixes), so "signal restored" is inherently a global event — this does
+    /// NOT touch `etaEstimators`; live ETA tracking continues normally.
+    private func clearAllDeadReckoning(reason: String) {
+        guard !deadReckoning.isEmpty else { return }
+        for id in Array(deadReckoning.keys) {
+            deadReckoningTimers[id]?.invalidate()
+            deadReckoningTimers[id] = nil
+            deadReckoning[id] = nil
+        }
+        DebugLogger.shared.log("Dead reckoning cleared for all tracked alarms (\(reason))", category: "AlarmManager")
+    }
+
+    /// Evaluates one dead-reckoning snapshot at `now`: expires it past the grace
+    /// cap (reverting to the geofence backstop), and fires the alarm if the
+    /// extrapolated distance now projects an ETA within the lead time. Injectable
+    /// `now` (mirrors `AddAlarmView.freshLocation`'s pattern) so tests don't
+    /// depend on real wall-clock timing or a live Timer. Internal (not private)
+    /// so the test target can drive it directly without waiting on the 5s ticker.
+    func evaluateDeadReckoning(for id: UUID, now: Date = Date()) {
+        guard let snapshot = deadReckoning[id],
+              let alarm = alarms.first(where: { $0.id == id }) else {
+            deadReckoningTimers[id]?.invalidate()
+            deadReckoningTimers[id] = nil
+            deadReckoning[id] = nil
+            return
+        }
+
+        let elapsed = now.timeIntervalSince(snapshot.gapStartedAt)
+        if elapsed >= snapshot.graceCap {
+            DebugLogger.shared.log("⏱️ Dead reckoning grace period expired for '\(alarm.name)' — reverting to geofence backstop", category: "AlarmManager")
+            deadReckoningTimers[id]?.invalidate()
+            deadReckoningTimers[id] = nil
+            deadReckoning[id] = nil
+            return
+        }
+
+        // Stopped (or below the "moving" threshold) at the moment signal was
+        // lost — extrapolating a fixed closing rate from a near-zero speed is
+        // the worst-case scenario called out in the design doc. Never fire on
+        // dead reckoning alone in that case; wait for a real fix or the
+        // geofence backstop.
+        guard snapshot.lastSpeed >= snapshot.minSpeed else { return }
+
+        guard alarm.isActive, alarm.isWithinWindow() else { return }
+
+        let virtualDistance = max(0, snapshot.lastDistance - snapshot.closingRate * elapsed)
+        let virtualETA = virtualDistance / snapshot.lastSpeed
+
+        if virtualETA <= Double(alarm.leadTimeMinutes) * 60 {
+            fireTimeBased(alarm, eta: virtualETA, source: .deadReckoning)
+        }
     }
 
     /// Feed every fix into the active estimators and fire when ETA ≤ lead time.
@@ -288,13 +432,15 @@ final class AlarmManager: NSObject, ObservableObject {
     }
 
     /// Fire a time-based alarm from the ETA path (mirrors the region-event fire).
-    private func fireTimeBased(_ alarm: NapAlarm, eta: TimeInterval?) {
+    /// `source` distinguishes a live-GPS fire from a dead-reckoning fire for
+    /// diagnostics (docs/dead-reckoning-design.md).
+    private func fireTimeBased(_ alarm: NapAlarm, eta: TimeInterval?, source: TimeBasedFireSource = .liveGPS) {
         alarm.state = .triggered
         alarm.lastTriggeredAt = Date()
         alarm.triggerCount += 1
         let etaStr = eta.map { "\(Int($0))s" } ?? "n/a"
-        CrashReporter.log("Alarm triggered (time-based): \(alarm.name) ETA=\(etaStr)")
-        DebugLogger.shared.log("🔔 Alarm TRIGGERED (time-based): '\(alarm.name)' ETA≈\(etaStr) lead=\(alarm.leadTimeMinutes)m", category: "AlarmManager")
+        CrashReporter.log("Alarm triggered (time-based, \(source.rawValue)): \(alarm.name) ETA=\(etaStr)")
+        DebugLogger.shared.log("🔔 Alarm TRIGGERED (time-based, \(source.rawValue)): '\(alarm.name)' ETA≈\(etaStr) lead=\(alarm.leadTimeMinutes)m", category: "AlarmManager")
         let firingID = alarm.id
         let firingTitle = alarm.name
         let firingSoundName = alarm.notificationSound.alarmKitSoundName
