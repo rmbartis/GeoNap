@@ -314,4 +314,48 @@ enum AppStorageKey {
             calendarScanRefreshIntervalMinutes: CalendarScanRefreshInterval.default.rawValue,
         ])
     }
+
+    // MARK: GTFS Transit Feed Cache
+    // Caching itself is always on, silently, with a fixed 7-day retention —
+    // no opt-in needed to get the basic behavior (Bob, 2026-07-07, correcting
+    // the original 2026-07-06 spec which was misread as "off by default").
+    // The Settings toggle below does NOT turn caching on/off; it only unlocks
+    // a stepper for overriding that fixed 7-day window with a custom value.
+
+    /// Fixed retention window (days) used whenever the user has not turned on
+    /// custom retention. Also the value `gtfsCacheRetentionDays` registers as
+    /// its UserDefaults default, so a fresh install behaves identically to
+    /// "custom retention off" even before this key is ever touched.
+    static let gtfsCacheDefaultRetentionDays = 7
+
+    /// Sentinel for `gtfsCacheRetentionDays` meaning "never expire the cache
+    /// automatically" — the stop past 30 days on the Settings stepper
+    /// (Bob, 2026-07-07: "a final option being Infinite").
+    static let gtfsCacheInfiniteRetention = 9999
+
+    /// Whether the user has opted to override the fixed 7-day default
+    /// retention with their own value via the Settings stepper. Defaults to
+    /// false — caching still happens either way; this only controls whether
+    /// the window is customizable (1–30 days, or "Infinite").
+    static let gtfsCacheCustomRetentionEnabled = "gtfsCacheCustomRetentionEnabled"
+
+    /// User-chosen retention window in days, used only when
+    /// `gtfsCacheCustomRetentionEnabled` is true: 1–30, or
+    /// `gtfsCacheInfiniteRetention` for "never expire". Ignored (fixed at
+    /// `gtfsCacheDefaultRetentionDays`) when custom retention is off.
+    static let gtfsCacheRetentionDays = "gtfsCacheRetentionDays"
+
+    /// Registers the UserDefaults default for `gtfsCacheRetentionDays`
+    /// (`gtfsCacheDefaultRetentionDays`, i.e. 7), so non-View code
+    /// (`GTFSService`, which isn't a SwiftUI View and can't use
+    /// `@AppStorage`) sees the same value the Settings stepper would show
+    /// even before the user has ever touched it. Same rationale as
+    /// `registerCalendarScanDefaults()` above — `@AppStorage`'s default is
+    /// never written back to UserDefaults until first touched. Call once at
+    /// app launch, before anything reads this key.
+    static func registerGTFSCacheDefaults() {
+        UserDefaults.standard.register(defaults: [
+            gtfsCacheRetentionDays: gtfsCacheDefaultRetentionDays,
+        ])
+    }
 }

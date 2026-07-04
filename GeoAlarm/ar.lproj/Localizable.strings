@@ -81,6 +81,16 @@
 "Enable Logging" = "تفعيل التسجيل";
 "Log Cleared" = "تم مسح السجل";
 "The debug log has been cleared. A new session header will be written on the next log entry." = "تم مسح سجل التصحيح. سيتم كتابة ترويسة جلسة جديدة عند الإدخال التالي.";
+
+/* GTFS Transit Feed Cache (Settings) */
+"Transit Feed Cache" = "ذاكرة التخزين المؤقت لبيانات النقل";
+"Customize Cache Duration" = "تخصيص مدة التخزين المؤقت";
+"Infinite" = "غير محدود";
+"Transit feeds are cached for 7 days automatically. Turn on above to set your own duration, from 1 to 30 days or Infinite." = "يتم تخزين بيانات النقل مؤقتًا تلقائيًا لمدة 7 أيام. فعّل الخيار أعلاه لتحديد مدة خاصة بك، من يوم واحد إلى 30 يومًا أو غير محدود.";
+"Cache for (days)" = "التخزين المؤقت لمدة (أيام)";
+"Clear Cache" = "مسح ذاكرة التخزين المؤقت";
+"Cache Cleared" = "تم مسح ذاكرة التخزين المؤقت";
+"All cached transit feed data has been removed. The next agency you select will download fresh data." = "تمت إزالة جميع بيانات النقل المخزنة مؤقتًا. ستقوم الوكالة التالية التي تحددها بتنزيل بيانات جديدة.";
 "About" = "حول";
 "Build" = "الإصدار";
 "Preview" = "معاينة";

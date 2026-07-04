@@ -81,6 +81,16 @@
 "Enable Logging" = "Activer la journalisation";
 "Log Cleared" = "Journal effacé";
 "The debug log has been cleared. A new session header will be written on the next log entry." = "Le journal de débogage a été effacé. Un nouvel en-tête de session sera écrit à la prochaine entrée.";
+
+/* GTFS Transit Feed Cache (Settings) */
+"Transit Feed Cache" = "Cache des flux de transport";
+"Customize Cache Duration" = "Personnaliser la durée du cache";
+"Infinite" = "Infini";
+"Transit feeds are cached for 7 days automatically. Turn on above to set your own duration, from 1 to 30 days or Infinite." = "Les flux de transport sont mis en cache automatiquement pendant 7 jours. Activez l'option ci-dessus pour définir votre propre durée, de 1 à 30 jours ou Infini.";
+"Cache for (days)" = "Conserver en cache (jours)";
+"Clear Cache" = "Vider le cache";
+"Cache Cleared" = "Cache vidé";
+"All cached transit feed data has been removed. The next agency you select will download fresh data." = "Toutes les données de transport mises en cache ont été supprimées. La prochaine agence que vous sélectionnerez téléchargera des données à jour.";
 "About" = "À propos";
 "Build" = "Version";
 "Preview" = "Aperçu";

@@ -54,8 +54,41 @@ struct AddAlarmView: View {
     var existingAlarm: NapAlarm?
     private var isEditing: Bool { existingAlarm != nil }
 
+    /// True when editing an alarm that was created from a GTFS transit stop.
+    /// Transit alarms provide the same options as location alarms (per Bob:
+    /// "the forms should be identical"), with one exception: the location came
+    /// from the selected stop and must not be moved, so the address search,
+    /// manual coordinate entry, and map pin-drop are hidden here — the map
+    /// itself still renders (read-only) so the user can see the radius impact.
+    private var isTransitAlarmBeingEdited: Bool { existingAlarm?.isTransitAlarm ?? false }
+
     var body: some View {
         Form {
+
+            // MARK: Transit Details (edit mode only, read-only — mirrors AlarmDetailView)
+            if isTransitAlarmBeingEdited, let alarm = existingAlarm {
+                Section {
+                    LabeledContent(NSLocalizedString("Agency", bundle: bundle, comment: "")) {
+                        Text(alarm.transitAgencyName ?? "—")
+                    }
+                    if let route = alarm.transitRouteName {
+                        LabeledContent(NSLocalizedString("Route", bundle: bundle, comment: "")) {
+                            HStack(spacing: 6) {
+                                if let rt = alarm.transitRouteType {
+                                    Image(systemName: rt.systemImage)
+                                        .foregroundColor(.teal)
+                                }
+                                Text(route)
+                            }
+                        }
+                    }
+                    LabeledContent(NSLocalizedString("Stop", bundle: bundle, comment: "")) {
+                        Text(alarm.transitStopName ?? "—")
+                    }
+                } header: {
+                    Text("Transit Details", bundle: bundle)
+                }
+            }
 
             // MARK: Name & Note
             Section {
@@ -68,6 +101,8 @@ struct AddAlarmView: View {
 
             // MARK: Location
             Section {
+
+                if !isTransitAlarmBeingEdited {
 
                 // Address search field
                 HStack {
@@ -158,10 +193,13 @@ struct AddAlarmView: View {
                     }
                 }
 
+                } // !isTransitAlarmBeingEdited (address search + autocomplete)
+
                 MapPickerView(
                     latitude: $viewModel.latitude,
                     longitude: $viewModel.longitude,
-                    radius: $viewModel.radius
+                    radius: $viewModel.radius,
+                    interactive: !isTransitAlarmBeingEdited
                 )
                 .frame(height: 220)
                 .clipShape(RoundedRectangle(cornerRadius: 10))
@@ -178,7 +216,9 @@ struct AddAlarmView: View {
                     }
                 }
 
-                // MARK: Manual coordinate entry
+                // MARK: Manual coordinate entry (not available when editing a
+                // transit alarm — the location comes from the GTFS stop).
+                if !isTransitAlarmBeingEdited {
                 DisclosureGroup(
                     isExpanded: $showCoordEntry,
                     content: {
@@ -265,6 +305,7 @@ struct AddAlarmView: View {
                         .font(.body)
                     }
                 )
+                } // !isTransitAlarmBeingEdited (manual coordinate entry)
 
                 if viewModel.hasLocation {
                     LabeledContent(NSLocalizedString("Latitude", bundle: bundle, comment: ""),
@@ -848,7 +889,10 @@ struct AddAlarmView: View {
 /// Explains the per-alarm "Dead Reckoning on Signal Loss" toggle in place, so a
 /// user can understand what it does and why it's off by default without
 /// leaving the creation screen. See docs/dead-reckoning-design.md.
-private struct DeadReckoningInfoSheet: View {
+/// Internal (not private) so TransitAlarmView.swift can reuse it — the two
+/// alarm-creation forms share this Trigger-section UI (Bob, "the forms should
+/// be identical").
+struct DeadReckoningInfoSheet: View {
     @Environment(\.languageBundle) private var bundle
 
     var body: some View {

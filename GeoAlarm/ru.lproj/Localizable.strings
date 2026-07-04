@@ -81,6 +81,16 @@
 "Enable Logging" = "Включить ведение журнала";
 "Log Cleared" = "Журнал очищен";
 "The debug log has been cleared. A new session header will be written on the next log entry." = "Журнал отладки очищен. При следующей записи будет добавлен новый заголовок сессии.";
+
+/* GTFS Transit Feed Cache (Settings) */
+"Transit Feed Cache" = "Кэш транзитных фидов";
+"Customize Cache Duration" = "Настроить срок хранения кэша";
+"Infinite" = "Бесконечно";
+"Transit feeds are cached for 7 days automatically. Turn on above to set your own duration, from 1 to 30 days or Infinite." = "Транзитные фиды автоматически кэшируются на 7 дней. Включите выше, чтобы задать свою продолжительность — от 1 до 30 дней или «Бесконечно».";
+"Cache for (days)" = "Хранить в кэше (дней)";
+"Clear Cache" = "Очистить кэш";
+"Cache Cleared" = "Кэш очищен";
+"All cached transit feed data has been removed. The next agency you select will download fresh data." = "Все кэшированные данные о транзите удалены. При следующем выборе агентства данные будут загружены заново.";
 "About" = "О приложении";
 "Build" = "Сборка";
 "Preview" = "Предпросмотр";

@@ -81,6 +81,16 @@
 "Enable Logging" = "लॉगिंग सक्षम करें";
 "Log Cleared" = "लॉग साफ़ हो गया";
 "The debug log has been cleared. A new session header will be written on the next log entry." = "डीबग लॉग साफ़ हो गया। अगली लॉग प्रविष्टि पर एक नया सत्र हेडर लिखा जाएगा।";
+
+/* GTFS Transit Feed Cache (Settings) */
+"Transit Feed Cache" = "ट्रांज़िट फ़ीड कैश";
+"Customize Cache Duration" = "कैश अवधि अनुकूलित करें";
+"Infinite" = "अनंत";
+"Transit feeds are cached for 7 days automatically. Turn on above to set your own duration, from 1 to 30 days or Infinite." = "ट्रांज़िट फ़ीड स्वचालित रूप से 7 दिनों के लिए कैश की जाती हैं। अपनी खुद की अवधि सेट करने के लिए ऊपर सक्षम करें — 1 से 30 दिनों तक या अनंत।";
+"Cache for (days)" = "इतने दिनों तक कैश रखें";
+"Clear Cache" = "कैश साफ़ करें";
+"Cache Cleared" = "कैश साफ़ हो गया";
+"All cached transit feed data has been removed. The next agency you select will download fresh data." = "सभी कैश की गई ट्रांज़िट जानकारी हटा दी गई है। अगली बार जो एजेंसी आप चुनेंगे वह नई जानकारी डाउनलोड करेगी।";
 "About" = "के बारे में";
 "Build" = "बिल्ड";
 "Preview" = "पूर्वावलोकन";

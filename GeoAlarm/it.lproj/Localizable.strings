@@ -81,6 +81,16 @@
 "Enable Logging" = "Abilita registrazione";
 "Log Cleared" = "Log cancellato";
 "The debug log has been cleared. A new session header will be written on the next log entry." = "Il log di debug è stato cancellato. Un nuovo intestazione di sessione sarà scritto alla prossima voce.";
+
+/* GTFS Transit Feed Cache (Settings) */
+"Transit Feed Cache" = "Cache dei feed di transito";
+"Customize Cache Duration" = "Personalizza durata cache";
+"Infinite" = "Infinito";
+"Transit feeds are cached for 7 days automatically. Turn on above to set your own duration, from 1 to 30 days or Infinite." = "I feed di transito vengono memorizzati automaticamente nella cache per 7 giorni. Attiva l'opzione sopra per impostare una durata personalizzata, da 1 a 30 giorni o Infinito.";
+"Cache for (days)" = "Conserva in cache per (giorni)";
+"Clear Cache" = "Svuota cache";
+"Cache Cleared" = "Cache svuotata";
+"All cached transit feed data has been removed. The next agency you select will download fresh data." = "Tutti i dati di transito memorizzati nella cache sono stati rimossi. La prossima agenzia selezionata scaricherà dati aggiornati.";
 "About" = "Informazioni";
 "Build" = "Build";
 "Preview" = "Anteprima";

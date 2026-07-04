@@ -57,6 +57,9 @@ struct NapStopApp: App {
         // can't rely on @AppStorage's in-memory-only default). See
         // AppStorageKey.registerCalendarScanDefaults() for why this is needed.
         AppStorageKey.registerCalendarScanDefaults()
+        // Same rationale, for GTFSService reading the retention-days default
+        // directly (see AppStorageKey.registerGTFSCacheDefaults()).
+        AppStorageKey.registerGTFSCacheDefaults()
         // Must be set early to catch a cold-launch tap on the "new trips
         // found" notification — see CalendarScanNotificationDelegate.
         UNUserNotificationCenter.current().delegate = CalendarScanNotificationDelegate.shared

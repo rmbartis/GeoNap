@@ -81,6 +81,16 @@
 "Enable Logging" = "เปิดใช้การบันทึก";
 "Log Cleared" = "ล้างบันทึกแล้ว";
 "The debug log has been cleared. A new session header will be written on the next log entry." = "ล้างบันทึกการแก้จุดบกพร่องแล้ว หัวข้อเซสชันใหม่จะถูกเขียนในรายการถัดไป";
+
+/* GTFS Transit Feed Cache (Settings) */
+"Transit Feed Cache" = "แคชฟีดขนส่ง";
+"Customize Cache Duration" = "ปรับแต่งระยะเวลาแคช";
+"Infinite" = "ไม่จำกัด";
+"Transit feeds are cached for 7 days automatically. Turn on above to set your own duration, from 1 to 30 days or Infinite." = "ฟีดขนส่งจะถูกแคชโดยอัตโนมัติเป็นเวลา 7 วัน เปิดใช้งานด้านบนเพื่อกำหนดระยะเวลาของคุณเอง ตั้งแต่ 1 ถึง 30 วัน หรือไม่จำกัด";
+"Cache for (days)" = "เก็บแคชไว้ (วัน)";
+"Clear Cache" = "ล้างแคช";
+"Cache Cleared" = "ล้างแคชแล้ว";
+"All cached transit feed data has been removed. The next agency you select will download fresh data." = "ข้อมูลขนส่งที่แคชไว้ทั้งหมดถูกลบแล้ว หน่วยงานถัดไปที่คุณเลือกจะดาวน์โหลดข้อมูลใหม่";
 "About" = "เกี่ยวกับ";
 "Build" = "บิลด์";
 "Preview" = "ตัวอย่าง";

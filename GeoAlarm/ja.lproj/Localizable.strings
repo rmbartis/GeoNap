@@ -81,6 +81,16 @@
 "Enable Logging" = "ログを有効にする";
 "Log Cleared" = "ログを削除しました";
 "The debug log has been cleared. A new session header will be written on the next log entry." = "デバッグログが削除されました。次のエントリ時に新しいセッションヘッダーが書き込まれます。";
+
+/* GTFS Transit Feed Cache (Settings) */
+"Transit Feed Cache" = "交通フィードキャッシュ";
+"Customize Cache Duration" = "キャッシュ期間をカスタマイズ";
+"Infinite" = "無期限";
+"Transit feeds are cached for 7 days automatically. Turn on above to set your own duration, from 1 to 30 days or Infinite." = "交通フィードは自動的に7日間キャッシュされます。上のオプションをオンにすると、1日から30日、または無期限まで独自の期間を設定できます。";
+"Cache for (days)" = "キャッシュ保持期間（日数）";
+"Clear Cache" = "キャッシュを消去";
+"Cache Cleared" = "キャッシュを消去しました";
+"All cached transit feed data has been removed. The next agency you select will download fresh data." = "キャッシュされた交通データはすべて削除されました。次に選択する事業者は最新データをダウンロードします。";
 "About" = "このアプリについて";
 "Build" = "ビルド";
 "Preview" = "プレビュー";

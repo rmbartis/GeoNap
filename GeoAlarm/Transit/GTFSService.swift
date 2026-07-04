@@ -9,6 +9,7 @@ import Foundation
 import Combine
 import CoreLocation
 import ZIPFoundation
+import SwiftData
 
 @MainActor
 final class GTFSService: ObservableObject {
@@ -29,12 +30,31 @@ final class GTFSService: ObservableObject {
 
     // MARK: - Public API
 
-    /// Load from cache if available, otherwise download and parse.
+    /// Load from cache if available and still fresh, otherwise download and parse.
+    /// Caching itself always happens, silently, with a fixed 7-day retention
+    /// window by default — the Settings "Customize Cache Duration" toggle
+    /// only unlocks overriding that window (1–30 days, or Infinite); it does
+    /// not gate whether caching happens at all (Bob, 2026-07-07). See
+    /// `shouldUseCache(...)` / `effectiveRetentionDays(...)` for the pure
+    /// decision logic.
     func load(feed: GTFSFeedModel) async {
         errorMessage = nil
 
-        if feed.isCached, let dir = feed.cachedDirectoryURL {
-            DebugLogger.shared.log("GTFS cache hit for '\(feed.name)' — loading from \(dir.lastPathComponent)", category: "GTFS")
+        let customRetentionEnabled = UserDefaults.standard.bool(forKey: AppStorageKey.gtfsCacheCustomRetentionEnabled)
+        let storedRetentionDays = UserDefaults.standard.integer(forKey: AppStorageKey.gtfsCacheRetentionDays)
+        let retentionDays = Self.effectiveRetentionDays(
+            customRetentionEnabled: customRetentionEnabled,
+            storedRetentionDays: storedRetentionDays
+        )
+        let useCache = Self.shouldUseCache(
+            isCached: feed.isCached,
+            lastDownloaded: feed.lastDownloaded,
+            retentionDays: retentionDays
+        )
+
+        if useCache, let dir = feed.cachedDirectoryURL {
+            let retentionDescription = retentionDays >= AppStorageKey.gtfsCacheInfiniteRetention ? "infinite" : "\(retentionDays)d"
+            DebugLogger.shared.log("GTFS cache hit for '\(feed.name)' — loading from \(dir.lastPathComponent) (retention=\(retentionDescription))", category: "GTFS")
             await parse(from: dir)
         } else {
             await downloadAndParse(feed: feed)
@@ -55,6 +75,87 @@ final class GTFSService: ObservableObject {
         downloadTask = nil
         isLoading = false
         downloadProgress = 0
+    }
+
+    /// Pure decision logic for whether a previously-downloaded feed's on-disk
+    /// cache should be reused instead of re-downloading. Extracted with an
+    /// injectable `now` so it's directly unit-testable without touching disk,
+    /// UserDefaults, or the network — matching the project's convention for
+    /// testable decision functions (see `AddAlarmView.isWaitingForGPSLock`,
+    /// `NapAlarm.deadReckoningGracePeriod`).
+    ///
+    /// Caching is NOT opt-in — a fully-cached, non-expired feed is always
+    /// reused. `retentionDays` is what `effectiveRetentionDays(...)` resolves
+    /// it to (fixed 7, or the user's custom value including the Infinite
+    /// sentinel) — see that function for how the Settings toggle factors in
+    /// (Bob, 2026-07-07, correcting the earlier "opt-in" reading of the spec).
+    static func shouldUseCache(
+        isCached: Bool,
+        lastDownloaded: Date?,
+        retentionDays: Int,
+        now: Date = Date()
+    ) -> Bool {
+        guard isCached, let lastDownloaded else { return false }
+        guard retentionDays > 0 else { return false }
+        if retentionDays >= AppStorageKey.gtfsCacheInfiniteRetention { return true }
+        let ageSeconds = now.timeIntervalSince(lastDownloaded)
+        return ageSeconds < TimeInterval(retentionDays) * 86_400
+    }
+
+    /// Pure resolution of which retention-days value is actually in effect,
+    /// given whether the user has turned on "Customize Cache Duration" in
+    /// Settings. When off (the default), the window is always the fixed
+    /// `AppStorageKey.gtfsCacheDefaultRetentionDays` (7) regardless of
+    /// whatever `storedRetentionDays` happens to hold from a previous custom
+    /// session. When on, the user's stored value (1–30, or the Infinite
+    /// sentinel) applies — after being run through `normalizedRetentionDays`
+    /// so a stray out-of-range value can never silently take effect.
+    /// Extracted alongside `shouldUseCache` for CI coverage (Bob, 2026-07-07).
+    static func effectiveRetentionDays(customRetentionEnabled: Bool, storedRetentionDays: Int) -> Int {
+        customRetentionEnabled
+            ? normalizedRetentionDays(storedRetentionDays)
+            : AppStorageKey.gtfsCacheDefaultRetentionDays
+    }
+
+    /// Clamps a raw stored `gtfsCacheRetentionDays` value into the only
+    /// domain the Settings stepper can actually produce: 1–30, or the
+    /// Infinite sentinel. Any other value is treated as "never legitimately
+    /// customized" and normalized back to the fixed 7-day default, rather
+    /// than being silently honored as a retention count the UI can't even
+    /// represent.
+    ///
+    /// This exists because a rebuild can carry forward UserDefaults from an
+    /// earlier build of this feature that used a wider stepper range (the
+    /// very first version allowed 1–90) — without this guard, a stray value
+    /// like 42 left over from that testing would display and behave as a
+    /// legitimate 42-day retention instead of resetting to the 7-day default
+    /// (Bob, 2026-07-08 — saw exactly this on a fresh rebuild).
+    static func normalizedRetentionDays(_ raw: Int) -> Int {
+        if raw >= AppStorageKey.gtfsCacheInfiniteRetention { return AppStorageKey.gtfsCacheInfiniteRetention }
+        if (1...30).contains(raw) { return raw }
+        return AppStorageKey.gtfsCacheDefaultRetentionDays
+    }
+
+    /// Deletes every cached GTFS feed: removes all extracted files on disk
+    /// and forgets every persisted `GTFSFeedModel` record, so the next
+    /// agency/stop selection always re-downloads. "Clear Cache" is meant to
+    /// work as an always-available manual escape hatch, independent of the
+    /// retention window (Bob, 2026-07-06).
+    @MainActor
+    static func clearCache(context: ModelContext) {
+        if let gtfsDir = FileManager.default
+            .urls(for: .cachesDirectory, in: .userDomainMask).first?
+            .appendingPathComponent("gtfs", isDirectory: true) {
+            try? FileManager.default.removeItem(at: gtfsDir)
+        }
+
+        let descriptor = FetchDescriptor<GTFSFeedModel>()
+        if let models = try? context.fetch(descriptor) {
+            for model in models {
+                context.delete(model)
+            }
+        }
+        DebugLogger.shared.log("GTFS cache cleared by user", category: "GTFS")
     }
 
     // MARK: - Download

@@ -37,6 +37,12 @@ struct TransitAlarmView: View {
 
     @EnvironmentObject var locationManager: LocationManager
     @Environment(\.languageBundle) private var bundle
+    // Picked up automatically from the environment the containing
+    // TransitAlarmSheet is already presented in — used to persist
+    // GTFSFeedModel records so repeat agency selections can find and reuse
+    // an existing cache entry instead of always constructing (and
+    // orphaning) a fresh random-UUID model (Bob, 2026-07-06 — GTFS caching).
+    @Environment(\.modelContext) private var modelContext
 
     // User preferences (mirrors AddAlarmView)
     @AppStorage(AppStorageKey.distanceUnit) private var distanceUnitRaw = DistanceUnit.imperial.rawValue
@@ -71,6 +77,17 @@ struct TransitAlarmView: View {
     @State private var regionEvent:       RegionEvent = .onEntry
     @State private var isRepeating:       Bool = false
     @State private var notificationSound: NotificationSound = .default
+
+    // Trigger mode (distance vs. time) — identical option set to AddAlarmView.
+    // Defaulted from the same Settings key read directly from UserDefaults
+    // (rather than via @AppStorage) so the initial value is available at
+    // struct-init time without an onAppear reset-on-revisit risk.
+    @State private var triggerMode: TriggerMode = TriggerMode(
+        rawValue: UserDefaults.standard.string(forKey: AppStorageKey.defaultTriggerMode) ?? ""
+    ) ?? .distance
+    @State private var leadTimeMinutes: Int = 5
+    @State private var deadReckoningEnabled: Bool = false
+    @State private var showDeadReckoningInfo: Bool = false
 
     // Time window
     @State private var hasTimeWindow: Bool  = false
@@ -213,7 +230,11 @@ struct TransitAlarmView: View {
                         .autocapitalization(.none)
                     Button {
                         guard !customURL.isEmpty else { return }
-                        let model = GTFSFeedModel(name: "Custom Feed", feedURL: customURL)
+                        let model = GTFSFeedModel.existingOrNew(
+                            name: "Custom Feed",
+                            feedURL: customURL,
+                            in: modelContext
+                        )
                         startDownload(feed: model)
                     } label: {
                         Text("Use this URL", bundle: bundle)
@@ -381,6 +402,26 @@ struct TransitAlarmView: View {
                 Text("Alarm Details", bundle: bundle)
             }
 
+            // MARK: Location (read-only preview — mirrors AddAlarmView's
+            // Location section, minus address search / manual entry / pin
+            // drop: the stop's coordinate is fixed. Still shown so the user
+            // can see the radius circle's real-world size.)
+            if let stop = selectedStop {
+                Section {
+                    MapPickerView(
+                        latitude: .constant(stop.latitude),
+                        longitude: .constant(stop.longitude),
+                        radius: $radius,
+                        interactive: false
+                    )
+                    .frame(height: 220)
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                    .listRowInsets(EdgeInsets(top: 8, leading: 8, bottom: 8, trailing: 8))
+                } header: {
+                    Text("Location", bundle: bundle)
+                }
+            }
+
             // MARK: Trigger
             Section {
                 Picker(selection: $regionEvent) {
@@ -392,16 +433,66 @@ struct TransitAlarmView: View {
                 }
                 .pickerStyle(.segmented)
 
-                VStack(alignment: .leading, spacing: 4) {
-                    HStack {
-                        Text("Radius", bundle: bundle)
-                        Spacer()
-                        Text(distanceUnit.formatted(meters: radius))
-                            .foregroundColor(.secondary)
+                // Distance (radius) vs Time (minutes before arrival) — identical
+                // to AddAlarmView's Trigger section.
+                Picker(selection: $triggerMode) {
+                    ForEach(TriggerMode.allCases) { mode in
+                        Text(NSLocalizedString(mode.localizationKey, bundle: bundle, comment: "")).tag(mode)
                     }
-                    Slider(value: radiusInUnit,
-                           in: distanceUnit.sliderRange,
-                           step: distanceUnit.sliderStep)
+                } label: {
+                    Text("trigger.mode.label", bundle: bundle)
+                }
+                .pickerStyle(.segmented)
+
+                if triggerMode == .distance {
+                    VStack(alignment: .leading, spacing: 4) {
+                        HStack {
+                            Text("Radius", bundle: bundle)
+                            Spacer()
+                            Text(distanceUnit.formatted(meters: radius))
+                                .foregroundColor(.secondary)
+                        }
+                        Slider(value: radiusInUnit,
+                               in: distanceUnit.sliderRange,
+                               step: distanceUnit.sliderStep)
+                    }
+                } else {
+                    Stepper(value: $leadTimeMinutes, in: 1...60) {
+                        HStack {
+                            Text("trigger.leadTime.label", bundle: bundle)
+                            Spacer()
+                            Text(String(format: NSLocalizedString("trigger.leadTime.value", bundle: bundle, comment: ""),
+                                        leadTimeMinutes))
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                    Text("trigger.leadTime.help", bundle: bundle)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+
+                    Toggle(isOn: $deadReckoningEnabled) {
+                        HStack(alignment: .top, spacing: 6) {
+                            VStack(alignment: .leading, spacing: 3) {
+                                Text("Dead Reckoning on Signal Loss", bundle: bundle)
+                                    .font(.body)
+                                Text("deadReckoning.toggle.subtitle", bundle: bundle)
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
+                            Button {
+                                showDeadReckoningInfo = true
+                            } label: {
+                                Image(systemName: "info.circle")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                            .buttonStyle(.plain)
+                            .popover(isPresented: $showDeadReckoningInfo, arrowEdge: .top) {
+                                DeadReckoningInfoSheet()
+                                    .presentationCompactAdaptation(.popover)
+                            }
+                        }
+                    }
                 }
             } header: {
                 Text("Trigger", bundle: bundle)
@@ -722,10 +813,11 @@ struct TransitAlarmView: View {
 
     private func pickCuratedFeed(_ curated: CuratedFeed) {
         DebugLogger.shared.log("Transit agency selected: '\(curated.name)' region=\(curated.region)", category: "UI")
-        let model = GTFSFeedModel(
+        let model = GTFSFeedModel.existingOrNew(
             name: curated.name,
             feedURL: curated.feedURL,
-            regionLabel: curated.region
+            regionLabel: curated.region,
+            in: modelContext
         )
         startDownload(feed: model)
     }
@@ -762,6 +854,8 @@ struct TransitAlarmView: View {
             latitude: stop.latitude,
             longitude: stop.longitude,
             radius: radius,
+            triggerMode: triggerMode,
+            leadTimeMinutes: leadTimeMinutes,
             regionEvent: regionEvent,
             note: note,
             isRepeating: isRepeating,
@@ -776,9 +870,10 @@ struct TransitAlarmView: View {
             transitRouteName: selectedRoute?.fullLabel,
             transitStopName: stop.name,
             transitRouteType: selectedRoute?.type,
-            notificationSound: notificationSound
+            notificationSound: notificationSound,
+            deadReckoningEnabled: deadReckoningEnabled
         )
-        DebugLogger.shared.log("Transit alarm created: '\(alarm.name)' agency='\(selectedFeed?.name ?? "?")' route='\(selectedRoute?.fullLabel ?? "?")' stop='\(stop.name)' event=\(regionEvent.rawValue) radius=\(Int(radius))m", category: "UI")
+        DebugLogger.shared.log("Transit alarm created: '\(alarm.name)' agency='\(selectedFeed?.name ?? "?")' route='\(selectedRoute?.fullLabel ?? "?")' stop='\(stop.name)' event=\(regionEvent.rawValue) triggerMode=\(triggerMode.rawValue) radius=\(Int(radius))m leadTime=\(leadTimeMinutes)min deadReckoning=\(deadReckoningEnabled)", category: "UI")
         onSave(alarm)
     }
 

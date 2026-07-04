@@ -81,6 +81,16 @@
 "Enable Logging" = "启用日志记录";
 "Log Cleared" = "日志已清除";
 "The debug log has been cleared. A new session header will be written on the next log entry." = "调试日志已清除。下次记录时将写入新的会话标题。";
+
+/* GTFS Transit Feed Cache (Settings) */
+"Transit Feed Cache" = "交通数据缓存";
+"Customize Cache Duration" = "自定义缓存时长";
+"Infinite" = "无限期";
+"Transit feeds are cached for 7 days automatically. Turn on above to set your own duration, from 1 to 30 days or Infinite." = "交通数据默认自动缓存 7 天。启用上方选项可自行设置缓存时长，从 1 天到 30 天，或选择无限期。";
+"Cache for (days)" = "缓存保留天数";
+"Clear Cache" = "清除缓存";
+"Cache Cleared" = "缓存已清除";
+"All cached transit feed data has been removed. The next agency you select will download fresh data." = "所有缓存的交通数据均已删除。下次选择的机构将下载最新数据。";
 "About" = "关于";
 "Build" = "版本";
 "Preview" = "预览";

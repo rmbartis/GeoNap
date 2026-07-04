@@ -81,6 +81,16 @@
 "Enable Logging" = "Protokollierung aktivieren";
 "Log Cleared" = "Protokoll gelöscht";
 "The debug log has been cleared. A new session header will be written on the next log entry." = "Das Debug-Protokoll wurde gelöscht. Bei der nächsten Eintragung wird ein neuer Sitzungskopf geschrieben.";
+
+/* GTFS Transit Feed Cache (Settings) */
+"Transit Feed Cache" = "Transit-Feed-Cache";
+"Customize Cache Duration" = "Cache-Dauer anpassen";
+"Infinite" = "Unendlich";
+"Transit feeds are cached for 7 days automatically. Turn on above to set your own duration, from 1 to 30 days or Infinite." = "Transitdaten werden automatisch 7 Tage lang zwischengespeichert. Aktivieren Sie die Option oben, um Ihre eigene Dauer festzulegen – von 1 bis 30 Tagen oder Unendlich.";
+"Cache for (days)" = "Zwischenspeichern für (Tage)";
+"Clear Cache" = "Cache leeren";
+"Cache Cleared" = "Cache geleert";
+"All cached transit feed data has been removed. The next agency you select will download fresh data." = "Alle zwischengespeicherten Transitdaten wurden entfernt. Die nächste ausgewählte Agentur lädt aktuelle Daten herunter.";
 "About" = "Info";
 "Build" = "Build";
 "Preview" = "Vorschau";

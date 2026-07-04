@@ -34,4 +34,40 @@ final class GTFSFeedModel {
             .appendingPathComponent("gtfs", isDirectory: true)
             .appendingPathComponent(name, isDirectory: true)
     }
+
+    /// Finds the previously-persisted feed record for this URL, or creates
+    /// and inserts a new one.
+    ///
+    /// Before this existed, `TransitAlarmView` constructed a fresh
+    /// `GTFSFeedModel(name:feedURL:regionLabel:)` on every agency/stop
+    /// selection — never inserting it into `modelContext` — so `id` (and the
+    /// on-disk cache directory keyed by `id.uuidString`) was a new random
+    /// UUID every single time, and `cachedDirectoryName`/`lastDownloaded`
+    /// never survived past the current view's lifetime. Keying the lookup by
+    /// `feedURL` (stable per agency) instead of `id` (random) is what lets a
+    /// repeat visit to the same agency find its existing cache record
+    /// (Bob, 2026-07-06 — GTFS caching feature).
+    static func existingOrNew(
+        name: String,
+        feedURL: String,
+        regionLabel: String = "",
+        in context: ModelContext
+    ) -> GTFSFeedModel {
+        let descriptor = FetchDescriptor<GTFSFeedModel>(
+            predicate: #Predicate { $0.feedURL == feedURL }
+        )
+        if let existing = try? context.fetch(descriptor).first {
+            // Keep display metadata current (a curated feed's display name or
+            // region label can change between app versions) without
+            // disturbing its cache state.
+            existing.name = name
+            if !regionLabel.isEmpty {
+                existing.regionLabel = regionLabel
+            }
+            return existing
+        }
+        let model = GTFSFeedModel(name: name, feedURL: feedURL, regionLabel: regionLabel)
+        context.insert(model)
+        return model
+    }
 }

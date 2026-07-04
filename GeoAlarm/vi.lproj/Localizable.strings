@@ -81,6 +81,16 @@
 "Enable Logging" = "Bật ghi nhật ký";
 "Log Cleared" = "Đã xóa nhật ký";
 "The debug log has been cleared. A new session header will be written on the next log entry." = "Nhật ký gỡ lỗi đã được xóa. Tiêu đề phiên mới sẽ được ghi vào mục nhập tiếp theo.";
+
+/* GTFS Transit Feed Cache (Settings) */
+"Transit Feed Cache" = "Bộ nhớ đệm nguồn cấp dữ liệu giao thông";
+"Customize Cache Duration" = "Tùy chỉnh thời gian lưu đệm";
+"Infinite" = "Vô hạn";
+"Transit feeds are cached for 7 days automatically. Turn on above to set your own duration, from 1 to 30 days or Infinite." = "Nguồn cấp dữ liệu giao thông được lưu đệm tự động trong 7 ngày. Bật tùy chọn trên để đặt thời gian riêng, từ 1 đến 30 ngày hoặc Vô hạn.";
+"Cache for (days)" = "Lưu đệm trong (ngày)";
+"Clear Cache" = "Xóa bộ nhớ đệm";
+"Cache Cleared" = "Đã xóa bộ nhớ đệm";
+"All cached transit feed data has been removed. The next agency you select will download fresh data." = "Tất cả dữ liệu giao thông đã lưu đệm đã bị xóa. Cơ quan tiếp theo bạn chọn sẽ tải xuống dữ liệu mới.";
 "About" = "Giới thiệu";
 "Build" = "Phiên bản";
 "Preview" = "Xem trước";

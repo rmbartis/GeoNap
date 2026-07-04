@@ -13,6 +13,14 @@ struct MapPickerView: View {
     /// Alarm radius in metres — drives the geofence circle overlay.
     @Binding var radius: Double
 
+    /// When false, the map is display-only: no tap-to-drop-pin, no "Use My
+    /// Location" button, no hint text. Used for transit alarms, whose location
+    /// comes from the selected GTFS stop and must not be moved — the map is
+    /// still shown so the user can see the radius circle's real-world size
+    /// (Bob, "the forms should be identical... Exception: pin drop not present
+    /// on Transit alarm. The map should still be shown").
+    var interactive: Bool = true
+
     @EnvironmentObject private var locationManager: LocationManager
     @Environment(\.languageBundle) private var bundle
 
@@ -44,6 +52,7 @@ struct MapPickerView: View {
                 MapCompass()
             }
             .onTapGesture { screenPoint in
+                guard interactive else { return }
                 if let coord = proxy.convert(screenPoint, from: .local) {
                     pinCoordinate = coord
                     latitude      = coord.latitude
@@ -52,30 +61,34 @@ struct MapPickerView: View {
             }
         }
         .overlay(alignment: .topTrailing) {
-            Button {
-                useCurrentLocation()
-            } label: {
-                Label { Text("Use My Location", bundle: bundle) } icon: { Image(systemName: "location.fill") }
-                    .font(.caption.weight(.medium))
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 7)
-                    .background(.ultraThinMaterial)
-                    .cornerRadius(8)
-                    .shadow(radius: 2)
+            if interactive {
+                Button {
+                    useCurrentLocation()
+                } label: {
+                    Label { Text("Use My Location", bundle: bundle) } icon: { Image(systemName: "location.fill") }
+                        .font(.caption.weight(.medium))
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 7)
+                        .background(.ultraThinMaterial)
+                        .cornerRadius(8)
+                        .shadow(radius: 2)
+                }
+                .disabled(locationManager.currentLocation == nil)
+                .padding([.top, .trailing], 10)
             }
-            .disabled(locationManager.currentLocation == nil)
-            .padding([.top, .trailing], 10)
         }
         .overlay(alignment: .bottom) {
-            Text(pinCoordinate == nil
-                 ? LocalizedStringKey("Tap the map to set alarm location")
-                 : LocalizedStringKey("Tap to move the pin"),
-                 bundle: bundle)
-                .font(.caption)
-                .padding(6)
-                .background(.ultraThinMaterial)
-                .cornerRadius(6)
-                .padding(.bottom, 8)
+            if interactive {
+                Text(pinCoordinate == nil
+                     ? LocalizedStringKey("Tap the map to set alarm location")
+                     : LocalizedStringKey("Tap to move the pin"),
+                     bundle: bundle)
+                    .font(.caption)
+                    .padding(6)
+                    .background(.ultraThinMaterial)
+                    .cornerRadius(6)
+                    .padding(.bottom, 8)
+            }
         }
         .onAppear {
             // If editing an existing alarm, center on its coordinate

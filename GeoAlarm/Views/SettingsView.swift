@@ -2,6 +2,7 @@
 // User-facing preferences sheet.
 
 import SwiftUI
+import SwiftData
 import ContactsUI
 
 struct SettingsView: View {
@@ -12,9 +13,12 @@ struct SettingsView: View {
     @AppStorage(AppStorageKey.debugLogging)  private var debugLoggingEnabled = false
     @AppStorage(AppStorageKey.autoSMSAutomationEnabled) private var autoSMSAutomationEnabled = false
     @AppStorage(AppStorageKey.defaultTriggerMode) private var defaultTriggerModeRaw = TriggerMode.distance.rawValue
+    @AppStorage(AppStorageKey.gtfsCacheCustomRetentionEnabled) private var gtfsCacheCustomRetentionEnabled = false
+    @AppStorage(AppStorageKey.gtfsCacheRetentionDays) private var gtfsCacheRetentionDays = AppStorageKey.gtfsCacheDefaultRetentionDays
 
     @EnvironmentObject private var languageManager: LanguageManager
     @Environment(\.languageBundle) private var bundle
+    @Environment(\.modelContext) private var modelContext
 
     @Environment(\.dismiss) private var dismiss
 
@@ -23,6 +27,8 @@ struct SettingsView: View {
     // Controls the share sheet for exporting the log file
     // Controls the "log cleared" feedback
     @State private var showClearedBanner = false
+    // Controls the "GTFS cache cleared" feedback
+    @State private var showGTFSCacheClearedBanner = false
 
     // Info popover state — one Bool per setting row
     @State private var infoDistance    = false
@@ -31,6 +37,9 @@ struct SettingsView: View {
     @State private var infoClock       = false
     @State private var infoLanguage    = false
     @State private var infoDebugLog    = false
+    @State private var infoGTFSCache   = false
+    // Controls the Auto-SMS one-time Shortcuts setup-steps popover
+    @State private var showAutoSMSSetupInfo = false
 
     // Auto-Notify Defaults state
     @State private var defaultContacts: [NotifyContact]  = []
@@ -220,6 +229,9 @@ struct SettingsView: View {
                         }
                     }
                 }
+
+                // MARK: Transit Feed Cache
+                gtfsCacheSection
 
                 // MARK: Help & Legal
                 Section {
@@ -447,6 +459,98 @@ struct SettingsView: View {
         }
     }
 
+    // MARK: - GTFS cache section
+
+    /// Caching always happens, silently, with a fixed 7-day retention window
+    /// by default — this toggle does NOT turn caching on/off. It only
+    /// unlocks the stepper below for overriding that fixed window with a
+    /// custom value: 1–30 days, or a final "Infinite" stop that never
+    /// auto-expires. "Clear Cache" is always available regardless of this
+    /// toggle, as the manual override/force-refresh mechanism
+    /// (Bob, 2026-07-07, correcting the original 2026-07-06 spec).
+    private var gtfsCacheSection: some View {
+        Section {
+            Toggle(isOn: $gtfsCacheCustomRetentionEnabled) {
+                SettingInfoLabel(
+                    title: "Customize Cache Duration",
+                    isPresented: $infoGTFSCache,
+                    helpTitle: "GTFS Feed Cache",
+                    helpBody: "GeoNap always caches a downloaded transit feed (routes and stops for an agency) for 7 days, so revisiting the same agency doesn't re-download every time.\n\nTurn this on to override that fixed 7-day window with your own value — anywhere from 1 to 30 days, or Infinite so it never expires automatically.\n\nUse Clear Cache below at any time to force a fresh download on your next visit, regardless of this setting."
+                )
+            }
+
+            if gtfsCacheCustomRetentionEnabled {
+                Stepper(value: gtfsCacheRetentionStepIndex, in: 0...30) {
+                    HStack {
+                        Text("Cache for (days)", bundle: bundle)
+                        Spacer()
+                        Text(gtfsCacheRetentionDisplayValue)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                .onAppear {
+                    // Self-heal a stale value left over from an earlier
+                    // build's wider stepper range (e.g. 42 days from the
+                    // original 1...90 range) so the stored value itself is
+                    // corrected, not just what's displayed
+                    // (Bob, 2026-07-08).
+                    let normalized = GTFSService.normalizedRetentionDays(gtfsCacheRetentionDays)
+                    if normalized != gtfsCacheRetentionDays {
+                        gtfsCacheRetentionDays = normalized
+                    }
+                }
+            }
+
+            Button(role: .destructive) {
+                GTFSService.clearCache(context: modelContext)
+                showGTFSCacheClearedBanner = true
+            } label: {
+                Label {
+                    Text("Clear Cache", bundle: bundle)
+                } icon: {
+                    Image(systemName: "trash")
+                }
+            }
+            .alert(Text("Cache Cleared", bundle: bundle), isPresented: $showGTFSCacheClearedBanner) {
+                Button(role: .cancel) {} label: {
+                    Text("OK", bundle: bundle)
+                }
+            } message: {
+                Text("All cached transit feed data has been removed. The next agency you select will download fresh data.", bundle: bundle)
+            }
+        } header: {
+            Text("Transit Feed Cache", bundle: bundle)
+        } footer: {
+            Text("Transit feeds are cached for 7 days automatically. Turn on above to set your own duration, from 1 to 30 days or Infinite.", bundle: bundle)
+        }
+    }
+
+    /// Maps the 0...30 Stepper range to the stored `gtfsCacheRetentionDays`
+    /// value: steps 0–29 are days 1–30, and the final step (30) is the
+    /// Infinite sentinel — "a final option being Infinite" past the 30-day
+    /// mark (Bob, 2026-07-07).
+    private var gtfsCacheRetentionStepIndex: Binding<Int> {
+        Binding(
+            get: {
+                let normalized = GTFSService.normalizedRetentionDays(gtfsCacheRetentionDays)
+                if normalized >= AppStorageKey.gtfsCacheInfiniteRetention { return 30 }
+                return max(0, min(29, normalized - 1))
+            },
+            set: { newIndex in
+                gtfsCacheRetentionDays = newIndex >= 30
+                    ? AppStorageKey.gtfsCacheInfiniteRetention
+                    : newIndex + 1
+            }
+        )
+    }
+
+    private var gtfsCacheRetentionDisplayValue: String {
+        let normalized = GTFSService.normalizedRetentionDays(gtfsCacheRetentionDays)
+        return normalized >= AppStorageKey.gtfsCacheInfiniteRetention
+            ? NSLocalizedString("Infinite", bundle: bundle, comment: "")
+            : "\(normalized)"
+    }
+
     // MARK: - Auto-SMS section
 
     private var autoSMSSection: some View {
@@ -462,29 +566,30 @@ struct SettingsView: View {
                 }
             }
 
-            // Step-by-step instructions
-            VStack(alignment: .leading, spacing: 10) {
+            // Description, with the one-time Shortcuts setup steps tucked
+            // behind an info icon instead of always-visible inline text —
+            // the icon sits to the right of this paragraph
+            // (Bob, 2026-07-08).
+            HStack(alignment: .top, spacing: 6) {
                 Text("settings.autoSMS.description", bundle: bundle)
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
 
-                Divider()
+                Spacer(minLength: 4)
 
-                Text("settings.autoSMS.setupTitle", bundle: bundle)
-                    .font(.subheadline.weight(.medium))
-
-                VStack(alignment: .leading, spacing: 6) {
-                    AutoSMSStep(number: "1", textKey: "settings.autoSMS.step1")
-                    AutoSMSStep(number: "2", textKey: "settings.autoSMS.step2")
-                    AutoSMSStep(number: "3", textKey: "settings.autoSMS.step3a")
-                    AutoSMSStep(number: "  ", textKey: "settings.autoSMS.step3b")
-                    AutoSMSStep(number: "4", textKey: "settings.autoSMS.step4a")
-                    AutoSMSStep(number: "  ", textKey: "settings.autoSMS.step4b")
-                    AutoSMSStep(number: "  ", textKey: "settings.autoSMS.step4c")
-                    AutoSMSStep(number: "5", textKey: "settings.autoSMS.step5")
+                Button {
+                    showAutoSMSSetupInfo = true
+                } label: {
+                    Image(systemName: "info.circle")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
                 }
-                .font(.subheadline)
+                .buttonStyle(.plain)
+                .popover(isPresented: $showAutoSMSSetupInfo, arrowEdge: .top) {
+                    AutoSMSSetupInfoSheet()
+                        .presentationCompactAdaptation(.popover)
+                }
             }
             .padding(.vertical, 4)
 
@@ -547,6 +652,47 @@ private struct AutoSMSStep: View {
             Text(NSLocalizedString(textKey, bundle: bundle, comment: ""))
                 .fixedSize(horizontal: false, vertical: true)
         }
+    }
+}
+
+// MARK: - Auto-SMS one-time setup popover
+
+/// Content shown from the info icon next to the Auto-SMS description —
+/// previously this "One-time setup in the Shortcuts app" title plus 5-step
+/// list was always visible inline in Settings; it's now tucked behind the
+/// icon instead (Bob, 2026-07-08). Reuses the same already-localized
+/// `settings.autoSMS.*` keys, so no new translation work was needed.
+private struct AutoSMSSetupInfoSheet: View {
+    @Environment(\.languageBundle) private var bundle
+
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 12) {
+                HStack(spacing: 8) {
+                    Image(systemName: "info.circle.fill")
+                        .foregroundStyle(.blue)
+                        .font(.title3)
+                    Text("settings.autoSMS.setupTitle", bundle: bundle)
+                        .font(.headline)
+                }
+
+                VStack(alignment: .leading, spacing: 6) {
+                    AutoSMSStep(number: "1", textKey: "settings.autoSMS.step1")
+                    AutoSMSStep(number: "2", textKey: "settings.autoSMS.step2")
+                    AutoSMSStep(number: "3", textKey: "settings.autoSMS.step3a")
+                    AutoSMSStep(number: "  ", textKey: "settings.autoSMS.step3b")
+                    AutoSMSStep(number: "4", textKey: "settings.autoSMS.step4a")
+                    AutoSMSStep(number: "  ", textKey: "settings.autoSMS.step4b")
+                    AutoSMSStep(number: "  ", textKey: "settings.autoSMS.step4c")
+                    AutoSMSStep(number: "5", textKey: "settings.autoSMS.step5")
+                }
+                .font(.subheadline)
+            }
+            .padding(20)
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .frame(minWidth: 300, idealWidth: 340, maxWidth: 420,
+               minHeight: 260, idealHeight: 380, maxHeight: 480)
     }
 }
 
