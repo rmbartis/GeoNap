@@ -67,6 +67,10 @@ struct ContentView: View {
                         } label: {
                             Image(systemName: "plus")
                         }
+                        // A bare SF Symbol label has no stable, locale-independent
+                        // accessibility label of its own to drive UI tests off of —
+                        // this identifier is the test hook (NapStopUITests).
+                        .accessibilityIdentifier("addAlarmMenuButton")
                         .disabled(alarmManager.isAtRegionLimit)
                         .opacity(alarmManager.isAtRegionLimit ? 0.35 : 1)
                     }
@@ -83,6 +87,7 @@ struct ContentView: View {
                         } label: {
                             Image(systemName: "gearshape")
                         }
+                        .accessibilityIdentifier("settingsButton")
                     }
                 }
             // Banner sits below the nav bar, pushing list content down.

@@ -16,8 +16,20 @@ struct NapStopApp: App {
     /// CloudKit-backed container with a local-only fallback.
     /// Falls back silently if the user is not signed into iCloud or if the
     /// CloudKit entitlement is missing (e.g. simulator without a paid account).
+    ///
+    /// UI tests (`--uitesting` launch argument, set by NapStopUITests) get an
+    /// isolated in-memory store instead: every launch starts with zero alarms,
+    /// deterministically, with no dependency on CloudKit/network availability
+    /// in CI (Bob, 2026-07-05 — previously the UI test suite assumed a
+    /// `--reset-alarms` flag that was never actually implemented anywhere).
     private let container: ModelContainer = {
         let schema = Schema([NapAlarm.self, GTFSFeedModel.self])
+
+        if ProcessInfo.processInfo.arguments.contains("--uitesting") {
+            let testConfig = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
+            return try! ModelContainer(for: schema, configurations: [testConfig])
+        }
+
         let cloudConfig = ModelConfiguration(
             schema: schema,
             isStoredInMemoryOnly: false,
@@ -32,6 +44,13 @@ struct NapStopApp: App {
     }()
 
     init() {
+        // UI tests launch straight past onboarding — otherwise every run on a
+        // fresh simulator (where "hasSeenOnboarding" has never been written)
+        // would block on the onboarding fullScreenCover before reaching any
+        // of the screens the tests actually exercise (Bob, 2026-07-05).
+        if ProcessInfo.processInfo.arguments.contains("--uitesting") {
+            UserDefaults.standard.set(true, forKey: "hasSeenOnboarding")
+        }
         CrashReporter.log("App launched")
         // Must happen before anything reads these UserDefaults keys directly
         // (e.g. CalendarScanBackgroundTask, which runs outside any View and

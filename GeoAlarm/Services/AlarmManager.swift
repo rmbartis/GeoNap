@@ -203,13 +203,20 @@ final class AlarmManager: NSObject, ObservableObject {
             // delivers NO "entered" event — so ETA tracking would never start and the
             // alarm would fall through to the 200 m inner backstop (firing ~seconds
             // out instead of the requested lead time). Start tracking now in that case.
-            if let here = locationManager?.currentLocation {
-                let dest = CLLocation(latitude: alarm.latitude, longitude: alarm.longitude)
-                if here.distance(from: dest) <= alarm.outerRingRadius() {
-                    beginETATracking(alarm)
-                }
+            if Self.isAlreadyInsideWarmupRing(alarm: alarm, currentLocation: locationManager?.currentLocation) {
+                beginETATracking(alarm)
             }
         }
+    }
+
+    /// Pure decision logic extracted from `startMonitoring` so it's unit
+    /// testable without a real CLLocationManager: true when `currentLocation`
+    /// is already within `alarm`'s outer warm-up ring radius. Returns false
+    /// when there's no current fix yet (nothing to compare against).
+    static func isAlreadyInsideWarmupRing(alarm: NapAlarm, currentLocation: CLLocation?) -> Bool {
+        guard let here = currentLocation else { return false }
+        let dest = CLLocation(latitude: alarm.latitude, longitude: alarm.longitude)
+        return here.distance(from: dest) <= alarm.outerRingRadius()
     }
 
     private func stopMonitoring(_ alarm: NapAlarm) {
@@ -263,7 +270,10 @@ final class AlarmManager: NSObject, ObservableObject {
     }
 
     /// Feed every fix into the active estimators and fire when ETA ≤ lead time.
-    private func handleLocationUpdate(_ loc: CLLocation) {
+    /// Internal (not private) so the test target can drive it directly via a
+    /// `simulateLocationUpdate(_:)` seam — mirrors `handleRegionEvent`, which
+    /// is internal for the same reason (Bob, 2026-07-05).
+    func handleLocationUpdate(_ loc: CLLocation) {
         guard !etaEstimators.isEmpty else { return }
         for id in Array(etaEstimators.keys) {
             guard var est = etaEstimators[id],

@@ -730,21 +730,53 @@ struct AddAlarmView: View {
     /// "Waiting for GPS lock…" indicator; clears automatically once a good fix
     /// lands (which auto-fills the centre and sets `hasLocation`).
     private var isWaitingForGPSLock: Bool {
-        existingAlarm == nil
-        && !viewModel.hasLocation
-        && !locationManager.isLocationUnavailable
-        && (locationManager.authorizationStatus == .authorizedWhenInUse
-            || locationManager.authorizationStatus == .authorizedAlways)
-        && freshCurrentLocation() == nil
+        Self.isWaitingForGPSLock(
+            isEditingExistingAlarm: existingAlarm != nil,
+            hasLocation: viewModel.hasLocation,
+            isLocationUnavailable: locationManager.isLocationUnavailable,
+            authorizationStatus: locationManager.authorizationStatus,
+            hasFreshCurrentLocation: freshCurrentLocation() != nil
+        )
+    }
+
+    /// Pure decision logic extracted from `isWaitingForGPSLock` so it's unit
+    /// testable without instantiating this View or a real LocationManager
+    /// (Bob, 2026-07-05 — CI coverage audit recommendation #3).
+    static func isWaitingForGPSLock(
+        isEditingExistingAlarm: Bool,
+        hasLocation: Bool,
+        isLocationUnavailable: Bool,
+        authorizationStatus: CLAuthorizationStatus,
+        hasFreshCurrentLocation: Bool
+    ) -> Bool {
+        !isEditingExistingAlarm
+        && !hasLocation
+        && !isLocationUnavailable
+        && (authorizationStatus == .authorizedWhenInUse || authorizationStatus == .authorizedAlways)
+        && !hasFreshCurrentLocation
     }
 
     /// Returns the user's location only if the fix is recent and accurate. A stale
     /// last-known fix is what centred alarms where the user *was*, not where they
     /// *are*, so we deliberately reject it.
     private func freshCurrentLocation() -> CLLocation? {
-        guard let loc = locationManager.currentLocation else { return nil }
-        let age = Date().timeIntervalSince(loc.timestamp)
-        guard age < 30, loc.horizontalAccuracy >= 0, loc.horizontalAccuracy < 100 else { return nil }
+        Self.freshLocation(locationManager.currentLocation)
+    }
+
+    /// Pure freshness gate extracted from `freshCurrentLocation()` for unit
+    /// testing: a fix counts as fresh when it's under `maxAge` seconds old and
+    /// its horizontal accuracy is within `[0, maxAccuracy)`. `now` is
+    /// injectable so tests don't depend on real wall-clock timing
+    /// (Bob, 2026-07-05).
+    static func freshLocation(
+        _ location: CLLocation?,
+        now: Date = Date(),
+        maxAge: TimeInterval = 30,
+        maxAccuracy: CLLocationAccuracy = 100
+    ) -> CLLocation? {
+        guard let loc = location else { return nil }
+        let age = now.timeIntervalSince(loc.timestamp)
+        guard age < maxAge, loc.horizontalAccuracy >= 0, loc.horizontalAccuracy < maxAccuracy else { return nil }
         return loc
     }
 
