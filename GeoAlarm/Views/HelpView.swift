@@ -31,12 +31,19 @@ struct HelpView: View {
         ("Minimum Requirements",                "help.body.minimumRequirements"),
         ("Feature Summary",                     "help.body.featureSummary"),
         ("Reporting a problem",                 "help.body.reportingProblem"),
+        ("Support / Feedback / Suggestions",    "help.body.supportFeedback"),
     ] }
 
     private var fullHelpText: String {
         sections.map { s in
             let title = NSLocalizedString(s.titleKey, bundle: bundle, comment: "")
-            let body  = NSLocalizedString(s.bodyKey,  bundle: bundle, comment: "")
+            let rawBody = NSLocalizedString(s.bodyKey, bundle: bundle, comment: "")
+            // "help.body.supportFeedback" contains a %@ placeholder for the
+            // support email so the address is only ever hardcoded in one
+            // place: SupportContact.email.
+            let body = s.bodyKey == "help.body.supportFeedback"
+                ? String(format: rawBody, SupportContact.email)
+                : rawBody
             return "\(title)\n\(body)"
         }.joined(separator: "\n\n")
     }
@@ -89,6 +96,9 @@ struct HelpView: View {
                             titleKey: "Feature Summary",      bodyKey: "help.body.featureSummary")
                 helpSection(symbol: "doc.text.magnifyingglass", color: .orange,
                             titleKey: "Reporting a problem",  bodyKey: "help.body.reportingProblem")
+                helpSection(symbol: "envelope",     color: .blue,
+                            titleKey: "Support / Feedback / Suggestions", bodyKey: "help.body.supportFeedback",
+                            formatArgs: [SupportContact.email])
             }
             .padding(.horizontal, 20)
             .padding(.vertical, 16)
@@ -114,7 +124,7 @@ struct HelpView: View {
     // MARK: - Section builder
 
     @ViewBuilder
-    private func helpSection(symbol: String, color: Color, titleKey: String, bodyKey: String) -> some View {
+    private func helpSection(symbol: String, color: Color, titleKey: String, bodyKey: String, formatArgs: [CVarArg] = []) -> some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack(spacing: 10) {
                 Image(systemName: symbol)
@@ -124,10 +134,20 @@ struct HelpView: View {
                 Text(LocalizedStringKey(titleKey), bundle: bundle)
                     .font(.headline)
             }
-            Text(LocalizedStringKey(bodyKey), bundle: bundle)
-                .font(.body)
-                .foregroundStyle(.secondary)
-                .fixedSize(horizontal: false, vertical: true)
+            if formatArgs.isEmpty {
+                Text(LocalizedStringKey(bodyKey), bundle: bundle)
+                    .font(.body)
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            } else {
+                // Body contains a %@ placeholder (e.g. the support email) that
+                // must be substituted manually — LocalizedStringKey doesn't
+                // support runtime format arguments the way NSLocalizedString does.
+                Text(String(format: NSLocalizedString(bodyKey, bundle: bundle, comment: ""), arguments: formatArgs))
+                    .font(.body)
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
         }
     }
 }

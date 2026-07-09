@@ -192,6 +192,7 @@
 "Alarm sound / vibrate" = "闹钟声音 / 振动";
 "Siri & Shortcuts" = "Siri 与快捷指令";
 "Reporting a problem" = "报告问题";
+"Support / Feedback / Suggestions" = "支持 / 反馈 / 建议";
 "Managing alarms" = "管理闹钟";
 "Always On location" = "始终开启位置";
 "Notifications" = "通知";
@@ -253,6 +254,7 @@
 • 版本 — 显示当前版本，格式为 MajorVersion.GitBuildNumber-Date（例如：1.247-20260529）。报告错误时请附上此信息。";
 
 "help.body.reportingProblem" = "如果 GeoNap 运行异常，您可以启用调试日志记录详细记录。\n\n启用日志记录的步骤：\n1. 打开设置 → 支持部分。\n2. 开启启用调试日志。\n3. 对话框解释记录内容，点击启用日志记录继续。\n4. 重现问题。\n5. 打开文件应用 → 我的 iPhone → GeoNap → GeoNapDebug.log，然后分享给支持团队。\n\n记录内容：设备型号、iOS 版本、位置权限状态、区域事件、闹钟事件、交通数据下载及错误。不会自动发送任何内容。";
+"help.body.supportFeedback" = "欢迎随时提出问题、报告错误或提供功能建议。\n\n请发送邮件至 %@，告诉我们您的想法。报告错误时，请附上：\n\n• 您的设备型号和 iOS 版本\n• 设置 → 关于本机（或 设置 → 支持）中显示的 Build 编号\n• 简要描述发生了什么以及您期望的结果\n\n如果您已启用调试日志，请附上日志文件（参见上方“报告问题”）以帮助我们更快诊断问题。\n\n有功能建议？我们很乐意倾听——请将建议发送至同一地址。";
 
 "help.body.alarmIcons" = "每个闹钟行显示一个状态点、可选徽章和右侧状态图标。\n\n状态点（最左侧）：\n• 绿色 — 激活中，正在监测您的位置。\n• 红色 — 闹钟已触发。\n• 橙色 — 已推迟10分钟。\n• 灰色 — 已禁用。\n\n中间徽章（仅在相关时显示）：\n• 青色交通图标 — 交通闹钟。图标形状反映路线类型：火车、地铁、公交、轮渡等。\n• 蓝色重复箭头 — 每次行程后自动重置闹钟。\n• 绿色扩音器 — 自动通知已开启；触发时将向联系人发送消息。\n• 灰色带斜线铃铛 — 声音设为仅振动，不播放音频。\n• 紫色时间范围 — 闹钟仅在特定时间窗口内有效。\n• 橙色日期字母 — 闹钟仅在选定的星期几有效。\n\n右侧图标：\n• 红色带徽章铃铛 — 闹钟已触发，等待确认或推迟。\n• 橙色带Z的月亮 — 闹钟当前处于推迟状态。";
 "help.body.managingAlarms" = "向右滑动列表中任意闹钟，无需打开详情页即可快速启用或禁用。\n\n向左滑动可删除闹钟。已删除的闹钟立即移除，其地理围栏监控也随之停止。\n\n编辑闹钟时，点击打开详情页，然后点击编辑闹钟。\n\n共享闹钟位置时，打开详情页并点击分享闹钟位置，这将分享一个指向闹钟固定坐标的 Apple 地图链接 — 适合在出行前告诉他人您的目的地。您可以随时分享，不必等到闹钟触发。";
@@ -366,19 +368,15 @@
 
 /* Auto-SMS section (SettingsView) */
 "Auto-SMS (No Approval Needed)" = "自动短信（无需批准）";
-"settings.autoSMS.description" = "免动手发送自动通知短信——无需撰写界面，无需点按“发送”。iOS 无法完全在后台发送，因此会在闹钟响后你下次打开 GeoNap 时发送。";
-"settings.autoSMS.setupTitle" = "在「捷径」App 中进行一次性设置：";
-"settings.autoSMS.step1" = "打开“快捷指令”→ 自动化 → 点按 + → 创建个人自动化";
-"settings.autoSMS.step2" = "在触发器列表中点按“App”（这是触发器，不是搜索框）→ 选择 → GeoNap → 被打开时 → 下一步";
-"settings.autoSMS.step3a" = "点击\u{201C}新建空白自动化\u{201D}，然后添加操作：";
-"settings.autoSMS.step3b" = "\u{201C}通过 GeoNap 通知联系人\u{201D}";
-"settings.autoSMS.step4a" = "添加第二个操作：\u{201C}发送信息\u{201D}";
-"settings.autoSMS.step4b" = "信息 → 从步骤 3 选择\u{201C}正文\u{201D}";
-"settings.autoSMS.step4c" = "收件人 → 点击 + 并选择您的联系人";
-"settings.autoSMS.step5" = "关闭\u{201C}运行前询问\u{201D} → 完成";
-"Open Shortcuts App" = "打开「捷径」App";
-"settings.autoSMS.footer" = "支持 iOS 16 及更高版本。iOS 没有通知触发器，因此自动化使用“当 GeoNap 被打开时”——闹钟响后你下次打开 GeoNap 时会发送短信。打开上方的开关，让 App 不再额外显示自己的撰写界面。";
-"settings.autoSMS.automationToggleHelp" = "跳过应用内的“信息”界面——闹钟响后你打开 GeoNap 时，自动化会免动手发送短信。";
+"settings.autoSMS.description" = "闹钟触发时，GeoNap 可以自动向您的联系人发送短信——无需撰写界面，也无需点按发送。需要在下方完成一次性设置。";
+"settings.autoSMS.setupTitle" = "设置方法：";
+"settings.autoSMS.step1" = "点按下方的设置自动化。这将打开捷径应用并创建一个新的个人自动化。";
+"settings.autoSMS.step2" = "在触发条件中，点按 App，选择 GeoNap，然后选择被打开时，点按下一步。";
+"settings.autoSMS.step3" = "点按添加操作，按此顺序添加两个操作：通过 GeoNap 通知联系人，然后是发送信息。在发送信息中，将收件人设置为您的联系人，并使用第一个操作的正文输出作为信息内容。";
+"settings.autoSMS.step4" = "关闭运行前询问，点按完成，然后打开上方的开关。";
+"Set Up Automation" = "设置自动化";
+"settings.autoSMS.footer" = "只要应用未打开，GeoNap 就无法检测到闹钟触发，因此自动化会在您下次打开 GeoNap（闹钟触发后）时运行。打开上方的开关，这样应用就不会再显示自己的撰写界面。";
+"settings.autoSMS.automationToggleHelp" = "仅在完成下方设置后再打开此项，这样 GeoNap 就会停止显示自己的发送界面。";
 "settings.autoSMS.automationToggle" = "我已设置“快捷指令”自动化";
 /* AlarmFiringView */
 "Snooze 10 min" = "贪睡 10 分钟";

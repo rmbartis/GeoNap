@@ -359,3 +359,17 @@ enum AppStorageKey {
         ])
     }
 }
+
+// MARK: - Support Contact
+
+/// Single source of truth for the support contact address. Every in-app use
+/// (Settings → Debug Log → "Share Log with Support", and the Help screen's
+/// "Support / Feedback / Suggestions" section, in all 13 languages) references
+/// this constant rather than hardcoding the address — Help's Localizable.strings
+/// entries hold a %@ placeholder that HelpView.swift fills in from here.
+///
+/// The one unavoidable exception is docs/privacy-policy.html, a static file
+/// with no build step, which must be kept in sync by hand if this ever changes.
+enum SupportContact {
+    static let email = "geonapios@gmail.com"
+}

@@ -4,6 +4,7 @@
 import SwiftUI
 import SwiftData
 import ContactsUI
+import MessageUI
 
 struct SettingsView: View {
 
@@ -24,11 +25,19 @@ struct SettingsView: View {
 
     // Controls the confirmation alert shown before logging is enabled
     @State private var showEnableConfirmation = false
-    // Controls the share sheet for exporting the log file
+    // Controls the mail compose sheet for sending the log file to support
+    @State private var pendingMailMessage: MailMessage?
     // Controls the "log cleared" feedback
     @State private var showClearedBanner = false
     // Controls the "GTFS cache cleared" feedback
     @State private var showGTFSCacheClearedBanner = false
+
+    /// Timestamp format used in the "Debug Log - <date - timestamp>" mail subject.
+    private static let debugLogTimestampFormatter: DateFormatter = {
+        let f = DateFormatter()
+        f.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        return f
+    }()
 
     // Info popover state — one Bool per setting row
     @State private var infoDistance    = false
@@ -320,6 +329,9 @@ struct SettingsView: View {
                     addDefaultContact(contact)
                 }
             }
+            .sheet(item: $pendingMailMessage) { message in
+                MailComposeView(message: message)
+            }
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     Button {
@@ -412,17 +424,36 @@ struct SettingsView: View {
                     Text("Log file size", bundle: bundle)
                 }
 
-                // Share log button
+                // Share log button — opens Mail addressed to support with the log
+                // file attached. Falls back to the generic share sheet if the
+                // device has no Mail account configured.
                 if FileManager.default.fileExists(atPath: DebugLogger.shared.logFileURL.path) {
-                    ShareLink(
-                        item: DebugLogger.shared.logFileURL,
-                        subject: Text("GeoNap Debug Log"),
-                        message: Text("Debug log from GeoNap")
-                    ) {
-                        Label {
-                            Text("Share Log with Support", bundle: bundle)
-                        } icon: {
-                            Image(systemName: "square.and.arrow.up")
+                    if MFMailComposeViewController.canSendMail() {
+                        Button {
+                            pendingMailMessage = MailMessage(
+                                to: [SupportContact.email],
+                                subject: "Debug Log - \(Self.debugLogTimestampFormatter.string(from: Date()))",
+                                body: "Debug log from GeoNap attached below.",
+                                attachmentURL: DebugLogger.shared.logFileURL
+                            )
+                        } label: {
+                            Label {
+                                Text("Share Log with Support", bundle: bundle)
+                            } icon: {
+                                Image(systemName: "square.and.arrow.up")
+                            }
+                        }
+                    } else {
+                        ShareLink(
+                            item: DebugLogger.shared.logFileURL,
+                            subject: Text("Debug Log - \(Self.debugLogTimestampFormatter.string(from: Date()))"),
+                            message: Text("Debug log from GeoNap")
+                        ) {
+                            Label {
+                                Text("Share Log with Support", bundle: bundle)
+                            } icon: {
+                                Image(systemName: "square.and.arrow.up")
+                            }
                         }
                     }
                 }
@@ -593,14 +624,19 @@ struct SettingsView: View {
             }
             .padding(.vertical, 4)
 
-            // Deep-link button
+            // Deep-link button — jumps straight to the "Create Personal
+            // Automation" screen in Shortcuts (shortcuts://create-automation),
+            // skipping the Automation tab + "+" taps described in step 1.
+            // "shortcuts://create-shortcut" (the previous URL) opened the
+            // wrong screen entirely — regular single-action shortcut
+            // creation, not automation creation.
             Button {
-                if let url = URL(string: "shortcuts://create-shortcut") {
+                if let url = URL(string: "shortcuts://create-automation") {
                     UIApplication.shared.open(url)
                 }
             } label: {
                 Label {
-                    Text("Open Shortcuts App", bundle: bundle)
+                    Text("Set Up Automation", bundle: bundle)
                 } icon: {
                     Image(systemName: "arrow.up.right.square")
                 }
@@ -660,8 +696,14 @@ private struct AutoSMSStep: View {
 /// Content shown from the info icon next to the Auto-SMS description —
 /// previously this "One-time setup in the Shortcuts app" title plus 5-step
 /// list was always visible inline in Settings; it's now tucked behind the
-/// icon instead (Bob, 2026-07-08). Reuses the same already-localized
-/// `settings.autoSMS.*` keys, so no new translation work was needed.
+/// icon instead (Bob, 2026-07-08).
+///
+/// Simplified from 8 fragmented sub-steps (1, 2, 3a, 3b, 4a, 4b, 4c, 5) down
+/// to 4 consolidated steps for clarity, and fixed a stale "NapAlarm" action
+/// name left over from the pre-rename app (should have said "GeoNap") —
+/// (Bob, 2026-07-09). The deep-link button below now opens
+/// shortcuts://create-automation directly (previously create-shortcut, the
+/// wrong screen), so step 1 assumes tapping it has already happened.
 private struct AutoSMSSetupInfoSheet: View {
     @Environment(\.languageBundle) private var bundle
 
@@ -679,12 +721,8 @@ private struct AutoSMSSetupInfoSheet: View {
                 VStack(alignment: .leading, spacing: 6) {
                     AutoSMSStep(number: "1", textKey: "settings.autoSMS.step1")
                     AutoSMSStep(number: "2", textKey: "settings.autoSMS.step2")
-                    AutoSMSStep(number: "3", textKey: "settings.autoSMS.step3a")
-                    AutoSMSStep(number: "  ", textKey: "settings.autoSMS.step3b")
-                    AutoSMSStep(number: "4", textKey: "settings.autoSMS.step4a")
-                    AutoSMSStep(number: "  ", textKey: "settings.autoSMS.step4b")
-                    AutoSMSStep(number: "  ", textKey: "settings.autoSMS.step4c")
-                    AutoSMSStep(number: "5", textKey: "settings.autoSMS.step5")
+                    AutoSMSStep(number: "3", textKey: "settings.autoSMS.step3")
+                    AutoSMSStep(number: "4", textKey: "settings.autoSMS.step4")
                 }
                 .font(.subheadline)
             }

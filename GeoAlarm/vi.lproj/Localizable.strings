@@ -192,6 +192,7 @@
 "Alarm sound / vibrate" = "Âm thanh / rung báo thức";
 "Siri & Shortcuts" = "Siri và Phím tắt";
 "Reporting a problem" = "Báo cáo sự cố";
+"Support / Feedback / Suggestions" = "Hỗ trợ / Phản hồi / Đề xuất";
 "Managing alarms" = "Quản lý báo thức";
 "Always On location" = "Vị trí luôn bật";
 "Notifications" = "Thông báo";
@@ -253,6 +254,7 @@ Nút Lưu bị tắt cho đến khi nhập tên và ghim vị trí. iOS cho phé
 • Bản dựng — hiển thị phiên bản hiện tại theo định dạng MajorVersion.GitBuildNumber-Date (ví dụ: 1.247-20260529). Bao gồm khi báo cáo lỗi.";
 
 "help.body.reportingProblem" = "Nếu GeoNap không hoạt động như mong đợi, bạn có thể bật ghi nhật ký gỡ lỗi để thu thập hồ sơ chi tiết.\n\nĐể bật ghi nhật ký:\n1. Mở Cài đặt → phần Hỗ trợ.\n2. Bật Nhật ký gỡ lỗi.\n3. Hộp thoại giải thích những gì được ghi lại. Nhấn Bật ghi nhật ký để tiếp tục.\n4. Tái hiện sự cố.\n5. Mở ứng dụng Files → Trên iPhone của tôi → GeoNap → GeoNapDebug.log, sau đó chia sẻ với bộ phận hỗ trợ.\n\nNhững gì được ghi lại: kiểu thiết bị, phiên bản iOS, trạng thái quyền vị trí, sự kiện vùng, sự kiện báo thức, tải xuống nguồn phương tiện và lỗi. Không có gì được gửi tự động.";
+"help.body.supportFeedback" = "Câu hỏi, báo cáo lỗi và đề xuất tính năng luôn được chào đón.\n\nGửi email đến %@ và cho chúng tôi biết bạn đang nghĩ gì. Đối với báo cáo lỗi, vui lòng bao gồm:\n\n• Kiểu thiết bị và phiên bản iOS của bạn\n• Số Build hiển thị trong Cài đặt → Giới thiệu (hoặc Cài đặt → Hỗ trợ)\n• Mô tả ngắn gọn về những gì đã xảy ra và những gì bạn mong đợi\n\nNếu bạn đã bật ghi nhật ký gỡ lỗi, hãy đính kèm tệp nhật ký (xem \"Báo cáo sự cố\" ở trên) để giúp chúng tôi chẩn đoán sự cố nhanh hơn.\n\nBạn có ý tưởng cho một tính năng? Chúng tôi rất muốn nghe — gửi đề xuất đến cùng địa chỉ.";
 
 "help.body.alarmIcons" = "Mỗi hàng báo thức hiển thị một chấm trạng thái, huy hiệu tùy chọn và biểu tượng trạng thái bên phải.\n\nChấm trạng thái (ngoài cùng bên trái):\n• Xanh lá — đang hoạt động, theo dõi vị trí của bạn.\n• Đỏ — báo thức đã kích hoạt.\n• Cam — đang tạm hoãn 10 phút.\n• Xám — đã tắt.\n\nHuy hiệu ở giữa (chỉ hiển thị khi phù hợp):\n• Biểu tượng phương tiện màu mòng két — báo thức phương tiện. Hình dạng phản ánh loại tuyến: tàu, tàu điện ngầm, xe buýt, phà, v.v.\n• Mũi tên lặp lại màu xanh dương — báo thức tự đặt lại sau mỗi chuyến đi.\n• Loa khuếch đại màu xanh lá — Tự động thông báo bật; các liên hệ sẽ nhận tin nhắn khi báo thức kích hoạt.\n• Chuông xám có gạch chéo — âm thanh được đặt thành Chỉ rung, không phát âm thanh.\n• Khoảng thời gian màu tím — báo thức chỉ hoạt động trong khung giờ cụ thể.\n• Chữ ngày màu cam — báo thức chỉ hoạt động vào các ngày được chọn trong tuần.\n\nBiểu tượng bên phải:\n• Chuông đỏ có huy hiệu — báo thức đã kích hoạt và đang chờ xác nhận hoặc tạm hoãn.\n• Mặt trăng cam có chữ Z — báo thức đang trong trạng thái tạm hoãn.";
 "help.body.managingAlarms" = "Vuốt sang phải trên bất kỳ báo thức nào trong danh sách để nhanh chóng bật hoặc tắt mà không cần mở chế độ xem chi tiết.\n\nVuốt sang trái để xóa báo thức. Báo thức bị xóa ngay lập tức và việc giám sát vùng địa lý của chúng dừng lại.\n\nĐể chỉnh sửa báo thức, nhấn vào để mở chế độ xem chi tiết, sau đó nhấn Chỉnh sửa báo thức.\n\nĐể chia sẻ vị trí báo thức, mở chế độ xem chi tiết và nhấn Chia sẻ vị trí báo thức. Thao tác này chia sẻ liên kết Apple Maps cố định đến tọa độ đã ghim của báo thức — hữu ích để báo cho ai đó biết điểm đến của bạn trước khi đi. Bạn có thể chia sẻ bất cứ lúc nào, không chỉ khi báo thức kêu.";
@@ -370,19 +372,15 @@ Xem Cai dat - SMS Tu dong (Khong can phe duyet) de biet huong dan tung buoc.\n\n
 
 /* Auto-SMS section (SettingsView) */
 "Auto-SMS (No Approval Needed)" = "SMS Tự động (Không cần phê duyệt)";
-"settings.autoSMS.description" = "Gửi SMS Tự động báo rảnh tay — không có trang soạn, không chạm Gửi. iOS không thể gửi hoàn toàn ở chế độ nền, nên tin được gửi vào lần tiếp theo bạn mở GeoNap sau khi báo thức kêu.";
-"settings.autoSMS.setupTitle" = "Thiết lập một lần trong app Phím tắt:";
-"settings.autoSMS.step1" = "Mở Phím tắt → Tự động hóa → chạm + → Tạo tự động hóa cá nhân";
-"settings.autoSMS.step2" = "Trong danh sách trình kích hoạt, chạm App (là trình kích hoạt, KHÔNG phải ô tìm kiếm) → Chọn → GeoNap → Được mở → Tiếp";
-"settings.autoSMS.step3a" = "Nhấn \u{201C}Tự động hóa trống mới\u{201D}, sau đó thêm hành động:";
-"settings.autoSMS.step3b" = "\u{201C}Thông báo liên hệ qua GeoNap\u{201D}";
-"settings.autoSMS.step4a" = "Thêm hành động thứ hai: \u{201C}Gửi tin nhắn\u{201D}";
-"settings.autoSMS.step4b" = "Tin nhắn → chọn \u{201C}Nội dung\u{201D} từ bước 3";
-"settings.autoSMS.step4c" = "Người nhận → nhấn + và chọn liên hệ của bạn";
-"settings.autoSMS.step5" = "Tắt \u{201C}Hỏi trước khi chạy\u{201D} → Xong";
-"Open Shortcuts App" = "Mở app Phím tắt";
-"settings.autoSMS.footer" = "Hỗ trợ iOS 16 trở lên. iOS không có trình kích hoạt theo thông báo, nên tự động hóa dùng “Khi GeoNap được mở” — SMS được gửi vào lần tiếp theo bạn mở GeoNap sau khi báo thức kêu. Bật công tắc ở trên để ứng dụng không hiển thị thêm trang soạn tin của riêng nó.";
-"settings.autoSMS.automationToggleHelp" = "Bỏ qua trang Tin nhắn trong ứng dụng — tự động hóa gửi SMS rảnh tay khi bạn mở GeoNap sau khi báo thức kêu.";
+"settings.autoSMS.description" = "GeoNap có thể tự động gửi SMS đến các liên hệ của bạn khi báo thức kêu — không cần màn hình soạn tin, không cần chạm để gửi. Cần thiết lập một lần bên dưới.";
+"settings.autoSMS.setupTitle" = "Cách thiết lập:";
+"settings.autoSMS.step1" = "Nhấn Thiết lập tự động hóa bên dưới. Thao tác này sẽ mở ứng dụng Phím tắt với một tự động hóa cá nhân mới.";
+"settings.autoSMS.step2" = "Với trình kích hoạt, nhấn App, chọn GeoNap, sau đó chọn Được mở, rồi nhấn Tiếp theo.";
+"settings.autoSMS.step3" = "Nhấn Thêm hành động và thêm hai hành động theo thứ tự này: Thông báo liên hệ qua GeoNap, sau đó Gửi tin nhắn. Trong Gửi tin nhắn, đặt Người nhận là các liên hệ của bạn và dùng kết quả \"Nội dung\" từ hành động đầu tiên làm tin nhắn.";
+"settings.autoSMS.step4" = "Tắt Hỏi trước khi chạy, nhấn Xong, rồi bật công tắc ở trên.";
+"Set Up Automation" = "Thiết lập tự động hóa";
+"settings.autoSMS.footer" = "GeoNap không thể phát hiện báo thức khi ứng dụng chưa mở, vì vậy tự động hóa sẽ chạy vào lần tiếp theo bạn mở GeoNap sau khi báo thức kêu. Bật công tắc ở trên để ứng dụng không hiển thị màn hình soạn tin của riêng nó nữa.";
+"settings.autoSMS.automationToggleHelp" = "Chỉ bật mục này sau khi bạn đã hoàn tất thiết lập bên dưới, để GeoNap ngừng hiển thị màn hình gửi tin của riêng nó.";
 "settings.autoSMS.automationToggle" = "Tôi đã thiết lập tự động hóa Phím tắt";
 /* AlarmFiringView */
 "Snooze 10 min" = "Báo lại 10 phút";

@@ -90,7 +90,7 @@ final class SpotlightManager {
 
         // Keywords drive search matching beyond the title
         var keywords = ["location alarm", "geo alarm", "arrival alert",
-                        "napstop", "commuter", "transit", "geofence", alarm.name]
+                        "geonap", "commuter", "transit", "geofence", alarm.name]
         if alarm.isTransitAlarm {
             keywords += ["train alarm", "bus alarm", "transit alarm"]
         }

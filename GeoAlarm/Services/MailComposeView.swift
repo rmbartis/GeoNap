@@ -22,6 +22,9 @@ struct MailMessage: Identifiable, Equatable {
     let to      : [String]
     let subject : String
     let body    : String
+    /// Optional file to attach (e.g. the debug log). Read as raw Data at compose time.
+    var attachmentURL: URL? = nil
+    var attachmentMimeType: String = "text/plain"
 }
 
 // MARK: - MailComposeView
@@ -38,6 +41,9 @@ struct MailComposeView: UIViewControllerRepresentable {
         vc.setToRecipients(message.to)
         vc.setSubject(message.subject)
         vc.setMessageBody(message.body, isHTML: false)
+        if let url = message.attachmentURL, let data = try? Data(contentsOf: url) {
+            vc.addAttachmentData(data, mimeType: message.attachmentMimeType, fileName: url.lastPathComponent)
+        }
         return vc
     }
 

@@ -192,6 +192,7 @@
 "Alarm sound / vibrate" = "Suono / vibrazione allarme";
 "Siri & Shortcuts" = "Siri e Comandi rapidi";
 "Reporting a problem" = "Segnalare un problema";
+"Support / Feedback / Suggestions" = "Supporto / Feedback / Suggerimenti";
 "Managing alarms" = "Gestire gli allarmi";
 "Always On location" = "Posizione sempre attiva";
 "Notifications" = "Notifiche";
@@ -243,6 +244,7 @@ Il pulsante Salva è disabilitato finché non hai inserito un nome e fissato una
 • Abilita log di debug — vedi \"Segnalare un problema\" sotto.
 • Build — mostra la versione corrente nel formato MajorVersion.GitBuildNumber-Date (es. 1.247-20260529). Includila quando segnali un bug.";
 "help.body.reportingProblem" = "Se GeoNap non si comporta come previsto, puoi abilitare la registrazione di debug.\n\nPer abilitare la registrazione:\n1. Apri Impostazioni → sezione Supporto.\n2. Attiva Abilita log di debug.\n3. Un dialogo spiega cosa viene registrato. Tocca Abilita registrazione.\n4. Riproduci il problema.\n5. Apri l'app File → Sul mio iPhone → GeoNap → GeoNapDebug.log, poi condividi con il supporto.\n\nViene registrato: modello dispositivo, versione iOS, stato permesso posizione, eventi regione, eventi allarme ed errori.";
+"help.body.supportFeedback" = "Domande, segnalazioni di bug e suggerimenti per nuove funzionalità sono sempre benvenuti.\n\nScrivi a %@ e facci sapere cosa hai in mente. Per le segnalazioni di bug, includi:\n\n• Il modello del tuo dispositivo e la versione di iOS\n• Il numero di build mostrato in Impostazioni → Info (o Impostazioni → Supporto)\n• Una breve descrizione di cosa è successo e di cosa ti aspettavi\n\nSe hai abilitato la registrazione di debug, allega il file di log (vedi \"Segnalare un problema\" sopra) per aiutarci a diagnosticare il problema più rapidamente.\n\nHai un'idea per una funzionalità? Ci farebbe piacere conoscerla — invia i suggerimenti allo stesso indirizzo.";
 "help.body.alarmIcons" = "Ogni riga di allarme mostra un punto di stato, badge opzionali e icone di stato a destra.\n\nPunto di stato (estrema sinistra):\n• Verde — attivo, monitoraggio della posizione in corso.\n• Rosso — l'allarme è scattato.\n• Arancione — in posticipo per 10 minuti.\n• Grigio — disattivato.\n\nBadge centrali (mostrati solo quando rilevanti):\n• Icona transit teal — allarme transit. La forma indica il tipo: treno, metro, bus, traghetto, ecc.\n• Frecce di ripetizione blu — l'allarme si reimposta automaticamente dopo ogni viaggio.\n• Megafono verde — Notifica automatica attiva; i tuoi contatti riceveranno un messaggio all'attivazione.\n• Campanella grigia barrata — suono impostato su Solo vibrazione.\n• Intervallo di tempo viola — allarme limitato a una finestra temporale specifica.\n• Lettere dei giorni arancioni — allarme limitato a giorni selezionati della settimana.\n\nIcone a destra:\n• Campanella rossa con badge — l'allarme è scattato e attende conferma o posticipo.\n• Luna arancione con Z — allarme attualmente in posticipo.";
 "help.body.managingAlarms" = "Scorri a destra su qualsiasi allarme per abilitarlo o disabilitarlo rapidamente.\n\nScorri a sinistra per eliminare un allarme. Gli allarmi eliminati vengono rimossi immediatamente.\n\nPer modificare un allarme, toccalo per aprire la vista dettaglio, poi tocca Modifica allarme.\n\nPer condividere la posizione di un allarme, apri la vista dettaglio e tocca Condividi posizione allarme. Questo condivide un link fisso di Apple Maps alle coordinate salvate dell'allarme — utile per far sapere a qualcuno dove sei diretto prima di viaggiare. Puoi condividerlo in qualsiasi momento, non solo quando l'allarme scatta.";
 "help.body.alwaysOnLocation" = "GeoNap necessita dell'accesso alla posizione Sempre per monitorare le regioni in background — anche quando il tuo schermo è bloccato o l'app è chiusa.\n\nSe hai scelto Non ora durante la configurazione, puoi concedere l'accesso in Impostazioni iOS → Privacy e sicurezza → Servizi di localizzazione → GeoNap. Seleziona Sempre.\n\nSenza accesso Sempre, gli allarmi si attiveranno solo quando l'app è aperta.";
@@ -344,19 +346,15 @@ Il pulsante Salva è disabilitato finché non hai inserito un nome e fissato una
 
 /* Auto-SMS section (SettingsView) */
 "Auto-SMS (No Approval Needed)" = "Auto-SMS (Senza approvazione)";
-"settings.autoSMS.description" = "Invia l’SMS di Notifica automatica a mani libere: senza foglio di composizione né tocco su Invia. iOS non può inviarlo del tutto in background, quindi viene inviato alla successiva apertura di GeoNap dopo un allarme.";
-"settings.autoSMS.setupTitle" = "Configurazione una tantum nell'app Comandi Rapidi:";
-"settings.autoSMS.step1" = "Apri Comandi rapidi → Automazione → tocca + → Crea automazione personale";
-"settings.autoSMS.step2" = "Nell’elenco dei trigger tocca App (un trigger, NON una ricerca) → Scegli → GeoNap → Viene aperta → Avanti";
-"settings.autoSMS.step3a" = "Tocca \u{201C}Nuova automazione vuota\u{201D}, poi aggiungi azione:";
-"settings.autoSMS.step3b" = "\u{201C}Notifica contatti tramite GeoNap\u{201D}";
-"settings.autoSMS.step4a" = "Aggiungi una seconda azione: \u{201C}Invia messaggio\u{201D}";
-"settings.autoSMS.step4b" = "Messaggio → scegli \u{201C}Corpo\u{201D} dal passaggio 3";
-"settings.autoSMS.step4c" = "Destinatari → tocca + e scegli i tuoi contatti";
-"settings.autoSMS.step5" = "Disattiva \u{201C}Chiedi prima di eseguire\u{201D} → Fine";
-"Open Shortcuts App" = "Apri Comandi Rapidi";
-"settings.autoSMS.footer" = "Supportato su iOS 16 e successivi. iOS non ha un trigger di notifica, quindi l’automazione usa “Quando GeoNap viene aperta”: l’SMS viene inviato alla successiva apertura di GeoNap dopo un allarme. Attiva l’interruttore qui sopra così l’app non mostra anche il proprio foglio di composizione.";
-"settings.autoSMS.automationToggleHelp" = "Salta il foglio Messaggi nell’app: l’automazione invia l’SMS a mani libere quando apri GeoNap dopo un allarme.";
+"settings.autoSMS.description" = "GeoNap può inviare un SMS ai tuoi contatti automaticamente quando scatta un allarme, senza schermata di composizione né tocco per inviare. Richiede una configurazione una tantum qui sotto.";
+"settings.autoSMS.setupTitle" = "Come configurarlo:";
+"settings.autoSMS.step1" = "Tocca Configura automazione qui sotto. Questo apre Comandi Rapidi con una nuova automazione personale.";
+"settings.autoSMS.step2" = "Per l'attivatore, tocca App, scegli GeoNap, poi Viene aperta, e tocca Avanti.";
+"settings.autoSMS.step3" = "Tocca Aggiungi azione e aggiungi due azioni, in quest'ordine: Notifica contatti tramite GeoNap, poi Invia messaggio. In Invia messaggio, imposta i destinatari con i tuoi contatti e usa come messaggio il risultato Testo della prima azione.";
+"settings.autoSMS.step4" = "Disattiva Chiedi prima di eseguire, tocca Fine, poi attiva l'interruttore qui sopra.";
+"Set Up Automation" = "Configura automazione";
+"settings.autoSMS.footer" = "GeoNap non può rilevare un allarme finché l'app non è aperta, quindi l'automazione viene eseguita la prossima volta che apri GeoNap dopo un allarme. Attiva l'interruttore qui sopra così l'app non mostra anche la propria schermata di composizione.";
+"settings.autoSMS.automationToggleHelp" = "Attivalo solo dopo aver completato la configurazione qui sotto, così GeoNap smette di mostrare la propria schermata di invio.";
 "settings.autoSMS.automationToggle" = "Ho configurato l’automazione Comandi rapidi";
 /* AlarmFiringView */
 "Snooze 10 min" = "Posticipa 10 min";
