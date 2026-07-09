@@ -13,7 +13,29 @@ import UserNotifications
 struct NapStopApp: App {
     @StateObject private var locationManager = LocationManager()
     @StateObject private var alarmManager = AlarmManager()
-    @StateObject private var languageManager = LanguageManager.shared
+    // LanguageManager persists the selected in-app language to plain
+    // UserDefaults.standard (AppStorageKey.appLanguage) — state that lives
+    // entirely outside the isolated in-memory SwiftData store below, so it
+    // survives across every subsequent launch on the same simulator,
+    // --uitesting or not. Once
+    // test_switchingLanguage_rebuildsWithoutCrashing_andReturnsToSettings
+    // runs once (this run or an earlier CI pass), every later UI test launch
+    // boots in Spanish — which is exactly what silently broke "Save Alarm"
+    // for three straight test runs (Bob — 2026-07-09 CI stability audit,
+    // fifth pass): the button's real accessibility label was "Guardar
+    // Alarma", not "Save Alarm", so no amount of scrolling or keyboard
+    // dismissal could ever find it. Clear the stored language INSIDE this
+    // property's own init closure — not in NapStopApp.init() below, which
+    // runs too late: `@StateObject`'s default-value expression evaluates
+    // (and reads UserDefaults via `LanguageManager.shared`'s `private
+    // init()`) as part of struct property initialization, which completes
+    // before a custom init() body ever runs.
+    @StateObject private var languageManager: LanguageManager = {
+        if ProcessInfo.processInfo.arguments.contains("--uitesting") {
+            UserDefaults.standard.removeObject(forKey: AppStorageKey.appLanguage)
+        }
+        return LanguageManager.shared
+    }()
 
     /// CloudKit-backed container with a local-only fallback.
     /// Falls back silently if the user is not signed into iCloud or if the
@@ -116,6 +138,20 @@ struct RootView: View {
                 alarmManager.locationManager = locationManager
                 locationManager.requestAlwaysAuthorization()
                 alarmManager.reregisterAllRegions()
+                // UI tests get an isolated in-memory SwiftData store (see
+                // `container` above), but AlarmKit alarms are OS-level state
+                // that lives entirely outside that store — a real alarm left
+                // over from a prior run (manual testing or an earlier CI
+                // pass) keeps showing its Live Activity across every
+                // subsequent launch, silently intercepting taps meant for
+                // the app's own toolbar underneath it. Clear the slate
+                // before any test-driven alarm scheduling can happen. (Bob —
+                // 2026-07-09 CI stability audit, after a failure screenshot
+                // showed a stale "Penn Station" Live Activity banner
+                // blocking addAlarmMenuButton / settingsButton.)
+                if ProcessInfo.processInfo.arguments.contains("--uitesting") {
+                    GeoAlarmScheduler.cancelAll()
+                }
                 // AlarmKit (iOS 26+): prompt for alarm permission so a geofence
                 // fire can present a system alarm. Lazily re-checked before each
                 // fire, but requesting at launch surfaces the prompt early.

@@ -40,6 +40,18 @@
                ReferencedContainer = "container:GeoAlarm.xcodeproj">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "NO"
+            testExecutionOrdering = "random">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "686A0F392FC337E50079F963"
+               BuildableName = "GeoNapUITests.xctest"
+               BlueprintName = "GeoNapUITests"
+               ReferencedContainer = "container:GeoAlarm.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction

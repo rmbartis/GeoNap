@@ -4,12 +4,27 @@
 #
 # GeoAlarm — CI
 #
+# IMPORTANT — target names vs folder names
+# ─────────────────────────────────────────
+# The Xcode test TARGETS are named GeoNapTests / GeoNapUITests (see
+# project.pbxproj), but the SOURCE FOLDERS they sync from are still named
+# NapStopTests/ and NapStopUITests/ — leftover from before the NapStop → GeoNap
+# rebrand, never renamed. `-only-testing:`/`-skip-testing:` flags need the
+# TARGET name (GeoNapTests/GeoNapUITests), not the folder name. Fixed here
+# (2026-07-09) after this drifted silently for over 5 weeks: commit b0ec2a4
+# (2026-05-31) renamed the scheme from NapStop → GeoNap but left every
+# -only-testing:/-skip-testing: flag below saying NapStopTests/NapStopUITests,
+# which don't exist as target names — every job in this file has been failing
+# with "isn't a member of the specified test plan or scheme" since that commit.
+# If you rename the Xcode target again, grep this file for GeoNapTests /
+# GeoNapUITests and update both here AND in GeoNap.xcscheme's TestAction.
+#
 # Jobs
 # ────
 # unit-tests   Runs on every push + PR.
-#              Executes the WHOLE NapStopTests target EXCEPT the two GTFS
+#              Executes the WHOLE GeoNapTests target EXCEPT the two GTFS
 #              network suites (GTFSFeedURLTests / GTFSParserTests), which have
-#              their own jobs. Using -only-testing:NapStopTests + -skip-testing
+#              their own jobs. Using -only-testing:GeoNapTests + -skip-testing
 #              (rather than a hand-maintained per-class allow-list) guarantees
 #              newly added test classes — e.g. ETAEstimatorTests, LocalizationTests,
 #              LocalizationConsistencyTests, CoordinateParserTests — are picked
@@ -35,7 +50,8 @@
 #              feeds (MARTA, BART, DB Fernverkehr, TriMet).  Takes 3–5 minutes.
 #
 # ui-tests     Runs on every push + PR.
-#              Executes NapStopUITests — empty state, add/delete/disable alarm,
+#              Executes the GeoNapUITests target (source still lives in
+#              NapStopUITests/, only the Xcode target was renamed) — empty state, add/delete/disable alarm,
 #              and the in-app language-switch view-identity smoke test. Was
 #              flagged as a gap (target existed, never run by CI) in the
 #              2026-07-05 audit; wired in the same day after finding — and
@@ -106,9 +122,9 @@ jobs:
             -project GeoAlarm.xcodeproj \
             -scheme GeoNap \
             -destination 'platform=iOS Simulator,name=iPhone 16' \
-            -only-testing:NapStopTests \
-            -skip-testing:NapStopTests/GTFSFeedURLTests \
-            -skip-testing:NapStopTests/GTFSParserTests \
+            -only-testing:GeoNapTests \
+            -skip-testing:GeoNapTests/GTFSFeedURLTests \
+            -skip-testing:GeoNapTests/GTFSParserTests \
             -enableCodeCoverage YES \
             -resultBundlePath TestResults.xcresult \
             CODE_SIGN_IDENTITY="" \
@@ -169,7 +185,7 @@ jobs:
             -project GeoAlarm.xcodeproj \
             -scheme GeoNap \
             -destination 'platform=iOS Simulator,name=iPhone 16' \
-            -only-testing:NapStopTests/GTFSFeedURLTests \
+            -only-testing:GeoNapTests/GTFSFeedURLTests \
             CODE_SIGN_IDENTITY="" \
             CODE_SIGNING_REQUIRED=NO \
             | xcpretty --color --report junit --output test-results-url.xml
@@ -213,7 +229,7 @@ jobs:
             -project GeoAlarm.xcodeproj \
             -scheme GeoNap \
             -destination 'platform=iOS Simulator,name=iPhone 16' \
-            -only-testing:NapStopTests/GTFSParserTests \
+            -only-testing:GeoNapTests/GTFSParserTests \
             CODE_SIGN_IDENTITY="" \
             CODE_SIGNING_REQUIRED=NO \
             | xcpretty --color --report junit --output test-results-parse.xml
@@ -254,7 +270,7 @@ jobs:
             -project GeoAlarm.xcodeproj \
             -scheme GeoNap \
             -destination 'platform=iOS Simulator,name=iPhone 16' \
-            -only-testing:NapStopUITests \
+            -only-testing:GeoNapUITests \
             CODE_SIGN_IDENTITY="" \
             CODE_SIGNING_REQUIRED=NO \
             | xcpretty --color --report junit --output test-results-ui.xml

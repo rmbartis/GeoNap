@@ -11,8 +11,18 @@ import XCTest
 
 final class NapStopUITestsLaunchTests: XCTestCase {
 
+    // Was `true` (Xcode's default template value), which reruns testLaunch()
+    // once per orientation x appearance-mode combination the scheme defines
+    // — ~90 repeated launches, 12+ minutes, and the source of a mid-run
+    // crash/restart during a 2026-07-09 CI run (Bob — CI stability audit).
+    // Worse, it leaves the simulator's device orientation in whatever state
+    // the last permutation used (observed: landscape), which then silently
+    // broke portrait-assuming hit-testing in NapStopUITests, the next suite
+    // to run on the same simulator instance. A single launch screenshot
+    // doesn't need per-orientation coverage in CI; set explicitly if that
+    // coverage is ever actually needed for a specific investigation.
     override class var runsForEachTargetApplicationUIConfiguration: Bool {
-        true
+        false
     }
 
     override func setUpWithError() throws {

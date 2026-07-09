@@ -197,4 +197,34 @@ enum GeoAlarmScheduler {
             DebugLogger.shared.log("AlarmKit cancel failed (id=\(id)): \(error.localizedDescription)", category: "AlarmKit")
         }
     }
+
+    /// Cancels every alarm AlarmKit currently knows about, regardless of
+    /// which NapAlarm (if any) originally scheduled it. AlarmKit has no
+    /// cancel-all, so this enumerates `alarms` and cancels each by id.
+    ///
+    /// Needed for `--uitesting` launches: AlarmKit alarms are OS-level state,
+    /// entirely independent of the app's own SwiftData store (which
+    /// NapStopApp already resets to an isolated in-memory container for UI
+    /// tests). A real alarm scheduled by an earlier run — manual testing or
+    /// a prior CI pass — keeps alerting and showing its Live Activity across
+    /// every subsequent app launch until explicitly cancelled, since nothing
+    /// about relaunching the app clears it.
+    ///
+    /// This is exactly what broke 4 NapStopUITests tests on 2026-07-09 (Bob
+    /// — CI stability audit): the failure screenshots showed a stale
+    /// "GeoNap — Penn Station" Live Activity banner docked at the top of the
+    /// screen, sitting on top of the app's own toolbar and silently
+    /// swallowing taps meant for addAlarmMenuButton / settingsButton — the
+    /// accessibility layer reported those buttons as present and hittable
+    /// (they're real SwiftUI elements underneath), but the actual touch
+    /// landed on the system overlay instead.
+    static func cancelAll() {
+        do {
+            for alarm in try AlarmKit.AlarmManager.shared.alarms {
+                cancel(id: alarm.id)
+            }
+        } catch {
+            DebugLogger.shared.log("AlarmKit cancelAll failed to read alarms: \(error.localizedDescription)", category: "AlarmKit")
+        }
+    }
 }

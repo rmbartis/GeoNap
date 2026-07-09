@@ -187,6 +187,18 @@ struct SettingsView: View {
                             )
                         }
                     }
+                    // Stable identifier on the row itself, not the "Language"
+                    // Text label. (Bob — 2026-07-09 CI stability audit, fourth
+                    // pass): the label contains a nested Button (the ⓘ info
+                    // icon inside SettingInfoLabel) sitting inside this
+                    // Picker's own tappable Form row — a nested-interactive-
+                    // control layout that made XCUITest's hit-test frame for
+                    // `app.staticTexts["Language"]` unreliable (exists, but
+                    // `isHittable` false, and it never recovered even after
+                    // scrolling). Tag the whole row so tests can target the
+                    // actual tappable element directly instead of a decorative
+                    // label fragment inside it.
+                    .accessibilityIdentifier("languageSettingsRow")
                 }
 
                 // MARK: Auto-Notify Defaults

@@ -608,6 +608,14 @@ struct AddAlarmView: View {
                 }
                 .frame(maxWidth: .infinity)
                 .disabled(!viewModel.isValid)
+                // Stable identifier independent of the current in-app
+                // language/localization bundle — belt-and-suspenders
+                // alongside the scroll-gesture fix in NapStopUITests.swift's
+                // tapWhenReady (Bob — 2026-07-09 CI stability audit, fifth
+                // pass), so a UI test target isn't sensitive to which
+                // .lproj bundle happens to be active when this button
+                // renders.
+                .accessibilityIdentifier("saveAlarmButton")
             }
         }
         .navigationTitle(isEditing

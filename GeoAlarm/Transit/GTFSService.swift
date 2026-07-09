@@ -91,7 +91,7 @@ final class GTFSService: ObservableObject {
     /// it to (fixed 7, or the user's custom value including the Infinite
     /// sentinel) — see that function for how the Settings toggle factors in
     /// (Bob, 2026-07-07, correcting the earlier "opt-in" reading of the spec).
-    static func shouldUseCache(
+    nonisolated static func shouldUseCache(
         isCached: Bool,
         lastDownloaded: Date?,
         retentionDays: Int,
@@ -113,7 +113,7 @@ final class GTFSService: ObservableObject {
     /// sentinel) applies — after being run through `normalizedRetentionDays`
     /// so a stray out-of-range value can never silently take effect.
     /// Extracted alongside `shouldUseCache` for CI coverage (Bob, 2026-07-07).
-    static func effectiveRetentionDays(customRetentionEnabled: Bool, storedRetentionDays: Int) -> Int {
+    nonisolated static func effectiveRetentionDays(customRetentionEnabled: Bool, storedRetentionDays: Int) -> Int {
         customRetentionEnabled
             ? normalizedRetentionDays(storedRetentionDays)
             : AppStorageKey.gtfsCacheDefaultRetentionDays
@@ -132,7 +132,7 @@ final class GTFSService: ObservableObject {
     /// like 42 left over from that testing would display and behave as a
     /// legitimate 42-day retention instead of resetting to the 7-day default
     /// (Bob, 2026-07-08 — saw exactly this on a fresh rebuild).
-    static func normalizedRetentionDays(_ raw: Int) -> Int {
+    nonisolated static func normalizedRetentionDays(_ raw: Int) -> Int {
         if raw >= AppStorageKey.gtfsCacheInfiniteRetention { return AppStorageKey.gtfsCacheInfiniteRetention }
         if (1...30).contains(raw) { return raw }
         return AppStorageKey.gtfsCacheDefaultRetentionDays
