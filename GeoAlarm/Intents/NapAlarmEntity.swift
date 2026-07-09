@@ -1,5 +1,5 @@
 // NapAlarmEntity.swift
-// AppEntity that lets Siri and Shortcuts resolve alarm names to NapAlarm records.
+// AppEntity that lets Siri and Shortcuts resolve alarm names to GeoNap alarm records.
 // NapAlarmQuery backs the entity with live SwiftData lookups.
 
 import AppIntents
@@ -10,7 +10,7 @@ import Foundation
 
 struct NapAlarmEntity: AppEntity {
 
-    static var typeDisplayRepresentation: TypeDisplayRepresentation = "NapAlarm"
+    static var typeDisplayRepresentation: TypeDisplayRepresentation = "GeoNap"
     static var defaultQuery = NapAlarmQuery()
 
     let id: UUID

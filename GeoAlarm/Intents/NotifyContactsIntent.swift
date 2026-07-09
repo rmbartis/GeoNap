@@ -1,13 +1,13 @@
 // NotifyContactsIntent.swift
 // An AppIntent that retrieves the message body written to UserDefaults when
-// the most recent NapAlarm fired, and returns it as a plain String.
+// the most recent GeoNap alarm fired, and returns it as a plain String.
 //
 // Designed for use in a Shortcuts Personal Automation:
 //
 //   Trigger : App → GeoNap → "Is Opened"   (iOS has no "app received a
 //             notification" trigger; "Is Opened" is the only app trigger, so
 //             the SMS is sent the next time GeoNap is opened after an alarm)
-//   Action 1: "Notify Contacts via NapAlarm"   ← this intent
+//   Action 1: "Notify Contacts via GeoNap"   ← this intent
 //             → output: message body String (empty/throws if no FRESH alarm,
 //               so opening the app for any other reason sends nothing)
 //   Action 2: "Send Message"
@@ -43,10 +43,10 @@ enum AutoNotifyDefaultsKey {
 
 struct NotifyContactsIntent: AppIntent {
 
-    static var title: LocalizedStringResource = "Notify Contacts via NapAlarm"
+    static var title: LocalizedStringResource = "Notify Contacts via GeoNap"
     static var description = IntentDescription(
         """
-        Returns the message body for the most recently triggered NapAlarm. \
+        Returns the message body for the most recently triggered GeoNap alarm. \
         Use the output with a "Send Message" action in a Personal Automation \
         set to "Run Without Asking" to send SMS without a compose sheet.
         """,

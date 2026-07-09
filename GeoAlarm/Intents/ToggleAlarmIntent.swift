@@ -1,5 +1,5 @@
 // ToggleAlarmIntent.swift
-// "Hey Siri, enable/disable my Penn Station NapAlarm"
+// "Hey Siri, enable/disable my Penn Station GeoNap"
 
 import AppIntents
 import SwiftData
@@ -8,9 +8,9 @@ import SwiftData
 
 struct EnableAlarmIntent: AppIntent {
 
-    static var title: LocalizedStringResource = "Enable NapAlarm"
+    static var title: LocalizedStringResource = "Enable GeoNap"
     static var description = IntentDescription(
-        "Enables a NapAlarm so it starts monitoring your location.",
+        "Enables a GeoNap so it starts monitoring your location.",
         categoryName: "Edit"
     )
     static var openAppWhenRun: Bool = false
@@ -28,9 +28,9 @@ struct EnableAlarmIntent: AppIntent {
 
 struct DisableAlarmIntent: AppIntent {
 
-    static var title: LocalizedStringResource = "Disable NapAlarm"
+    static var title: LocalizedStringResource = "Disable GeoNap"
     static var description = IntentDescription(
-        "Disables a NapAlarm so it stops monitoring your location.",
+        "Disables a GeoNap so it stops monitoring your location.",
         categoryName: "Edit"
     )
     static var openAppWhenRun: Bool = false

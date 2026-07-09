@@ -13,7 +13,7 @@ struct NearestAlarmView: View {
             List(store.alarms) { alarm in
                 AlarmWatchRow(alarm: alarm)
             }
-            .navigationTitle("NapAlarm")
+            .navigationTitle("GeoNap")
         }
     }
 
@@ -25,7 +25,7 @@ struct NearestAlarmView: View {
             Text("No active alarms")
                 .font(.caption)
                 .foregroundStyle(.secondary)
-            Text("Open NapAlarm on your iPhone to set one up.")
+            Text("Open GeoNap on your iPhone to set one up.")
                 .font(.caption2)
                 .foregroundStyle(.tertiary)
                 .multilineTextAlignment(.center)

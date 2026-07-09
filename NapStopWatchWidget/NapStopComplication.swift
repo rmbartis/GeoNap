@@ -114,7 +114,7 @@ struct AlarmComplicationView: View {
                 Image(systemName: entry.isTriggered ? "bell.badge.fill" : "location.fill")
                     .font(.caption2.bold())
                     .foregroundStyle(entry.isTriggered ? .red : .green)
-                Text(entry.isTriggered ? "Alarm fired!" : "NapAlarm")
+                Text(entry.isTriggered ? "Alarm fired!" : "GeoNap")
                     .font(.caption2)
                     .foregroundStyle(.secondary)
             }
@@ -155,7 +155,7 @@ struct AlarmComplicationView: View {
     private var cornerView: some View {
         Image(systemName: entry.isTriggered ? "bell.badge.fill" : "location.fill")
             .foregroundStyle(entry.isTriggered ? .red : .green)
-            .widgetLabel(entry.featuredName ?? "NapAlarm")
+            .widgetLabel(entry.featuredName ?? "GeoNap")
     }
 }
 
@@ -170,7 +170,7 @@ struct NapStopComplication: Widget {
             AlarmComplicationView(entry: entry)
                 .containerBackground(.background, for: .widget)
         }
-        .configurationDisplayName("NapAlarm")
+        .configurationDisplayName("GeoNap")
         .description("Shows your nearest active alarm.")
         .supportedFamilies([
             .accessoryCircular,

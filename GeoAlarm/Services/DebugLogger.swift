@@ -157,7 +157,7 @@ final class DebugLogger {
         let bundle   = Bundle.main
         let appName  = bundle.infoDictionary?["CFBundleDisplayName"] as? String
                        ?? bundle.infoDictionary?["CFBundleName"] as? String
-                       ?? "NapAlarm"
+                       ?? "GeoNap"
         let version  = bundle.infoDictionary?["CFBundleShortVersionString"] as? String ?? "?"
         let build    = bundle.infoDictionary?["CFBundleVersion"] as? String ?? "?"
         // The exact build identifier shown to the user in Settings → About → "Build".
@@ -174,7 +174,7 @@ final class DebugLogger {
         let separator = String(repeating: "─", count: 60)
         let header = """
         \(separator)
-        NapAlarm Debug Log — Session started \(iso.string(from: Date()))
+        GeoNap Debug Log — Session started \(iso.string(from: Date()))
         \(separator)
         App:      \(appName) \(version) (build \(build))
         Build:    \(userBuild)

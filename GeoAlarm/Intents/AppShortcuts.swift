@@ -19,7 +19,7 @@ struct NapAlarmShortcuts: AppShortcutsProvider {
                 "New \(.applicationName)",
                 "Set a \(.applicationName)"
             ],
-            shortTitle: "Create NapAlarm",
+            shortTitle: "Create GeoNap",
             systemImageName: "location.fill"
         )
 
@@ -31,7 +31,7 @@ struct NapAlarmShortcuts: AppShortcutsProvider {
                 "Turn on \(.applicationName)",
                 "Activate \(.applicationName)"
             ],
-            shortTitle: "Enable NapAlarm",
+            shortTitle: "Enable GeoNap",
             systemImageName: "play.circle.fill"
         )
 
@@ -43,7 +43,7 @@ struct NapAlarmShortcuts: AppShortcutsProvider {
                 "Turn off \(.applicationName)",
                 "Deactivate \(.applicationName)"
             ],
-            shortTitle: "Disable NapAlarm",
+            shortTitle: "Disable GeoNap",
             systemImageName: "pause.circle.fill"
         )
 
