@@ -217,7 +217,13 @@ final class LocalizationTests: XCTestCase {
 
     // MARK: - Auto-SMS section keys (SettingsView)
 
-    /// Every language file must contain all 13 keys used by the Auto-SMS section.
+    /// Every language file must contain all keys used by the Auto-SMS section.
+    /// Updated (Bob, 2026-07-09) from the pre-consolidation 8-sub-step key set
+    /// (step1, step2, step3a/3b, step4a/4b/4c, step5, "Open Shortcuts App") —
+    /// those were removed from every Localizable.strings back in commit
+    /// 518d836 but this test wasn't updated then, so it's been asserting on
+    /// keys that no longer exist. Now matches the current 9-step version
+    /// (step1–step9) plus the "Set Up Automation" deep-link button label.
     func test_allLanguages_haveAutoSMSSectionKeys() throws {
         let autoSMSKeys = [
             "Auto-SMS (No Approval Needed)",
@@ -225,13 +231,14 @@ final class LocalizationTests: XCTestCase {
             "settings.autoSMS.setupTitle",
             "settings.autoSMS.step1",
             "settings.autoSMS.step2",
-            "settings.autoSMS.step3a",
-            "settings.autoSMS.step3b",
-            "settings.autoSMS.step4a",
-            "settings.autoSMS.step4b",
-            "settings.autoSMS.step4c",
+            "settings.autoSMS.step3",
+            "settings.autoSMS.step4",
             "settings.autoSMS.step5",
-            "Open Shortcuts App",
+            "settings.autoSMS.step6",
+            "settings.autoSMS.step7",
+            "settings.autoSMS.step8",
+            "settings.autoSMS.step9",
+            "Set Up Automation",
             "settings.autoSMS.footer",
         ]
         for lang in expectedTokens.keys.sorted() {

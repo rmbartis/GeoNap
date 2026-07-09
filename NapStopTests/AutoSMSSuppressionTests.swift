@@ -14,9 +14,16 @@
 //
 // queueAutoNotify() reads/writes UserDefaults.standard directly (not an
 // injectable suite), so these tests touch the real `standard` defaults for
-// three specific keys and carefully reset them in setUp/tearDown to avoid
+// four specific keys and carefully reset them in setUp/tearDown to avoid
 // bleeding state into other test files (confirmed no other test file reads
-// or writes these three keys).
+// or writes these four keys).
+//
+// pendingPhones added (Bob, 2026-07-09) alongside pendingBody/pendingBodyTimestamp
+// — it's the recipient list NotifyContactsIntent now returns as a named
+// "Recipients" output, sourced from the alarm's own Auto-Notify contacts so the
+// Shortcuts automation never needs a manually configured, static contact list.
+// This key was previously untested — queueAutoNotify wrote it but nothing here
+// asserted on it, so a regression there would have shipped silently.
 
 import XCTest
 @testable import GeoNap
@@ -41,6 +48,7 @@ final class AutoSMSSuppressionTests: XCTestCase {
     private func resetDefaults() {
         UserDefaults.standard.removeObject(forKey: AppStorageKey.autoSMSAutomationEnabled)
         UserDefaults.standard.removeObject(forKey: AutoNotifyDefaultsKey.pendingBody)
+        UserDefaults.standard.removeObject(forKey: AutoNotifyDefaultsKey.pendingPhones)
         UserDefaults.standard.removeObject(forKey: AutoNotifyDefaultsKey.pendingBodyTimestamp)
     }
 
@@ -120,6 +128,60 @@ final class AutoSMSSuppressionTests: XCTestCase {
         XCTAssertLessThanOrEqual(ts, after)
     }
 
+    // MARK: - pendingPhones (Recipients output for NotifyContactsIntent)
+
+    func test_automationEnabled_writesPendingPhones_matchingConfiguredContacts() {
+        UserDefaults.standard.set(true, forKey: AppStorageKey.autoSMSAutomationEnabled)
+        let alarm = NapAlarm(name: "Penn Station", latitude: 40.7506, longitude: -73.9971,
+                              regionEvent: .onEntry)
+        alarm.notifyContact = true
+        alarm.notifyContactList = [
+            NotifyContact(name: "Alice", value: "+15551234567"),
+            NotifyContact(name: "Bob",   value: "+15559876543"),
+        ]
+        sut.add(alarm: alarm)
+
+        sut.simulateRegionEntered(regionID: alarm.id.uuidString)
+
+        let phones = UserDefaults.standard.stringArray(forKey: AutoNotifyDefaultsKey.pendingPhones) ?? []
+        XCTAssertEqual(Set(phones), ["+15551234567", "+15559876543"],
+            "pendingPhones must contain every phone contact for the fired alarm, for NotifyContactsIntent's Recipients output")
+    }
+
+    func test_automationDisabled_alsoWritesPendingPhones() {
+        // Same as pendingBody: written unconditionally regardless of the
+        // toggle, so a Shortcuts run outside the automation still has correct
+        // data available (NotifyContactsIntent's freshness guard governs
+        // whether it actually sends, not this write).
+        UserDefaults.standard.set(false, forKey: AppStorageKey.autoSMSAutomationEnabled)
+        let alarm = makeAlarmWithPhone()
+        sut.add(alarm: alarm)
+
+        sut.simulateRegionEntered(regionID: alarm.id.uuidString)
+
+        let phones = UserDefaults.standard.stringArray(forKey: AutoNotifyDefaultsKey.pendingPhones) ?? []
+        XCTAssertEqual(phones, ["+15551234567"],
+            "pendingPhones must be written even when automation is off")
+    }
+
+    func test_pendingPhones_excludesEmailContacts() {
+        UserDefaults.standard.set(true, forKey: AppStorageKey.autoSMSAutomationEnabled)
+        let alarm = NapAlarm(name: "Penn Station", latitude: 40.7506, longitude: -73.9971,
+                              regionEvent: .onEntry)
+        alarm.notifyContact = true
+        alarm.notifyContactList = [
+            NotifyContact(name: "Alice", value: "+15551234567"),
+            NotifyContact(name: "Email", value: "alice@example.com"),
+        ]
+        sut.add(alarm: alarm)
+
+        sut.simulateRegionEntered(regionID: alarm.id.uuidString)
+
+        let phones = UserDefaults.standard.stringArray(forKey: AutoNotifyDefaultsKey.pendingPhones) ?? []
+        XCTAssertEqual(phones, ["+15551234567"],
+            "Email-only contacts must not appear in the Shortcuts Recipients output — Send Message needs a phone number")
+    }
+
     // MARK: - No contacts — neither path engages
 
     func test_noPhoneContacts_neitherQueuesSheetNorWritesBody() {
@@ -134,6 +196,8 @@ final class AutoSMSSuppressionTests: XCTestCase {
             "No contacts configured — the compose sheet must never be queued")
         XCTAssertNil(UserDefaults.standard.string(forKey: AutoNotifyDefaultsKey.pendingBody),
             "queueAutoNotify must return before writing pendingBody when there are no phone contacts")
+        XCTAssertNil(UserDefaults.standard.array(forKey: AutoNotifyDefaultsKey.pendingPhones),
+            "queueAutoNotify must return before writing pendingPhones when there are no phone contacts")
     }
 
     func test_notifyContactFalse_withContactsListed_stillSkips() {

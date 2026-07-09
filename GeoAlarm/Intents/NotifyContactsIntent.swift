@@ -9,22 +9,36 @@
 //
 //   Trigger : App → GeoNap → "Is Opened"   (iOS has no "app received a
 //             notification" trigger; "Is Opened" is the only app trigger, so
-//             the SMS is sent the next time GeoNap is opened after an alarm)
+//             the SMS is sent the next time GeoNap is opened after an alarm —
+//             which means this intent runs on EVERY ordinary app-open too,
+//             not just the ones following an alarm. See the no-throw note
+//             below — that's a direct consequence of this trigger choice.)
 //   Action 1: "Notify Contacts via GeoNap"   ← this intent
-//             → outputs: "Body" (String) and "Recipients" ([String]) — empty/
-//               throws if no FRESH alarm, so opening the app for any other
-//               reason sends nothing
-//   Action 2: "Send Message"
-//             Message    → "Body" from Action 1
-//             Recipients → "Recipients" from Action 1 (no manual contact entry —
-//                          sourced from the alarm's own Auto-Notify contacts /
-//                          Auto-Notify Defaults, same as the in-app compose sheet)
+//             → outputs: "Body" (String) and "Recipients" ([String]) — BOTH
+//               EMPTY (never thrown) if there's no fresh alarm, so opening the
+//               app for any other reason is a silent no-op
+//   Action 2: If  → "Body" is not empty
+//               "Send Message"
+//                 Message    → "Body" from Action 1
+//                 Recipients → "Recipients" from Action 1 (no manual contact
+//                              entry — sourced from the alarm's own Auto-Notify
+//                              contacts / Auto-Notify Defaults, same as the
+//                              in-app compose sheet)
 //   Setting : Run Immediately  ✓
 //
 // With that automation in place — and the "I've set up the Shortcuts automation"
 // switch enabled in Settings so the in-app compose sheet is suppressed — iOS
 // sends the SMS with no compose sheet and no Send tap the next time the user
-// opens GeoNap after an alarm fires (within the freshness window).
+// opens GeoNap after an alarm fires (within the freshness window), and does
+// nothing (silently) on every other open.
+//
+// Why this intent never throws: it used to throw `IntentError.noPendingNotification`
+// whenever there was nothing fresh to send. That felt right in isolation, but
+// combined with the "Is Opened" trigger it meant a thrown error — and the
+// resulting system "Automation Failed" notification — on nearly every normal
+// app-open, since a fresh pending alarm is the rare case, not the common one.
+// Returning an empty result instead, with the Shortcut's own "If Body is not
+// empty" check gating Send Message, keeps the common case silent.
 
 import AppIntents
 import Foundation
@@ -100,10 +114,11 @@ struct NotifyContactsIntent: AppIntent {
     static var description = IntentDescription(
         """
         Returns the message body and recipient phone numbers for the most \
-        recently triggered GeoNap alarm. Use the "Body" and "Recipients" \
-        outputs directly in a "Send Message" action inside a Personal \
-        Automation set to "Run Immediately" to send SMS with no compose sheet \
-        and no manual contact entry.
+        recently triggered GeoNap alarm, or an empty result if there's nothing \
+        fresh to send (this never throws — wrap "Send Message" in an "If Body \
+        is not empty" check in a Personal Automation set to "Run Immediately", \
+        so SMS sends with no compose sheet and no manual contact entry, and \
+        every other app-open is a silent no-op).
         """,
         categoryName: "Notify"
     )
@@ -122,31 +137,23 @@ struct NotifyContactsIntent: AppIntent {
         let tsKey     = "autoNotify_pendingBodyTimestamp"
         let window: TimeInterval = 15 * 60   // keep in sync with AutoNotifyDefaultsKey.freshnessWindow
 
-        guard let body = defaults.string(forKey: bodyKey), !body.isEmpty else {
-            throw IntentError.noPendingNotification
-        }
+        // Read + clear unconditionally so this is one-shot per alarm regardless
+        // of what we do with the values below.
+        let body   = defaults.string(forKey: bodyKey) ?? ""
         let phones = defaults.stringArray(forKey: phonesKey) ?? []
-
-        // Freshness guard: only send if an alarm fired within the window. This is
-        // what makes the "When GeoNap Is Opened" automation safe — opening the app
-        // for any other reason finds a stale (or already-cleared) body and sends
-        // nothing. Clear everything either way so it's one-shot per alarm.
         let firedAt = defaults.double(forKey: tsKey)   // 0 if never set
         defaults.removeObject(forKey: bodyKey)
         defaults.removeObject(forKey: phonesKey)
         defaults.removeObject(forKey: tsKey)
 
-        guard Self.isFresh(firedAt: firedAt,
-                           now: Date().timeIntervalSince1970,
-                           window: window) else {
-            throw IntentError.noPendingNotification
-        }
-
-        // No recipients (e.g. the alarm that fired had only email contacts, or
-        // none at all) — nothing for Send Message to address, so don't return
-        // a result that would silently try to send to no one.
-        guard !phones.isEmpty else {
-            throw IntentError.noPendingNotification
+        // Nothing to send — this is the common case (every app-open that isn't
+        // right after an alarm). Return an empty result rather than throwing:
+        // see the file-header note on why throwing here caused an "Automation
+        // Failed" notification on ordinary app-opens. The Shortcut's own
+        // "If Body is not empty" check makes this a silent no-op.
+        guard Self.shouldNotify(body: body, phones: phones, firedAt: firedAt,
+                                 now: Date().timeIntervalSince1970, window: window) else {
+            return .result(value: NotifyContactsResult(body: "", recipients: []))
         }
 
         return .result(value: NotifyContactsResult(body: body, recipients: phones))
@@ -163,16 +170,19 @@ struct NotifyContactsIntent: AppIntent {
         guard firedAt > 0 else { return false }
         return (now - firedAt) <= window
     }
-}
 
-// MARK: - Errors
-
-extension NotifyContactsIntent {
-    enum IntentError: Error, CustomLocalizedStringResourceConvertible {
-        case noPendingNotification
-
-        var localizedStringResource: LocalizedStringResource {
-            "No pending alarm notification found. The alarm may not have fired yet, or the message has already been sent."
-        }
+    /// Whether `perform()` should return the real body/recipients (true) or the
+    /// empty sentinel result (false) that keeps the Shortcut's "If Body is not
+    /// empty" gate closed. Extracted as a pure function — same rationale as
+    /// `isFresh` — so the no-throw redesign (2026-07-09, fixing the
+    /// "Automation Failed" banner on every ordinary app-open) has direct test
+    /// coverage instead of only being exercised by manually opening the app.
+    static func shouldNotify(body: String,
+                              phones: [String],
+                              firedAt: TimeInterval,
+                              now: TimeInterval,
+                              window: TimeInterval) -> Bool {
+        guard !body.isEmpty, !phones.isEmpty else { return false }
+        return isFresh(firedAt: firedAt, now: now, window: window)
     }
 }

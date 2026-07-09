@@ -62,6 +62,89 @@ final class NotifyContactsFreshnessTests: XCTestCase {
         XCTAssertEqual(AutoNotifyDefaultsKey.freshnessWindow, window,
                        "AutoNotifyDefaultsKey.freshnessWindow must equal the 15-minute literal NotifyContactsIntent.perform() uses.")
     }
+
+    /// `perform()` reads UserDefaults via hardcoded string literals rather than
+    /// `AutoNotifyDefaultsKey` directly (see the comment in `perform()` — done
+    /// to avoid actor-isolation inference), which means the enum's key strings
+    /// and the intent's literals can silently drift apart. This pins all three.
+    func test_defaultsKeyLiterals_matchIntentHardcodedStrings() {
+        XCTAssertEqual(AutoNotifyDefaultsKey.pendingBody, "autoNotify_pendingBody")
+        XCTAssertEqual(AutoNotifyDefaultsKey.pendingPhones, "autoNotify_pendingPhones")
+        XCTAssertEqual(AutoNotifyDefaultsKey.pendingBodyTimestamp, "autoNotify_pendingBodyTimestamp")
+    }
+}
+
+// MARK: - Auto-SMS shouldNotify (no-throw redesign, 2026-07-09)
+
+/// `NotifyContactsIntent.perform()` used to `throw` when there was nothing
+/// fresh to send. Combined with the "App is Opened" trigger (the only one iOS
+/// offers — see the intent's file header), that meant a thrown error, and the
+/// resulting system "Automation Failed" banner, on nearly every ordinary
+/// app-open. The fix: `perform()` now always returns a result — either the
+/// real body/recipients or an empty sentinel — and the Shortcut itself gates
+/// Send Message behind an "If Body is not empty" check. `shouldNotify` is the
+/// pure decision behind that empty-vs-real branch; these tests are what would
+/// have caught the original bug before it shipped.
+final class NotifyContactsShouldNotifyTests: XCTestCase {
+
+    private let window: TimeInterval = 15 * 60
+
+    func test_freshBodyAndPhones_shouldNotify() {
+        let now = Date().timeIntervalSince1970
+        XCTAssertTrue(NotifyContactsIntent.shouldNotify(
+            body: "[Arrival] I arrived at Grand Central at 9:14 AM.",
+            phones: ["+15551234567"],
+            firedAt: now - 60, now: now, window: window
+        ), "Fresh body with at least one phone must notify.")
+    }
+
+    func test_emptyBody_doesNotNotify_evenIfFreshWithPhones() {
+        let now = Date().timeIntervalSince1970
+        XCTAssertFalse(NotifyContactsIntent.shouldNotify(
+            body: "", phones: ["+15551234567"],
+            firedAt: now - 60, now: now, window: window
+        ), "No body means nothing to send, regardless of freshness or recipients.")
+    }
+
+    func test_emptyPhones_doesNotNotify_evenIfFreshWithBody() {
+        // e.g. the alarm that fired had only email contacts, or none at all —
+        // this is exactly the guard that stops Send Message from trying to
+        // text an empty recipient list.
+        let now = Date().timeIntervalSince1970
+        XCTAssertFalse(NotifyContactsIntent.shouldNotify(
+            body: "[Arrival] I arrived at Grand Central at 9:14 AM.", phones: [],
+            firedAt: now - 60, now: now, window: window
+        ), "No phone recipients means nothing for Send Message to address.")
+    }
+
+    func test_staleBodyAndPhones_doesNotNotify() {
+        let now = Date().timeIntervalSince1970
+        XCTAssertFalse(NotifyContactsIntent.shouldNotify(
+            body: "[Arrival] I arrived at Grand Central at 9:14 AM.",
+            phones: ["+15551234567"],
+            firedAt: now - (window + 1), now: now, window: window
+        ), "A stale body must not notify — this is the ordinary-app-open case that used to throw.")
+    }
+
+    func test_neverFired_doesNotNotify() {
+        // firedAt == 0: no alarm has ever fired. This is the MOST common case
+        // — the one that used to throw on every single app-open.
+        let now = Date().timeIntervalSince1970
+        XCTAssertFalse(NotifyContactsIntent.shouldNotify(
+            body: "", phones: [],
+            firedAt: 0, now: now, window: window
+        ), "Never-fired, empty body/phones must not notify — the ordinary app-open path.")
+    }
+
+    func test_freshEmptyBodyEmptyPhones_doesNotNotify() {
+        // Freshness alone isn't sufficient — guards against a regression where
+        // a fresh timestamp with no actual content would slip through.
+        let now = Date().timeIntervalSince1970
+        XCTAssertFalse(NotifyContactsIntent.shouldNotify(
+            body: "", phones: [],
+            firedAt: now - 60, now: now, window: window
+        ))
+    }
 }
 
 // MARK: - Time-based warm-up ring (must not self-fire)

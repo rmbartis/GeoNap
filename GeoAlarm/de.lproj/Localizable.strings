@@ -352,9 +352,14 @@ Die Schaltfläche Speichern ist deaktiviert, bis ein Name und ein Standort festg
 "settings.autoSMS.description" = "Lässt GeoNap automatisch eine SMS an Ihre Kontakte senden, wenn ein Alarm auslöst – kein Verfassen-Fenster, kein Tippen auf Senden. Erfordert eine einmalige Einrichtung unten.";
 "settings.autoSMS.setupTitle" = "So richten Sie es ein:";
 "settings.autoSMS.step1" = "Tippen Sie unten auf Automation einrichten. Dies öffnet Kurzbefehle mit einer neuen persönlichen Automation.";
-"settings.autoSMS.step2" = "Tippen Sie bei Auslöser auf App, wählen Sie GeoNap, dann Wird geöffnet, und tippen Sie auf Weiter.";
-"settings.autoSMS.step3" = "Tippen Sie auf Aktion hinzufügen und fügen Sie in dieser Reihenfolge zwei Aktionen hinzu: Kontakte über GeoNap benachrichtigen, dann Nachricht senden. Legen Sie bei Nachricht senden die Empfänger fest und wählen Sie als Nachricht die Textausgabe der ersten Aktion.";
-"settings.autoSMS.step4" = "Schalten Sie Vor Ausführung fragen aus, tippen Sie auf Fertig, und aktivieren Sie dann den Schalter oben.";
+"settings.autoSMS.step2" = "Scrollen Sie nach unten, tippen Sie auf App, wählen Sie GeoNap, stellen Sie sicher, dass sowohl „Wird geöffnet“ als auch „Sofort ausführen“ aktiviert sind, und tippen Sie auf Weiter.";
+"settings.autoSMS.step3" = "Tippen Sie auf Neuer Kurzbefehl. Fügen Sie in der Aktionssuche Kontakte über GeoNap benachrichtigen hinzu.";
+"settings.autoSMS.step4" = "Tippen Sie unten auf die Aktionssuche, geben Sie „Falls“ ein und fügen Sie die angezeigte Falls-Aktion hinzu. Halten Sie das Bedingungsfeld gedrückt, tippen Sie auf Variable auswählen, wählen Sie Kontakte über GeoNap benachrichtigen, dann Text, und wählen Sie im Dropdown „ist“ die Option Hat einen Wert.";
+"settings.autoSMS.step5" = "Fügen Sie innerhalb des Falls-Blocks (zwischen Falls und Andernfalls) Nachricht senden hinzu — das grüne iMessage-Symbol (Apples native SMS-Funktion), nicht eine ähnlich benannte Aktion einer anderen Nachrichten-App.";
+"settings.autoSMS.step6" = "Überprüfen Sie in Nachricht senden die Felder Nachricht und Empfänger — falls „Kontakte über GeoNap benachrichtigen“ dort nicht bereits angezeigt wird, halten Sie das Feld gedrückt, bis Variable auswählen erscheint, und wählen Sie Kontakte über GeoNap benachrichtigen. Lassen Sie Andernfalls und Ende Falls leer.";
+"settings.autoSMS.step7" = "Tippen Sie oben rechts auf das blaue Häkchen, um zu speichern.";
+"settings.autoSMS.step8" = "Sie kehren zur Automationsübersicht zurück, die Ihre neue Automation „Wenn „GeoNap“ geöffnet wird“ mit sechs Symbolen darüber zeigt: ein abgewinkelter Pfeil, das GeoNap-Symbol, ein Verzweigungssymbol, das iMessage-Symbol und zwei weitere Verzweigungssymbole.";
+"settings.autoSMS.step9" = "Kehren Sie zu den GeoNap-Einstellungen zurück und aktivieren Sie oben „Ich habe die Kurzbefehl-Automation eingerichtet“.";
 "Set Up Automation" = "Automation einrichten";
 "settings.autoSMS.footer" = "GeoNap kann einen Alarm nicht erkennen, solange die App nicht geöffnet ist. Die Automation läuft daher erst, wenn Sie GeoNap das nächste Mal nach einem Alarm öffnen. Aktivieren Sie den Schalter oben, damit die App nicht zusätzlich ihr eigenes Verfassen-Fenster zeigt.";
 "settings.autoSMS.automationToggleHelp" = "Aktivieren Sie dies erst, nachdem Sie die Einrichtung unten abgeschlossen haben, damit GeoNap nicht mehr den eigenen Sendebildschirm zeigt.";

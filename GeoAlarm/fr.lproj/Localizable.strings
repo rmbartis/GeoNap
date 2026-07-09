@@ -356,9 +356,14 @@ Consultez Reglages - Auto-SMS (Sans approbation) pour les instructions etape par
 "settings.autoSMS.description" = "GeoNap peut envoyer un SMS à vos contacts automatiquement quand une alarme se déclenche, sans écran de rédaction ni appui pour envoyer. Nécessite une configuration unique ci-dessous.";
 "settings.autoSMS.setupTitle" = "Comment la configurer :";
 "settings.autoSMS.step1" = "Appuyez sur Configurer l'automatisation ci-dessous. Cela ouvre Raccourcis avec une nouvelle automatisation personnelle.";
-"settings.autoSMS.step2" = "Pour le déclencheur, appuyez sur App, choisissez GeoNap, puis Est ouverte, et appuyez sur Suivant.";
-"settings.autoSMS.step3" = "Appuyez sur Ajouter une action et ajoutez deux actions, dans cet ordre : Notifier les contacts via GeoNap, puis Envoyer un message. Dans Envoyer un message, définissez les destinataires avec vos contacts et utilisez comme message le résultat Corps de la première action.";
-"settings.autoSMS.step4" = "Désactivez Demander avant d'exécuter, appuyez sur OK, puis activez l'interrupteur ci-dessus.";
+"settings.autoSMS.step2" = "Faites défiler vers le bas, appuyez sur App, choisissez GeoNap, assurez-vous que « Est ouverte » et « Exécuter immédiatement » sont tous deux cochés, puis appuyez sur Suivant.";
+"settings.autoSMS.step3" = "Appuyez sur Créer un raccourci. Dans Rechercher des actions, ajoutez Notifier les contacts via GeoNap.";
+"settings.autoSMS.step4" = "Appuyez sur Rechercher des actions en bas, tapez Si et ajoutez l'action Si qui apparaît. Maintenez le doigt sur son champ de condition, appuyez sur Sélectionner une variable, choisissez Notifier les contacts via GeoNap, puis Texte, puis dans le menu « est », choisissez A une valeur.";
+"settings.autoSMS.step5" = "À l'intérieur du bloc Si (entre Si et Sinon), ajoutez Envoyer un message — l'icône verte iMessage (SMS natif d'Apple), pas une action au nom similaire d'une autre appli de messagerie.";
+"settings.autoSMS.step6" = "Dans Envoyer un message, vérifiez les champs Message et Destinataires — si « Notifier les contacts via GeoNap » n'y figure pas déjà, maintenez le doigt sur ce champ jusqu'à ce que Sélectionner une variable apparaisse, puis choisissez Notifier les contacts via GeoNap. Laissez Sinon et Fin si vides.";
+"settings.autoSMS.step7" = "Appuyez sur la coche bleue en haut à droite pour enregistrer.";
+"settings.autoSMS.step8" = "Vous reviendrez à l'écran récapitulatif des automatisations, montrant votre nouvelle automatisation « Quand GeoNap est ouverte » avec six icônes au-dessus : une flèche coudée, l'icône GeoNap, une icône de branchement, l'icône iMessage, puis deux icônes de branchement supplémentaires.";
+"settings.autoSMS.step9" = "Retournez dans les réglages de GeoNap et activez « J'ai configuré l'automatisation Raccourcis » ci-dessus.";
 "Set Up Automation" = "Configurer l'automatisation";
 "settings.autoSMS.footer" = "GeoNap ne peut pas détecter une alarme tant que l'app n'est pas ouverte : l'automatisation s'exécute donc la prochaine fois que vous ouvrez GeoNap après une alarme. Activez l'interrupteur ci-dessus pour que l'app n'affiche pas aussi son propre écran de rédaction.";
 "settings.autoSMS.automationToggleHelp" = "Activez ceci seulement une fois la configuration ci-dessous terminée, pour que GeoNap cesse d'afficher son propre écran d'envoi.";

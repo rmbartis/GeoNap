@@ -377,9 +377,14 @@ Xem Cai dat - SMS Tu dong (Khong can phe duyet) de biet huong dan tung buoc.\n\n
 "settings.autoSMS.description" = "GeoNap có thể tự động gửi SMS đến các liên hệ của bạn khi báo thức kêu — không cần màn hình soạn tin, không cần chạm để gửi. Cần thiết lập một lần bên dưới.";
 "settings.autoSMS.setupTitle" = "Cách thiết lập:";
 "settings.autoSMS.step1" = "Nhấn Thiết lập tự động hóa bên dưới. Thao tác này sẽ mở ứng dụng Phím tắt với một tự động hóa cá nhân mới.";
-"settings.autoSMS.step2" = "Với trình kích hoạt, nhấn App, chọn GeoNap, sau đó chọn Được mở, rồi nhấn Tiếp theo.";
-"settings.autoSMS.step3" = "Nhấn Thêm hành động và thêm hai hành động theo thứ tự này: Thông báo liên hệ qua GeoNap, sau đó Gửi tin nhắn. Trong Gửi tin nhắn, đặt Người nhận là các liên hệ của bạn và dùng kết quả \"Nội dung\" từ hành động đầu tiên làm tin nhắn.";
-"settings.autoSMS.step4" = "Tắt Hỏi trước khi chạy, nhấn Xong, rồi bật công tắc ở trên.";
+"settings.autoSMS.step2" = "Cuộn xuống và nhấn App, chọn GeoNap, sau đó đảm bảo cả \"Được mở\" và \"Chạy ngay\" đều được chọn, rồi nhấn Tiếp theo.";
+"settings.autoSMS.step3" = "Nhấn Tạo lối tắt mới. Trong Tìm kiếm hành động, thêm Thông báo liên hệ qua GeoNap.";
+"settings.autoSMS.step4" = "Nhấn Tìm kiếm hành động ở dưới cùng, gõ Nếu và thêm hành động Nếu xuất hiện. Chạm và giữ trường điều kiện của nó, nhấn Chọn biến, chọn Thông báo liên hệ qua GeoNap, sau đó Nội dung, rồi trong menu thả xuống \"là\" chọn Có bất kỳ giá trị nào.";
+"settings.autoSMS.step5" = "Bên trong khối Nếu (giữa Nếu và Nếu không), thêm Gửi tin nhắn — biểu tượng iMessage màu xanh lá (SMS gốc của Apple), không phải hành động có tên tương tự từ ứng dụng nhắn tin khác.";
+"settings.autoSMS.step6" = "Trong Gửi tin nhắn, kiểm tra các trường Tin nhắn và Người nhận — nếu \"Thông báo liên hệ qua GeoNap\" chưa xuất hiện ở một trong hai trường, chạm và giữ trường đó cho đến khi Chọn biến xuất hiện, rồi chọn Thông báo liên hệ qua GeoNap. Để trống Nếu không và Kết thúc Nếu.";
+"settings.autoSMS.step7" = "Nhấn dấu tích màu xanh ở góc trên bên phải để lưu.";
+"settings.autoSMS.step8" = "Bạn sẽ quay lại màn hình tóm tắt tự động hóa, hiển thị tự động hóa mới \"Khi GeoNap được mở\" với sáu biểu tượng phía trên: một mũi tên gấp khúc, biểu tượng GeoNap, một biểu tượng phân nhánh, biểu tượng iMessage, và thêm hai biểu tượng phân nhánh nữa.";
+"settings.autoSMS.step9" = "Quay lại Cài đặt GeoNap và bật \"Tôi đã thiết lập tự động hóa Phím tắt\" ở trên.";
 "Set Up Automation" = "Thiết lập tự động hóa";
 "settings.autoSMS.footer" = "GeoNap không thể phát hiện báo thức khi ứng dụng chưa mở, vì vậy tự động hóa sẽ chạy vào lần tiếp theo bạn mở GeoNap sau khi báo thức kêu. Bật công tắc ở trên để ứng dụng không hiển thị màn hình soạn tin của riêng nó nữa.";
 "settings.autoSMS.automationToggleHelp" = "Chỉ bật mục này sau khi bạn đã hoàn tất thiết lập bên dưới, để GeoNap ngừng hiển thị màn hình gửi tin của riêng nó.";

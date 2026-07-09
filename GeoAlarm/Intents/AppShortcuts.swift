@@ -50,11 +50,12 @@ struct NapAlarmShortcuts: AppShortcutsProvider {
         )
 
         // ── Notify Contacts ───────────────────────────────────────────────────
-        // Used as Action 1 in a Personal Automation:
-        //   Trigger : notification from GeoNap
-        //   Action 1: this intent  →  returns recipients + body
-        //   Action 2: Send Message (using outputs from Action 1)
-        //   Setting : Run Without Asking ✓
+        // Used as Action 1 in a Personal Automation — see NotifyContactsIntent.swift's
+        // file header for the full setup (Trigger: App → GeoNap → Is Opened,
+        // If Body has any value, Send Message inside, Run Immediately). This
+        // intent returns a structured Body/Recipients result and never throws —
+        // see the file header for why (a thrown error surfaced as a system
+        // "Automation Failed" banner on every ordinary app-open).
         AppShortcut(
             intent: NotifyContactsIntent(),
             phrases: [

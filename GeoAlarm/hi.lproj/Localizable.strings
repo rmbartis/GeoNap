@@ -373,9 +373,14 @@
 "settings.autoSMS.description" = "GeoNap अलार्म बजने पर स्वतः आपके संपर्कों को SMS भेज सकता है — न कोई कंपोज़ स्क्रीन, न भेजने के लिए टैप। इसके लिए नीचे एक बार की सेटअप आवश्यक है।";
 "settings.autoSMS.setupTitle" = "इसे कैसे सेटअप करें:";
 "settings.autoSMS.step1" = "नीचे ऑटोमेशन सेटअप करें पर टैप करें। इससे Shortcuts ऐप में एक नया पर्सनल ऑटोमेशन खुलेगा।";
-"settings.autoSMS.step2" = "ट्रिगर के लिए, App पर टैप करें, GeoNap चुनें, फिर Is Opened चुनें, और Next पर टैप करें।";
-"settings.autoSMS.step3" = "Add Action पर टैप करें और इस क्रम में दो एक्शन जोड़ें: Notify Contacts via GeoNap, फिर Send Message। Send Message में, प्राप्तकर्ताओं को अपने संपर्कों से सेट करें और संदेश के लिए पहले एक्शन के \"Body\" आउटपुट का उपयोग करें।";
-"settings.autoSMS.step4" = "Ask Before Running को बंद करें, Done पर टैप करें, फिर ऊपर दिया गया स्विच चालू करें।";
+"settings.autoSMS.step2" = "नीचे स्क्रॉल करें और App पर टैप करें, GeoNap चुनें, फिर सुनिश्चित करें कि \"Is Opened\" और \"Run Immediately\" दोनों चेक किए गए हैं, और Next पर टैप करें।";
+"settings.autoSMS.step3" = "Create New Shortcut पर टैप करें। Search Actions में, Notify Contacts via GeoNap जोड़ें।";
+"settings.autoSMS.step4" = "नीचे Search Actions पर टैप करें, If टाइप करें, और दिखने वाला If एक्शन जोड़ें। इसके कंडीशन फ़ील्ड को दबाकर रखें, Select Variable पर टैप करें, Notify Contacts via GeoNap चुनें, फिर Body, फिर \"is\" ड्रॉपडाउन में Has Any Value चुनें।";
+"settings.autoSMS.step5" = "If ब्लॉक के अंदर (If और Otherwise के बीच), Send Message जोड़ें — हरा iMessage (Apple का नेटिव SMS) आइकन, किसी अन्य मैसेजिंग ऐप के मिलते-जुलते नाम वाले एक्शन को नहीं।";
+"settings.autoSMS.step6" = "Send Message में, Message और Recipients फ़ील्ड जांचें — यदि \"Notify Contacts via GeoNap\" इनमें से किसी में पहले से नहीं दिख रहा है, तो उस फ़ील्ड को दबाकर रखें जब तक Select Variable न दिखे, फिर Notify Contacts via GeoNap चुनें। Otherwise और End If को खाली छोड़ दें।";
+"settings.autoSMS.step7" = "सेव करने के लिए ऊपर दाईं ओर नीले चेकमार्क पर टैप करें।";
+"settings.autoSMS.step8" = "आप ऑटोमेशन सारांश स्क्रीन पर वापस आ जाएंगे, जो आपका नया \"When GeoNap is opened\" ऑटोमेशन दिखाएगी, जिसके ऊपर छह आइकन होंगे: एक मुड़ा हुआ तीर, GeoNap आइकन, एक ब्रांच आइकन, iMessage आइकन, और दो और ब्रांच आइकन।";
+"settings.autoSMS.step9" = "GeoNap Settings में वापस जाएं और ऊपर \"I've set up the Shortcuts automation\" चालू करें।";
 "Set Up Automation" = "ऑटोमेशन सेटअप करें";
 "settings.autoSMS.footer" = "जब तक ऐप खुला नहीं होता, GeoNap अलार्म का पता नहीं लगा सकता, इसलिए अलार्म बजने के बाद अगली बार GeoNap खोलने पर ऑटोमेशन चलता है। ऊपर दिया स्विच चालू करें ताकि ऐप अपनी खुद की कंपोज़ स्क्रीन भी न दिखाए।";
 "settings.autoSMS.automationToggleHelp" = "नीचे दी गई सेटअप पूरी करने के बाद ही इसे चालू करें, ताकि GeoNap अपनी खुद की भेजने वाली स्क्रीन दिखाना बंद कर दे।";

@@ -700,14 +700,30 @@ private struct AutoSMSStep: View {
 /// list was always visible inline in Settings; it's now tucked behind the
 /// icon instead (Bob, 2026-07-08).
 ///
-/// Simplified from 8 fragmented sub-steps (1, 2, 3a, 3b, 4a, 4b, 4c, 5) down
-/// to 4 consolidated steps for clarity, and fixed a stale "NapAlarm" action
-/// name left over from the pre-rename app (should have said "GeoNap") —
-/// (Bob, 2026-07-09). The deep-link button below now opens
-/// shortcuts://create-automation directly (previously create-shortcut, the
-/// wrong screen), so step 1 assumes tapping it has already happened.
+/// Expanded to 9 steps (Bob, 2026-07-09, later same day) to cover the
+/// If/"Has Any Value" gate that keeps the automation silent on ordinary app
+/// opens — see `NotifyContactsIntent.swift`'s file header for why that gate
+/// exists. Also added a copy-to-clipboard icon (mirrors `HelpView`'s pattern)
+/// since 9 steps is a lot to keep re-reading one popover-width at a time.
 private struct AutoSMSSetupInfoSheet: View {
     @Environment(\.languageBundle) private var bundle
+    @State private var copied = false
+
+    private let stepKeys = [
+        "settings.autoSMS.step1", "settings.autoSMS.step2", "settings.autoSMS.step3",
+        "settings.autoSMS.step4", "settings.autoSMS.step5", "settings.autoSMS.step6",
+        "settings.autoSMS.step7", "settings.autoSMS.step8", "settings.autoSMS.step9",
+    ]
+
+    /// Title + all 9 steps, numbered, for the copy-to-clipboard button —
+    /// same construction pattern as `HelpView.fullHelpText`.
+    private var fullSetupText: String {
+        let title = NSLocalizedString("settings.autoSMS.setupTitle", bundle: bundle, comment: "")
+        let steps = stepKeys.enumerated().map { index, key in
+            "\(index + 1). \(NSLocalizedString(key, bundle: bundle, comment: ""))"
+        }
+        return ([title] + steps).joined(separator: "\n\n")
+    }
 
     var body: some View {
         ScrollView {
@@ -718,6 +734,20 @@ private struct AutoSMSSetupInfoSheet: View {
                         .font(.title3)
                     Text("settings.autoSMS.setupTitle", bundle: bundle)
                         .font(.headline)
+
+                    Spacer()
+
+                    Button {
+                        UIPasteboard.general.string = fullSetupText
+                        copied = true
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 2) { copied = false }
+                    } label: {
+                        Image(systemName: copied ? "checkmark.circle.fill" : "doc.on.doc")
+                            .foregroundStyle(copied ? .green : .secondary)
+                            .animation(.easeInOut(duration: 0.2), value: copied)
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel(copied ? "Copied" : "Copy all setup steps")
                 }
 
                 VStack(alignment: .leading, spacing: 6) {
@@ -725,6 +755,11 @@ private struct AutoSMSSetupInfoSheet: View {
                     AutoSMSStep(number: "2", textKey: "settings.autoSMS.step2")
                     AutoSMSStep(number: "3", textKey: "settings.autoSMS.step3")
                     AutoSMSStep(number: "4", textKey: "settings.autoSMS.step4")
+                    AutoSMSStep(number: "5", textKey: "settings.autoSMS.step5")
+                    AutoSMSStep(number: "6", textKey: "settings.autoSMS.step6")
+                    AutoSMSStep(number: "7", textKey: "settings.autoSMS.step7")
+                    AutoSMSStep(number: "8", textKey: "settings.autoSMS.step8")
+                    AutoSMSStep(number: "9", textKey: "settings.autoSMS.step9")
                 }
                 .font(.subheadline)
             }
@@ -732,7 +767,7 @@ private struct AutoSMSSetupInfoSheet: View {
             .frame(maxWidth: .infinity, alignment: .leading)
         }
         .frame(minWidth: 300, idealWidth: 340, maxWidth: 420,
-               minHeight: 260, idealHeight: 380, maxHeight: 480)
+               minHeight: 260, idealHeight: 480, maxHeight: 620)
     }
 }
 
