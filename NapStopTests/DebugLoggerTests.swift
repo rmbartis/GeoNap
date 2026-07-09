@@ -1,3 +1,5 @@
+// Copyright © 2026 Robert Bartis. All rights reserved.
+
 // DebugLoggerTests.swift
 // CI tests verifying that:
 //   1. DebugLogger records entries when enabled and ignores calls when disabled.

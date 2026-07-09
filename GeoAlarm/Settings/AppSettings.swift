@@ -1,3 +1,5 @@
+// Copyright © 2026 Robert Bartis. All rights reserved.
+
 // AppSettings.swift
 // Shared enums and AppStorage key constants for user preferences.
 

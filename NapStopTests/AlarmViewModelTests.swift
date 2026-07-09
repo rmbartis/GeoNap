@@ -1,3 +1,5 @@
+// Copyright © 2026 Robert Bartis. All rights reserved.
+
 // AlarmViewModelTests.swift
 // Unit tests for AlarmViewModel validation and alarm-building logic.
 

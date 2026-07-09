@@ -1,3 +1,5 @@
+// Copyright © 2026 Robert Bartis. All rights reserved.
+
 // AlarmViewModel.swift
 // Drives the Add/Edit alarm screen. Holds form state and validates input.
 

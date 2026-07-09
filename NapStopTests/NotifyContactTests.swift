@@ -1,3 +1,5 @@
+// Copyright © 2026 Robert Bartis. All rights reserved.
+
 // NotifyContactTests.swift
 // Tests for NotifyContact JSON encoding/decoding, isEmail edge cases,
 // and the array-level toJSON/fromJSON helpers.

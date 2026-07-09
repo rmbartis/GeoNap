@@ -1,3 +1,5 @@
+// Copyright © 2026 Robert Bartis. All rights reserved.
+
 // PrivacyView.swift
 // Full in-app privacy & location-sharing disclosure document.
 // Accessible from Settings, near the Help button.

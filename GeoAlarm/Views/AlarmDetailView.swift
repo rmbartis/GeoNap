@@ -1,3 +1,5 @@
+// Copyright © 2026 Robert Bartis. All rights reserved.
+
 // AlarmDetailView.swift
 // Read-only summary of a saved alarm: mini-map with accurate radius circle,
 // history, and metadata. Provides navigation to AddAlarmView for editing.

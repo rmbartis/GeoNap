@@ -1,3 +1,5 @@
+// Copyright © 2026 Robert Bartis. All rights reserved.
+
 // GTFSParserUnitTests.swift
 // Pure offline unit tests for GTFSParser CSV parsing logic and CuratedFeeds integrity.
 // No network access required — writes minimal CSV content to a temp directory.

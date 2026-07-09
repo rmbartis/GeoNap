@@ -1,3 +1,5 @@
+// Copyright © 2026 Robert Bartis. All rights reserved.
+
 // GPSLockIndicatorTests.swift
 // Coverage for AddAlarmView's "Waiting for GPS lock…" indicator — flagged as
 // an untested UI/ViewModel state transition in the 2026-06-29 CI review

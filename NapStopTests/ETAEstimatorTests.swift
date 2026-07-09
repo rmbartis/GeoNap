@@ -1,3 +1,5 @@
+// Copyright © 2026 Robert Bartis. All rights reserved.
+
 // ETAEstimatorTests.swift
 // Unit tests for the time-based-alarm ETA engine and the new NapAlarm trigger fields.
 

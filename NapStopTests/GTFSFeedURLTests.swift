@@ -1,3 +1,5 @@
+// Copyright © 2026 Robert Bartis. All rights reserved.
+
 // GTFSFeedURLTests.swift
 // Tier 1 — URL reachability tests for all curated GTFS feeds.
 // Makes a lightweight HTTP request (HEAD, or byte-range GET as fallback) for

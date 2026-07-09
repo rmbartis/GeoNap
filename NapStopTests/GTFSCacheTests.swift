@@ -1,3 +1,5 @@
+// Copyright © 2026 Robert Bartis. All rights reserved.
+
 // GTFSCacheTests.swift
 // Pure-logic coverage for GTFSService.shouldUseCache(...) and
 // effectiveRetentionDays(...) — the decision of whether a previously

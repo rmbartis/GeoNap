@@ -1,3 +1,5 @@
+// Copyright © 2026 Robert Bartis. All rights reserved.
+
 // AlarmViewModelFieldTests.swift
 // Full round-trip tests for every AlarmViewModel field that was not covered
 // by the basic AlarmViewModelTests.swift — scheduling, sound, contacts, reset.

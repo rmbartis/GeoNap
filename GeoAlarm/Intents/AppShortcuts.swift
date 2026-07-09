@@ -1,3 +1,5 @@
+// Copyright © 2026 Robert Bartis. All rights reserved.
+
 // AppShortcuts.swift
 // Registers Siri phrases so shortcuts appear automatically in Spotlight,
 // the Shortcuts app, and Siri suggestions — no user setup required.

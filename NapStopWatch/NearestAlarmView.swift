@@ -1,3 +1,5 @@
+// Copyright © 2026 Robert Bartis. All rights reserved.
+
 // NearestAlarmView.swift
 // Main watch app view — lists active alarms received from the iPhone.
 

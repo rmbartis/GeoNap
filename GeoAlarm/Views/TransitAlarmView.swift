@@ -1,3 +1,5 @@
+// Copyright © 2026 Robert Bartis. All rights reserved.
+
 // TransitAlarmView.swift
 // 4-step wizard for creating a transit stop alarm using a GTFS feed.
 //  Step 1 — Agency (pick from curated list or enter custom URL)

@@ -1,3 +1,5 @@
+// Copyright © 2026 Robert Bartis. All rights reserved.
+
 // NapAlarmModelTests.swift
 // Unit tests for the NapAlarm model, sound regression guards, and Info.plist checks.
 

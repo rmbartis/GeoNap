@@ -1,3 +1,5 @@
+<!-- Copyright © 2026 Robert Bartis. All rights reserved. -->
+
 # Apple Watch Setup — Xcode Steps
 
 These are one-time manual steps in Xcode required to compile and run the Watch app and complication. All Swift source files are already written.

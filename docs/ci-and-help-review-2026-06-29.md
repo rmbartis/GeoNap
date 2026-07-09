@@ -1,3 +1,5 @@
+<!-- Copyright © 2026 Robert Bartis. All rights reserved. -->
+
 # GeoNap — CI Coverage & Help Review
 
 **Date:** 2026-06-29 · **Branch:** `time-based-alarms` · **Mode:** review + low-risk edits (no Xcode/iOS SDK available here)

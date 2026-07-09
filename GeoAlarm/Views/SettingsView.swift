@@ -1,3 +1,5 @@
+// Copyright © 2026 Robert Bartis. All rights reserved.
+
 // SettingsView.swift
 // User-facing preferences sheet.
 

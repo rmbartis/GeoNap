@@ -1,3 +1,5 @@
+// Copyright © 2026 Robert Bartis. All rights reserved.
+
 // CalendarScanCandidateStoreTests.swift
 // Unit tests for Phase 3's dedup/re-offer logic:
 //   • CalendarScanCandidateMerger.mergeScanResults(found:existingPending:handled:)

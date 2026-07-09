@@ -1,3 +1,5 @@
+// Copyright © 2026 Robert Bartis. All rights reserved.
+
 // DebugLogger.swift
 // Thread-safe, append-only debug log that writes structured entries to a plain
 // text file in the app's Documents folder.

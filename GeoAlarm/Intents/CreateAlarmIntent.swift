@@ -1,3 +1,5 @@
+// Copyright © 2026 Robert Bartis. All rights reserved.
+
 // CreateAlarmIntent.swift
 // "Hey Siri, create a GeoNap" — geocodes an address and saves a new alarm.
 

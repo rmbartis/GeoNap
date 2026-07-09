@@ -1,3 +1,5 @@
+<!-- Copyright © 2026 Robert Bartis. All rights reserved. -->
+
 # Design Doc: Dead Reckoning on Signal Loss (Per-Alarm, Opt-In)
 
 **Status:** Implemented (v1) · **Author:** GeoNap team · **Created:** 2026-07-03 · **Updated:** 2026-07-03

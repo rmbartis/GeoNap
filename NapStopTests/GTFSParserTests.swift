@@ -1,3 +1,5 @@
+// Copyright © 2026 Robert Bartis. All rights reserved.
+
 // GTFSParserTests.swift
 // Tier 2 — Full download + parse tests for a representative subset of feeds.
 //

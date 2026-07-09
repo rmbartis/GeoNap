@@ -1,3 +1,5 @@
+// Copyright © 2026 Robert Bartis. All rights reserved.
+
 // AlarmManagerETAFireTests.swift
 // Coverage for the time-based (ETA) "final approach" fire path in
 // AlarmManager.swift — previously untested per the 2026-06-29 CI review

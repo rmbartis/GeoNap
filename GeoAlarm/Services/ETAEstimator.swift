@@ -1,3 +1,5 @@
+// Copyright © 2026 Robert Bartis. All rights reserved.
+
 // ETAEstimator.swift
 // Pure, testable rolling-average-speed → ETA engine for time-based alarms.
 //

@@ -1,3 +1,5 @@
+// Copyright © 2026 Robert Bartis. All rights reserved.
+
 // CrashReporter.swift
 // Native crash and error reporting — replaces Firebase Crashlytics.
 // No third-party SDKs. No data leaves the device.

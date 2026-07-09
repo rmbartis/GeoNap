@@ -1,3 +1,5 @@
+// Copyright © 2026 Robert Bartis. All rights reserved.
+
 // AlarmListView.swift
 // Displays all saved geo-alarms with swipe actions and repeat indicator.
 

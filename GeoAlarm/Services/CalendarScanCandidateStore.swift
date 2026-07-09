@@ -1,3 +1,5 @@
+// Copyright © 2026 Robert Bartis. All rights reserved.
+
 // CalendarScanCandidateStore.swift
 // Phase 3: persistence + dedup/re-offer logic for calendar scan candidates.
 //

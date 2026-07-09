@@ -1,3 +1,5 @@
+// Copyright © 2026 Robert Bartis. All rights reserved.
+
 // NapStopApp.swift
 // Entry point. Wires SwiftData ModelContainer, LocationManager, and AlarmManager.
 

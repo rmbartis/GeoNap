@@ -1,3 +1,5 @@
+// Copyright © 2026 Robert Bartis. All rights reserved.
+
 // LocalizationTests.swift
 // CI tests that verify every Localizable.strings file:
 //   1. Contains the two help keys that were recently updated.

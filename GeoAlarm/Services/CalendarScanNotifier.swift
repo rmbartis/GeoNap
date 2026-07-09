@@ -1,3 +1,5 @@
+// Copyright © 2026 Robert Bartis. All rights reserved.
+
 // CalendarScanNotifier.swift
 // Phase 3: posts a local "N new trips found" notification when a background
 // (or manual) calendar scan turns up candidates the user hasn't seen before.

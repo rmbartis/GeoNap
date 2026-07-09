@@ -1,3 +1,5 @@
+// Copyright © 2026 Robert Bartis. All rights reserved.
+
 // OnboardingView.swift
 // Shown once on first launch.
 // Page 0: language picker

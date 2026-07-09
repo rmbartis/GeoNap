@@ -1,3 +1,5 @@
+// Copyright © 2026 Robert Bartis. All rights reserved.
+
 // GTFSService.swift
 // Downloads a GTFS ZIP feed, extracts routes.txt and stops.txt,
 // parses them into GTFSRoute / GTFSStop arrays, and caches the result.

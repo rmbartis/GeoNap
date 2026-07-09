@@ -1,3 +1,5 @@
+// Copyright © 2026 Robert Bartis. All rights reserved.
+
 // MapPickerView.swift
 // Interactive map for picking an alarm's center coordinate.
 // Tap to drop a pin; "Use My Location" button pins current GPS position.

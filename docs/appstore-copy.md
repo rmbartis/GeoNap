@@ -1,3 +1,5 @@
+<!-- Copyright © 2026 Robert Bartis. All rights reserved. -->
+
 # GeoNap — App Store Connect Copy
 
 ## App Name

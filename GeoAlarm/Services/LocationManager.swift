@@ -1,3 +1,5 @@
+// Copyright © 2026 Robert Bartis. All rights reserved.
+
 // LocationManager.swift
 // Wraps CLLocationManager; publishes authorization status and current location.
 // Handles region monitoring callbacks and forwards events to AlarmManager.

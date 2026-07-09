@@ -1,3 +1,5 @@
+// Copyright © 2026 Robert Bartis. All rights reserved.
+
 // SoundPickerSection.swift
 // Collapsible sound / vibrate picker for alarm creation forms.
 //

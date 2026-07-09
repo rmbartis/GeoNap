@@ -1,3 +1,5 @@
+// Copyright © 2026 Robert Bartis. All rights reserved.
+
 // WatchAlarmPayload.swift
 // Lightweight Codable model transferred between the iOS app and the Watch
 // targets via WCSession applicationContext.

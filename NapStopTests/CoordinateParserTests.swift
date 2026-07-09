@@ -1,3 +1,5 @@
+// Copyright © 2026 Robert Bartis. All rights reserved.
+
 // CoordinateParserTests.swift
 // CoordinateParser.swift (DD / DMS / DDM parsing + formatting, hemisphere
 // handling, range validation) is pure Foundation/CoreLocation logic with no

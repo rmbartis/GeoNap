@@ -1,3 +1,5 @@
+// Copyright © 2026 Robert Bartis. All rights reserved.
+
 // GTFSFeedModel.swift
 // SwiftData model representing a saved GTFS agency feed.
 // Stores the feed URL and tracks when data was last downloaded.

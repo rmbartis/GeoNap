@@ -1,3 +1,5 @@
+// Copyright © 2026 Robert Bartis. All rights reserved.
+
 // AlarmManagerDeadReckoningTests.swift
 // Coverage for the opt-in, per-alarm dead-reckoning signal-loss bridge added
 // to AlarmManager.swift (docs/dead-reckoning-design.md). Mirrors the test-seam

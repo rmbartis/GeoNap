@@ -1,3 +1,5 @@
+// Copyright © 2026 Robert Bartis. All rights reserved.
+
 // CoordinateParser.swift
 // Parses, validates, and formats geographic coordinates in three formats:
 //   DD  — Decimal Degrees:         40.712800  /  -74.006000

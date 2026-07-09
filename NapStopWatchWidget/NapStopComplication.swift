@@ -1,3 +1,5 @@
+// Copyright © 2026 Robert Bartis. All rights reserved.
+
 // NapStopComplication.swift
 // WidgetKit complication for watchOS — shows the nearest active NapAlarm.
 // Supports four complication families:

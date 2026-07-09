@@ -1,3 +1,5 @@
+// Copyright © 2026 Robert Bartis. All rights reserved.
+
 // NapAlarm.swift
 // Core data model — SwiftData @Model class.
 // Supports one-shot and repeating alarms with hysteresis.

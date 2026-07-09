@@ -1,3 +1,5 @@
+// Copyright © 2026 Robert Bartis. All rights reserved.
+
 // AlarmSchedulingTests.swift
 // Tests for scheduling features that had zero coverage:
 //   • isWithinWindow  — time window (normal and overnight) and day-of-week filter

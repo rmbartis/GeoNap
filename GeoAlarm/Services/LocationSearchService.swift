@@ -1,3 +1,5 @@
+// Copyright © 2026 Robert Bartis. All rights reserved.
+
 // LocationSearchService.swift
 // Wraps MKLocalSearchCompleter to provide address autocomplete suggestions,
 // then resolves a selected suggestion to a coordinate via MKLocalSearch.

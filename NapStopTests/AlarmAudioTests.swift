@@ -1,3 +1,5 @@
+// Copyright © 2026 Robert Bartis. All rights reserved.
+
 // AlarmAudioTests.swift
 // Bundle-resource integration tests for alarm sounds.
 //

@@ -1,3 +1,5 @@
+// Copyright © 2026 Robert Bartis. All rights reserved.
+
 // ShareAndAutoNotifyTests.swift
 // CI tests for two distinct sharing features:
 //

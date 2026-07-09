@@ -1,3 +1,5 @@
+// Copyright © 2026 Robert Bartis. All rights reserved.
+
 // NapStopWatchApp.swift
 // Entry point for the NapAlarmWatch watchOS target.
 

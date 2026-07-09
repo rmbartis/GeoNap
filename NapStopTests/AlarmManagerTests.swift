@@ -1,3 +1,5 @@
+// Copyright © 2026 Robert Bartis. All rights reserved.
+
 // AlarmManagerTests.swift
 // Unit tests for AlarmManager CRUD, persistence, and state transitions.
 // Uses a mock UserDefaults suite so tests don't pollute real app storage.

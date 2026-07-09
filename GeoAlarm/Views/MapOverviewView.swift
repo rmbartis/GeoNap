@@ -1,3 +1,5 @@
+// Copyright © 2026 Robert Bartis. All rights reserved.
+
 // MapOverviewView.swift
 // Shows all saved alarms as region circles on a single map.
 // Circle colour reflects alarm state. Tap a circle label to open its detail.

@@ -1,3 +1,5 @@
+// Copyright © 2026 Robert Bartis. All rights reserved.
+
 // CuratedFeeds.swift
 // Built-in list of popular transit agencies with confirmed-public GTFS feed URLs.
 // All feeds are freely accessible without API keys or registration unless noted.

@@ -1,3 +1,5 @@
+<!-- Copyright © 2026 Robert Bartis. All rights reserved. -->
+
 # iCloud Sync Setup — Xcode Steps
 
 All code changes are complete. These are the one-time manual steps required in Xcode and the Apple Developer portal.

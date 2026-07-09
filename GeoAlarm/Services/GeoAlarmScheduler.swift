@@ -1,3 +1,5 @@
+// Copyright © 2026 Robert Bartis. All rights reserved.
+
 // GeoAlarmScheduler.swift
 // AlarmKit-based alerting layer (iOS 26+).
 //

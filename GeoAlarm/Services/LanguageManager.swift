@@ -1,3 +1,5 @@
+// Copyright © 2026 Robert Bartis. All rights reserved.
+
 // LanguageManager.swift
 // In-app language switching for iOS 26 / SwiftUI 6.
 //

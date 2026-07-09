@@ -1,3 +1,5 @@
+// Copyright © 2026 Robert Bartis. All rights reserved.
+
 // MessageComposeView.swift
 // UIViewControllerRepresentable wrapper for MFMessageComposeViewController.
 // Presents a pre-composed iMessage/SMS sheet that the user reviews and sends.

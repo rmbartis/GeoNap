@@ -1,3 +1,5 @@
+// Copyright © 2026 Robert Bartis. All rights reserved.
+
 // ToggleAlarmIntent.swift
 // "Hey Siri, enable/disable my Penn Station GeoNap"
 

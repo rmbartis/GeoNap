@@ -1,3 +1,5 @@
+// Copyright © 2026 Robert Bartis. All rights reserved.
+
 // CalendarScanBackgroundTask.swift
 // Phase 3: BGAppRefreshTask that periodically re-runs the calendar scan
 // pipeline in the background when Scan Mode is set to Automatic, so trips

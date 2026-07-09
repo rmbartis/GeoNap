@@ -1,3 +1,5 @@
+// Copyright © 2026 Robert Bartis. All rights reserved.
+
 // SpotlightManager.swift
 // Indexes NapAlarm entries in CoreSpotlight so they appear in on-device search.
 // Each alarm is stored as a CSSearchableItem keyed by its UUID.

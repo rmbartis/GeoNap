@@ -1,3 +1,5 @@
+// Copyright © 2026 Robert Bartis. All rights reserved.
+
 // CalendarScanSettingsView.swift
 // Settings submenu for the Calendar Scanning feature: scans the user's
 // calendars for upcoming events with a location and suggests location-based

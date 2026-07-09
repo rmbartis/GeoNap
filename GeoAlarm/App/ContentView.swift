@@ -1,3 +1,5 @@
+// Copyright © 2026 Robert Bartis. All rights reserved.
+
 // ContentView.swift
 // Root navigation shell for the app.
 

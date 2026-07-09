@@ -1,3 +1,5 @@
+// Copyright © 2026 Robert Bartis. All rights reserved.
+
 // IntentModelContainer.swift
 // Provides a ModelContainer for AppIntents, which run outside the main app
 // process and cannot access the @EnvironmentObject AlarmManager directly.

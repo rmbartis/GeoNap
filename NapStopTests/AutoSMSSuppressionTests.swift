@@ -1,3 +1,5 @@
+// Copyright © 2026 Robert Bartis. All rights reserved.
+
 // AutoSMSSuppressionTests.swift
 // Coverage for AlarmManager.queueAutoNotify's automation-suppression toggle —
 // flagged as untested in the 2026-06-29 CI review

@@ -1,3 +1,5 @@
+// Copyright © 2026 Robert Bartis. All rights reserved.
+
 // NotifyContactsIntent.swift
 // An AppIntent that retrieves the message body written to UserDefaults when
 // the most recent GeoNap alarm fired, and returns it as a plain String.

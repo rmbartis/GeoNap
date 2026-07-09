@@ -1,3 +1,5 @@
+// Copyright © 2026 Robert Bartis. All rights reserved.
+
 // GTFSModels.swift
 // Lightweight value types for parsed GTFS data.
 // Only the fields NapAlarm needs — routes and stops.

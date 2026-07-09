@@ -1,3 +1,5 @@
+// Copyright © 2026 Robert Bartis. All rights reserved.
+
 // MailComposeView.swift
 // UIViewControllerRepresentable wrapper around MFMailComposeViewController.
 // Presents the device's default mail app compose sheet.

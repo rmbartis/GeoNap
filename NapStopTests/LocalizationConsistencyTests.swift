@@ -1,3 +1,5 @@
+// Copyright © 2026 Robert Bartis. All rights reserved.
+
 // LocalizationConsistencyTests.swift
 // Systematic, structural consistency checks across all 13 Localizable.strings
 // files — as opposed to LocalizationTests.swift, which spot-checks specific

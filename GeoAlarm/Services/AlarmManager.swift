@@ -1,3 +1,5 @@
+// Copyright © 2026 Robert Bartis. All rights reserved.
+
 // AlarmManager.swift
 // Owns the list of NapAlarms, coordinates region monitoring via LocationManager,
 // and presents alarms via AlarmKit (GeoAlarmScheduler) on region events.

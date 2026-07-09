@@ -1,3 +1,5 @@
+// Copyright © 2026 Robert Bartis. All rights reserved.
+
 // NapAlarmEntity.swift
 // AppEntity that lets Siri and Shortcuts resolve alarm names to GeoNap alarm records.
 // NapAlarmQuery backs the entity with live SwiftData lookups.

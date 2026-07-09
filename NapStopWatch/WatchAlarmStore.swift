@@ -1,3 +1,5 @@
+// Copyright © 2026 Robert Bartis. All rights reserved.
+
 // WatchAlarmStore.swift
 // Receives alarm data from the iPhone via WCSession and persists it locally
 // so the complication extension can also read it from the shared App Group.

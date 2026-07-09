@@ -1,3 +1,5 @@
+// Copyright © 2026 Robert Bartis. All rights reserved.
+
 // NapStopUITests.swift
 // UI smoke tests using XCUITest.
 // Run on the simulator; require the app to be built and running.

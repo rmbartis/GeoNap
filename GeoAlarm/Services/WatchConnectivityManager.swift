@@ -1,3 +1,5 @@
+// Copyright © 2026 Robert Bartis. All rights reserved.
+
 // WatchConnectivityManager.swift
 // iOS side: pushes active alarm data to the paired Apple Watch via WCSession.
 // Uses applicationContext (background delivery) — no need for the Watch to be

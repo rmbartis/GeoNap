@@ -1,3 +1,5 @@
+<!-- Copyright © 2026 Robert Bartis. All rights reserved. -->
+
 # Design Doc: Time-Based Alarms (Hybrid Approach)
 
 **Status:** Proposed · **Author:** GeoNap team · **Created:** 2026-06-28

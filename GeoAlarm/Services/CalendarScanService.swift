@@ -1,3 +1,5 @@
+// Copyright © 2026 Robert Bartis. All rights reserved.
+
 // CalendarScanService.swift
 // EventKit wrapper for the Calendar Scanning feature — lets GeoNap scan the
 // user's calendars for upcoming events with a location, and suggest

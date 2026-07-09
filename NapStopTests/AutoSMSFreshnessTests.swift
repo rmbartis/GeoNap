@@ -1,3 +1,5 @@
+// Copyright © 2026 Robert Bartis. All rights reserved.
+
 // AutoSMSFreshnessTests.swift
 // Unit tests for the Auto-SMS redesign and the time-based-alarm warm-up ring.
 //

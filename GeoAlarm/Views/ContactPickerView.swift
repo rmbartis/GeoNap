@@ -1,3 +1,5 @@
+// Copyright © 2026 Robert Bartis. All rights reserved.
+
 // ContactPickerView.swift
 // UIViewControllerRepresentable wrapper around CNContactPickerViewController.
 //

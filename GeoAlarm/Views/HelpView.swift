@@ -1,3 +1,5 @@
+// Copyright © 2026 Robert Bartis. All rights reserved.
+
 // HelpView.swift
 // Scrollable help guide covering app concept, use cases, and controls.
 

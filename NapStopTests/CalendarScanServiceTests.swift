@@ -1,3 +1,5 @@
+// Copyright © 2026 Robert Bartis. All rights reserved.
+
 // CalendarScanServiceTests.swift
 // Unit tests for the Calendar Scanning feature's pure logic:
 //   • CalendarScanStorage — Set<String> <-> JSON round-trip
