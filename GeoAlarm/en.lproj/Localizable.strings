@@ -363,9 +363,9 @@ The Save button is disabled until a name has been entered and a location has bee
 "settings.autoSMS.description" = "Have GeoNap text your contacts automatically when an alarm fires — no compose sheet, no tap to send. Requires a one-time setup below.";
 "settings.autoSMS.setupTitle" = "How to set it up:";
 "settings.autoSMS.step1" = "Tap Set Up Automation below. This opens Shortcuts to a new Personal Automation.";
-"settings.autoSMS.step2" = "For the trigger, tap App, choose GeoNap, then Is Opened, and tap Next.";
-"settings.autoSMS.step3" = "Tap Add Action and add two actions, in this order: Notify Contacts via GeoNap, then Send Message. In Send Message, set Recipients to your contacts and set the Message to the Body output from the first action.";
-"settings.autoSMS.step4" = "Turn off Ask Before Running, tap Done, then turn on the switch above.";
+"settings.autoSMS.step2" = "Scroll down and tap App, choose GeoNap, then ensure both \"Is Opened\" and \"Run Immediately\" are checked, and tap Next.";
+"settings.autoSMS.step3" = "Tap Create New Shortcut. In Search Actions, add two actions, in this order: Notify Contacts via GeoNap, then Send Message. In Send Message, set Recipients to your contacts and set the Message to the Body output from the first action.";
+"settings.autoSMS.step4" = "Select Run Immediately, tap Done, then turn on the switch above.";
 "Set Up Automation" = "Set Up Automation";
 "settings.autoSMS.footer" = "GeoNap can’t detect an alarm while it isn’t open, so the automation runs the next time you open the app after an alarm fires. Turn on the switch above so the app doesn’t also show its own compose sheet.";
 "settings.autoSMS.automationToggleHelp" = "Turn this on once you’ve completed the setup below, so GeoNap stops showing its own Send screen.";

@@ -541,11 +541,15 @@ final class AlarmManager: NSObject, ObservableObject {
         var body = "[\(direction)] I \(verb) \(alarm.name) at \(timeStr)."
         if !alarm.note.isEmpty { body += " \(alarm.note)" }
 
-        // Persist body + fire time for NotifyContactsIntent — lets the Shortcuts
-        // "When GeoNap Is Opened" automation read the message and send SMS without
-        // a compose sheet. The timestamp drives the intent's freshness guard.
+        // Persist body + recipients + fire time for NotifyContactsIntent — lets the
+        // Shortcuts "When GeoNap Is Opened" automation read both the message and
+        // the phone numbers (sourced from this alarm's own Auto-Notify contacts,
+        // same list used for the in-app compose sheet below) and send SMS without
+        // a compose sheet or a manually configured recipient list. The timestamp
+        // drives the intent's freshness guard.
         let defaults = UserDefaults.standard
         defaults.set(body, forKey: AutoNotifyDefaultsKey.pendingBody)
+        defaults.set(phones, forKey: AutoNotifyDefaultsKey.pendingPhones)
         defaults.set(Date().timeIntervalSince1970, forKey: AutoNotifyDefaultsKey.pendingBodyTimestamp)
 
         // If the user runs the hands-free Shortcuts automation, suppress the in-app
