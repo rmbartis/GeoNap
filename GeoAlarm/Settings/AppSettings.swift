@@ -2,12 +2,27 @@
 
 // AppSettings.swift
 // Shared enums and AppStorage key constants for user preferences.
+//
+// Every type in this file is `nonisolated` (Bob — 2026-07-09, warning
+// clean-up): they're all plain rawValue-backed enums / string-key constants
+// with no actor-isolated state — no @Published, no UIKit/AppKit calls, no
+// class at all — but the project builds with Swift's default-MainActor-
+// isolation mode (SWIFT_DEFAULT_ACTOR_ISOLATION=MainActor), which
+// implicitly makes every declaration MainActor-isolated unless marked
+// otherwise. That silently broke code elsewhere that was deliberately
+// pulled out as `nonisolated` for testability — e.g. GTFSService's
+// shouldUseCache/effectiveRetentionDays/normalizedRetentionDays (see
+// 2026-07-07/08 history) — the moment those functions referenced a
+// constant from here. Marking each type here `nonisolated` fixes that at
+// the source, for every current and future member, instead of inlining
+// magic literals at each call site (the workaround previously used for the
+// analogous `AutoNotifyDefaultsKey` case — see NotifyContactsIntent.swift).
 
 import Foundation
 
 // MARK: - Distance Unit
 
-enum DistanceUnit: String, CaseIterable, Identifiable {
+nonisolated enum DistanceUnit: String, CaseIterable, Identifiable {
     case metric   = "metric"
     case imperial = "imperial"
 
@@ -78,7 +93,7 @@ enum DistanceUnit: String, CaseIterable, Identifiable {
 
 // MARK: - Time Format
 
-enum TimeFormat: String, CaseIterable, Identifiable {
+nonisolated enum TimeFormat: String, CaseIterable, Identifiable {
     case twelveHour     = "12h"
     case twentyFourHour = "24h"
 
@@ -111,7 +126,7 @@ enum TimeFormat: String, CaseIterable, Identifiable {
 
 // MARK: - Coordinate Format
 
-enum CoordFormat: String, CaseIterable, Identifiable {
+nonisolated enum CoordFormat: String, CaseIterable, Identifiable {
     case dd  = "dd"   // Decimal Degrees:          40.712800, -74.006000
     case dms = "dms"  // Degrees Minutes Seconds:  40°42′46″N  74°00′21″W
     case ddm = "ddm"  // Degrees Decimal Minutes:  40°42.767′N  74°00.360′W
@@ -155,7 +170,7 @@ enum CoordFormat: String, CaseIterable, Identifiable {
 
 /// Whether calendar scanning runs automatically in the background or only
 /// when the user explicitly taps "Scan Now" in Settings.
-enum CalendarScanMode: String, CaseIterable, Identifiable {
+nonisolated enum CalendarScanMode: String, CaseIterable, Identifiable {
     case automatic
     case manualOnly
 
@@ -191,7 +206,7 @@ enum CalendarScanMode: String, CaseIterable, Identifiable {
 /// picked here. The picker label pairs each option with a frequency/battery
 /// hint rather than promising precision, and the Settings footer calls this
 /// out explicitly (Bob, 2026-07-04).
-enum CalendarScanRefreshInterval: Int, CaseIterable, Identifiable {
+nonisolated enum CalendarScanRefreshInterval: Int, CaseIterable, Identifiable {
     case oneHour = 60
     case twoHours = 120
     case fourHours = 240
@@ -235,7 +250,7 @@ enum CalendarScanRefreshInterval: Int, CaseIterable, Identifiable {
 
 // MARK: - AppStorage Keys
 
-enum AppStorageKey {
+nonisolated enum AppStorageKey {
     static let distanceUnit   = "distanceUnit"
     static let timeFormat     = "timeFormat"
     static let coordFormat    = "coordFormat"
@@ -372,6 +387,6 @@ enum AppStorageKey {
 ///
 /// The one unavoidable exception is docs/privacy-policy.html, a static file
 /// with no build step, which must be kept in sync by hand if this ever changes.
-enum SupportContact {
+nonisolated enum SupportContact {
     static let email = "geonapios@gmail.com"
 }

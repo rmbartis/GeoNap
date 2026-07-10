@@ -210,7 +210,14 @@ final class DebugLogger {
 // MARK: - UserDefaults Keys
 
 extension DebugLogger {
-    enum UserDefaultsKey {
+    // `nonisolated` (Bob — 2026-07-09, warning clean-up): a single constant
+    // key string, referenced from AppSettings.swift's `nonisolated enum
+    // AppStorageKey` — without this, the module's default-MainActor-
+    // isolation build setting made this implicitly MainActor-isolated
+    // (DebugLogger itself carries no explicit annotation either way),
+    // which broke that nonisolated reference. See AppSettings.swift's
+    // file-header comment for the fuller explanation of this pattern.
+    nonisolated enum UserDefaultsKey {
         static let debugLoggingEnabled = "debugLoggingEnabled"
     }
 }

@@ -1,4 +1,0 @@
-Query chain:
- →Find: Target Application 'com.rmbartis.GeoNap'
-  ↪︎Find: Descendants matching type Button
-    ↪︎Find: Elements matching predicate '"saveAlarmButton" IN identifiers'
