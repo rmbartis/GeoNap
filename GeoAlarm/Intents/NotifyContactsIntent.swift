@@ -81,14 +81,29 @@ struct NotifyContactsResult: TransientAppEntity {
 
     static var typeDisplayRepresentation: TypeDisplayRepresentation = "GeoNap Notification"
 
+    // Optional, not just empty-when-absent (Bob — 2026-07-09, ninth pass:
+    // found live on-device after Auto-SMS setup was otherwise wired
+    // correctly, matching this file's exported "If Body has any value" +
+    // "Send Message" structure exactly). Shortcuts' "Has Any Value" check
+    // on a @Property means "is this property present at all" — a
+    // non-optional String/[String] is ALWAYS present, even when its value
+    // is "" / [], so with these declared non-optional the automation's "If
+    // Body has any value" gate was structurally incapable of ever
+    // evaluating false. That let "Send Message" run on every ordinary
+    // app-open with an empty body and no recipients, which Shortcuts can't
+    // auto-address, so it fell back to popping open the interactive "New
+    // Message" compose sheet instead of silently doing nothing. Making both
+    // properties genuinely Optional — nil (not empty) when there's nothing
+    // fresh to send — is what makes "Has Any Value" mean what the
+    // Shortcut's author actually intends.
     @Property(identifier: "body", title: "Body")
-    var body: String
+    var body: String?
 
     @Property(identifier: "recipients", title: "Recipients")
-    var recipients: [String]
+    var recipients: [String]?
 
     var displayRepresentation: DisplayRepresentation {
-        DisplayRepresentation(title: "\(body)")
+        DisplayRepresentation(title: "\(body ?? "")")
     }
 
     /// Required by `TransientAppEntity` conformance (Protocol requires
@@ -96,11 +111,11 @@ struct NotifyContactsResult: TransientAppEntity {
     /// constructed via `init(body:recipients:)` below, which overwrites both
     /// defaults immediately.
     init() {
-        self.body = ""
-        self.recipients = []
+        self.body = nil
+        self.recipients = nil
     }
 
-    init(body: String, recipients: [String]) {
+    init(body: String?, recipients: [String]?) {
         self.body = body
         self.recipients = recipients
     }
@@ -153,7 +168,7 @@ struct NotifyContactsIntent: AppIntent {
         // "If Body is not empty" check makes this a silent no-op.
         guard Self.shouldNotify(body: body, phones: phones, firedAt: firedAt,
                                  now: Date().timeIntervalSince1970, window: window) else {
-            return .result(value: NotifyContactsResult(body: "", recipients: []))
+            return .result(value: NotifyContactsResult(body: nil, recipients: nil))
         }
 
         return .result(value: NotifyContactsResult(body: body, recipients: phones))

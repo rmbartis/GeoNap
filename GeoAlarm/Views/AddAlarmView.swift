@@ -6,6 +6,7 @@
 import SwiftUI
 import CoreLocation
 import MapKit
+import UIKit
 
 struct AddAlarmView: View {
     @Environment(\.dismiss) private var dismiss
@@ -622,6 +623,37 @@ struct AddAlarmView: View {
             ? Text("Edit Alarm", bundle: bundle)
             : Text("New Alarm", bundle: bundle))
         .navigationBarTitleDisplayMode(.inline)
+        // Explicit keyboard "Done" accessory (Bob — 2026-07-09 CI stability
+        // audit, eighth pass): two prior UI-test-only dismiss attempts
+        // (tapping the nav bar; dragging the keyboard itself) both proved
+        // empirically ineffective — confirmed via exported .xcresult
+        // accessibility snapshots that the keyboard never actually closed
+        // either way, and a follow-up CI log showed `app.keyboards.count`
+        // staying > 0 for the entire 2s poll after the keyboard-drag
+        // gesture. Root cause: the docked iPhone system keyboard has no
+        // built-in drag-to-dismiss gesture (that only exists for the
+        // floating/undocked keyboard), and this Form has no
+        // `.scrollDismissesKeyboard`/tap-outside wiring for interactive
+        // dismiss to hook into.
+        //
+        // Rather than keep guessing at gestures from the test target, give
+        // the keyboard itself a real, always-visible "Done" button via the
+        // standard `.keyboard` toolbar placement — this renders as part of
+        // the keyboard's own input accessory view, directly above the keys,
+        // so it's never covered by anything and needs no scrolling to
+        // reach. This is also a normal, expected UX affordance for a form
+        // like this independent of testing.
+        .toolbar {
+            ToolbarItemGroup(placement: .keyboard) {
+                Spacer()
+                Button {
+                    dismissKeyboard()
+                } label: {
+                    Text("Done", bundle: bundle)
+                }
+                .accessibilityIdentifier("keyboardDoneButton")
+            }
+        }
         .background(
             ContactPickerView(isPresented: $showContactPicker) { contact in
                 addContact(contact)
@@ -775,6 +807,16 @@ struct AddAlarmView: View {
         } catch {
             coordEntryError = error.localizedDescription
         }
+    }
+
+    /// Resigns whatever text input is currently first responder, dismissing
+    /// the on-screen keyboard. Used by the keyboard toolbar's "Done" button
+    /// (see the `.toolbar { ToolbarItemGroup(.keyboard) ... }` modifier
+    /// above) — sending the resign action to `nil` lets UIKit route it to
+    /// whichever field actually has focus, without this view needing its
+    /// own `@FocusState` plumbing for every TextField in the Form.
+    private func dismissKeyboard() {
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
     }
 
     private func saveAlarm() {

@@ -167,17 +167,38 @@ final class NapStopUITests: XCTestCase {
         nameField.tap()
         nameField.typeText(name)
 
-        // Dismiss the keyboard before doing anything else. (Bob — 2026-07-09
-        // CI stability audit, fourth pass): tapping the map doesn't reliably
-        // resign the name field's first responder (MapKit's own gesture
-        // recognizers consume the touch without propagating a "tap outside
-        // to dismiss"), so the keyboard was still covering the bottom of the
-        // screen the entire time this test searched for "Save Alarm" —
-        // which likely meant every scroll attempt (drag or swipe) in that
-        // region was landing on the keyboard, not the Form. Tapping the nav
-        // bar is a safe no-op location that reliably resigns first responder.
+        // Dismiss the keyboard before doing anything else.
+        //
+        // Eighth pass (Bob — 2026-07-09 CI stability audit): the seventh-pass
+        // fix (drag starting ON the keyboard element, off the bottom of the
+        // screen) was based on a wrong assumption — a follow-up CI run's log
+        // showed `app.keyboards.count` staying > 0 for the ENTIRE 2s poll
+        // afterward, meaning the drag never dismissed anything. The docked
+        // iPhone system keyboard has no built-in drag-to-dismiss gesture at
+        // all (that only exists for the floating/undocked keyboard); that
+        // theory was wrong from the start. Combined with the sixth-pass
+        // finding that this Form has no `.scrollDismissesKeyboard`/tap-
+        // outside wiring either, there was no gesture left to try from the
+        // test target's side.
+        //
+        // Fix: stop guessing at gestures entirely. AddAlarmView.swift now
+        // has an explicit `.toolbar { ToolbarItemGroup(.keyboard) { ... } }`
+        // "Done" button wired to a real `resignFirstResponder` call. That
+        // button renders as part of the keyboard's own input accessory
+        // view — directly above the keys — so it's always on-screen and
+        // never covered by the keyboard's window, unlike anything relying
+        // on the app's main window/List. Tap it directly via its stable
+        // accessibilityIdentifier.
         if app.keyboards.count > 0 {
-            app.navigationBars.firstMatch.tap()
+            let doneButton = app.buttons["keyboardDoneButton"]
+            if doneButton.waitForExistence(timeout: 1) {
+                doneButton.tap()
+            }
+
+            let deadline = Date().addingTimeInterval(2)
+            while app.keyboards.count > 0 && Date() < deadline {
+                usleep(100_000)
+            }
         }
 
         let mapView = app.maps.firstMatch

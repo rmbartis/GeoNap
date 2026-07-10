@@ -1,0 +1,4 @@
+Query chain:
+ →Find: Target Application 'com.rmbartis.GeoNap'
+  ↪︎Find: Descendants matching type StaticText
+    ↪︎Find: Elements matching predicate '"Test Alarm" IN identifiers'
