@@ -380,11 +380,12 @@ Xem Cai dat - SMS Tu dong (Khong can phe duyet) de biet huong dan tung buoc.\n\n
 "settings.autoSMS.step2" = "Cuộn xuống và nhấn App, chọn GeoNap, sau đó đảm bảo cả \"Được mở\" và \"Chạy ngay\" đều được chọn, rồi nhấn Tiếp theo.";
 "settings.autoSMS.step3" = "Nhấn Tạo lối tắt mới. Trong Tìm kiếm hành động, thêm Thông báo liên hệ qua GeoNap.";
 "settings.autoSMS.step4" = "Nhấn Tìm kiếm hành động ở dưới cùng, gõ Nếu và thêm hành động Nếu xuất hiện. Chạm và giữ trường điều kiện của nó, nhấn Chọn biến, chọn Thông báo liên hệ qua GeoNap, sau đó Nội dung, rồi trong menu thả xuống \"là\" chọn Có bất kỳ giá trị nào.";
-"settings.autoSMS.step5" = "Bên trong khối Nếu (giữa Nếu và Nếu không), thêm Gửi tin nhắn — biểu tượng iMessage màu xanh lá (SMS gốc của Apple), không phải hành động có tên tương tự từ ứng dụng nhắn tin khác.";
-"settings.autoSMS.step6" = "Trong Gửi tin nhắn, kiểm tra các trường Tin nhắn và Người nhận — nếu \"Thông báo liên hệ qua GeoNap\" chưa xuất hiện ở một trong hai trường, chạm và giữ trường đó cho đến khi Chọn biến xuất hiện, rồi chọn Thông báo liên hệ qua GeoNap. Để trống Nếu không và Kết thúc Nếu.";
-"settings.autoSMS.step7" = "Nhấn dấu tích màu xanh ở góc trên bên phải để lưu.";
-"settings.autoSMS.step8" = "Bạn sẽ quay lại màn hình tóm tắt tự động hóa, hiển thị tự động hóa mới \"Khi GeoNap được mở\" với sáu biểu tượng phía trên: một mũi tên gấp khúc, biểu tượng GeoNap, một biểu tượng phân nhánh, biểu tượng iMessage, và thêm hai biểu tượng phân nhánh nữa.";
-"settings.autoSMS.step9" = "Quay lại Cài đặt GeoNap và bật \"Tôi đã thiết lập tự động hóa Phím tắt\" ở trên.";
+"settings.autoSMS.step5" = "Bên trong khối Nếu (giữa Nếu và Nếu không), nhấn Tìm kiếm hành động, gõ \"Lặp lại\" và thêm Lặp lại với mỗi mục. Chạm và giữ trường đầu vào của nó, nhấn Chọn biến, rồi chọn Thông báo liên hệ qua GeoNap, sau đó Người nhận.";
+"settings.autoSMS.step6" = "Bên trong khối Lặp lại với mỗi mục (giữa Lặp lại với mỗi mục và Kết thúc lặp lại), thêm Gửi tin nhắn — biểu tượng iMessage màu xanh lá (SMS gốc của Apple), không phải hành động có tên tương tự từ ứng dụng nhắn tin khác.";
+"settings.autoSMS.step7" = "Trong Gửi tin nhắn, thiết lập riêng hai trường: đối với Tin nhắn, chạm và giữ trường đó, nhấn Chọn biến, rồi chọn Thông báo liên hệ qua GeoNap, sau đó Nội dung. Đối với Người nhận, chạm và giữ trường đó, nhấn Chọn biến, rồi chọn Lặp lại mục — không chọn trực tiếp \"Thông báo liên hệ qua GeoNap\", vì điều đó sẽ đưa toàn bộ danh sách trở lại một tin nhắn nhóm duy nhất. Để trống Nếu không và Kết thúc Nếu.";
+"settings.autoSMS.step8" = "Nhấn dấu tích màu xanh ở góc trên bên phải để lưu.";
+"settings.autoSMS.step9" = "Bạn sẽ quay lại màn hình tóm tắt tự động hóa, hiển thị tự động hóa mới \"Khi GeoNap được mở\".";
+"settings.autoSMS.step10" = "Quay lại Cài đặt GeoNap và bật \"Tôi đã thiết lập tự động hóa Phím tắt\" ở trên.";
 "Set Up Automation" = "Thiết lập tự động hóa";
 "settings.autoSMS.footer" = "GeoNap không thể phát hiện báo thức khi ứng dụng chưa mở, vì vậy tự động hóa sẽ chạy vào lần tiếp theo bạn mở GeoNap sau khi báo thức kêu. Bật công tắc ở trên để ứng dụng không hiển thị màn hình soạn tin của riêng nó nữa.";
 "settings.autoSMS.automationToggleHelp" = "Chỉ bật mục này sau khi bạn đã hoàn tất thiết lập bên dưới, để GeoNap ngừng hiển thị màn hình gửi tin của riêng nó.";

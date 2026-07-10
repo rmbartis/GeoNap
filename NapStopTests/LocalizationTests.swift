@@ -222,8 +222,11 @@ final class LocalizationTests: XCTestCase {
     /// (step1, step2, step3a/3b, step4a/4b/4c, step5, "Open Shortcuts App") —
     /// those were removed from every Localizable.strings back in commit
     /// 518d836 but this test wasn't updated then, so it's been asserting on
-    /// keys that no longer exist. Now matches the current 9-step version
-    /// (step1–step9) plus the "Set Up Automation" deep-link button label.
+    /// keys that no longer exist. Updated again (Bob, 2026-07-10) to the
+    /// current 10-step version (step1–step10) — step10 was added when a
+    /// "Repeat with Each" loop was inserted around Send Message so multi-
+    /// recipient Auto-SMS sends individual texts instead of one group
+    /// message — plus the "Set Up Automation" deep-link button label.
     func test_allLanguages_haveAutoSMSSectionKeys() throws {
         let autoSMSKeys = [
             "Auto-SMS (No Approval Needed)",
@@ -238,6 +241,7 @@ final class LocalizationTests: XCTestCase {
             "settings.autoSMS.step7",
             "settings.autoSMS.step8",
             "settings.autoSMS.step9",
+            "settings.autoSMS.step10",
             "Set Up Automation",
             "settings.autoSMS.footer",
         ]

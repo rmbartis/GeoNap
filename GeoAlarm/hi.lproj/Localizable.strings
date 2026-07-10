@@ -376,11 +376,12 @@
 "settings.autoSMS.step2" = "नीचे स्क्रॉल करें और App पर टैप करें, GeoNap चुनें, फिर सुनिश्चित करें कि \"Is Opened\" और \"Run Immediately\" दोनों चेक किए गए हैं, और Next पर टैप करें।";
 "settings.autoSMS.step3" = "Create New Shortcut पर टैप करें। Search Actions में, Notify Contacts via GeoNap जोड़ें।";
 "settings.autoSMS.step4" = "नीचे Search Actions पर टैप करें, If टाइप करें, और दिखने वाला If एक्शन जोड़ें। इसके कंडीशन फ़ील्ड को दबाकर रखें, Select Variable पर टैप करें, Notify Contacts via GeoNap चुनें, फिर Body, फिर \"is\" ड्रॉपडाउन में Has Any Value चुनें।";
-"settings.autoSMS.step5" = "If ब्लॉक के अंदर (If और Otherwise के बीच), Send Message जोड़ें — हरा iMessage (Apple का नेटिव SMS) आइकन, किसी अन्य मैसेजिंग ऐप के मिलते-जुलते नाम वाले एक्शन को नहीं।";
-"settings.autoSMS.step6" = "Send Message में, Message और Recipients फ़ील्ड जांचें — यदि \"Notify Contacts via GeoNap\" इनमें से किसी में पहले से नहीं दिख रहा है, तो उस फ़ील्ड को दबाकर रखें जब तक Select Variable न दिखे, फिर Notify Contacts via GeoNap चुनें। Otherwise और End If को खाली छोड़ दें।";
-"settings.autoSMS.step7" = "सेव करने के लिए ऊपर दाईं ओर नीले चेकमार्क पर टैप करें।";
-"settings.autoSMS.step8" = "आप ऑटोमेशन सारांश स्क्रीन पर वापस आ जाएंगे, जो आपका नया \"When GeoNap is opened\" ऑटोमेशन दिखाएगी, जिसके ऊपर छह आइकन होंगे: एक मुड़ा हुआ तीर, GeoNap आइकन, एक ब्रांच आइकन, iMessage आइकन, और दो और ब्रांच आइकन।";
-"settings.autoSMS.step9" = "GeoNap Settings में वापस जाएं और ऊपर \"I've set up the Shortcuts automation\" चालू करें।";
+"settings.autoSMS.step5" = "If ब्लॉक के अंदर (If और Otherwise के बीच), Search Actions पर टैप करें, Repeat टाइप करें, और Repeat with Each जोड़ें। इसके इनपुट फ़ील्ड को दबाकर रखें, Select Variable पर टैप करें, और Notify Contacts via GeoNap चुनें, फिर Recipients।";
+"settings.autoSMS.step6" = "Repeat with Each ब्लॉक के अंदर (Repeat with Each और End Repeat के बीच), Send Message जोड़ें — हरा iMessage (Apple का नेटिव SMS) आइकन, किसी अन्य मैसेजिंग ऐप के मिलते-जुलते नाम वाले एक्शन को नहीं।";
+"settings.autoSMS.step7" = "Send Message में, दोनों फ़ील्ड अलग-अलग सेट करें: Message के लिए, फ़ील्ड को दबाकर रखें, Select Variable पर टैप करें, और Notify Contacts via GeoNap चुनें, फिर Body। Recipients के लिए, फ़ील्ड को दबाकर रखें, Select Variable पर टैप करें, और Repeat Item चुनें — सीधे \"Notify Contacts via GeoNap\" नहीं, क्योंकि इससे पूरी लिस्ट फिर से एक ही ग्रुप मैसेज में चली जाएगी। Otherwise और End If को खाली छोड़ दें।";
+"settings.autoSMS.step8" = "सेव करने के लिए ऊपर दाईं ओर नीले चेकमार्क पर टैप करें।";
+"settings.autoSMS.step9" = "आप ऑटोमेशन सारांश स्क्रीन पर वापस आ जाएंगे, जो आपका नया \"When GeoNap is opened\" ऑटोमेशन दिखाएगी।";
+"settings.autoSMS.step10" = "GeoNap Settings में वापस जाएं और ऊपर \"I've set up the Shortcuts automation\" चालू करें।";
 "Set Up Automation" = "ऑटोमेशन सेटअप करें";
 "settings.autoSMS.footer" = "जब तक ऐप खुला नहीं होता, GeoNap अलार्म का पता नहीं लगा सकता, इसलिए अलार्म बजने के बाद अगली बार GeoNap खोलने पर ऑटोमेशन चलता है। ऊपर दिया स्विच चालू करें ताकि ऐप अपनी खुद की कंपोज़ स्क्रीन भी न दिखाए।";
 "settings.autoSMS.automationToggleHelp" = "नीचे दी गई सेटअप पूरी करने के बाद ही इसे चालू करें, ताकि GeoNap अपनी खुद की भेजने वाली स्क्रीन दिखाना बंद कर दे।";

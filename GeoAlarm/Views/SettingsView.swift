@@ -717,6 +717,11 @@ private struct AutoSMSStep: View {
 /// opens — see `NotifyContactsIntent.swift`'s file header for why that gate
 /// exists. Also added a copy-to-clipboard icon (mirrors `HelpView`'s pattern)
 /// since 9 steps is a lot to keep re-reading one popover-width at a time.
+///
+/// Expanded again to 10 steps (Bob, 2026-07-10) to insert a "Repeat with
+/// Each" loop around Send Message — binding Recipients to the whole array in
+/// a single Send Message action sends one group message instead of an
+/// individual text per contact, which is unreliable for 2+ recipients.
 private struct AutoSMSSetupInfoSheet: View {
     @Environment(\.languageBundle) private var bundle
     @State private var copied = false
@@ -725,9 +730,10 @@ private struct AutoSMSSetupInfoSheet: View {
         "settings.autoSMS.step1", "settings.autoSMS.step2", "settings.autoSMS.step3",
         "settings.autoSMS.step4", "settings.autoSMS.step5", "settings.autoSMS.step6",
         "settings.autoSMS.step7", "settings.autoSMS.step8", "settings.autoSMS.step9",
+        "settings.autoSMS.step10",
     ]
 
-    /// Title + all 9 steps, numbered, for the copy-to-clipboard button —
+    /// Title + all 10 steps, numbered, for the copy-to-clipboard button —
     /// same construction pattern as `HelpView.fullHelpText`.
     private var fullSetupText: String {
         let title = NSLocalizedString("settings.autoSMS.setupTitle", bundle: bundle, comment: "")
@@ -772,6 +778,7 @@ private struct AutoSMSSetupInfoSheet: View {
                     AutoSMSStep(number: "7", textKey: "settings.autoSMS.step7")
                     AutoSMSStep(number: "8", textKey: "settings.autoSMS.step8")
                     AutoSMSStep(number: "9", textKey: "settings.autoSMS.step9")
+                    AutoSMSStep(number: "10", textKey: "settings.autoSMS.step10")
                 }
                 .font(.subheadline)
             }

@@ -376,11 +376,12 @@
 "settings.autoSMS.step2" = "向下滚动并点按 App，选择 GeoNap，确保“被打开时”和“立即运行”均已勾选，然后点按下一步。";
 "settings.autoSMS.step3" = "点按新建捷径。在搜索操作中，添加通过 GeoNap 通知联系人。";
 "settings.autoSMS.step4" = "点按底部的搜索操作，输入“如果”，添加出现的“如果”操作。触摸并按住其条件字段，点按选择变量，选择通过 GeoNap 通知联系人，然后选择正文，再在“为”下拉菜单中选择有任何值。";
-"settings.autoSMS.step5" = "在“如果”代码块内（“如果”和“否则”之间），添加发送信息 — 绿色 iMessage（苹果原生短信）图标，不要选择其他信息应用中名称类似的操作。";
-"settings.autoSMS.step6" = "在发送信息中，检查信息和收件人字段 — 如果其中任一字段尚未显示“通过 GeoNap 通知联系人”，请触摸并按住该字段，直到出现选择变量，然后选择通过 GeoNap 通知联系人。将“否则”和“结束如果”保持为空。";
-"settings.autoSMS.step7" = "点按右上角的蓝色对勾以保存。";
-"settings.autoSMS.step8" = "您将返回自动化摘要屏幕，其中显示新建的“GeoNap 被打开时”自动化，上方有六个图标：一个折角箭头、GeoNap 图标、一个分支图标、iMessage 图标，以及另外两个分支图标。";
-"settings.autoSMS.step9" = "返回 GeoNap 设置，打开上方的“我已设置捷径自动化”。";
+"settings.autoSMS.step5" = "在“如果”代码块内（“如果”和“否则”之间），点按搜索操作，输入“重复”，添加重复每一项。触摸并按住其输入字段，点按选择变量，然后选择通过 GeoNap 通知联系人，再选择收件人。";
+"settings.autoSMS.step6" = "在“重复每一项”代码块内（“重复每一项”和“结束重复”之间），添加发送信息 — 绿色 iMessage（苹果原生短信）图标，不要选择其他信息应用中名称类似的操作。";
+"settings.autoSMS.step7" = "在发送信息中，分别设置这两个字段：对于信息，触摸并按住该字段，点按选择变量，然后选择通过 GeoNap 通知联系人，再选择正文。对于收件人，触摸并按住该字段，点按选择变量，然后选择重复项目 — 不要直接选择“通过 GeoNap 通知联系人”，否则会把整个列表重新合并成一条群发信息。将“否则”和“结束如果”保持为空。";
+"settings.autoSMS.step8" = "点按右上角的蓝色对勾以保存。";
+"settings.autoSMS.step9" = "您将返回自动化摘要屏幕，其中显示新建的“GeoNap 被打开时”自动化。";
+"settings.autoSMS.step10" = "返回 GeoNap 设置，打开上方的“我已设置捷径自动化”。";
 "Set Up Automation" = "设置自动化";
 "settings.autoSMS.footer" = "只要应用未打开，GeoNap 就无法检测到闹钟触发，因此自动化会在您下次打开 GeoNap（闹钟触发后）时运行。打开上方的开关，这样应用就不会再显示自己的撰写界面。";
 "settings.autoSMS.automationToggleHelp" = "仅在完成下方设置后再打开此项，这样 GeoNap 就会停止显示自己的发送界面。";

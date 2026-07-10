@@ -366,11 +366,12 @@ The Save button is disabled until a name has been entered and a location has bee
 "settings.autoSMS.step2" = "Scroll down and tap App, choose GeoNap, then ensure both \"Is Opened\" and \"Run Immediately\" are checked, and tap Next.";
 "settings.autoSMS.step3" = "Tap Create New Shortcut. In Search Actions, add Notify Contacts via GeoNap.";
 "settings.autoSMS.step4" = "Tap Search Actions at the bottom, type If, and add the If action that appears. Touch and hold its condition field, tap Select Variable, choose Notify Contacts via GeoNap, then Body, then tap the \"is\" dropdown and choose Has Any Value.";
-"settings.autoSMS.step5" = "Inside the If block (between If and Otherwise), add Send Message — the green iMessage (Apple native SMS) icon, not a similarly named action from another messaging app.";
-"settings.autoSMS.step6" = "In Send Message, check the Message and Recipients fields — if \"Notify Contacts via GeoNap\" isn't already shown in either one, touch and hold that field until Select Variable appears, then choose Notify Contacts via GeoNap. Leave Otherwise and End If empty.";
-"settings.autoSMS.step7" = "Tap the blue checkmark in the upper-right corner to save.";
-"settings.autoSMS.step8" = "You'll return to the Automation summary screen showing your new \"When GeoNap is opened\" automation, with six icons above it: an angled arrow, the GeoNap icon, an up-split-arrow icon, the iMessage icon, and two more up-split-arrow icons.";
-"settings.autoSMS.step9" = "Go back to GeoNap Settings and turn on \"I've set up the Shortcuts automation\" above.";
+"settings.autoSMS.step5" = "Inside the If block (between If and Otherwise), tap Search Actions, type Repeat, and add Repeat with Each. Touch and hold its input field, tap Select Variable, and choose Notify Contacts via GeoNap, then Recipients.";
+"settings.autoSMS.step6" = "Inside the Repeat block (between Repeat with Each and End Repeat), add Send Message — the green iMessage (Apple native SMS) icon, not a similarly named action from another messaging app.";
+"settings.autoSMS.step7" = "In Send Message, set the two fields separately: for Message, touch and hold the field, tap Select Variable, and choose Notify Contacts via GeoNap, then Body. For Recipients, touch and hold the field, tap Select Variable, and choose Repeat Item — not \"Notify Contacts via GeoNap\" directly, since that would put the whole list back into one group send. Leave Otherwise and End If empty.";
+"settings.autoSMS.step8" = "Tap the blue checkmark in the upper-right corner to save.";
+"settings.autoSMS.step9" = "You'll return to the Automation summary screen showing your new \"When GeoNap is opened\" automation.";
+"settings.autoSMS.step10" = "Go back to GeoNap Settings and turn on \"I've set up the Shortcuts automation\" above.";
 "Set Up Automation" = "Set Up Automation";
 "settings.autoSMS.footer" = "GeoNap can’t detect an alarm while it isn’t open, so the automation runs the next time you open the app after an alarm fires. Turn on the switch above so the app doesn’t also show its own compose sheet.";
 "settings.autoSMS.automationToggleHelp" = "Turn this on once you’ve completed the setup below, so GeoNap stops showing its own Send screen.";

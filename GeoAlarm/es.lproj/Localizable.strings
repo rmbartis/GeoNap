@@ -355,11 +355,12 @@ El botón Guardar está desactivado hasta que hayas ingresado un nombre y fijado
 "settings.autoSMS.step2" = "Desplázate hacia abajo, toca App, elige GeoNap, asegúrate de que tanto \"Se abre\" como \"Ejecutar inmediatamente\" estén marcados, y toca Siguiente.";
 "settings.autoSMS.step3" = "Toca Crear atajo nuevo. En Buscar acciones, agrega Notificar contactos vía GeoNap.";
 "settings.autoSMS.step4" = "Toca Buscar acciones en la parte inferior, escribe Si y agrega la acción Si que aparece. Mantén pulsado su campo de condición, toca Seleccionar variable, elige Notificar contactos vía GeoNap, luego Cuerpo, y en el menú \"es\" elige Tiene algún valor.";
-"settings.autoSMS.step5" = "Dentro del bloque Si (entre Si y Si no), agrega Enviar mensaje — el icono verde de iMessage (SMS nativo de Apple), no una acción con nombre similar de otra app de mensajería.";
-"settings.autoSMS.step6" = "En Enviar mensaje, revisa los campos Mensaje y Destinatarios — si \"Notificar contactos vía GeoNap\" no aparece ya en alguno de ellos, mantén pulsado ese campo hasta que aparezca Seleccionar variable, y elige Notificar contactos vía GeoNap. Deja Si no y Fin si vacíos.";
-"settings.autoSMS.step7" = "Toca la marca de verificación azul en la esquina superior derecha para guardar.";
-"settings.autoSMS.step8" = "Volverás a la pantalla de resumen de automatizaciones, que muestra tu nueva automatización \"Cuando se abre GeoNap\" con seis iconos encima: una flecha angulada, el icono de GeoNap, un icono de bifurcación, el icono de iMessage, y dos iconos de bifurcación más.";
-"settings.autoSMS.step9" = "Vuelve a Ajustes de GeoNap y activa \"He configurado la automatización de Atajos\" arriba.";
+"settings.autoSMS.step5" = "Dentro del bloque Si (entre Si y Si no), toca Buscar acciones, escribe \"Repetir\" y agrega Repetir con cada uno. Mantén pulsado su campo de entrada, toca Seleccionar variable, y elige Notificar contactos vía GeoNap, luego Destinatarios.";
+"settings.autoSMS.step6" = "Dentro del bloque Repetir con cada uno (entre Repetir con cada uno y Terminar repetición), agrega Enviar mensaje — el icono verde de iMessage (SMS nativo de Apple), no una acción con nombre similar de otra app de mensajería.";
+"settings.autoSMS.step7" = "En Enviar mensaje, configura los dos campos por separado: para Mensaje, mantén pulsado el campo, toca Seleccionar variable, y elige Notificar contactos vía GeoNap, luego Cuerpo. Para Destinatarios, mantén pulsado el campo, toca Seleccionar variable, y elige Repetir ítem — no \"Notificar contactos vía GeoNap\" directamente, ya que eso volvería a poner toda la lista en un solo envío grupal. Deja Si no y Fin si vacíos.";
+"settings.autoSMS.step8" = "Toca la marca de verificación azul en la esquina superior derecha para guardar.";
+"settings.autoSMS.step9" = "Volverás a la pantalla de resumen de automatizaciones, que muestra tu nueva automatización \"Cuando se abre GeoNap\".";
+"settings.autoSMS.step10" = "Vuelve a Ajustes de GeoNap y activa \"He configurado la automatización de Atajos\" arriba.";
 "Set Up Automation" = "Configurar automatización";
 "settings.autoSMS.footer" = "GeoNap no puede detectar una alarma mientras la app no está abierta, así que la automatización se ejecuta la próxima vez que abras GeoNap después de que suene una alarma. Activa el interruptor de arriba para que la app no muestre también su propia pantalla de redacción.";
 "settings.autoSMS.automationToggleHelp" = "Actívalo solo después de completar la configuración de abajo, para que GeoNap deje de mostrar su propia pantalla de envío.";
