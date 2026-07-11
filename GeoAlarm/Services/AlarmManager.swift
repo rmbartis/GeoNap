@@ -546,7 +546,42 @@ final class AlarmManager: NSObject, ObservableObject {
         // the phone numbers (sourced from this alarm's own Auto-Notify contacts,
         // same list used for the in-app compose sheet below) and send SMS without
         // a compose sheet or a manually configured recipient list. The timestamp
-        // drives the intent's freshness guard.
+        // marks that an alarm has fired (vs. an ordinary app-open with nothing
+        // pending) — no staleness cutoff as of 2026-07-11, so a slow app-open
+        // still sends rather than silently dropping the message. NOTE: this
+        // single set of keys holds only one pending message at a time — if a
+        // second alarm fires before the user opens the app after the first,
+        // this overwrites the first alarm's message, so only the most recent
+        // alarm's notification goes out. Both behaviors are called out in
+        // Settings' Auto-SMS help text (`help.body.autoNotify`).
+        //
+        // TODO(multi-alarm queue, discussed 2026-07-11, not yet approved/built):
+        // Replace this single pending slot with a small queue instead of one
+        // body/phones/timestamp triple. `queueAutoNotify` would APPEND a
+        // {body, phones, firedAt} entry per firing alarm rather than overwrite.
+        // On next app-open, NotifyContactsIntent.perform() reads the whole
+        // queue, clears it in one shot (same one-shot guarantee as today), then
+        // collapses it into a single body/recipients pair before returning —
+        // so the existing Shortcuts automation needs NO changes:
+        //   • Body: join each queued alarm's own line with "\n", in fire order,
+        //     e.g. "[Departure] I departed from Amandas at 5:07 PM.\n[Arrival]
+        //     I arrived at Darryl's at 5:35 PM."
+        //   • Recipients: union of every queued alarm's phone numbers,
+        //     deduplicated — the automation's existing "Repeat with Each" loop
+        //     already sends one individual text per recipient, so a contact on
+        //     multiple queued alarms just gets the combined message once.
+        // Tradeoff (why this is a TODO and not yet built): a contact only on
+        // alarm A's list would now also see alarm B's line if both are queued
+        // together — there's no way to give different recipients different
+        // bodies without returning an array of alarm/recipient pairs instead
+        // of one pair, which would require the Personal Automation itself to
+        // be rebuilt with a nested "Repeat with Each" (over alarms, then over
+        // each alarm's recipients) — that part can't be done from GeoNap's
+        // code, only manually in the Shortcuts app. Should also cap the queue
+        // (e.g. last 10 unconsumed alarms) so it can't grow unbounded if the
+        // app goes unopened for days. Mirror the same queue change in
+        // `pendingContactMessage` below for the non-automation compose-sheet
+        // path, which has the identical overwrite behavior.
         let defaults = UserDefaults.standard
         defaults.set(body, forKey: AutoNotifyDefaultsKey.pendingBody)
         defaults.set(phones, forKey: AutoNotifyDefaultsKey.pendingPhones)

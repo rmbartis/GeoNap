@@ -6,10 +6,20 @@
 // Added by the CI-coverage review (scheduled task, 2026-06-29). These cover two
 // recently-changed paths that previously had NO direct test:
 //   1. NotifyContactsIntent's freshness guard — the rule that makes the
-//      "When GeoNap Is Opened" Shortcuts automation safe (a body older than the
-//      freshness window, or no fired alarm at all, must NOT be sent).
+//      "When GeoNap Is Opened" Shortcuts automation safe (nothing sends unless
+//      an alarm has actually fired).
 //   2. The outer "warm-up" ring of a time-based alarm must START ETA tracking
 //      but must NEVER fire the alarm by itself.
+//
+// UPDATED 2026-07-11: the original 15-minute staleness cutoff (`isFresh(firedAt:
+// now:window:)`) was removed after a real device log showed it silently
+// dropping legitimate sends — a rider getting off a bus/train and gathering
+// belongings routinely took longer than 15 minutes to next open the app. Since
+// `perform()` already reads-then-clears the pending keys unconditionally,
+// dropping the cutoff introduces no duplicate-send risk. `isFresh` now only
+// asks "has an alarm fired at all" (`firedAt > 0`). See
+// docs/ — or [[autosms-freshness-window-too-tight]] in project memory — for
+// the investigation.
 //
 // NOTE: these require an Xcode build + simulator run to execute — they have not
 // been run in this authoring environment.
@@ -22,45 +32,29 @@ import CoreLocation
 
 final class NotifyContactsFreshnessTests: XCTestCase {
 
-    private let window: TimeInterval = 15 * 60   // keep in sync with AutoNotifyDefaultsKey.freshnessWindow
-
-    func test_freshBody_isSent() {
+    func test_firedRecently_isFresh() {
         let now = Date().timeIntervalSince1970
         XCTAssertTrue(
-            NotifyContactsIntent.isFresh(firedAt: now - 60, now: now, window: window),
-            "A body written 60 s ago is well within the 15-minute window and must be sent."
+            NotifyContactsIntent.isFresh(firedAt: now - 60),
+            "A body written 60 s ago must be sent."
         )
     }
 
-    func test_staleBody_isRejected() {
+    func test_firedLongAgo_isStillFresh() {
+        // No staleness cutoff as of 2026-07-11 — a pending body from hours ago
+        // must still be sent on the next app-open rather than silently dropped.
         let now = Date().timeIntervalSince1970
-        XCTAssertFalse(
-            NotifyContactsIntent.isFresh(firedAt: now - (window + 1), now: now, window: window),
-            "A body older than the freshness window must NOT be sent — this is what stops a casual app-open from re-sending an old message."
+        XCTAssertTrue(
+            NotifyContactsIntent.isFresh(firedAt: now - (6 * 60 * 60)),
+            "A body from 6 hours ago must still be sent — there is no time-based cutoff anymore."
         )
     }
 
     func test_neverFired_isRejected() {
-        let now = Date().timeIntervalSince1970
         XCTAssertFalse(
-            NotifyContactsIntent.isFresh(firedAt: 0, now: now, window: window),
-            "firedAt == 0 means no alarm ever fired — nothing to send."
+            NotifyContactsIntent.isFresh(firedAt: 0),
+            "firedAt == 0 means no alarm ever fired — nothing to send. This is the ordinary-app-open case."
         )
-    }
-
-    func test_exactlyAtWindowBoundary_isStillFresh() {
-        let now = Date().timeIntervalSince1970
-        XCTAssertTrue(
-            NotifyContactsIntent.isFresh(firedAt: now - window, now: now, window: window),
-            "Age == window is inclusive (<=), matching the original perform() guard."
-        )
-    }
-
-    /// The matching constant on the model side must stay in sync with the literal
-    /// the intent uses, so the freshness window is one value, not two drifting ones.
-    func test_freshnessWindowConstant_matchesIntentLiteral() {
-        XCTAssertEqual(AutoNotifyDefaultsKey.freshnessWindow, window,
-                       "AutoNotifyDefaultsKey.freshnessWindow must equal the 15-minute literal NotifyContactsIntent.perform() uses.")
     }
 
     /// `perform()` reads UserDefaults via hardcoded string literals rather than
@@ -87,62 +81,62 @@ final class NotifyContactsFreshnessTests: XCTestCase {
 /// have caught the original bug before it shipped.
 final class NotifyContactsShouldNotifyTests: XCTestCase {
 
-    private let window: TimeInterval = 15 * 60
-
     func test_freshBodyAndPhones_shouldNotify() {
         let now = Date().timeIntervalSince1970
         XCTAssertTrue(NotifyContactsIntent.shouldNotify(
             body: "[Arrival] I arrived at Grand Central at 9:14 AM.",
             phones: ["+15551234567"],
-            firedAt: now - 60, now: now, window: window
+            firedAt: now - 60
         ), "Fresh body with at least one phone must notify.")
     }
 
-    func test_emptyBody_doesNotNotify_evenIfFreshWithPhones() {
+    func test_emptyBody_doesNotNotify_evenIfFiredWithPhones() {
         let now = Date().timeIntervalSince1970
         XCTAssertFalse(NotifyContactsIntent.shouldNotify(
             body: "", phones: ["+15551234567"],
-            firedAt: now - 60, now: now, window: window
-        ), "No body means nothing to send, regardless of freshness or recipients.")
+            firedAt: now - 60
+        ), "No body means nothing to send, regardless of recipients.")
     }
 
-    func test_emptyPhones_doesNotNotify_evenIfFreshWithBody() {
+    func test_emptyPhones_doesNotNotify_evenIfFiredWithBody() {
         // e.g. the alarm that fired had only email contacts, or none at all —
         // this is exactly the guard that stops Send Message from trying to
         // text an empty recipient list.
         let now = Date().timeIntervalSince1970
         XCTAssertFalse(NotifyContactsIntent.shouldNotify(
             body: "[Arrival] I arrived at Grand Central at 9:14 AM.", phones: [],
-            firedAt: now - 60, now: now, window: window
+            firedAt: now - 60
         ), "No phone recipients means nothing for Send Message to address.")
     }
 
-    func test_staleBodyAndPhones_doesNotNotify() {
+    func test_firedLongAgoWithBodyAndPhones_stillShouldNotify() {
+        // No staleness cutoff as of 2026-07-11 (see file header) — a pending
+        // body from hours ago must still notify rather than being silently
+        // dropped, since perform() clears it unconditionally either way.
         let now = Date().timeIntervalSince1970
-        XCTAssertFalse(NotifyContactsIntent.shouldNotify(
+        XCTAssertTrue(NotifyContactsIntent.shouldNotify(
             body: "[Arrival] I arrived at Grand Central at 9:14 AM.",
             phones: ["+15551234567"],
-            firedAt: now - (window + 1), now: now, window: window
-        ), "A stale body must not notify — this is the ordinary-app-open case that used to throw.")
+            firedAt: now - (6 * 60 * 60)
+        ), "A body from 6 hours ago must still notify — there is no time-based cutoff anymore.")
     }
 
     func test_neverFired_doesNotNotify() {
         // firedAt == 0: no alarm has ever fired. This is the MOST common case
         // — the one that used to throw on every single app-open.
-        let now = Date().timeIntervalSince1970
         XCTAssertFalse(NotifyContactsIntent.shouldNotify(
             body: "", phones: [],
-            firedAt: 0, now: now, window: window
+            firedAt: 0
         ), "Never-fired, empty body/phones must not notify — the ordinary app-open path.")
     }
 
-    func test_freshEmptyBodyEmptyPhones_doesNotNotify() {
-        // Freshness alone isn't sufficient — guards against a regression where
-        // a fresh timestamp with no actual content would slip through.
-        let now = Date().timeIntervalSince1970
+    func test_neverFiredButBodyAndPhonesPresent_doesNotNotify() {
+        // Guards against a regression where stale leftover content with
+        // firedAt == 0 would slip through.
         XCTAssertFalse(NotifyContactsIntent.shouldNotify(
-            body: "", phones: [],
-            firedAt: now - 60, now: now, window: window
+            body: "[Arrival] I arrived at Grand Central at 9:14 AM.",
+            phones: ["+15551234567"],
+            firedAt: 0
         ))
     }
 }

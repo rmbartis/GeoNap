@@ -29,8 +29,8 @@
 // With that automation in place — and the "I've set up the Shortcuts automation"
 // switch enabled in Settings so the in-app compose sheet is suppressed — iOS
 // sends the SMS with no compose sheet and no Send tap the next time the user
-// opens GeoNap after an alarm fires (within the freshness window), and does
-// nothing (silently) on every other open.
+// opens GeoNap after an alarm fires, and does nothing (silently) on every
+// other open.
 //
 // Why this intent never throws: it used to throw `IntentError.noPendingNotification`
 // whenever there was nothing fresh to send. That felt right in isolation, but
@@ -39,6 +39,26 @@
 // app-open, since a fresh pending alarm is the rare case, not the common one.
 // Returning an empty result instead, with the Shortcut's own "If Body is not
 // empty" check gating Send Message, keeps the common case silent.
+//
+// No time-based staleness cutoff (removed 2026-07-11): this used to reject a
+// pending body older than 15 minutes, on the theory that a casual app-open
+// long after an alarm shouldn't resend an old message. In practice, GeoNap's
+// whole use case is a traveler who is asleep, or busy gathering bags and
+// getting off a bus/train, when an alarm fires — a real, legitimate gap
+// between firing and the next app-open regularly exceeded 15 minutes and
+// caused a genuine send to be silently dropped (see the 2026-07-11 debug-log
+// investigation). Because `perform()` already reads-then-clears these keys
+// unconditionally on every app-open, dropping the cutoff creates no
+// duplicate-send risk — it only means a message can now arrive later than
+// it used to, which is preferable to it never arriving. Users are warned
+// about this delay (and about the one-pending-message-only limitation below)
+// in the in-app Help text. See `help.body.autoNotify` in Localizable.strings.
+//
+// One-pending-message-only (unchanged): `queueAutoNotify` overwrites the same
+// UserDefaults keys every time ANY alarm fires, so if a second alarm fires
+// before the user opens the app after the first, the first alarm's message is
+// silently replaced, not queued. This is independent of the staleness cutoff
+// removed above and is also called out in the Help text.
 
 import AppIntents
 import Foundation
@@ -56,13 +76,11 @@ enum AutoNotifyDefaultsKey {
     /// configured, static recipient list.
     static let pendingPhones = "autoNotify_pendingPhones"
     /// Unix time (TimeInterval) when `pendingBody` was last written, i.e. when an
-    /// alarm last fired. Used to reject stale bodies so opening the app casually
-    /// (long after an alarm) doesn't resend an old message.
+    /// alarm last fired. No longer used to reject stale bodies (see the 2026-07-11
+    /// note above) — kept because `isFresh` still needs to distinguish "an alarm
+    /// has fired" (> 0) from "no alarm has ever fired" (0, the UserDefaults
+    /// default for a missing double), which covers the ordinary-app-open case.
     static let pendingBodyTimestamp = "autoNotify_pendingBodyTimestamp"
-    /// How recently an alarm must have fired for the Shortcuts automation to send.
-    /// Covers the normal gap between the alarm firing and the user opening the app;
-    /// beyond this the pending body is treated as stale and ignored.
-    static let freshnessWindow: TimeInterval = 15 * 60   // 15 minutes
 }
 
 // MARK: - Structured result
@@ -150,7 +168,6 @@ struct NotifyContactsIntent: AppIntent {
         let bodyKey   = "autoNotify_pendingBody"
         let phonesKey = "autoNotify_pendingPhones"
         let tsKey     = "autoNotify_pendingBodyTimestamp"
-        let window: TimeInterval = 15 * 60   // keep in sync with AutoNotifyDefaultsKey.freshnessWindow
 
         // Read + clear unconditionally so this is one-shot per alarm regardless
         // of what we do with the values below.
@@ -165,25 +182,24 @@ struct NotifyContactsIntent: AppIntent {
         // right after an alarm). Return an empty result rather than throwing:
         // see the file-header note on why throwing here caused an "Automation
         // Failed" notification on ordinary app-opens. The Shortcut's own
-        // "If Body is not empty" check makes this a silent no-op.
-        guard Self.shouldNotify(body: body, phones: phones, firedAt: firedAt,
-                                 now: Date().timeIntervalSince1970, window: window) else {
+        // "If Body is not empty" check makes this a silent no-op. No staleness
+        // cutoff — see the 2026-07-11 file-header note: a pending body is sent
+        // however long ago it fired, since it's cleared unconditionally above
+        // and can therefore never be resent.
+        guard Self.shouldNotify(body: body, phones: phones, firedAt: firedAt) else {
             return .result(value: NotifyContactsResult(body: nil, recipients: nil))
         }
 
         return .result(value: NotifyContactsResult(body: body, recipients: phones))
     }
 
-    /// Pure freshness decision, extracted so it can be unit-tested without
-    /// constructing an AppIntent or invoking `perform()`. A pending body is
-    /// "fresh" when an alarm actually fired (`firedAt > 0`) and it did so no
-    /// longer than `window` seconds ago. Behaviour-preserving with the inline
-    /// guard that previously lived in `perform()`.
-    static func isFresh(firedAt: TimeInterval,
-                        now: TimeInterval,
-                        window: TimeInterval) -> Bool {
-        guard firedAt > 0 else { return false }
-        return (now - firedAt) <= window
+    /// Whether an alarm has actually fired at all (`firedAt > 0`), as opposed to
+    /// this being an ordinary app-open with nothing pending (`firedAt == 0`, the
+    /// UserDefaults default for a missing double). No longer time-bounded — see
+    /// the 2026-07-11 file-header note on why the old 15-minute cutoff was
+    /// dropped.
+    static func isFresh(firedAt: TimeInterval) -> Bool {
+        firedAt > 0
     }
 
     /// Whether `perform()` should return the real body/recipients (true) or the
@@ -194,10 +210,8 @@ struct NotifyContactsIntent: AppIntent {
     /// coverage instead of only being exercised by manually opening the app.
     static func shouldNotify(body: String,
                               phones: [String],
-                              firedAt: TimeInterval,
-                              now: TimeInterval,
-                              window: TimeInterval) -> Bool {
+                              firedAt: TimeInterval) -> Bool {
         guard !body.isEmpty, !phones.isEmpty else { return false }
-        return isFresh(firedAt: firedAt, now: now, window: window)
+        return isFresh(firedAt: firedAt)
     }
 }

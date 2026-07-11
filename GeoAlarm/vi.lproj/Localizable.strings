@@ -370,7 +370,7 @@ Nút Lưu bị tắt cho đến khi nhập tên và ghim vị trí. iOS cho phé
 Gui ma khong can phe duyet (thiet lap mot lan):
 Ban co the bo qua buoc Nhan Gui bang cach su dung Tu dong hoa Ca nhan trong Phim tat. Sau khi thiet lap, iOS se tu dong gui tin nhan moi khi bao thuc kich hoat - khong can chuyen ung dung, khong can xac nhan.
 
-Xem Cai dat - SMS Tu dong (Khong can phe duyet) de biet huong dan tung buoc.\n\nGửi mà không cần phê duyệt (thiết lập một lần):\nBạn có thể bỏ qua bước Nhấn Gửi bằng cách sử dụng Tự động hóa Cá nhân trong Phím tắt. Sau khi thiết lập, iOS sẽ tự động gửi tin nhắn mỗi khi báo thức kích hoạt — không cần chuyển ứng dụng, không cần xác nhận.\n\nXem Cài đặt → SMS Tự động (Không cần phê duyệt) để biết hướng dẫn từng bước.";
+Xem Cai dat - SMS Tu dong (Khong can phe duyet) de biet huong dan tung buoc.\n\nGửi mà không cần phê duyệt (thiết lập một lần):\nBạn có thể bỏ qua bước Nhấn Gửi bằng cách sử dụng Tự động hóa Cá nhân trong Phím tắt. Sau khi thiết lập, iOS sẽ tự động gửi tin nhắn mỗi khi báo thức kích hoạt — không cần chuyển ứng dụng, không cần xác nhận.\n\nXem Cài đặt → SMS Tự động (Không cần phê duyệt) để biết hướng dẫn từng bước.\n\nThời điểm gửi: Tự động thông báo chỉ được gửi khi bạn tương tác với GeoNap — ví dụ như mở ứng dụng hoặc tắt báo thức. Nếu điều đó không xảy ra ngay, tin nhắn có thể đến muộn hơn so với thời điểm báo thức kêu; không có giới hạn thời gian, vì vậy dù tương tác muộn tin nhắn vẫn được gửi.\n\nChỉ giữ một tin nhắn đang chờ tại một thời điểm: Nếu báo thức thứ hai có bật Tự động thông báo kêu trước khi bạn tương tác với ứng dụng, chỉ thông báo hành trình gần nhất mới được gửi.";
 
 /* Auto-SMS section (SettingsView) */
 "Auto-SMS (No Approval Needed)" = "SMS Tự động (Không cần phê duyệt)";
