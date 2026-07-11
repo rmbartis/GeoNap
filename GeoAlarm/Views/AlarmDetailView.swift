@@ -154,6 +154,15 @@ struct AlarmDetailView: View {
                 }
             }
 
+            // MARK: Run Shortcut on Alarm
+            if !alarm.runShortcutName.isEmpty {
+                Section {
+                    Text(alarm.runShortcutName)
+                } header: {
+                    Label("Run Shortcut on Alarm", systemImage: "bolt.horizontal.circle.fill")
+                }
+            }
+
             // MARK: History
             Section {
                 LabeledContent(NSLocalizedString("Times triggered", bundle: bundle, comment: "")) {

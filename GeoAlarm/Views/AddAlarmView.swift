@@ -587,6 +587,17 @@ struct AddAlarmView: View {
                      bundle: bundle)
             }
 
+            // MARK: Run Shortcut on Alarm
+            Section {
+                TextField(NSLocalizedString("Shortcut name", bundle: bundle, comment: ""),
+                          text: $viewModel.runShortcutName)
+                    .autocorrectionDisabled()
+            } header: {
+                Text("Run Shortcut on Alarm", bundle: bundle)
+            } footer: {
+                Text("runShortcut.formFooter", bundle: bundle)
+            }
+
             // MARK: Validation error
             if let error = viewModel.validationError {
                 Section {

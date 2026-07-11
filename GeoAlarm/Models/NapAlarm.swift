@@ -200,6 +200,17 @@ final class NapAlarm {
         set { transitRouteTypeRaw = newValue.map { String($0.rawValue) } }
     }
 
+    // MARK: - Run Shortcut on Alarm
+
+    /// Name of a user-built Shortcut to run when this alarm fires — empty
+    /// disables the feature. GeoNap only stores the name; it never inspects
+    /// or constrains what the Shortcut does (HomeKit scenes, email, a
+    /// webhook, anything the Shortcuts app supports). See
+    /// AlarmManager.runShortcutIfConfigured(for:), RunAlarmShortcutIntent.swift,
+    /// and help.body.runShortcut for the full mechanism and its known
+    /// single-pending-slot limitation (shared with Auto-Notify).
+    var runShortcutName: String = ""
+
     // MARK: - Calendar Scanning provenance
 
     /// EKEvent.eventIdentifier this alarm was created from via Calendar
@@ -372,7 +383,8 @@ final class NapAlarm {
         transitRouteType: GTFSRouteType? = nil,
         notificationSound: NotificationSound = .default,
         calendarEventID: String? = nil,
-        deadReckoningEnabled: Bool = false
+        deadReckoningEnabled: Bool = false,
+        runShortcutName: String = ""
     ) {
         self.id = id
         self.name = name
@@ -403,6 +415,7 @@ final class NapAlarm {
         self.soundNameRaw = notificationSound.rawValue
         self.calendarEventID = calendarEventID
         self.deadReckoningEnabled = deadReckoningEnabled
+        self.runShortcutName = runShortcutName
     }
 }
 

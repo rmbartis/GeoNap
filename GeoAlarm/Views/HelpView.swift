@@ -25,7 +25,7 @@ struct HelpView: View {
         ("Alarm sound / vibrate",               "help.body.soundVibrate"),
         ("Auto-Notify",                         "help.body.autoNotify"),
         ("Siri & Shortcuts",                    "help.body.siri"),
-        ("Apple Home Automation",               "help.body.appleAutomation"),
+        ("Run Shortcut on Alarm",               "help.body.runShortcut"),
         ("Managing alarms",                     "help.body.managingAlarms"),
         ("Alarm list icons",                    "help.body.alarmIcons"),
         ("Settings",                            "help.body.settings"),
@@ -82,8 +82,8 @@ struct HelpView: View {
                             titleKey: "Auto-Notify",          bodyKey: "help.body.autoNotify")
                 helpSection(symbol: "mic",          color: .indigo,
                             titleKey: "Siri & Shortcuts",     bodyKey: "help.body.siri")
-                helpSection(symbol: "house.fill",   color: .orange,
-                            titleKey: "Apple Home Automation", bodyKey: "help.body.appleAutomation")
+                helpSection(symbol: "bolt.horizontal.circle.fill", color: .purple,
+                            titleKey: "Run Shortcut on Alarm", bodyKey: "help.body.runShortcut")
                 helpSection(symbol: "hand.point.left", color: .cyan,
                             titleKey: "Managing alarms",      bodyKey: "help.body.managingAlarms")
                 helpSection(symbol: "list.bullet.rectangle", color: .indigo,

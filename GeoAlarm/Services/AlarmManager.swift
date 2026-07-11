@@ -448,6 +448,7 @@ final class AlarmManager: NSObject, ObservableObject {
         let firingSoundName = alarm.notificationSound.alarmKitSoundName
         Task { await GeoAlarmScheduler.fire(id: firingID, title: firingTitle, soundName: firingSoundName) }
         queueAutoNotify(for: alarm)
+        runShortcutIfConfigured(for: alarm)
         scheduleWindowEndGuard(for: alarm)
         save()
         // Done: tear down this alarm's rings + tracking (non-repeating).
@@ -502,6 +503,7 @@ final class AlarmManager: NSObject, ObservableObject {
             let firingSoundName: String? = firingSound.alarmKitSoundName
             Task { await GeoAlarmScheduler.fire(id: firingID, title: firingTitle, soundName: firingSoundName) }
             queueAutoNotify(for: alarms[index])
+            runShortcutIfConfigured(for: alarms[index])
             scheduleWindowEndGuard(for: alarms[index])
             save()
             print("🔔 Alarm triggered: \(alarms[index].name)")
@@ -597,6 +599,47 @@ final class AlarmManager: NSObject, ObservableObject {
             pendingContactMessage = ContactMessage(phones: phones, body: body)
             DebugLogger.shared.log("Auto-Notify: SMS compose queued at alarm fire (\(phones.count) contact(s))", category: "AlarmManager")
         }
+    }
+
+    // MARK: - Run Shortcut on Alarm
+
+    /// Triggers the per-alarm "Run Shortcut" feature (help.body.runShortcut).
+    /// GeoNap only stores a Shortcut's name — it never inspects what the
+    /// Shortcut does, so this can drive HomeKit scenes, an email, a webhook,
+    /// or anything else the Shortcuts app supports.
+    ///
+    /// Two paths, same dual-path shape as queueAutoNotify above:
+    ///   1. Reliable path (always runs): queue the name + fire time for
+    ///      RunAlarmShortcutIntent to read on the next app-open — mirrors
+    ///      NotifyContactsIntent exactly, including its one-shot read/clear
+    ///      and lack of a staleness cutoff (a late open still runs it).
+    ///   2. Best-effort immediate path: if GeoNap happens to already be
+    ///      foregrounded at this exact instant, also open the
+    ///      shortcuts://run-shortcut URL directly so it runs right away
+    ///      instead of waiting for the next open. This is the one case where
+    ///      "runs the moment the alarm fires" is literally true — uncommon,
+    ///      since a location alarm typically fires while the phone is locked.
+    ///
+    /// Same known limitation as Auto-Notify (single pending slot — a second
+    /// alarm with Run Shortcut firing before the user opens the app after the
+    /// first overwrites the first alarm's pending name, so only the most
+    /// recently fired alarm's Shortcut runs). Documented in help text rather
+    /// than fixed; see the queue TODO on queueAutoNotify above, which would
+    /// need a matching change here if ever built.
+    private func runShortcutIfConfigured(for alarm: NapAlarm) {
+        let name = alarm.runShortcutName.trimmingCharacters(in: .whitespaces)
+        guard !name.isEmpty else { return }
+
+        let defaults = UserDefaults.standard
+        defaults.set(name, forKey: RunShortcutDefaultsKey.pendingShortcutName)
+        defaults.set(Date().timeIntervalSince1970, forKey: RunShortcutDefaultsKey.pendingShortcutFiredAt)
+        DebugLogger.shared.log("Run Shortcut: '\(name)' queued for next app-open", category: "AlarmManager")
+
+        guard UIApplication.shared.applicationState == .active,
+              let encoded = name.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
+              let url = URL(string: "shortcuts://run-shortcut?name=\(encoded)") else { return }
+        UIApplication.shared.open(url)
+        DebugLogger.shared.log("Run Shortcut: '\(name)' opened immediately (app was foregrounded)", category: "AlarmManager")
     }
 
     /// Builds an Auto-Notify payload (alarmID + optional phones/body).

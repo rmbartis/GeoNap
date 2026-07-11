@@ -49,6 +49,12 @@ final class AlarmViewModel: ObservableObject {
     /// Per-alarm contact list (phone numbers and/or email addresses).
     @Published var notifyContactList: [NotifyContact] = []
 
+    // MARK: - Run Shortcut on Alarm
+
+    /// Name of a user-built Shortcut to run when this alarm fires. Empty
+    /// disables the feature. See NapAlarm.runShortcutName.
+    @Published var runShortcutName: String = ""
+
     // MARK: - Time window
     @Published var hasTimeWindow: Bool = false
     @Published var windowStart: Date = AlarmViewModel.defaultWindowStart
@@ -129,6 +135,7 @@ final class AlarmViewModel: ObservableObject {
         notificationSound = alarm.notificationSound
         notifyContact     = alarm.notifyContact
         notifyContactList = alarm.notifyContactList
+        runShortcutName   = alarm.runShortcutName
     }
 
     // MARK: - Build model
@@ -186,6 +193,7 @@ final class AlarmViewModel: ObservableObject {
             alarm.notifyContact     = notifyContact
             alarm.notifyContactList = notifyContact ? notifyContactList : []
             alarm.notificationSound = notificationSound
+            alarm.runShortcutName   = runShortcutName.trimmingCharacters(in: .whitespaces)
             return alarm
         }
 
@@ -209,7 +217,8 @@ final class AlarmViewModel: ObservableObject {
             notifyContact: notifyContact,
             notifyContactsJSON: notifyContact ? notifyContactList.toJSON() : "",
             notificationSound: notificationSound,
-            deadReckoningEnabled: deadReckoningEnabled
+            deadReckoningEnabled: deadReckoningEnabled,
+            runShortcutName: runShortcutName.trimmingCharacters(in: .whitespaces)
         )
     }
 
@@ -243,6 +252,7 @@ final class AlarmViewModel: ObservableObject {
         notificationSound = .default
         notifyContact     = false
         notifyContactList = []
+        runShortcutName   = ""
         validationError   = nil
     }
 }

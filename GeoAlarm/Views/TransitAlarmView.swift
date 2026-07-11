@@ -105,6 +105,11 @@ struct TransitAlarmView: View {
     @State private var showContactPicker: Bool             = false
     @State private var showManualEntry:   Bool             = false
 
+    // Run Shortcut on Alarm — mirrors AlarmViewModel.runShortcutName. This
+    // view keeps its own local state rather than sharing AlarmViewModel, same
+    // as the Auto-Notify fields above (Bob, 2026-07-04 precedent).
+    @State private var runShortcutName: String = ""
+
     /// True when Auto-Notify is toggled on but there's nobody to notify.
     /// Mirrors `AlarmViewModel.hasAutoNotifyWithNoContacts` — this view keeps
     /// its own local state rather than sharing `AlarmViewModel`, so the same
@@ -658,6 +663,17 @@ struct TransitAlarmView: View {
                 Text("When this alarm fires, a message with your location will be sent to all listed contacts automatically.", bundle: bundle)
             }
 
+            // MARK: Run Shortcut on Alarm
+            Section {
+                TextField(NSLocalizedString("Shortcut name", bundle: bundle, comment: ""),
+                          text: $runShortcutName)
+                    .autocorrectionDisabled()
+            } header: {
+                Text("Run Shortcut on Alarm", bundle: bundle)
+            } footer: {
+                Text("runShortcut.formFooter", bundle: bundle)
+            }
+
             // MARK: Validation error
             if alarmName.trimmingCharacters(in: .whitespaces).isEmpty {
                 Section {
@@ -873,7 +889,8 @@ struct TransitAlarmView: View {
             transitStopName: stop.name,
             transitRouteType: selectedRoute?.type,
             notificationSound: notificationSound,
-            deadReckoningEnabled: deadReckoningEnabled
+            deadReckoningEnabled: deadReckoningEnabled,
+            runShortcutName: runShortcutName.trimmingCharacters(in: .whitespaces)
         )
         DebugLogger.shared.log("Transit alarm created: '\(alarm.name)' agency='\(selectedFeed?.name ?? "?")' route='\(selectedRoute?.fullLabel ?? "?")' stop='\(stop.name)' event=\(regionEvent.rawValue) triggerMode=\(triggerMode.rawValue) radius=\(Int(radius))m leadTime=\(leadTimeMinutes)min deadReckoning=\(deadReckoningEnabled)", category: "UI")
         onSave(alarm)

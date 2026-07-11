@@ -65,5 +65,21 @@ struct NapAlarmShortcuts: AppShortcutsProvider {
             shortTitle: "Notify Contacts",
             systemImageName: "message.fill"
         )
+
+        // ── Run Shortcut on Alarm ─────────────────────────────────────────────
+        // Used as an action in the SAME Personal Automation as NotifyContactsIntent
+        // — see RunAlarmShortcutIntent.swift's file header for the full setup
+        // (Trigger: App → GeoNap → Is Opened, If Shortcut Name is not empty,
+        // Run Shortcut, Run Immediately). Never throws, same reasoning as
+        // NotifyContactsIntent.
+        AppShortcut(
+            intent: RunAlarmShortcutIntent(),
+            phrases: [
+                "Get \(.applicationName) alarm shortcut",
+                "Run \(.applicationName) alarm shortcut"
+            ],
+            shortTitle: "Get Alarm Shortcut",
+            systemImageName: "bolt.horizontal.circle.fill"
+        )
     }
 }
