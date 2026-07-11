@@ -59,6 +59,13 @@
 // before the user opens the app after the first, the first alarm's message is
 // silently replaced, not queued. This is independent of the staleness cutoff
 // removed above and is also called out in the Help text.
+//
+// Silver-tier gate (added 2026-07-11): hands-free Auto-SMS
+// requires Silver — see monetization-tier-pricing memory and the
+// EntitlementManager.isEntitled(to: .silver) guard in perform() below.
+// Mirrors RunAlarmShortcutIntent's Gold-tier gate exactly (same reasoning:
+// gating must happen inside the intent itself, not just a Settings toggle,
+// since Shortcuts-exposed intents bypass in-app UI entirely).
 
 import AppIntents
 import Foundation
@@ -170,13 +177,29 @@ struct NotifyContactsIntent: AppIntent {
         let tsKey     = "autoNotify_pendingBodyTimestamp"
 
         // Read + clear unconditionally so this is one-shot per alarm regardless
-        // of what we do with the values below.
+        // of what we do with the values below — including the entitlement
+        // check just below, so a downgraded-then-re-upgraded device never
+        // sends a stale message queued while it was locked out.
         let body   = defaults.string(forKey: bodyKey) ?? ""
         let phones = defaults.stringArray(forKey: phonesKey) ?? []
         let firedAt = defaults.double(forKey: tsKey)   // 0 if never set
         defaults.removeObject(forKey: bodyKey)
         defaults.removeObject(forKey: phonesKey)
         defaults.removeObject(forKey: tsKey)
+
+        // Silver-tier gate. This is the load-bearing check for hands-free
+        // Auto-SMS — Notify Contacts is a Silver feature (see
+        // monetization-tier-pricing memory), and this intent is reachable
+        // directly from a Shortcuts automation, bypassing any in-app UI
+        // lock entirely. AlarmManager.queueAutoNotify also gates the
+        // automation-suppression branch so a non-entitled device never
+        // relies on hands-free delivery in the first place, but that's
+        // defense in depth, not the enforcement point — this guard is.
+        // Mirrors RunAlarmShortcutIntent.perform()'s identical Gold-tier
+        // gate exactly.
+        guard EntitlementManager.isEntitled(to: .silver) else {
+            return .result(value: NotifyContactsResult(body: nil, recipients: nil))
+        }
 
         // Nothing to send — this is the common case (every app-open that isn't
         // right after an alarm). Return an empty result rather than throwing:

@@ -75,6 +75,21 @@ struct NapStopApp: App {
         if ProcessInfo.processInfo.arguments.contains("--uitesting") {
             UserDefaults.standard.set(true, forKey: "hasSeenOnboarding")
         }
+        #if DEBUG
+        // XCUITest runs as a separate process from the app — it can't call
+        // EntitlementManager.testOverride = ... directly, so it passes the
+        // desired tier as a launch argument instead (e.g.
+        // "--uitesting-tier Free") and this reads it back before any UI
+        // renders. Must run in init(), not RootView.onAppear — by the time a
+        // View's onAppear fires, SwiftUI has already evaluated body once
+        // with whatever tier was in effect at that point, and a gated
+        // control's initial disabled state could be wrong for that first
+        // frame. Silently a no-op if the flag is absent (ordinary manual
+        // Xcode runs) or doesn't match a known tier name.
+        if let tier = EntitlementManager.parseTierLaunchArgument(from: ProcessInfo.processInfo.arguments) {
+            EntitlementManager.testOverride = tier
+        }
+        #endif
         CrashReporter.log("App launched")
         // Must happen before anything reads these UserDefaults keys directly
         // (e.g. CalendarScanBackgroundTask, which runs outside any View and

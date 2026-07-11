@@ -140,12 +140,24 @@ struct SoundPickerSection: View {
         .onTapGesture {
             withAnimation(.easeInOut(duration: 0.22)) { isExpanded = true }
         }
+        .accessibilityIdentifier("soundPickerCollapsedRow")
     }
 
     // MARK: Expanded — full dynamic list, tap a row to select and collapse
 
+    /// Bundled travel sounds (Boat horn, Cable car bell, etc.) require
+    /// Standard+ — see monetization-tier-pricing memory. System sounds
+    /// (Vibrate/Default/Critical) are always free. Preview playback is
+    /// intentionally NOT locked — letting a Free-tier user hear what they're
+    /// missing is a reasonable teaser and doesn't unlock any real
+    /// functionality; only actually SELECTING a locked sound is blocked.
+    private func isLocked(_ sound: NotificationSound) -> Bool {
+        !sound.isSystem && !EntitlementManager.isEntitled(to: .standard)
+    }
+
     private var expandedList: some View {
         ForEach(NotificationSound.all) { sound in
+            let locked = isLocked(sound)
             HStack(spacing: 12) {
                 Image(systemName: sound.systemImage)
                     .foregroundColor(iconColor(for: sound))
@@ -153,21 +165,42 @@ struct SoundPickerSection: View {
 
                 Text(NSLocalizedString(sound.localizationKey, bundle: bundle, comment: ""))
                     .frame(maxWidth: .infinity, alignment: .leading)
+                    .foregroundColor(locked ? .secondary : .primary)
 
                 previewButton(for: sound)
 
-                Image(systemName: "checkmark")
-                    .font(.caption.weight(.bold))
-                    .foregroundColor(.accentColor)
-                    .opacity(selection == sound ? 1 : 0)
-                    .frame(width: 16)
+                if locked {
+                    // This row is built with .onTapGesture rather than a
+                    // Button/TextField, so plain .disabled() wouldn't
+                    // actually block selection (SwiftUI's disabled
+                    // environment value is ignored by raw gesture
+                    // recognizers) — the guard inside onTapGesture below is
+                    // what really blocks it. This lock badge is the visible
+                    // half of the same "visible but disabled" pattern as
+                    // TierGatedModifier, just applied manually since this
+                    // row shape doesn't fit that modifier.
+                    Label("Standard", systemImage: "lock.fill")
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                        .labelStyle(.titleAndIcon)
+                        .fixedSize()
+                        .accessibilityIdentifier("tierGatedLock.standard")
+                } else {
+                    Image(systemName: "checkmark")
+                        .font(.caption.weight(.bold))
+                        .foregroundColor(.accentColor)
+                        .opacity(selection == sound ? 1 : 0)
+                        .frame(width: 16)
+                }
             }
             .contentShape(Rectangle())
             .onTapGesture {
+                guard !locked else { return }
                 selection = sound
                 player.stop()
                 withAnimation(.easeInOut(duration: 0.22)) { isExpanded = false }
             }
+            .accessibilityIdentifier("soundRow.\(sound.id)")
         }
     }
 

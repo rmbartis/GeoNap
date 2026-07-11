@@ -99,11 +99,28 @@ struct RunAlarmShortcutIntent: AppIntent {
         let tsKey   = "runShortcut_pendingFiredAt"
 
         // Read + clear unconditionally so this is one-shot regardless of what
-        // we do with the values below.
+        // we do with the values below — including the entitlement check just
+        // below, so a downgraded-then-re-upgraded user never runs a stale
+        // Shortcut queued while they were locked out.
         let name    = defaults.string(forKey: nameKey) ?? ""
         let firedAt = defaults.double(forKey: tsKey)   // 0 if never set
         defaults.removeObject(forKey: nameKey)
         defaults.removeObject(forKey: tsKey)
+
+        // Gold-tier gate. This is the load-bearing check — Run Shortcut is a
+        // Gold feature (monetization-tier-pricing memory), and this intent is
+        // reachable directly from a Shortcuts automation, bypassing any
+        // in-app UI lock entirely. AlarmManager.runShortcutIfConfigured also
+        // gates so a non-entitled device never queues a name in the first
+        // place, but that's defense in depth, not the enforcement point —
+        // this guard is. `isGoldTier` is `isEntitled(to: .gold)` — see
+        // EntitlementManager.swift's file header for why this currently
+        // reads as "always true" in both RELEASE (distribution stays Gold
+        // for everyone until real StoreKit exists) and DEBUG (unless a test
+        // or Settings' Tier Simulation section overrides it lower).
+        guard EntitlementManager.isEntitled(to: .gold) else {
+            return .result(value: RunAlarmShortcutResult(shortcutName: nil))
+        }
 
         guard Self.shouldRun(shortcutName: name, firedAt: firedAt) else {
             return .result(value: RunAlarmShortcutResult(shortcutName: nil))

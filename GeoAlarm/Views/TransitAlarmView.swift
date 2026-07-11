@@ -83,10 +83,14 @@ struct TransitAlarmView: View {
     // Trigger mode (distance vs. time) — identical option set to AddAlarmView.
     // Defaulted from the same Settings key read directly from UserDefaults
     // (rather than via @AppStorage) so the initial value is available at
-    // struct-init time without an onAppear reset-on-revisit risk.
-    @State private var triggerMode: TriggerMode = TriggerMode(
-        rawValue: UserDefaults.standard.string(forKey: AppStorageKey.defaultTriggerMode) ?? ""
-    ) ?? .distance
+    // struct-init time without an onAppear reset-on-revisit risk. Clamped via
+    // TriggerMode.allowed(requested:tier:) — see that function's doc comment.
+    @State private var triggerMode: TriggerMode = {
+        let requested = TriggerMode(
+            rawValue: UserDefaults.standard.string(forKey: AppStorageKey.defaultTriggerMode) ?? ""
+        ) ?? .distance
+        return TriggerMode.allowed(requested: requested, tier: EntitlementManager.currentTier)
+    }()
     @State private var leadTimeMinutes: Int = 5
     @State private var deadReckoningEnabled: Bool = false
     @State private var showDeadReckoningInfo: Bool = false
@@ -441,7 +445,9 @@ struct TransitAlarmView: View {
                 .pickerStyle(.segmented)
 
                 // Distance (radius) vs Time (minutes before arrival) — identical
-                // to AddAlarmView's Trigger section.
+                // to AddAlarmView's Trigger section, including the tier gate
+                // (Time requires Silver+; see that file's comment for why the
+                // whole control is gated rather than just the Time segment).
                 Picker(selection: $triggerMode) {
                     ForEach(TriggerMode.allCases) { mode in
                         Text(NSLocalizedString(mode.localizationKey, bundle: bundle, comment: "")).tag(mode)
@@ -450,6 +456,8 @@ struct TransitAlarmView: View {
                     Text("trigger.mode.label", bundle: bundle)
                 }
                 .pickerStyle(.segmented)
+                .accessibilityIdentifier("triggerModePicker")
+                .tierGated(minimumTier: .silver)
 
                 if triggerMode == .distance {
                     VStack(alignment: .leading, spacing: 4) {
@@ -500,6 +508,8 @@ struct TransitAlarmView: View {
                             }
                         }
                     }
+                    .accessibilityIdentifier("deadReckoningToggle")
+                    .tierGated(minimumTier: .gold)
                 }
             } header: {
                 Text("Trigger", bundle: bundle)
@@ -519,6 +529,8 @@ struct TransitAlarmView: View {
                             .foregroundColor(.secondary)
                     }
                 }
+                .accessibilityIdentifier("repeatToggle")
+                .tierGated(minimumTier: .silver)
 
                 if isRepeating {
                     HStack(spacing: 8) {
@@ -538,6 +550,8 @@ struct TransitAlarmView: View {
                             .foregroundColor(.secondary)
                     }
                 }
+                .accessibilityIdentifier("activeTimeWindowToggle")
+                .tierGated(minimumTier: .standard)
 
                 if hasTimeWindow {
                     DatePicker(selection: $windowStart, displayedComponents: .hourAndMinute) {
@@ -602,6 +616,8 @@ struct TransitAlarmView: View {
                         .buttonStyle(.plain)
                     }
                 }
+                .accessibilityIdentifier("activeDaysRow")
+                .tierGated(minimumTier: .silver)
                 HStack(spacing: 6) {
                     Image(systemName: activeDays == Set(1...7) ? "checkmark.circle" : "calendar")
                         .foregroundColor(activeDays == Set(1...7) ? .green : .accentColor)
@@ -628,8 +644,12 @@ struct TransitAlarmView: View {
                         Image(systemName: "bell.badge")
                     }
                 }
+                .accessibilityIdentifier("autoNotifyToggle")
+                .tierGated(minimumTier: .standard)
 
-                if notifyContact {
+                // Defensive: see AddAlarmView.swift's identical guard for
+                // why this checks both the toggle AND the tier.
+                if notifyContact && EntitlementManager.isEntitled(to: .standard) {
                     ForEach(notifyContactList) { contact in
                         contactRow(contact)
                     }
@@ -668,10 +688,17 @@ struct TransitAlarmView: View {
                 TextField(NSLocalizedString("Shortcut name", bundle: bundle, comment: ""),
                           text: $runShortcutName)
                     .autocorrectionDisabled()
+                    .accessibilityIdentifier("runShortcutNameField")
+                    .tierGated(minimumTier: .gold)
             } header: {
                 Text("Run Shortcut on Alarm", bundle: bundle)
             } footer: {
-                Text("runShortcut.formFooter", bundle: bundle)
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("runShortcut.formFooter", bundle: bundle)
+                    Text("runShortcut.goldRequired", bundle: bundle)
+                        .foregroundColor(.secondary)
+                        .fontWeight(.semibold)
+                }
             }
 
             // MARK: Validation error

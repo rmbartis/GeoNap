@@ -57,6 +57,17 @@ struct SettingsView: View {
     @State private var showContactPicker  = false
     @State private var showManualEntry    = false
 
+    #if DEBUG
+    // Tier Simulation (DEBUG only) — mirrors EntitlementManager.testOverride
+    // so the picker shows the right selection if you navigate away and back
+    // within a session. Resets to "real" (Gold, per the DEBUG default) on
+    // every fresh launch, same as EntitlementManager.testOverride itself,
+    // since neither is persisted to UserDefaults. A --uitesting-tier launch
+    // argument (see NapStopApp.init()) can also set testOverride before this
+    // view ever appears — this initial value picks that up correctly too.
+    @State private var simulatedTier: AppTier = EntitlementManager.testOverride ?? .gold
+    #endif
+
     private var distanceUnit: DistanceUnit {
         DistanceUnit(rawValue: distanceUnitRaw) ?? .imperial
     }
@@ -127,6 +138,8 @@ struct SettingsView: View {
                         )
                     }
                     .pickerStyle(.segmented)
+                    .accessibilityIdentifier("settingsTriggerModePicker")
+                    .tierGated(minimumTier: .silver)
                 } header: {
                     Text("Alarm Trigger", bundle: bundle)
                 } footer: {
@@ -222,6 +235,8 @@ struct SettingsView: View {
                             Image(systemName: "person.crop.circle.badge.plus")
                         }
                     }
+                    .accessibilityIdentifier("addFromContactsButton")
+                    .tierGated(minimumTier: .standard)
 
                     Button {
                         showManualEntry = true
@@ -232,6 +247,8 @@ struct SettingsView: View {
                             Image(systemName: "plus.circle")
                         }
                     }
+                    .accessibilityIdentifier("addManuallyButton")
+                    .tierGated(minimumTier: .standard)
                 } header: {
                     Text("Auto-Notify Defaults", bundle: bundle)
                 } footer: {
@@ -244,6 +261,15 @@ struct SettingsView: View {
 
                 // MARK: Calendar Scanning
                 Section {
+                    // NavigationLink respects .disabled() correctly (unlike
+                    // the onTapGesture-based Sound rows), so .tierGated
+                    // works as-is here. Gold-gated (calendar-scan
+                    // auto-scheduling — see monetization-tier-pricing
+                    // memory). Note: CalendarScanSettingsView is also
+                    // reachable via a background-task notification tap
+                    // (ContentView.swift's showCalendarScanReview sheet) —
+                    // that entry point is NOT gated here; out of scope for
+                    // this pass, flagged as a known gap.
                     NavigationLink(destination: CalendarScanSettingsView()) {
                         Label {
                             Text("Calendar Scanning", bundle: bundle)
@@ -251,6 +277,8 @@ struct SettingsView: View {
                             Image(systemName: "calendar.badge.clock")
                         }
                     }
+                    .accessibilityIdentifier("calendarScanningRow")
+                    .tierGated(minimumTier: .gold)
                 }
 
                 // MARK: Transit Feed Cache
@@ -276,6 +304,11 @@ struct SettingsView: View {
 
                 // MARK: Debug Logging
                 debugSection
+
+                #if DEBUG
+                // MARK: Tier Simulation (DEBUG only — never ships)
+                tierSimulationSection
+                #endif
 
                 // MARK: About
                 Section {
@@ -504,6 +537,37 @@ struct SettingsView: View {
         }
     }
 
+    #if DEBUG
+    // MARK: - Tier simulation section (DEBUG only)
+
+    /// Lets Bob see the locked (non-Gold) Run Shortcut experience on a
+    /// simulator or device without hand-editing EntitlementManager.swift and
+    /// rebuilding. Wrapped entirely in #if DEBUG at both the declaration
+    /// site and every call site (see `body` above) — this view, its backing
+    /// state, and EntitlementManager.testOverride itself all compile out of
+    /// RELEASE/TestFlight builds, so it can never reach a real user.
+    ///
+    /// Deliberately not localized — developer-only tooling that never ships,
+    /// same reasoning as not localizing debug log category strings.
+    private var tierSimulationSection: some View {
+        Section {
+            Picker("Simulated tier", selection: $simulatedTier) {
+                ForEach(AppTier.allCases, id: \.self) { tier in
+                    Text(tier.description).tag(tier)
+                }
+            }
+            .onChange(of: simulatedTier) { _, newValue in
+                EntitlementManager.testOverride = newValue
+                DebugLogger.shared.log("Tier Simulation: override set to \(newValue)", category: "Settings")
+            }
+        } header: {
+            Text("Tier Simulation")
+        } footer: {
+            Text("DEBUG builds report Gold by default so local testing isn't blocked by the missing StoreKit integration. Pick a lower tier to confirm gated features — like Run Shortcut on Alarm — stay visible but disabled. Distribution (Release/TestFlight) builds ignore this entirely and always report Gold for now; this section itself never appears outside Debug builds.")
+        }
+    }
+    #endif
+
     // MARK: - GTFS cache section
 
     /// Caching always happens, silently, with a fixed 7-day retention window
@@ -523,6 +587,11 @@ struct SettingsView: View {
                     helpBody: "GeoNap always caches a downloaded transit feed (routes and stops for an agency) for 7 days, so revisiting the same agency doesn't re-download every time.\n\nTurn this on to override that fixed 7-day window with your own value — anywhere from 1 to 30 days, or Infinite so it never expires automatically.\n\nUse Clear Cache below at any time to force a fresh download on your next visit, regardless of this setting."
                 )
             }
+            // Meaningless below Silver — GTFS caching only matters once
+            // Transit Alarms are actually usable (gated at Silver+ in
+            // ContentView.swift's "+" menu). "Clear Cache" below stays
+            // ungated — it's a harmless no-op with nothing cached yet.
+            .tierGated(minimumTier: .silver)
 
             if gtfsCacheCustomRetentionEnabled {
                 Stepper(value: gtfsCacheRetentionStepIndex, in: 0...30) {
@@ -602,6 +671,12 @@ struct SettingsView: View {
         Section {
             // Hands-free switch: when on, the app suppresses its own pre-filled
             // compose sheet because the Shortcuts automation sends the SMS instead.
+            // Requires Silver+ — Standard only gets prompted/tap-to-send (see
+            // monetization-tier-pricing memory). Gating this toggle is the UI
+            // half; AlarmManager.queueAutoNotify and NotifyContactsIntent
+            // .perform() both independently re-check the tier too, so this
+            // toggle being disabled isn't the only thing standing between a
+            // sub-Silver device and hands-free delivery.
             Toggle(isOn: $autoSMSAutomationEnabled) {
                 VStack(alignment: .leading, spacing: 2) {
                     Text("settings.autoSMS.automationToggle", bundle: bundle)
@@ -610,6 +685,8 @@ struct SettingsView: View {
                         .foregroundStyle(.secondary)
                 }
             }
+            .accessibilityIdentifier("autoSMSAutomationToggle")
+            .tierGated(minimumTier: .silver)
 
             // Description, with the one-time Shortcuts setup steps tucked
             // behind an info icon instead of always-visible inline text —
@@ -655,6 +732,8 @@ struct SettingsView: View {
                     Image(systemName: "arrow.up.right.square")
                 }
             }
+            .accessibilityIdentifier("setUpAutomationButton")
+            .tierGated(minimumTier: .silver)
         } header: {
             Text("Auto-SMS (No Approval Needed)", bundle: bundle)
         } footer: {

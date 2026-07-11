@@ -87,13 +87,32 @@ final class AlarmManager: NSObject, ObservableObject {
     /// True when all slots are full — block adding new active alarms.
     var isAtRegionLimit: Bool  { activeAlarmCount >= Self.regionMonitoringLimit }
 
+    // MARK: - Free-tier alarm cap (added 2026-07-11)
+
+    /// Free tier is capped at one active alarm (see monetization-tier-pricing
+    /// memory). Standard+ removes this cap entirely — only the iOS
+    /// `regionMonitoringLimit` above still applies from that point on.
+    static let freeTierActiveAlarmLimit = 1
+
+    /// True when a Free-tier device already has its one allowed active alarm
+    /// — block adding another until the user upgrades or disables the
+    /// existing one. Always false at Standard+, regardless of count. Mirrors
+    /// `isAtRegionLimit`'s naming/shape deliberately — same UX treatment
+    /// (disable the "+" button, reduced opacity) applies at both call sites
+    /// in ContentView.swift.
+    var isAtFreeTierLimit: Bool {
+        EntitlementManager.isEntitled(to: .standard) ? false : activeAlarmCount >= Self.freeTierActiveAlarmLimit
+    }
+
     // MARK: - CRUD
 
     func add(alarm: NapAlarm) {
-        // If already at the iOS 20-region cap, insert as inactive so monitoring
-        // isn't attempted. The user can enable it after disabling another alarm.
+        // If already at the iOS 20-region cap OR the Free-tier 1-alarm cap,
+        // insert as inactive so monitoring isn't attempted. The user can
+        // enable it after disabling another alarm (or, for the tier cap,
+        // after upgrading).
         var toInsert = alarm
-        if alarm.isActive && isAtRegionLimit {
+        if alarm.isActive && (isAtRegionLimit || isAtFreeTierLimit) {
             toInsert = NapAlarm(
                 id: alarm.id, name: alarm.name,
                 latitude: alarm.latitude, longitude: alarm.longitude,
@@ -109,7 +128,10 @@ final class AlarmManager: NSObject, ObservableObject {
                 calendarEventID: alarm.calendarEventID,
                 deadReckoningEnabled: alarm.deadReckoningEnabled
             )
-            DebugLogger.shared.log("Alarm '\(alarm.name)' inserted as INACTIVE — region monitoring limit reached (\(Self.regionMonitoringLimit))", category: "AlarmManager")
+            let reason = isAtRegionLimit
+                ? "region monitoring limit reached (\(Self.regionMonitoringLimit))"
+                : "Free-tier active alarm limit reached (\(Self.freeTierActiveAlarmLimit))"
+            DebugLogger.shared.log("Alarm '\(alarm.name)' inserted as INACTIVE — \(reason)", category: "AlarmManager")
         }
         // Capture the chosen sound BEFORE handing the object to the SwiftData context.
         // When context.insert() registers a newly-created model, its context-managed
@@ -537,6 +559,19 @@ final class AlarmManager: NSObject, ObservableObject {
         let phones = alarm.notifyContactList.filter { !$0.isEmail }.map { $0.value }
         guard alarm.notifyContact, !phones.isEmpty else { return }
 
+        // Contact notify (even prompted/tap-to-send) requires Standard+ (see
+        // monetization-tier-pricing memory). Defense in depth: the per-alarm
+        // Auto-Notify toggle is already tierGated(minimumTier: .standard) in
+        // AddAlarmView/TransitAlarmView so a Free-tier user can't newly
+        // enable this, but an alarm edited/saved while on a higher tier
+        // could still have notifyContact == true sitting in its data if the
+        // device is later simulated down to Free — this guard is what
+        // actually stops delivery in that case, not just the UI.
+        guard EntitlementManager.isEntitled(to: .standard) else {
+            DebugLogger.shared.log("Auto-Notify: skipped — current tier (\(EntitlementManager.currentTier)) is below Standard", category: "AlarmManager")
+            return
+        }
+
         let direction = alarm.regionEvent == .onEntry ? "Arrival" : "Departure"
         let verb      = alarm.regionEvent == .onEntry ? "arrived at" : "departed from"
         let timeStr   = DateFormatter.localizedString(from: Date(), dateStyle: .none, timeStyle: .short)
@@ -592,7 +627,19 @@ final class AlarmManager: NSObject, ObservableObject {
         // If the user runs the hands-free Shortcuts automation, suppress the in-app
         // pre-filled compose sheet so the message isn't both auto-sent AND shown.
         // Otherwise queue the one-tap compose sheet for the next foreground.
-        let automationActive = defaults.bool(forKey: AppStorageKey.autoSMSAutomationEnabled)
+        //
+        // Hands-free requires Silver+ (Standard only gets prompted/tap-to-send —
+        // see monetization-tier-pricing memory). The autoSMSAutomationEnabled
+        // toggle itself is tierGated(minimumTier: .silver) in SettingsView, so
+        // an ordinary Standard-tier user can't turn this on — but read it
+        // gated here too rather than trusting the stored flag blindly: if
+        // it's somehow true on a sub-Silver device (stale value from a
+        // simulated downgrade, since this flag persists across tier
+        // changes), fall back to the compose sheet instead of silently
+        // suppressing it with nothing to replace it — that would be a
+        // worse outcome than just not gating this at all.
+        let automationActive = EntitlementManager.isEntitled(to: .silver)
+            && defaults.bool(forKey: AppStorageKey.autoSMSAutomationEnabled)
         if automationActive {
             DebugLogger.shared.log("Auto-Notify: body queued for Shortcuts automation; in-app sheet suppressed (\(phones.count) contact(s))", category: "AlarmManager")
         } else {
@@ -629,6 +676,19 @@ final class AlarmManager: NSObject, ObservableObject {
     private func runShortcutIfConfigured(for alarm: NapAlarm) {
         let name = alarm.runShortcutName.trimmingCharacters(in: .whitespaces)
         guard !name.isEmpty else { return }
+
+        // Gold-tier gate — Run Shortcut is a Gold feature (see
+        // monetization-tier-pricing memory / EntitlementManager.swift). This
+        // is defense in depth, not the enforcement point: even if this check
+        // were skipped, RunAlarmShortcutIntent.perform() gates independently
+        // since it's reachable directly from a Shortcuts automation. Gating
+        // here too avoids queuing a name a non-entitled device will never be
+        // allowed to run, and keeps the immediate-foreground `shortcuts://`
+        // open from firing for locked-out users.
+        guard EntitlementManager.isEntitled(to: .gold) else {
+            DebugLogger.shared.log("Run Shortcut: '\(name)' skipped — current tier (\(EntitlementManager.currentTier)) is below Gold", category: "AlarmManager")
+            return
+        }
 
         let defaults = UserDefaults.standard
         defaults.set(name, forKey: RunShortcutDefaultsKey.pendingShortcutName)

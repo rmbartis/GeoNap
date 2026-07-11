@@ -21,6 +21,10 @@ struct ContentView: View {
     @State private var spotlightAlarm: NapAlarm? = nil
     @State private var showCalendarScanReview = false
 
+    /// Transit Alarms (the full Agency→Route→Stop GTFS wizard) require
+    /// Silver+ — see monetization-tier-pricing memory.
+    private var transitAlarmLocked: Bool { !EntitlementManager.isEntitled(to: .silver) }
+
     var body: some View {
         NavigationStack {
             AlarmListView()
@@ -61,11 +65,29 @@ struct ContentView: View {
                                 showTransitAlarm = true
                             } label: {
                                 Label {
-                                    Text("Transit Alarm", bundle: bundle)
+                                    // Menu rows don't support an arbitrary
+                                    // trailing lock badge the way Form rows
+                                    // do (TierGatedModifier), so the tier
+                                    // requirement is spelled out inline in
+                                    // the label text instead, and the icon
+                                    // swaps to a lock — still "visible but
+                                    // disabled", just a different visual
+                                    // treatment forced by the container.
+                                    Text(transitAlarmLocked
+                                         ? String(format: NSLocalizedString("menu.transitAlarm.locked", bundle: bundle, comment: ""), AppTier.silver.description)
+                                         : NSLocalizedString("Transit Alarm", bundle: bundle, comment: ""))
                                 } icon: {
-                                    Image(systemName: "tram.fill")
+                                    Image(systemName: transitAlarmLocked ? "lock.fill" : "tram.fill")
                                 }
                             }
+                            // Real Button/.disabled() works correctly inside
+                            // a Menu (unlike the onTapGesture-based Sound
+                            // rows) — Transit Alarms require Silver+ (the
+                            // whole Agency→Route→Stop GTFS wizard; see
+                            // monetization-tier-pricing memory for why
+                            // there's no partial/distance-only transit tier).
+                            .disabled(transitAlarmLocked)
+                            .accessibilityIdentifier("transitAlarmMenuButton")
                         } label: {
                             Image(systemName: "plus")
                         }
@@ -73,8 +95,11 @@ struct ContentView: View {
                         // accessibility label of its own to drive UI tests off of —
                         // this identifier is the test hook (NapStopUITests).
                         .accessibilityIdentifier("addAlarmMenuButton")
-                        .disabled(alarmManager.isAtRegionLimit)
-                        .opacity(alarmManager.isAtRegionLimit ? 0.35 : 1)
+                        // Region limit (iOS 20-region cap, all tiers) OR the
+                        // Free-tier 1-active-alarm cap — either blocks adding
+                        // more. See AlarmManager.isAtFreeTierLimit.
+                        .disabled(alarmManager.isAtRegionLimit || alarmManager.isAtFreeTierLimit)
+                        .opacity((alarmManager.isAtRegionLimit || alarmManager.isAtFreeTierLimit) ? 0.35 : 1)
                     }
                     ToolbarItem(placement: .navigationBarTrailing) {
                         Button {

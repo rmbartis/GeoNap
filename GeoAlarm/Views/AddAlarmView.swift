@@ -347,7 +347,12 @@ struct AddAlarmView: View {
                 }
                 .pickerStyle(.segmented)
 
-                // Distance (radius) vs Time (minutes before arrival)
+                // Distance (radius) vs Time (minutes before arrival).
+                // SwiftUI's segmented Picker style has no per-segment disabled
+                // state, so this gates the WHOLE control rather than just the
+                // "Time" segment — below Silver it's frozen on whatever value
+                // it already has (Distance, per the onAppear clamp above),
+                // with a lock badge rather than a half-disabled control.
                 Picker(selection: $viewModel.triggerMode) {
                     ForEach(TriggerMode.allCases) { mode in
                         Text(NSLocalizedString(mode.localizationKey, bundle: bundle, comment: "")).tag(mode)
@@ -356,6 +361,8 @@ struct AddAlarmView: View {
                     Text("trigger.mode.label", bundle: bundle)
                 }
                 .pickerStyle(.segmented)
+                .accessibilityIdentifier("triggerModePicker")
+                .tierGated(minimumTier: .silver)
 
                 if viewModel.triggerMode == .distance {
                     VStack(alignment: .leading, spacing: 4) {
@@ -406,6 +413,8 @@ struct AddAlarmView: View {
                             }
                         }
                     }
+                    .accessibilityIdentifier("deadReckoningToggle")
+                    .tierGated(minimumTier: .gold)
                 }
             } header: {
                 Text("Trigger", bundle: bundle)
@@ -425,6 +434,8 @@ struct AddAlarmView: View {
                             .foregroundColor(.secondary)
                     }
                 }
+                .accessibilityIdentifier("repeatToggle")
+                .tierGated(minimumTier: .silver)
 
                 if viewModel.isRepeating {
                     HStack(spacing: 8) {
@@ -446,6 +457,8 @@ struct AddAlarmView: View {
                             .foregroundColor(.secondary)
                     }
                 }
+                .accessibilityIdentifier("activeTimeWindowToggle")
+                .tierGated(minimumTier: .standard)
 
                 if viewModel.hasTimeWindow {
                     DatePicker(
@@ -517,6 +530,8 @@ struct AddAlarmView: View {
                         .buttonStyle(.plain)
                     }
                 }
+                .accessibilityIdentifier("activeDaysRow")
+                .tierGated(minimumTier: .silver)
                 HStack(spacing: 6) {
                     Image(systemName: viewModel.activeDays == Set(1...7) ? "checkmark.circle" : "calendar")
                         .foregroundColor(viewModel.activeDays == Set(1...7) ? .green : .accentColor)
@@ -544,8 +559,19 @@ struct AddAlarmView: View {
                         Image(systemName: "bell.badge")
                     }
                 }
+                .accessibilityIdentifier("autoNotifyToggle")
+                .tierGated(minimumTier: .standard)
 
-                if viewModel.notifyContact {
+                // Defensive: only show contact management if BOTH the toggle
+                // is on AND the tier actually allows it. Covers the case
+                // where notifyContact was already true (e.g. Auto-Notify
+                // Defaults pre-filled it) on a Free-tier device — the toggle
+                // above is disabled so the user can't flip it further, but
+                // without this guard the contact list/add buttons would
+                // still render underneath a locked toggle, which would be
+                // confusing and would let a Free user manage contacts for a
+                // feature they can't actually use.
+                if viewModel.notifyContact && EntitlementManager.isEntitled(to: .standard) {
                     // Existing contacts — swipe to delete
                     ForEach(viewModel.notifyContactList) { contact in
                         contactRow(contact)
@@ -592,10 +618,17 @@ struct AddAlarmView: View {
                 TextField(NSLocalizedString("Shortcut name", bundle: bundle, comment: ""),
                           text: $viewModel.runShortcutName)
                     .autocorrectionDisabled()
+                    .accessibilityIdentifier("runShortcutNameField")
+                    .tierGated(minimumTier: .gold)
             } header: {
                 Text("Run Shortcut on Alarm", bundle: bundle)
             } footer: {
-                Text("runShortcut.formFooter", bundle: bundle)
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("runShortcut.formFooter", bundle: bundle)
+                    Text("runShortcut.goldRequired", bundle: bundle)
+                        .foregroundColor(.secondary)
+                        .fontWeight(.semibold)
+                }
             }
 
             // MARK: Validation error
@@ -687,8 +720,11 @@ struct AddAlarmView: View {
                 // expected. Runs once so returning from a sub-sheet won't wipe input.
                 didInitNewAlarm = true
                 viewModel.reset()
-                // Honor the Settings default for the trigger input mode on new alarms.
-                viewModel.triggerMode = TriggerMode(rawValue: defaultTriggerModeRaw) ?? .distance
+                // Honor the Settings default for the trigger input mode on new
+                // alarms — clamped to Distance if the tier doesn't allow Time
+                // (Silver+ only). See TriggerMode.allowed(requested:tier:).
+                let requestedMode = TriggerMode(rawValue: defaultTriggerModeRaw) ?? .distance
+                viewModel.triggerMode = TriggerMode.allowed(requested: requestedMode, tier: EntitlementManager.currentTier)
                 autofillCurrentLocationIfNeeded()
             }
         }
