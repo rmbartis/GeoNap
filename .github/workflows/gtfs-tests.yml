@@ -367,7 +367,7 @@ jobs:
           xcodebuild test \
             -project GeoAlarm.xcodeproj \
             -scheme "NapStopWatch Watch App" \
-            -destination 'platform=watchOS Simulator,name=Apple Watch Series 10 (46mm)' \
+            -destination 'platform=watchOS Simulator,name=Apple Watch Series 11 (46mm)' \
             -only-testing:"NapStopWatch Watch AppTests" \
             CODE_SIGN_IDENTITY="" \
             CODE_SIGNING_REQUIRED=NO \
@@ -409,7 +409,7 @@ jobs:
           xcodebuild test \
             -project GeoAlarm.xcodeproj \
             -scheme "NapStopWatch Watch App" \
-            -destination 'platform=watchOS Simulator,name=Apple Watch Series 10 (46mm)' \
+            -destination 'platform=watchOS Simulator,name=Apple Watch Series 11 (46mm)' \
             -only-testing:"NapStopWatch Watch AppUITests" \
             CODE_SIGN_IDENTITY="" \
             CODE_SIGNING_REQUIRED=NO \
