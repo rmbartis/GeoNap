@@ -163,7 +163,8 @@ struct AlarmComplicationView: View {
 
 // MARK: - Widget Definition
 
-@main
+// @main lives on NapStopWatchWidgetBundle.swift's WidgetBundle — a target
+// can only have one @main type, and the bundle is the entry point.
 struct NapStopComplication: Widget {
     let kind = "GeoNapComplication"
 

@@ -7,10 +7,52 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		685A95E530031ECF00124C21 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 685A95E430031ECF00124C21 /* WidgetKit.framework */; };
+		685A95E730031ECF00124C21 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 685A95E630031ECF00124C21 /* SwiftUI.framework */; };
+		685A95F630031ED000124C21 /* GeoAlarmLiveActivityExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 685A95E330031ECF00124C21 /* GeoAlarmLiveActivityExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		685A96283003278C00124C21 /* NapStopWatch Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 685A96083003278B00124C21 /* NapStopWatch Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		685A96383003280F00124C21 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 685A95E430031ECF00124C21 /* WidgetKit.framework */; };
+		685A96393003280F00124C21 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 685A95E630031ECF00124C21 /* SwiftUI.framework */; };
+		685A96443003280F00124C21 /* NapStopWatchWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 685A96373003280F00124C21 /* NapStopWatchWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		686A100D2FC48EB90079F963 /* ZIPFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 686A100C2FC48EB90079F963 /* ZIPFoundation */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		685A95F430031ED000124C21 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 686A0F172FC337E40079F963 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 685A95E230031ECF00124C21;
+			remoteInfo = GeoAlarmLiveActivityExtension;
+		};
+		685A96153003278C00124C21 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 686A0F172FC337E40079F963 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 685A96073003278B00124C21;
+			remoteInfo = "NapStopWatch Watch App";
+		};
+		685A961F3003278C00124C21 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 686A0F172FC337E40079F963 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 685A96073003278B00124C21;
+			remoteInfo = "NapStopWatch Watch App";
+		};
+		685A96263003278C00124C21 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 686A0F172FC337E40079F963 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 685A96073003278B00124C21;
+			remoteInfo = "NapStopWatch Watch App";
+		};
+		685A96423003280F00124C21 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 686A0F172FC337E40079F963 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 685A96363003280F00124C21;
+			remoteInfo = NapStopWatchWidgetExtension;
+		};
 		686A0F312FC337E50079F963 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 686A0F172FC337E40079F963 /* Project object */;
@@ -27,7 +69,51 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		685A95FB30031ED000124C21 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				685A95F630031ED000124C21 /* GeoAlarmLiveActivityExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		685A962C3003278C00124C21 /* Embed Watch Content */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
+			dstSubfolderSpec = 16;
+			files = (
+				685A96283003278C00124C21 /* NapStopWatch Watch App.app in Embed Watch Content */,
+			);
+			name = "Embed Watch Content";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		685A96493003280F00124C21 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				685A96443003280F00124C21 /* NapStopWatchWidgetExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		685A95E330031ECF00124C21 /* GeoAlarmLiveActivityExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = GeoAlarmLiveActivityExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		685A95E430031ECF00124C21 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		685A95E630031ECF00124C21 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		685A96083003278B00124C21 /* NapStopWatch Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "NapStopWatch Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		685A96143003278C00124C21 /* NapStopWatch Watch AppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "NapStopWatch Watch AppTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		685A961E3003278C00124C21 /* NapStopWatch Watch AppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "NapStopWatch Watch AppUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		685A96373003280F00124C21 /* NapStopWatchWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = NapStopWatchWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		685A976B30032ED200124C21 /* NapStopWatchWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NapStopWatchWidgetExtension.entitlements; sourceTree = "<group>"; };
 		686A0F1F2FC337E40079F963 /* GeoNap.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GeoNap.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		686A0F302FC337E50079F963 /* GeoNapTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GeoNapTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		686A0F3A2FC337E50079F963 /* GeoNapUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GeoNapUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -35,6 +121,20 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		685A95FA30031ED000124C21 /* Exceptions for "GeoAlarmLiveActivity" folder in "GeoAlarmLiveActivityExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 685A95E230031ECF00124C21 /* GeoAlarmLiveActivityExtension */;
+		};
+		685A96483003280F00124C21 /* Exceptions for "NapStopWatchWidget" folder in "NapStopWatchWidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 685A96363003280F00124C21 /* NapStopWatchWidgetExtension */;
+		};
 		686A0F422FC337E50079F963 /* Exceptions for "GeoAlarm" folder in "GeoNap" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -46,6 +146,37 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		685A95E830031ECF00124C21 /* GeoAlarmLiveActivity */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				685A95FA30031ED000124C21 /* Exceptions for "GeoAlarmLiveActivity" folder in "GeoAlarmLiveActivityExtension" target */,
+			);
+			path = GeoAlarmLiveActivity;
+			sourceTree = "<group>";
+		};
+		685A96093003278B00124C21 /* NapStopWatch Watch App */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "NapStopWatch Watch App";
+			sourceTree = "<group>";
+		};
+		685A96173003278C00124C21 /* NapStopWatch Watch AppTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "NapStopWatch Watch AppTests";
+			sourceTree = "<group>";
+		};
+		685A96213003278C00124C21 /* NapStopWatch Watch AppUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "NapStopWatch Watch AppUITests";
+			sourceTree = "<group>";
+		};
+		685A963A3003280F00124C21 /* NapStopWatchWidget */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				685A96483003280F00124C21 /* Exceptions for "NapStopWatchWidget" folder in "NapStopWatchWidgetExtension" target */,
+			);
+			path = NapStopWatchWidget;
+			sourceTree = "<group>";
+		};
 		686A0F212FC337E40079F963 /* GeoAlarm */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
@@ -67,6 +198,45 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		685A95E030031ECF00124C21 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				685A95E730031ECF00124C21 /* SwiftUI.framework in Frameworks */,
+				685A95E530031ECF00124C21 /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		685A96053003278B00124C21 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		685A96113003278C00124C21 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		685A961B3003278C00124C21 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		685A96343003280F00124C21 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				685A96393003280F00124C21 /* SwiftUI.framework in Frameworks */,
+				685A96383003280F00124C21 /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		686A0F1C2FC337E40079F963 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -95,10 +265,16 @@
 		686A0F162FC337E40079F963 = {
 			isa = PBXGroup;
 			children = (
+				685A976B30032ED200124C21 /* NapStopWatchWidgetExtension.entitlements */,
 				6880B3EC2FEC2E3500692392 /* GeoNap.entitlements */,
 				686A0F212FC337E40079F963 /* GeoAlarm */,
 				686A0F332FC337E50079F963 /* NapStopTests */,
 				686A0F3D2FC337E50079F963 /* NapStopUITests */,
+				685A95E830031ECF00124C21 /* GeoAlarmLiveActivity */,
+				685A96093003278B00124C21 /* NapStopWatch Watch App */,
+				685A96173003278C00124C21 /* NapStopWatch Watch AppTests */,
+				685A96213003278C00124C21 /* NapStopWatch Watch AppUITests */,
+				685A963A3003280F00124C21 /* NapStopWatchWidget */,
 				686A100B2FC48EB90079F963 /* Frameworks */,
 				686A0F202FC337E40079F963 /* Products */,
 			);
@@ -110,6 +286,11 @@
 				686A0F1F2FC337E40079F963 /* GeoNap.app */,
 				686A0F302FC337E50079F963 /* GeoNapTests.xctest */,
 				686A0F3A2FC337E50079F963 /* GeoNapUITests.xctest */,
+				685A95E330031ECF00124C21 /* GeoAlarmLiveActivityExtension.appex */,
+				685A96083003278B00124C21 /* NapStopWatch Watch App.app */,
+				685A96143003278C00124C21 /* NapStopWatch Watch AppTests.xctest */,
+				685A961E3003278C00124C21 /* NapStopWatch Watch AppUITests.xctest */,
+				685A96373003280F00124C21 /* NapStopWatchWidgetExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -117,6 +298,8 @@
 		686A100B2FC48EB90079F963 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				685A95E430031ECF00124C21 /* WidgetKit.framework */,
+				685A95E630031ECF00124C21 /* SwiftUI.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -124,6 +307,120 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		685A95E230031ECF00124C21 /* GeoAlarmLiveActivityExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 685A95F730031ED000124C21 /* Build configuration list for PBXNativeTarget "GeoAlarmLiveActivityExtension" */;
+			buildPhases = (
+				685A95DF30031ECF00124C21 /* Sources */,
+				685A95E030031ECF00124C21 /* Frameworks */,
+				685A95E130031ECF00124C21 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				685A95E830031ECF00124C21 /* GeoAlarmLiveActivity */,
+			);
+			name = GeoAlarmLiveActivityExtension;
+			packageProductDependencies = (
+			);
+			productName = GeoAlarmLiveActivityExtension;
+			productReference = 685A95E330031ECF00124C21 /* GeoAlarmLiveActivityExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		685A96073003278B00124C21 /* NapStopWatch Watch App */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 685A96293003278C00124C21 /* Build configuration list for PBXNativeTarget "NapStopWatch Watch App" */;
+			buildPhases = (
+				685A96043003278B00124C21 /* Sources */,
+				685A96053003278B00124C21 /* Frameworks */,
+				685A96063003278B00124C21 /* Resources */,
+				685A96493003280F00124C21 /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				685A96433003280F00124C21 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				685A96093003278B00124C21 /* NapStopWatch Watch App */,
+			);
+			name = "NapStopWatch Watch App";
+			packageProductDependencies = (
+			);
+			productName = "NapStopWatch Watch App";
+			productReference = 685A96083003278B00124C21 /* NapStopWatch Watch App.app */;
+			productType = "com.apple.product-type.application";
+		};
+		685A96133003278C00124C21 /* NapStopWatch Watch AppTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 685A962D3003278C00124C21 /* Build configuration list for PBXNativeTarget "NapStopWatch Watch AppTests" */;
+			buildPhases = (
+				685A96103003278C00124C21 /* Sources */,
+				685A96113003278C00124C21 /* Frameworks */,
+				685A96123003278C00124C21 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				685A96163003278C00124C21 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				685A96173003278C00124C21 /* NapStopWatch Watch AppTests */,
+			);
+			name = "NapStopWatch Watch AppTests";
+			packageProductDependencies = (
+			);
+			productName = "NapStopWatch Watch AppTests";
+			productReference = 685A96143003278C00124C21 /* NapStopWatch Watch AppTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		685A961D3003278C00124C21 /* NapStopWatch Watch AppUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 685A96303003278C00124C21 /* Build configuration list for PBXNativeTarget "NapStopWatch Watch AppUITests" */;
+			buildPhases = (
+				685A961A3003278C00124C21 /* Sources */,
+				685A961B3003278C00124C21 /* Frameworks */,
+				685A961C3003278C00124C21 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				685A96203003278C00124C21 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				685A96213003278C00124C21 /* NapStopWatch Watch AppUITests */,
+			);
+			name = "NapStopWatch Watch AppUITests";
+			packageProductDependencies = (
+			);
+			productName = "NapStopWatch Watch AppUITests";
+			productReference = 685A961E3003278C00124C21 /* NapStopWatch Watch AppUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+		685A96363003280F00124C21 /* NapStopWatchWidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 685A96453003280F00124C21 /* Build configuration list for PBXNativeTarget "NapStopWatchWidgetExtension" */;
+			buildPhases = (
+				685A96333003280F00124C21 /* Sources */,
+				685A96343003280F00124C21 /* Frameworks */,
+				685A96353003280F00124C21 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				685A963A3003280F00124C21 /* NapStopWatchWidget */,
+			);
+			name = NapStopWatchWidgetExtension;
+			packageProductDependencies = (
+			);
+			productName = NapStopWatchWidgetExtension;
+			productReference = 685A96373003280F00124C21 /* NapStopWatchWidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		686A0F1E2FC337E40079F963 /* GeoNap */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 686A0F432FC337E50079F963 /* Build configuration list for PBXNativeTarget "GeoNap" */;
@@ -133,10 +430,14 @@
 				686A0F1C2FC337E40079F963 /* Frameworks */,
 				686A0F1D2FC337E40079F963 /* Resources */,
 				686A0FD02FC3AADC0079F963 /* ShellScript */,
+				685A95FB30031ED000124C21 /* Embed Foundation Extensions */,
+				685A962C3003278C00124C21 /* Embed Watch Content */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				685A95F530031ED000124C21 /* PBXTargetDependency */,
+				685A96273003278C00124C21 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				686A0F212FC337E40079F963 /* GeoAlarm */,
@@ -202,9 +503,26 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 2650;
+				LastSwiftUpdateCheck = 2660;
 				LastUpgradeCheck = 2650;
 				TargetAttributes = {
+					685A95E230031ECF00124C21 = {
+						CreatedOnToolsVersion = 26.6;
+					};
+					685A96073003278B00124C21 = {
+						CreatedOnToolsVersion = 26.6;
+					};
+					685A96133003278C00124C21 = {
+						CreatedOnToolsVersion = 26.6;
+						TestTargetID = 685A96073003278B00124C21;
+					};
+					685A961D3003278C00124C21 = {
+						CreatedOnToolsVersion = 26.6;
+						TestTargetID = 685A96073003278B00124C21;
+					};
+					685A96363003280F00124C21 = {
+						CreatedOnToolsVersion = 26.6;
+					};
 					686A0F1E2FC337E40079F963 = {
 						CreatedOnToolsVersion = 26.5;
 					};
@@ -250,11 +568,51 @@
 				686A0F1E2FC337E40079F963 /* GeoNap */,
 				686A0F2F2FC337E50079F963 /* GeoNapTests */,
 				686A0F392FC337E50079F963 /* GeoNapUITests */,
+				685A95E230031ECF00124C21 /* GeoAlarmLiveActivityExtension */,
+				685A96073003278B00124C21 /* NapStopWatch Watch App */,
+				685A96133003278C00124C21 /* NapStopWatch Watch AppTests */,
+				685A961D3003278C00124C21 /* NapStopWatch Watch AppUITests */,
+				685A96363003280F00124C21 /* NapStopWatchWidgetExtension */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		685A95E130031ECF00124C21 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		685A96063003278B00124C21 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		685A96123003278C00124C21 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		685A961C3003278C00124C21 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		685A96353003280F00124C21 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		686A0F1D2FC337E40079F963 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -319,6 +677,41 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		685A95DF30031ECF00124C21 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		685A96043003278B00124C21 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		685A96103003278C00124C21 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		685A961A3003278C00124C21 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		685A96333003280F00124C21 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		686A0F1B2FC337E40079F963 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -343,6 +736,31 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		685A95F530031ED000124C21 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 685A95E230031ECF00124C21 /* GeoAlarmLiveActivityExtension */;
+			targetProxy = 685A95F430031ED000124C21 /* PBXContainerItemProxy */;
+		};
+		685A96163003278C00124C21 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 685A96073003278B00124C21 /* NapStopWatch Watch App */;
+			targetProxy = 685A96153003278C00124C21 /* PBXContainerItemProxy */;
+		};
+		685A96203003278C00124C21 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 685A96073003278B00124C21 /* NapStopWatch Watch App */;
+			targetProxy = 685A961F3003278C00124C21 /* PBXContainerItemProxy */;
+		};
+		685A96273003278C00124C21 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 685A96073003278B00124C21 /* NapStopWatch Watch App */;
+			targetProxy = 685A96263003278C00124C21 /* PBXContainerItemProxy */;
+		};
+		685A96433003280F00124C21 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 685A96363003280F00124C21 /* NapStopWatchWidgetExtension */;
+			targetProxy = 685A96423003280F00124C21 /* PBXContainerItemProxy */;
+		};
 		686A0F322FC337E50079F963 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 686A0F1E2FC337E40079F963 /* GeoNap */;
@@ -356,6 +774,301 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		685A95F830031ED000124C21 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 79MGKH9L7U;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = GeoAlarmLiveActivity/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = GeoAlarmLiveActivity;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.5;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.rmbartis.GeoNap.GeoAlarmLiveActivity;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		685A95F930031ED000124C21 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 79MGKH9L7U;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = GeoAlarmLiveActivity/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = GeoAlarmLiveActivity;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.5;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.rmbartis.GeoNap.GeoAlarmLiveActivity;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		685A962A3003278C00124C21 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "NapStopWatch Watch App/NapStopWatch Watch App.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 79MGKH9L7U;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = GeoNapWatch;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.rmbartis.GeoNap;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.rmbartis.GeoNap.watchkitapp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 26.5;
+			};
+			name = Debug;
+		};
+		685A962B3003278C00124C21 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "NapStopWatch Watch App/NapStopWatch Watch App.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 79MGKH9L7U;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = GeoNapWatch;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.rmbartis.GeoNap;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.rmbartis.GeoNap.watchkitapp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				VALIDATE_PRODUCT = YES;
+				WATCHOS_DEPLOYMENT_TARGET = 26.5;
+			};
+			name = Release;
+		};
+		685A962E3003278C00124C21 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 79MGKH9L7U;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.rmbartis.GeoNap.NapStopWatch-Watch-AppTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/NapStopWatch Watch App.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/NapStopWatch Watch App";
+				WATCHOS_DEPLOYMENT_TARGET = 26.5;
+			};
+			name = Debug;
+		};
+		685A962F3003278C00124C21 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 79MGKH9L7U;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.rmbartis.GeoNap.NapStopWatch-Watch-AppTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/NapStopWatch Watch App.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/NapStopWatch Watch App";
+				VALIDATE_PRODUCT = YES;
+				WATCHOS_DEPLOYMENT_TARGET = 26.5;
+			};
+			name = Release;
+		};
+		685A96313003278C00124C21 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 79MGKH9L7U;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.rmbartis.GeoNap.NapStopWatch-Watch-AppUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				TEST_TARGET_NAME = "NapStopWatch Watch App";
+				WATCHOS_DEPLOYMENT_TARGET = 26.5;
+			};
+			name = Debug;
+		};
+		685A96323003278C00124C21 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 79MGKH9L7U;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.rmbartis.GeoNap.NapStopWatch-Watch-AppUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				TEST_TARGET_NAME = "NapStopWatch Watch App";
+				VALIDATE_PRODUCT = YES;
+				WATCHOS_DEPLOYMENT_TARGET = 26.5;
+			};
+			name = Release;
+		};
+		685A96463003280F00124C21 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = NapStopWatchWidgetExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 79MGKH9L7U;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = NapStopWatchWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = NapStopWatchWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.rmbartis.GeoNap.watchkitapp.NapStopWatchWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 26.5;
+			};
+			name = Debug;
+		};
+		685A96473003280F00124C21 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = NapStopWatchWidgetExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 79MGKH9L7U;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = NapStopWatchWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = NapStopWatchWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.rmbartis.GeoNap.watchkitapp.NapStopWatchWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				VALIDATE_PRODUCT = YES;
+				WATCHOS_DEPLOYMENT_TARGET = 26.5;
+			};
+			name = Release;
+		};
 		686A0F442FC337E50079F963 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -698,6 +1411,51 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		685A95F730031ED000124C21 /* Build configuration list for PBXNativeTarget "GeoAlarmLiveActivityExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				685A95F830031ED000124C21 /* Debug */,
+				685A95F930031ED000124C21 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		685A96293003278C00124C21 /* Build configuration list for PBXNativeTarget "NapStopWatch Watch App" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				685A962A3003278C00124C21 /* Debug */,
+				685A962B3003278C00124C21 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		685A962D3003278C00124C21 /* Build configuration list for PBXNativeTarget "NapStopWatch Watch AppTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				685A962E3003278C00124C21 /* Debug */,
+				685A962F3003278C00124C21 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		685A96303003278C00124C21 /* Build configuration list for PBXNativeTarget "NapStopWatch Watch AppUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				685A96313003278C00124C21 /* Debug */,
+				685A96323003278C00124C21 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		685A96453003280F00124C21 /* Build configuration list for PBXNativeTarget "NapStopWatchWidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				685A96463003280F00124C21 /* Debug */,
+				685A96473003280F00124C21 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		686A0F1A2FC337E40079F963 /* Build configuration list for PBXProject "GeoAlarm" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

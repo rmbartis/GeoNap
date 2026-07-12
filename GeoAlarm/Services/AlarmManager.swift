@@ -145,8 +145,17 @@ final class AlarmManager: NSObject, ObservableObject {
             DebugLogger.shared.log("⚠️ SwiftData backing-store init reset soundNameRaw '\(toInsert.soundNameRaw)' → reapplying '\(soundRaw)'", category: "AlarmManager")
         }
         toInsert.soundNameRaw = soundRaw
-        save()
+        // Append BEFORE save() — save() reads self.alarms and hands it to
+        // WatchConnectivityManager.updateWatch(with:), so if the new alarm
+        // isn't in the array yet when save() runs, the Watch push silently
+        // omits it entirely (not filtered out — just never included). This
+        // is why editing an existing alarm always synced to the Watch but
+        // creating a brand-new one never did: update(alarm:) mutates an
+        // object that's already array-resident before calling save(), but
+        // add(alarm:) was appending after. Found 2026-07-11 debugging a
+        // Watch sync gap — see NapStopWatch Watch App/WATCH_SETUP.md.
         alarms.append(toInsert)
+        save()
         SpotlightManager.shared.index(toInsert)
         if toInsert.isActive {
             startMonitoring(toInsert)
@@ -233,7 +242,27 @@ final class AlarmManager: NSObject, ObservableObject {
                 beginETATracking(alarm)
             }
         }
+        // Gold-tier Live Activity (see LiveActivityManager.swift) — silent
+        // no-op below Gold or if the system declined. Distance-mode alarms
+        // have no other reason to run continuous GPS updates, so only
+        // request them here if a Live Activity actually started; time-mode
+        // alarms' own ETA tracking already requests continuous updates
+        // separately (see beginETATracking above) — liveActivityTrackedIDs
+        // and etaEstimators both feed the same combined stop condition in
+        // stopMonitoring/stopETATracking so neither tears down updates the
+        // other still needs.
+        if LiveActivityManager.shared.start(for: alarm) {
+            liveActivityTrackedIDs.insert(alarm.id)
+            locationManager?.startContinuousUpdates()
+        }
     }
+
+    /// Alarms with a currently-running Live Activity (see
+    /// LiveActivityManager.swift) — tracked separately from `etaEstimators`
+    /// since a Live Activity can run for either trigger mode, but
+    /// etaEstimators only ever exists for time-mode alarms inside their
+    /// warm-up ring.
+    private var liveActivityTrackedIDs: Set<UUID> = []
 
     /// Pure decision logic extracted from `startMonitoring` so it's unit
     /// testable without a real CLLocationManager: true when `currentLocation`
@@ -246,10 +275,18 @@ final class AlarmManager: NSObject, ObservableObject {
     }
 
     private func stopMonitoring(_ alarm: NapAlarm) {
+        LiveActivityManager.shared.end(alarmID: alarm.id)
+        liveActivityTrackedIDs.remove(alarm.id)
         locationManager?.stopMonitoring(region: alarm.clRegion)
         if alarm.triggerMode == .time {
             locationManager?.stopMonitoring(region: alarm.outerWarmupRegion)
-            stopETATracking(alarm.id)
+            stopETATracking(alarm.id)   // also re-checks the combined continuous-updates condition below
+        } else if etaEstimators.isEmpty && liveActivityTrackedIDs.isEmpty {
+            // A distance-mode alarm's Live Activity was the only reason
+            // continuous updates were running for it — stop them now that
+            // it's gone, unless some OTHER tracked alarm (time-mode ETA or
+            // another Live Activity) still needs them.
+            locationManager?.stopContinuousUpdates()
         }
     }
 
@@ -327,7 +364,12 @@ final class AlarmManager: NSObject, ObservableObject {
         deadReckoning[id] = nil
         guard etaEstimators[id] != nil else { return }
         etaEstimators[id] = nil
-        if etaEstimators.isEmpty { locationManager?.stopContinuousUpdates() }
+        // Combined condition (added for Live Activities, 2026-07-11): only
+        // stop continuous updates once NEITHER ETA tracking NOR any Gold
+        // Live Activity still needs them — see liveActivityTrackedIDs.
+        if etaEstimators.isEmpty && liveActivityTrackedIDs.isEmpty {
+            locationManager?.stopContinuousUpdates()
+        }
     }
 
     // MARK: - Dead reckoning (signal-loss bridging)
@@ -442,16 +484,35 @@ final class AlarmManager: NSObject, ObservableObject {
     /// `simulateLocationUpdate(_:)` seam — mirrors `handleRegionEvent`, which
     /// is internal for the same reason (Bob, 2026-07-05).
     func handleLocationUpdate(_ loc: CLLocation) {
-        guard !etaEstimators.isEmpty else { return }
         for id in Array(etaEstimators.keys) {
             guard var est = etaEstimators[id],
                   let alarm = alarms.first(where: { $0.id == id }) else { stopETATracking(id); continue }
             est.add(loc)
             etaEstimators[id] = est
+            let eta = est.eta(to: alarm.coordinate)
+            LiveActivityManager.shared.update(
+                alarmID: id,
+                distanceRemaining: loc.distance(from: CLLocation(latitude: alarm.latitude, longitude: alarm.longitude)),
+                etaSeconds: eta
+            )
             guard alarm.isActive, alarm.isWithinWindow() else { continue }
             if est.shouldFire(to: alarm.coordinate, leadTimeMinutes: alarm.leadTimeMinutes) {
-                fireTimeBased(alarm, eta: est.eta(to: alarm.coordinate))
+                fireTimeBased(alarm, eta: eta)
             }
+        }
+
+        // Distance-mode alarms with a running Live Activity have no ETA
+        // estimator (ETA tracking only exists for time-mode alarms) —
+        // update their live distance readout straight from this GPS fix.
+        let distanceOnlyIDs = liveActivityTrackedIDs.subtracting(etaEstimators.keys)
+        guard !distanceOnlyIDs.isEmpty else { return }
+        for id in distanceOnlyIDs {
+            guard let alarm = alarms.first(where: { $0.id == id }) else { continue }
+            LiveActivityManager.shared.update(
+                alarmID: id,
+                distanceRemaining: loc.distance(from: CLLocation(latitude: alarm.latitude, longitude: alarm.longitude)),
+                etaSeconds: nil
+            )
         }
     }
 
@@ -511,6 +572,22 @@ final class AlarmManager: NSObject, ObservableObject {
             CrashReporter.log("Alarm triggered: \(alarms[index].name) (\(event.rawValue))")
             CrashReporter.setKey("lastTriggeredAlarm", value: alarms[index].name)
             DebugLogger.shared.log("🔔 Alarm TRIGGERED: '\(alarms[index].name)' event=\(event.rawValue) triggerCount=\(alarms[index].triggerCount) regionID=\(regionID)", category: "AlarmManager")
+            // Unlike fireTimeBased, this path does NOT call stopMonitoring —
+            // a non-repeating alarm stays region-registered (state ==
+            // .triggered, not .active) until edited/deleted, and a
+            // repeating alarm needs to keep monitoring the SAME region to
+            // detect the opposite-direction crossing that re-arms it below.
+            // Either way there's no more live progress to show once fired,
+            // so end the Live Activity explicitly here rather than letting
+            // it linger — the exact "stale Live Activity" failure mode
+            // already documented for AlarmKit's own system banner (see
+            // NapStopApp.swift). Re-arming (below) calls startMonitoring
+            // again, which starts a fresh one for the next leg.
+            LiveActivityManager.shared.end(alarmID: alarms[index].id)
+            liveActivityTrackedIDs.remove(alarms[index].id)
+            if etaEstimators.isEmpty && liveActivityTrackedIDs.isEmpty {
+                locationManager?.stopContinuousUpdates()
+            }
             // AlarmKit (iOS 26+): present the alarm via the system alarm engine. The
             // OS owns the lock-screen Stop/Snooze UI and the alert cuts through
             // silent mode / Focus. Capture Sendable primitives before the Task —

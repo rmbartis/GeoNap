@@ -559,6 +559,13 @@ struct SettingsView: View {
             .onChange(of: simulatedTier) { _, newValue in
                 EntitlementManager.testOverride = newValue
                 DebugLogger.shared.log("Tier Simulation: override set to \(newValue)", category: "Settings")
+                // A Live Activity started under a higher simulated tier
+                // must not keep running once dialed below Gold — see
+                // LiveActivityManager.endAll()'s TODO(StoreKit) for the
+                // real (non-DEBUG) equivalent of this once purchases exist.
+                if newValue < .gold {
+                    LiveActivityManager.shared.endAll()
+                }
             }
         } header: {
             Text("Tier Simulation")

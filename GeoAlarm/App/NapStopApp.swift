@@ -47,7 +47,7 @@ struct NapStopApp: App {
     /// in CI (Bob, 2026-07-05 — previously the UI test suite assumed a
     /// `--reset-alarms` flag that was never actually implemented anywhere).
     private let container: ModelContainer = {
-        let schema = Schema([NapAlarm.self, GTFSFeedModel.self])
+        let schema = Schema([NapAlarm.self, GTFSFeedModel.self, AutoNotifyDefaultsRecord.self])
 
         if ProcessInfo.processInfo.arguments.contains("--uitesting") {
             let testConfig = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
@@ -150,6 +150,7 @@ struct RootView: View {
                 // can find them. Must run before any alarm can fire.
                 NotificationSound.installBundledSoundsIfNeeded()
                 alarmManager.setModelContext(modelContext)
+                AutoNotifyDefaultsStore.configure(modelContext)
                 alarmManager.locationManager = locationManager
                 locationManager.requestAlwaysAuthorization()
                 alarmManager.reregisterAllRegions()

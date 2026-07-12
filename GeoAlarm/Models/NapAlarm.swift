@@ -469,14 +469,20 @@ extension Array where Element == NotifyContact {
         return str
     }
 
-    /// Load the global Auto-Notify defaults from UserDefaults.
+    /// Load the global Auto-Notify defaults — CloudKit-synced via
+    /// AutoNotifyDefaultsStore (backed by AutoNotifyDefaultsRecord), added
+    /// 2026-07-11. Previously read straight from UserDefaults.standard,
+    /// which meant this list never followed a user across devices even
+    /// though alarms and per-alarm contacts already did — see
+    /// AutoNotifyDefaultsStore.swift for the full story and the one-time
+    /// migration off the old key.
     static func loadGlobalDefaults() -> [NotifyContact] {
-        fromJSON(UserDefaults.standard.string(forKey: "defaultNotifyContacts") ?? "")
+        AutoNotifyDefaultsStore.load()
     }
 
     /// Persist the current array as the global Auto-Notify defaults.
     func saveAsGlobalDefaults() {
-        UserDefaults.standard.set(toJSON(), forKey: "defaultNotifyContacts")
+        AutoNotifyDefaultsStore.save(self)
     }
 }
 
