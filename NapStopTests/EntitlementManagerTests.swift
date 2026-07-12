@@ -125,7 +125,16 @@ final class EntitlementManagerTests: XCTestCase {
     }
 
     func test_parseTierLaunchArgument_unknownValue_returnsNil() {
-        XCTAssertNil(EntitlementManager.parseTierLaunchArgument(from: ["--uitesting-tier", "Platinum"]))
+        // "Bronze" is deliberately plausible-but-wrong — a name from the
+        // classic Bronze/Silver/Gold/Platinum loyalty-tier ladder that
+        // GeoNap doesn't actually use, to verify parseTierLaunchArgument
+        // rejects lookalike values rather than fuzzy-matching them. This
+        // used to say "Platinum" before that became a real tier name (see
+        // the Silver/Gold/Platinum rename) — recognizesEachTierCaseInsensitively
+        // above already covers "Platinum" resolving correctly, so reusing it
+        // here as the "unknown" example was a stale collision, not a real
+        // regression.
+        XCTAssertNil(EntitlementManager.parseTierLaunchArgument(from: ["--uitesting-tier", "Bronze"]))
     }
 
     func test_parseTierLaunchArgument_flagWithNoValue_returnsNil() {
