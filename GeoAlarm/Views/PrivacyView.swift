@@ -27,6 +27,12 @@ struct PrivacyView: View {
                 privacySection(icon: "icloud.fill",        iconColor: .cyan,
                                titleKey: "iCloud Sync",            bodyKey: "privacy.body.iCloudSync")
                 Divider()
+                privacySection(icon: "person.crop.circle.fill", iconColor: .pink,
+                               titleKey: "Auto-Notify Contacts",   bodyKey: "privacy.body.contacts")
+                Divider()
+                privacySection(icon: "applewatch",         iconColor: .purple,
+                               titleKey: "Apple Watch",            bodyKey: "privacy.body.appleWatch")
+                Divider()
                 privacySection(icon: "tram.fill",          iconColor: .teal,
                                titleKey: "Transit Feed Downloads", bodyKey: "privacy.body.transitFeeds")
                 Divider()

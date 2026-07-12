@@ -172,6 +172,9 @@ final class DebugLogger {
         let name     = device.name         // user's device name
         let locale   = Locale.current.identifier
         let tz       = TimeZone.current.identifier
+        // Snapshot only — see WatchConnectivityManager.logPairingChangeIfNeeded()
+        // for the log entries written whenever pairing actually changes mid-session.
+        let watch    = WatchConnectivityManager.shared.pairingStatusDescription
 
         let separator = String(repeating: "─", count: 60)
         let header = """
@@ -182,6 +185,7 @@ final class DebugLogger {
         Build:    \(userBuild)
         Device:   \(model) — \(name)
         iOS:      \(ios)
+        Watch:    \(watch)
         Locale:   \(locale)   TZ: \(tz)
         \(separator)
 

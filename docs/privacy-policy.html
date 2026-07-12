@@ -27,7 +27,7 @@
 <body>
 
   <h1>GeoNap Privacy Policy</h1>
-  <p class="updated">Last updated: May 29, 2026</p>
+  <p class="updated">Last updated: July 11, 2026</p>
 
   <p>GeoNap ("the app") is developed and operated by Robert Bartis ("I", "me", or "my"). This policy explains what information the app collects, how it is used, and the choices you have.</p>
 
@@ -53,19 +53,37 @@
   <h3>Data You Enter</h3>
   <p>Alarm names, locations, radii, and settings you configure are stored <strong>locally on your device</strong> using Apple's SwiftData framework, optionally synced to your personal iCloud account. This data never passes through servers I operate.</p>
 
+  <h3>Contacts (Auto-Notify)</h3>
+  <p>If you use the optional <strong>Auto-Notify</strong> feature, GeoNap lets you pick people to automatically message when an alarm fires. Picking a contact uses Apple's system contact picker — GeoNap does not get bulk access to your address book, only the specific contact(s) you select.</p>
+  <ul>
+    <li>For each contact you choose, GeoNap stores that contact's <strong>name and phone number or email address</strong> — nothing else from their contact card.</li>
+    <li>This is stored using SwiftData and, like your alarms, is <strong>optionally synced to your personal iCloud account</strong> so your Auto-Notify contacts and defaults carry over across your own devices.</li>
+    <li>Selected contact info is never transmitted to any server I operate, and is never shared with anyone other than by sending the message you configure (SMS/Shortcuts automation you control).</li>
+  </ul>
+
+  <h3>Apple Watch</h3>
+  <p>If you use GeoNap on a paired Apple Watch, the iPhone app shares your active alarms (name, location-derived region, radius, and status) with the Watch app so it can show and alert on them.</p>
+  <ul>
+    <li>This data is sent <strong>device-to-device</strong> using Apple's WatchConnectivity framework — it does not pass through any server I operate.</li>
+    <li>On the Watch, this data is stored in a <strong>shared App Group container</strong> local to your device, so both the Watch app and its complication/widget can read it. It is not synced to iCloud from the Watch.</li>
+    <li>Debug logging (see below) can record when a Watch is paired/unpaired or when the GeoNap Watch app is installed/removed, purely to help diagnose sync issues — it does not record the alarm data itself.</li>
+  </ul>
+
   <h2>2. Data Not Collected</h2>
   <p>GeoNap does <strong>not</strong> collect, store, or share:</p>
   <ul>
     <li>Your name, email address, or any account credentials</li>
-    <li>Contacts, photos, microphone, or camera data</li>
+    <li>Photos, microphone, or camera data</li>
     <li>Advertising identifiers or tracking data</li>
     <li>Precise location history sent to any third party</li>
+    <li>Bulk or ongoing access to your Contacts — only the specific contact(s) you choose to add via the system contact picker, as described above</li>
   </ul>
   <p>There are no user accounts, no sign-in, and no advertising in this app.</p>
 
   <h2>3. Third-Party Services</h2>
   <p>The only third-party SDK integrated into GeoNap is <strong>Firebase Crashlytics</strong> (Google). No analytics, advertising, or social SDKs are included.</p>
   <p>GTFS transit schedule data (used for transit feed features) is downloaded directly from public agency sources and is not associated with your identity in any way.</p>
+  <p>Apple's iCloud/CloudKit and WatchConnectivity frameworks are used as described above to sync your data across your own devices — I do not have access to this data, and Apple's handling of it is governed by <a href="https://www.apple.com/legal/privacy/" target="_blank">Apple's privacy policy</a>.</p>
 
   <h2>4. Children's Privacy</h2>
   <p>GeoNap is not directed at children under 13. I do not knowingly collect personal information from children.</p>
@@ -73,12 +91,14 @@
   <h2>5. Your Choices</h2>
   <ul>
     <li><strong>Location access</strong> — you can change location permissions at any time in <em>Settings → Privacy & Security → Location Services → GeoNap</em>. Restricting location access will prevent alarms from triggering in the background.</li>
-    <li><strong>iCloud sync</strong> — you can disable iCloud for GeoNap in <em>Settings → [your name] → iCloud → GeoNap</em>. Alarm data will remain local only.</li>
+    <li><strong>iCloud sync</strong> — you can disable iCloud for GeoNap in <em>Settings → [your name] → iCloud → GeoNap</em>. Alarm data, and any Auto-Notify contacts you've added, will remain local only.</li>
+    <li><strong>Auto-Notify contacts</strong> — you can remove any contact you've added from an alarm's Auto-Notify list or from Auto-Notify Defaults at any time in the app; removing a contact deletes it from the synced record.</li>
+    <li><strong>Apple Watch</strong> — uninstalling GeoNap from your Watch, or unpairing the Watch, stops any further data from being shared with it. You can also turn logging of pairing-status changes off by disabling the debug log (see below).</li>
     <li><strong>Crash reporting</strong> — crash reports are linked to an anonymous installation ID generated by Firebase. There is no way to associate them with you personally.</li>
   </ul>
 
   <h2>6. Data Retention and Deletion</h2>
-  <p>All alarm data stored on your device is deleted when you delete the app. Crash reports retained by Firebase are subject to Google's standard retention policies.</p>
+  <p>All alarm data, and any Auto-Notify contacts, stored on your device are deleted when you delete the app. Deleting the GeoNap Watch app removes the copy of your alarm data stored in its shared App Group container on that Watch. Crash reports retained by Firebase are subject to Google's standard retention policies.</p>
 
   <h2>7. Changes to This Policy</h2>
   <p>If this policy changes materially, the updated version will be posted at this URL with a revised "Last updated" date.</p>

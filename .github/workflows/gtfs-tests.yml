@@ -64,6 +64,35 @@
 #              (XCUITest drives the real UI) — expect this job to need the
 #              most post-merge triage of the four if the first run is red.
 #
+# watch-unit-tests  Runs on every push + PR.
+#              Uses the new "NapStopWatch Watch App" scheme (added 2026-07-11
+#              alongside this job — the watchOS app previously had no shared
+#              scheme at all, so nothing here could build or test it) against
+#              a watchOS Simulator destination. Executes
+#              "NapStopWatch Watch AppTests" — currently the WatchAlarmPayload
+#              Codable round-trip that guards the WCSession applicationContext
+#              wire format shared with WatchConnectivityManager on the iOS
+#              side (GeoAlarm/Services/WatchConnectivityManager.swift) and
+#              WatchAlarmStore on the Watch side. Uses Swift Testing
+#              (`import Testing`), not XCTest — xcodebuild test runs both
+#              frameworks through the same `-only-testing:` mechanism in
+#              Xcode 16+. Also implicitly build-validates the watchOS app
+#              target itself (and, via its "Embed Watch Content" build
+#              phase dependency, was already being compiled as a side effect
+#              of the `unit-tests` job above — this job is what actually
+#              *tests* it). Update the destination's `name=` device below if
+#              the runner image's available watchOS simulators change.
+#
+# watch-ui-tests  Runs on every push + PR.
+#              Executes "NapStopWatch Watch AppUITests" via the same scheme.
+#              Currently Xcode's generated launch/performance placeholder —
+#              kept wired into CI (rather than left unbuilt like the rest of
+#              the Watch target was before 2026-07-11) so future watch UI
+#              tests are picked up automatically. watchOS XCUITest is
+#              generally more environment-sensitive than iOS XCUITest
+#              (slower simulator boot, companion-pairing quirks); expect
+#              this job to need triage first if a watch-side CI run goes red.
+#
 # Security note
 # ─────────────
 # This workflow uses only ${{ secrets.GITHUB_TOKEN }} (the auto-generated token
@@ -293,4 +322,100 @@ jobs:
           name: ui-test-xcresult
           path: ~/Library/Developer/Xcode/DerivedData/**/Logs/Test/*.xcresult
           retention-days: 14
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # Job 5 — Apple Watch unit tests (every commit)
+  # Added 2026-07-11: the watchOS app ("NapStopWatch Watch App" target) had
+  # no shared scheme and was never built or tested by CI on its own — only
+  # indirectly compiled as a side effect of the iOS app's "Embed Watch
+  # Content" build phase when the `unit-tests` job above built the GeoNap
+  # scheme. This job actually tests it.
+  # ──────────────────────────────────────────────────────────────────────────
+  watch-unit-tests:
+    name: Watch Unit Tests
+    runs-on: macos-15
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: sudo xcode-select -s /Applications/Xcode_16.3.app/Contents/Developer
+
+      - name: Resolve Swift packages
+        run: |
+          xcodebuild -resolvePackageDependencies \
+            -project GeoAlarm.xcodeproj \
+            -scheme "NapStopWatch Watch App"
+
+      - name: Run watch unit tests
+        run: |
+          xcodebuild test \
+            -project GeoAlarm.xcodeproj \
+            -scheme "NapStopWatch Watch App" \
+            -destination 'platform=watchOS Simulator,name=Apple Watch Series 10 (46mm)' \
+            -only-testing:"NapStopWatch Watch AppTests" \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            | xcpretty --color --report junit --output test-results-watch-unit.xml
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: watch-unit-test-results
+          path: test-results-watch-unit.xml
+          retention-days: 14
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # Job 6 — Apple Watch UI tests (every commit)
+  # Added 2026-07-11, same scheme as watch-unit-tests above. See that job's
+  # comment for why this previously ran nowhere in CI.
+  # ──────────────────────────────────────────────────────────────────────────
+  watch-ui-tests:
+    name: Watch UI Tests
+    runs-on: macos-15
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: sudo xcode-select -s /Applications/Xcode_16.3.app/Contents/Developer
+
+      - name: Resolve Swift packages
+        run: |
+          xcodebuild -resolvePackageDependencies \
+            -project GeoAlarm.xcodeproj \
+            -scheme "NapStopWatch Watch App"
+
+      - name: Run watch UI tests
+        run: |
+          xcodebuild test \
+            -project GeoAlarm.xcodeproj \
+            -scheme "NapStopWatch Watch App" \
+            -destination 'platform=watchOS Simulator,name=Apple Watch Series 10 (46mm)' \
+            -only-testing:"NapStopWatch Watch AppUITests" \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            | xcpretty --color --report junit --output test-results-watch-ui.xml
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: watch-ui-test-results
+          path: test-results-watch-ui.xml
+          retention-days: 14
+
+      - name: Upload watch UI test result bundle (screenshots on failure)
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: watch-ui-test-xcresult
+          path: ~/Library/Developer/Xcode/DerivedData/**/Logs/Test/*.xcresult
+          retention-days: 14
+          if-no-files-found: ignore
           if-no-files-found: ignore
