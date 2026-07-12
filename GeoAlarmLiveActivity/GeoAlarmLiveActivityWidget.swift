@@ -121,7 +121,7 @@ private struct ProgressReadout: View {
             return Self.formatETA(eta)
         }
         if let distance = state.distanceRemaining {
-            return Self.formatDistance(distance)
+            return Self.formatDistance(distance, unitRaw: state.distanceUnitRaw)
         }
         return "—"
     }
@@ -131,13 +131,22 @@ private struct ProgressReadout: View {
         return minutes < 1 ? "<1 min" : "\(minutes) min"
     }
 
-    private static func formatDistance(_ meters: Double) -> String {
-        // Matches the app's own DistanceUnit formatting intent (see
-        // DistanceUnit.formatted(meters:) in the main target) without
-        // depending on @AppStorage, which isn't meaningfully available to a
-        // widget extension process — a simple metric/imperial-agnostic
-        // readout is fine here since the Live Activity is a glance, not the
-        // full alarm detail screen.
+    /// Mirrors the main target's DistanceUnit.formatted(meters:)/fromMeters(_:)
+    /// conversion (see AppSettings.swift) without depending on that type
+    /// directly — this widget extension target doesn't share the main
+    /// target's Swift files, only the data ContentState carries across the
+    /// process boundary. `unitRaw` is ContentState.distanceUnitRaw, stamped
+    /// by LiveActivityManager from the app's live AppStorageKey.distanceUnit
+    /// setting on every start/update, so this now tracks the same Settings
+    /// toggle the rest of the app respects instead of always showing metric.
+    private static func formatDistance(_ meters: Double, unitRaw: String) -> String {
+        if unitRaw == "imperial" {
+            let feet = meters * 3.28084
+            if feet >= 5280 {
+                return String(format: "%.1f mi", feet / 5280)
+            }
+            return "\(Int(feet.rounded())) ft"
+        }
         if meters >= 1000 {
             return String(format: "%.1f km", meters / 1000)
         }

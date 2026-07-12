@@ -68,7 +68,8 @@ final class LiveActivityManager {
         let initialState = GeoAlarmActivityAttributes.ContentState(
             distanceRemaining: nil,
             etaSeconds: nil,
-            lastUpdated: Date()
+            lastUpdated: Date(),
+            distanceUnitRaw: currentDistanceUnitRaw()
         )
 
         do {
@@ -96,7 +97,8 @@ final class LiveActivityManager {
         let state = GeoAlarmActivityAttributes.ContentState(
             distanceRemaining: distanceRemaining,
             etaSeconds: etaSeconds,
-            lastUpdated: Date()
+            lastUpdated: Date(),
+            distanceUnitRaw: currentDistanceUnitRaw()
         )
         Task {
             await activity.update(.init(state: state, staleDate: nil))
@@ -125,5 +127,17 @@ final class LiveActivityManager {
             Task { await activity.end(nil, dismissalPolicy: .immediate) }
         }
         activities.removeAll()
+    }
+
+    /// Reads the user's current distance-unit preference directly from
+    /// UserDefaults.standard (this file runs in the main app process, so
+    /// unlike the widget extension it has ordinary access to the same
+    /// UserDefaults every @AppStorage(AppStorageKey.distanceUnit) call site
+    /// reads from) so it can be stamped onto ContentState on every start/
+    /// update. Falls back to "imperial", matching every other distanceUnit
+    /// call site's `?? .imperial` default (AlarmListView, AddAlarmView,
+    /// AlarmDetailView, TransitAlarmView, SettingsView).
+    private func currentDistanceUnitRaw() -> String {
+        UserDefaults.standard.string(forKey: AppStorageKey.distanceUnit) ?? DistanceUnit.imperial.rawValue
     }
 }

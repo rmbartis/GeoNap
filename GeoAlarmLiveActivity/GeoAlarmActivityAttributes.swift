@@ -47,6 +47,19 @@ struct GeoAlarmActivityAttributes: ActivityAttributes {
         /// signal, backgrounded too long) instead of silently going stale
         /// with no indication anything's wrong.
         var lastUpdated: Date
+
+        /// DistanceUnit.rawValue ("metric" / "imperial") captured from the
+        /// app's AppStorageKey.distanceUnit setting at the moment this state
+        /// was built. Sent explicitly through ContentState (rather than the
+        /// widget extension reading @AppStorage/UserDefaults.standard
+        /// itself) because the extension process doesn't share the main
+        /// app's UserDefaults.standard suite — piggybacking the value on the
+        /// existing app-process -> extension-process update path avoids
+        /// needing an App Group entitlement just for this one setting.
+        /// Defaults to "imperial" (matches every other distanceUnit call
+        /// site's fallback) if somehow missing after decode (e.g. an Activity
+        /// still running from before this field existed).
+        var distanceUnitRaw: String = "imperial"
     }
 
     /// Alarm identity + fields the widget needs to render but that never
