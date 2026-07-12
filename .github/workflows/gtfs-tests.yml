@@ -50,10 +50,22 @@
 #              feeds (MARTA, BART, DB Fernverkehr, TriMet).  Takes 3–5 minutes.
 #
 # ui-tests     Runs on every push + PR.
-#              Executes the GeoNapUITests target (source still lives in
-#              NapStopUITests/, only the Xcode target was renamed) — empty state, add/delete/disable alarm,
-#              and the in-app language-switch view-identity smoke test. Was
-#              flagged as a gap (target existed, never run by CI) in the
+#              Executes the WHOLE GeoNapUITests target (source still lives in
+#              NapStopUITests/, only the Xcode target was renamed) — same
+#              -only-testing:GeoNapUITests-covers-everything-in-the-folder
+#              approach as unit-tests above (synchronized group, no
+#              hand-maintained allow-list), so newly added UI test classes
+#              are picked up automatically. Currently covers: empty state,
+#              add/delete/disable alarm, and the in-app language-switch
+#              view-identity smoke test (NapStopUITests.swift); and, since
+#              2026-07-11, the full tier-gating UI matrix in
+#              TierGatingUITests.swift — lock badges, disabled/enabled state,
+#              and visibility for every gated feature (Run Shortcut,
+#              Auto-Notify, time window, Repeat/Active Days, Dead Reckoning,
+#              the Trigger Mode picker, the Transit Alarm menu, Sound
+#              library, Calendar Scanning, Auto-Notify Defaults) across
+#              Free/Silver/Gold/Platinum. The empty-state/smoke-test suite
+#              was flagged as a gap (target existed, never run by CI) in the
 #              2026-07-05 audit; wired in the same day after finding — and
 #              fixing at the source — several ways the suite had drifted out
 #              of runnable state (stale empty-state string, a button lookup
