@@ -2,7 +2,7 @@
 
 // LiveActivityManagerTests.swift
 // Covers the tier-gating decision in LiveActivityManager.start(for:) — added
-// alongside the Gold-tier Live Activity / Dynamic Island countdown feature,
+// alongside the Platinum-tier Live Activity / Dynamic Island countdown feature,
 // 2026-07-11 (see LiveActivityManager.swift / GeoAlarmActivityAttributes.swift).
 //
 // Deliberately narrow scope: this does NOT exercise the real
@@ -13,7 +13,7 @@
 // invoked directly by tests either (see AutoSMSFreshnessTests.swift's header).
 // What IS deterministically testable without a real device/simulator run is
 // the tier gate itself: start(for:) must return false, and must never reach
-// ActivityKit at all, below Gold — that guard clause is pure and doesn't
+// ActivityKit at all, below Platinum — that guard clause is pure and doesn't
 // depend on anything OS-provided.
 //
 // NOTE: like the rest of this suite, requires an Xcode build to execute —
@@ -39,20 +39,20 @@ final class LiveActivityManagerTests: XCTestCase {
         XCTAssertFalse(LiveActivityManager.shared.start(for: makeAlarm()))
     }
 
-    func test_start_standardTier_returnsFalse() {
-        EntitlementManager.testOverride = .standard
+    func test_start_silverTier_returnsFalse() {
+        EntitlementManager.testOverride = .silver
         XCTAssertFalse(LiveActivityManager.shared.start(for: makeAlarm()))
     }
 
-    func test_start_silverTier_returnsFalse() {
-        EntitlementManager.testOverride = .silver
+    func test_start_goldTier_returnsFalse() {
+        EntitlementManager.testOverride = .gold
         XCTAssertFalse(LiveActivityManager.shared.start(for: makeAlarm()))
     }
 
     // MARK: - Safe no-ops
 
     func test_end_forAlarmWithNoRunningActivity_doesNotCrash() {
-        // Whether or not Gold tier successfully started a real Activity in
+        // Whether or not Platinum tier successfully started a real Activity in
         // this process (environment-dependent, see header), ending an id
         // that was never started must always be a harmless no-op — every
         // AlarmManager call site (stopMonitoring, both fire paths) calls

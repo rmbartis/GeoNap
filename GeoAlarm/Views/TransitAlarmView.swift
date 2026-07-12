@@ -39,6 +39,17 @@ struct TransitAlarmView: View {
 
     @EnvironmentObject var locationManager: LocationManager
     @Environment(\.languageBundle) private var bundle
+
+    #if DEBUG
+    // Same re-render fix as AddAlarmView.swift's identical guard (see its
+    // comment): the Auto-Notify contact list below is gated by a raw
+    // `EntitlementManager.isEntitled(to: .silver)` check, not `.tierGated()`,
+    // so it doesn't inherit that modifier's TierChangeObserver subscription.
+    // RELEASE builds never change tier at runtime, so this is compiled out
+    // there.
+    @ObservedObject private var tierChangeObserver = TierChangeObserver.shared
+    #endif
+
     // Picked up automatically from the environment the containing
     // TransitAlarmSheet is already presented in — used to persist
     // GTFSFeedModel records so repeat agency selections can find and reuse

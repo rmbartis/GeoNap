@@ -15,6 +15,20 @@ struct AddAlarmView: View {
     @EnvironmentObject private var locationManager: LocationManager
     @StateObject private var viewModel = AlarmViewModel()
     @StateObject private var searchService = LocationSearchService()
+
+    #if DEBUG
+    // Same re-render fix as ContentView.swift's transitAlarmLocked and
+    // SoundPickerSection.swift's isLocked(_:): the Auto-Notify contact list
+    // below is gated by a raw `EntitlementManager.isEntitled(to: .silver)`
+    // check (see below), not `.tierGated()`, so it doesn't inherit that
+    // modifier's TierChangeObserver subscription. Without this, the contact
+    // list could keep rendering (or stay hidden) using a stale tier if
+    // Settings' Tier Simulation picker changes tier while this screen is
+    // still on the nav stack. RELEASE builds never change tier at runtime,
+    // so this is compiled out there.
+    @ObservedObject private var tierChangeObserver = TierChangeObserver.shared
+    #endif
+
     @State private var showContactPicker  = false
     @State private var showManualEntry    = false
     @State private var showDeadReckoningInfo = false

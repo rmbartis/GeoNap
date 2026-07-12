@@ -106,6 +106,18 @@ struct SoundPickerSection: View {
     @State   private var isExpanded = false
     @Environment(\.languageBundle) private var bundle
 
+    #if DEBUG
+    // Same re-render fix as ContentView.swift's transitAlarmLocked: this
+    // section's isLocked(_:) gate is hand-rolled (onTapGesture-based rows
+    // don't support .tierGated()'s layout — see isLocked's doc comment), so
+    // it doesn't get TierGatedModifier's TierChangeObserver subscription for
+    // free. Without this, switching tiers in Settings' Tier Simulation
+    // picker wouldn't refresh which sound rows show locked here until this
+    // view re-rendered for some unrelated reason. RELEASE builds never
+    // change tier at runtime, so this is compiled out there.
+    @ObservedObject private var tierChangeObserver = TierChangeObserver.shared
+    #endif
+
     var body: some View {
         Section {
             if isExpanded {

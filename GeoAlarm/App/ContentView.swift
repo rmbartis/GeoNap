@@ -21,9 +21,24 @@ struct ContentView: View {
     @State private var spotlightAlarm: NapAlarm? = nil
     @State private var showCalendarScanReview = false
 
+    #if DEBUG
+    // Makes transitAlarmLocked (and the Menu that reads it) re-render
+    // whenever the simulated tier changes anywhere in the app — e.g. via
+    // Settings' Tier Simulation picker, presented as a sheet over this same
+    // view. Without this, ContentView has no reason to re-render after the
+    // sheet dismisses, so the "+" menu's Transit Alarm row can keep showing
+    // whatever lock state was true when ContentView last rendered, not the
+    // tier you just switched to. Same fix TierGatedModifier.swift already
+    // applies for Form-row gates (see its file header) — this Menu-based
+    // gate needed its own copy since it can't use that modifier (Menu rows
+    // don't support the trailing lock-badge layout it renders). RELEASE
+    // builds never change tier at runtime, so this is compiled out there.
+    @ObservedObject private var tierChangeObserver = TierChangeObserver.shared
+    #endif
+
     /// Transit Alarms (the full Agency→Route→Stop GTFS wizard) require
-    /// Silver+ — see monetization-tier-pricing memory.
-    private var transitAlarmLocked: Bool { !EntitlementManager.isEntitled(to: .silver) }
+    /// Gold+ — see monetization-tier-pricing memory.
+    private var transitAlarmLocked: Bool { !EntitlementManager.isEntitled(to: .gold) }
 
     var body: some View {
         NavigationStack {
@@ -74,7 +89,7 @@ struct ContentView: View {
                                     // disabled", just a different visual
                                     // treatment forced by the container.
                                     Text(transitAlarmLocked
-                                         ? String(format: NSLocalizedString("menu.transitAlarm.locked", bundle: bundle, comment: ""), AppTier.silver.description)
+                                         ? String(format: NSLocalizedString("menu.transitAlarm.locked", bundle: bundle, comment: ""), AppTier.gold.description)
                                          : NSLocalizedString("Transit Alarm", bundle: bundle, comment: ""))
                                 } icon: {
                                     Image(systemName: transitAlarmLocked ? "lock.fill" : "tram.fill")
@@ -82,7 +97,7 @@ struct ContentView: View {
                             }
                             // Real Button/.disabled() works correctly inside
                             // a Menu (unlike the onTapGesture-based Sound
-                            // rows) — Transit Alarms require Silver+ (the
+                            // rows) — Transit Alarms require Gold+ (the
                             // whole Agency→Route→Stop GTFS wizard; see
                             // monetization-tier-pricing memory for why
                             // there's no partial/distance-only transit tier).
