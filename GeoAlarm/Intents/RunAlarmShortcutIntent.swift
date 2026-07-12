@@ -107,18 +107,18 @@ struct RunAlarmShortcutIntent: AppIntent {
         defaults.removeObject(forKey: nameKey)
         defaults.removeObject(forKey: tsKey)
 
-        // Gold-tier gate. This is the load-bearing check — Run Shortcut is a
-        // Gold feature (monetization-tier-pricing memory), and this intent is
+        // Platinum-tier gate. This is the load-bearing check — Run Shortcut is a
+        // Platinum feature (monetization-tier-pricing memory), and this intent is
         // reachable directly from a Shortcuts automation, bypassing any
         // in-app UI lock entirely. AlarmManager.runShortcutIfConfigured also
         // gates so a non-entitled device never queues a name in the first
         // place, but that's defense in depth, not the enforcement point —
-        // this guard is. `isGoldTier` is `isEntitled(to: .gold)` — see
+        // this guard is. `isPlatinumTier` is `isEntitled(to: .platinum)` — see
         // EntitlementManager.swift's file header for why this currently
-        // reads as "always true" in both RELEASE (distribution stays Gold
+        // reads as "always true" in both RELEASE (distribution stays Platinum
         // for everyone until real StoreKit exists) and DEBUG (unless a test
         // or Settings' Tier Simulation section overrides it lower).
-        guard EntitlementManager.isEntitled(to: .gold) else {
+        guard EntitlementManager.isEntitled(to: .platinum) else {
             return .result(value: RunAlarmShortcutResult(shortcutName: nil))
         }
 

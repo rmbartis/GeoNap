@@ -90,18 +90,18 @@ final class AlarmManager: NSObject, ObservableObject {
     // MARK: - Free-tier alarm cap (added 2026-07-11)
 
     /// Free tier is capped at one active alarm (see monetization-tier-pricing
-    /// memory). Standard+ removes this cap entirely — only the iOS
+    /// memory). Silver+ removes this cap entirely — only the iOS
     /// `regionMonitoringLimit` above still applies from that point on.
     static let freeTierActiveAlarmLimit = 1
 
     /// True when a Free-tier device already has its one allowed active alarm
     /// — block adding another until the user upgrades or disables the
-    /// existing one. Always false at Standard+, regardless of count. Mirrors
+    /// existing one. Always false at Silver+, regardless of count. Mirrors
     /// `isAtRegionLimit`'s naming/shape deliberately — same UX treatment
     /// (disable the "+" button, reduced opacity) applies at both call sites
     /// in ContentView.swift.
     var isAtFreeTierLimit: Bool {
-        EntitlementManager.isEntitled(to: .standard) ? false : activeAlarmCount >= Self.freeTierActiveAlarmLimit
+        EntitlementManager.isEntitled(to: .silver) ? false : activeAlarmCount >= Self.freeTierActiveAlarmLimit
     }
 
     // MARK: - CRUD
@@ -242,8 +242,8 @@ final class AlarmManager: NSObject, ObservableObject {
                 beginETATracking(alarm)
             }
         }
-        // Gold-tier Live Activity (see LiveActivityManager.swift) — silent
-        // no-op below Gold or if the system declined. Distance-mode alarms
+        // Platinum-tier Live Activity (see LiveActivityManager.swift) — silent
+        // no-op below Platinum or if the system declined. Distance-mode alarms
         // have no other reason to run continuous GPS updates, so only
         // request them here if a Live Activity actually started; time-mode
         // alarms' own ETA tracking already requests continuous updates
@@ -365,7 +365,7 @@ final class AlarmManager: NSObject, ObservableObject {
         guard etaEstimators[id] != nil else { return }
         etaEstimators[id] = nil
         // Combined condition (added for Live Activities, 2026-07-11): only
-        // stop continuous updates once NEITHER ETA tracking NOR any Gold
+        // stop continuous updates once NEITHER ETA tracking NOR any Platinum
         // Live Activity still needs them — see liveActivityTrackedIDs.
         if etaEstimators.isEmpty && liveActivityTrackedIDs.isEmpty {
             locationManager?.stopContinuousUpdates()
@@ -636,16 +636,16 @@ final class AlarmManager: NSObject, ObservableObject {
         let phones = alarm.notifyContactList.filter { !$0.isEmail }.map { $0.value }
         guard alarm.notifyContact, !phones.isEmpty else { return }
 
-        // Contact notify (even prompted/tap-to-send) requires Standard+ (see
+        // Contact notify (even prompted/tap-to-send) requires Silver+ (see
         // monetization-tier-pricing memory). Defense in depth: the per-alarm
-        // Auto-Notify toggle is already tierGated(minimumTier: .standard) in
+        // Auto-Notify toggle is already tierGated(minimumTier: .silver) in
         // AddAlarmView/TransitAlarmView so a Free-tier user can't newly
         // enable this, but an alarm edited/saved while on a higher tier
         // could still have notifyContact == true sitting in its data if the
         // device is later simulated down to Free — this guard is what
         // actually stops delivery in that case, not just the UI.
-        guard EntitlementManager.isEntitled(to: .standard) else {
-            DebugLogger.shared.log("Auto-Notify: skipped — current tier (\(EntitlementManager.currentTier)) is below Standard", category: "AlarmManager")
+        guard EntitlementManager.isEntitled(to: .silver) else {
+            DebugLogger.shared.log("Auto-Notify: skipped — current tier (\(EntitlementManager.currentTier)) is below Silver", category: "AlarmManager")
             return
         }
 
@@ -705,17 +705,17 @@ final class AlarmManager: NSObject, ObservableObject {
         // pre-filled compose sheet so the message isn't both auto-sent AND shown.
         // Otherwise queue the one-tap compose sheet for the next foreground.
         //
-        // Hands-free requires Silver+ (Standard only gets prompted/tap-to-send —
+        // Hands-free requires Gold+ (Silver only gets prompted/tap-to-send —
         // see monetization-tier-pricing memory). The autoSMSAutomationEnabled
-        // toggle itself is tierGated(minimumTier: .silver) in SettingsView, so
-        // an ordinary Standard-tier user can't turn this on — but read it
+        // toggle itself is tierGated(minimumTier: .gold) in SettingsView, so
+        // an ordinary Silver-tier user can't turn this on — but read it
         // gated here too rather than trusting the stored flag blindly: if
-        // it's somehow true on a sub-Silver device (stale value from a
+        // it's somehow true on a sub-Gold device (stale value from a
         // simulated downgrade, since this flag persists across tier
         // changes), fall back to the compose sheet instead of silently
         // suppressing it with nothing to replace it — that would be a
         // worse outcome than just not gating this at all.
-        let automationActive = EntitlementManager.isEntitled(to: .silver)
+        let automationActive = EntitlementManager.isEntitled(to: .gold)
             && defaults.bool(forKey: AppStorageKey.autoSMSAutomationEnabled)
         if automationActive {
             DebugLogger.shared.log("Auto-Notify: body queued for Shortcuts automation; in-app sheet suppressed (\(phones.count) contact(s))", category: "AlarmManager")
@@ -754,7 +754,7 @@ final class AlarmManager: NSObject, ObservableObject {
         let name = alarm.runShortcutName.trimmingCharacters(in: .whitespaces)
         guard !name.isEmpty else { return }
 
-        // Gold-tier gate — Run Shortcut is a Gold feature (see
+        // Platinum-tier gate — Run Shortcut is a Platinum feature (see
         // monetization-tier-pricing memory / EntitlementManager.swift). This
         // is defense in depth, not the enforcement point: even if this check
         // were skipped, RunAlarmShortcutIntent.perform() gates independently
@@ -762,8 +762,8 @@ final class AlarmManager: NSObject, ObservableObject {
         // here too avoids queuing a name a non-entitled device will never be
         // allowed to run, and keeps the immediate-foreground `shortcuts://`
         // open from firing for locked-out users.
-        guard EntitlementManager.isEntitled(to: .gold) else {
-            DebugLogger.shared.log("Run Shortcut: '\(name)' skipped — current tier (\(EntitlementManager.currentTier)) is below Gold", category: "AlarmManager")
+        guard EntitlementManager.isEntitled(to: .platinum) else {
+            DebugLogger.shared.log("Run Shortcut: '\(name)' skipped — current tier (\(EntitlementManager.currentTier)) is below Platinum", category: "AlarmManager")
             return
         }
 

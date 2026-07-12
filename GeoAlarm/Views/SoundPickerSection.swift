@@ -152,13 +152,13 @@ struct SoundPickerSection: View {
     // MARK: Expanded — full dynamic list, tap a row to select and collapse
 
     /// Bundled travel sounds (Boat horn, Cable car bell, etc.) require
-    /// Standard+ — see monetization-tier-pricing memory. System sounds
+    /// Silver+ — see monetization-tier-pricing memory. System sounds
     /// (Vibrate/Default/Critical) are always free. Preview playback is
     /// intentionally NOT locked — letting a Free-tier user hear what they're
     /// missing is a reasonable teaser and doesn't unlock any real
     /// functionality; only actually SELECTING a locked sound is blocked.
     private func isLocked(_ sound: NotificationSound) -> Bool {
-        !sound.isSystem && !EntitlementManager.isEntitled(to: .standard)
+        !sound.isSystem && !EntitlementManager.isEntitled(to: .silver)
     }
 
     private var expandedList: some View {
@@ -185,12 +185,12 @@ struct SoundPickerSection: View {
                     // half of the same "visible but disabled" pattern as
                     // TierGatedModifier, just applied manually since this
                     // row shape doesn't fit that modifier.
-                    Label("Standard", systemImage: "lock.fill")
+                    Label("Silver", systemImage: "lock.fill")
                         .font(.caption2)
                         .foregroundStyle(.secondary)
                         .labelStyle(.titleAndIcon)
                         .fixedSize()
-                        .accessibilityIdentifier("tierGatedLock.standard")
+                        .accessibilityIdentifier("tierGatedLock.silver")
                 } else {
                     Image(systemName: "checkmark")
                         .font(.caption.weight(.bold))

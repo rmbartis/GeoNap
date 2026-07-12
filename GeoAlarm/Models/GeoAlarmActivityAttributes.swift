@@ -1,7 +1,7 @@
 // Copyright © 2026 Robert Bartis. All rights reserved.
 
 // GeoAlarmActivityAttributes.swift
-// ActivityAttributes for the Gold-tier Live Activity / Dynamic Island
+// ActivityAttributes for the Platinum-tier Live Activity / Dynamic Island
 // countdown (see monetization-tier-pricing memory — previously listed as
 // "not yet built"). This is the copy used by the main GeoNap app target,
 // which starts/updates/ends the Activity — see LiveActivityManager.swift.

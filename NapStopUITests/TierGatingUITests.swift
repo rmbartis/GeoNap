@@ -135,7 +135,7 @@ final class TierGatingUITests: XCTestCase {
         return app.otherElements[identifier]
     }
 
-    // MARK: - Run Shortcut field: visible but disabled below Gold
+    // MARK: - Run Shortcut field: visible but disabled below Platinum
 
     func test_freeTier_runShortcutFieldVisibleButDisabled() throws {
         launch(tier: "Free")
@@ -143,18 +143,8 @@ final class TierGatingUITests: XCTestCase {
 
         let field = app.textFields["runShortcutNameField"]
         XCTAssertTrue(scrollIntoView(field), "Run Shortcut field must still be VISIBLE on Free tier — gated controls are disabled, never hidden.")
-        XCTAssertFalse(field.isEnabled, "Run Shortcut field must be disabled below Gold tier.")
-        XCTAssertTrue(lockBadgeExists(tier: "gold"), "A lock/tier badge naming the required tier must be visible next to the disabled field.")
-    }
-
-    func test_standardTier_runShortcutFieldVisibleButDisabled() throws {
-        launch(tier: "Standard")
-        openAddLocationAlarm()
-
-        let field = app.textFields["runShortcutNameField"]
-        XCTAssertTrue(scrollIntoView(field))
-        XCTAssertFalse(field.isEnabled)
-        XCTAssertTrue(lockBadgeExists(tier: "gold"))
+        XCTAssertFalse(field.isEnabled, "Run Shortcut field must be disabled below Platinum tier.")
+        XCTAssertTrue(lockBadgeExists(tier: "platinum"), "A lock/tier badge naming the required tier must be visible next to the disabled field.")
     }
 
     func test_silverTier_runShortcutFieldVisibleButDisabled() throws {
@@ -164,17 +154,27 @@ final class TierGatingUITests: XCTestCase {
         let field = app.textFields["runShortcutNameField"]
         XCTAssertTrue(scrollIntoView(field))
         XCTAssertFalse(field.isEnabled)
-        XCTAssertTrue(lockBadgeExists(tier: "gold"))
+        XCTAssertTrue(lockBadgeExists(tier: "platinum"))
     }
 
-    func test_goldTier_runShortcutFieldEnabled_noLockBadge() throws {
+    func test_goldTier_runShortcutFieldVisibleButDisabled() throws {
         launch(tier: "Gold")
         openAddLocationAlarm()
 
         let field = app.textFields["runShortcutNameField"]
         XCTAssertTrue(scrollIntoView(field))
-        XCTAssertTrue(field.isEnabled, "Run Shortcut field must be enabled at Gold tier.")
-        XCTAssertFalse(lockBadgeExists(tier: "gold"), "No lock badge should render once the required tier is met.")
+        XCTAssertFalse(field.isEnabled)
+        XCTAssertTrue(lockBadgeExists(tier: "platinum"))
+    }
+
+    func test_platinumTier_runShortcutFieldEnabled_noLockBadge() throws {
+        launch(tier: "Platinum")
+        openAddLocationAlarm()
+
+        let field = app.textFields["runShortcutNameField"]
+        XCTAssertTrue(scrollIntoView(field))
+        XCTAssertTrue(field.isEnabled, "Run Shortcut field must be enabled at Platinum tier.")
+        XCTAssertFalse(lockBadgeExists(tier: "platinum"), "No lock badge should render once the required tier is met.")
 
         // Confirm it's genuinely usable, not just reporting isEnabled==true.
         field.tap()
@@ -182,7 +182,7 @@ final class TierGatingUITests: XCTestCase {
         XCTAssertEqual(field.value as? String, "Welcome Home")
     }
 
-    // MARK: - Auto-Notify toggle: Free disabled, Standard+ enabled
+    // MARK: - Auto-Notify toggle: Free disabled, Silver+ enabled
 
     func test_freeTier_autoNotifyToggleDisabled() throws {
         launch(tier: "Free")
@@ -190,21 +190,21 @@ final class TierGatingUITests: XCTestCase {
 
         let toggle = app.switches["autoNotifyToggle"]
         XCTAssertTrue(scrollIntoView(toggle), "Auto-Notify toggle must still be visible on Free tier.")
-        XCTAssertFalse(toggle.isEnabled, "Auto-Notify must be disabled on Free tier — contact notify starts at Standard.")
-        XCTAssertTrue(lockBadgeExists(tier: "standard"))
+        XCTAssertFalse(toggle.isEnabled, "Auto-Notify must be disabled on Free tier — contact notify starts at Silver.")
+        XCTAssertTrue(lockBadgeExists(tier: "silver"))
     }
 
-    func test_standardTier_autoNotifyToggleEnabled() throws {
-        launch(tier: "Standard")
+    func test_silverTier_autoNotifyToggleEnabled() throws {
+        launch(tier: "Silver")
         openAddLocationAlarm()
 
         let toggle = app.switches["autoNotifyToggle"]
         XCTAssertTrue(scrollIntoView(toggle))
-        XCTAssertTrue(toggle.isEnabled, "Auto-Notify must be enabled at Standard+.")
-        XCTAssertFalse(lockBadgeExists(tier: "standard"))
+        XCTAssertTrue(toggle.isEnabled, "Auto-Notify must be enabled at Silver+.")
+        XCTAssertFalse(lockBadgeExists(tier: "silver"))
     }
 
-    // MARK: - Active time window toggle: Free disabled, Standard+ enabled
+    // MARK: - Active time window toggle: Free disabled, Silver+ enabled
 
     func test_freeTier_activeTimeWindowToggleDisabled() throws {
         launch(tier: "Free")
@@ -212,71 +212,57 @@ final class TierGatingUITests: XCTestCase {
 
         let toggle = app.switches["activeTimeWindowToggle"]
         XCTAssertTrue(scrollIntoView(toggle), "Active time window toggle must still be visible on Free tier.")
-        XCTAssertFalse(toggle.isEnabled, "Active time window requires Standard+.")
-        XCTAssertTrue(lockBadgeExists(tier: "standard"))
+        XCTAssertFalse(toggle.isEnabled, "Active time window requires Silver+.")
+        XCTAssertTrue(lockBadgeExists(tier: "silver"))
     }
 
-    func test_standardTier_activeTimeWindowToggleEnabled() throws {
-        launch(tier: "Standard")
+    func test_silverTier_activeTimeWindowToggleEnabled() throws {
+        launch(tier: "Silver")
         openAddLocationAlarm()
 
         let toggle = app.switches["activeTimeWindowToggle"]
         XCTAssertTrue(scrollIntoView(toggle))
-        XCTAssertTrue(toggle.isEnabled, "Active time window must be usable at Standard+.")
-        XCTAssertFalse(lockBadgeExists(tier: "standard"))
+        XCTAssertTrue(toggle.isEnabled, "Active time window must be usable at Silver+.")
+        XCTAssertFalse(lockBadgeExists(tier: "silver"))
     }
 
-    // MARK: - Repeat toggle + Active Days: Standard disabled, Silver+ enabled
+    // MARK: - Repeat toggle + Active Days: Silver disabled, Gold+ enabled
 
-    func test_standardTier_repeatAndActiveDaysDisabled() throws {
-        launch(tier: "Standard")
+    func test_silverTier_repeatAndActiveDaysDisabled() throws {
+        launch(tier: "Silver")
         openAddLocationAlarm()
 
         let repeatToggle = app.switches["repeatToggle"]
-        XCTAssertTrue(scrollIntoView(repeatToggle), "Repeat toggle must still be visible on Standard tier.")
-        XCTAssertFalse(repeatToggle.isEnabled, "Repeat requires Silver+.")
-        XCTAssertTrue(lockBadgeExists(tier: "silver"))
+        XCTAssertTrue(scrollIntoView(repeatToggle), "Repeat toggle must still be visible on Silver tier.")
+        XCTAssertFalse(repeatToggle.isEnabled, "Repeat requires Gold+.")
+        XCTAssertTrue(lockBadgeExists(tier: "gold"))
 
         let activeDaysRow = formRow("activeDaysRow")
-        XCTAssertTrue(scrollIntoView(activeDaysRow), "Active Days row must still be visible on Standard tier.")
-        XCTAssertFalse(activeDaysRow.isEnabled, "Active Days requires Silver+.")
+        XCTAssertTrue(scrollIntoView(activeDaysRow), "Active Days row must still be visible on Silver tier.")
+        XCTAssertFalse(activeDaysRow.isEnabled, "Active Days requires Gold+.")
     }
 
-    func test_silverTier_repeatAndActiveDaysEnabled() throws {
-        launch(tier: "Silver")
+    func test_goldTier_repeatAndActiveDaysEnabled() throws {
+        launch(tier: "Gold")
         openAddLocationAlarm()
 
         let repeatToggle = app.switches["repeatToggle"]
         XCTAssertTrue(scrollIntoView(repeatToggle))
-        XCTAssertTrue(repeatToggle.isEnabled, "Repeat must be usable at Silver+.")
-        XCTAssertFalse(lockBadgeExists(tier: "silver"))
+        XCTAssertTrue(repeatToggle.isEnabled, "Repeat must be usable at Gold+.")
+        XCTAssertFalse(lockBadgeExists(tier: "gold"))
 
         let activeDaysRow = formRow("activeDaysRow")
         XCTAssertTrue(scrollIntoView(activeDaysRow))
-        XCTAssertTrue(activeDaysRow.isEnabled, "Active Days must be usable at Silver+.")
+        XCTAssertTrue(activeDaysRow.isEnabled, "Active Days must be usable at Gold+.")
     }
 
-    // MARK: - Dead Reckoning on Signal Loss: Silver disabled, Gold enabled
+    // MARK: - Dead Reckoning on Signal Loss: Gold disabled, Platinum enabled
     //
-    // Only rendered under Time-based trigger mode, itself Silver+ (see
-    // below) — so these tests select Time mode first via a Silver launch,
-    // then check the Dead Reckoning toggle specifically needs Gold on top.
+    // Only rendered under Time-based trigger mode, itself Gold+ (see
+    // below) — so these tests select Time mode first via a Gold launch,
+    // then check the Dead Reckoning toggle specifically needs Platinum on top.
 
-    func test_silverTier_deadReckoningToggleDisabled() throws {
-        launch(tier: "Silver")
-        openAddLocationAlarm()
-
-        let picker = app.segmentedControls["triggerModePicker"]
-        XCTAssertTrue(scrollIntoView(picker))
-        picker.buttons.element(boundBy: 1).tap() // "Time (before arrival)"
-
-        let toggle = app.switches["deadReckoningToggle"]
-        XCTAssertTrue(scrollIntoView(toggle), "Dead Reckoning toggle must still be visible at Silver.")
-        XCTAssertFalse(toggle.isEnabled, "Dead Reckoning requires Gold.")
-        XCTAssertTrue(lockBadgeExists(tier: "gold"))
-    }
-
-    func test_goldTier_deadReckoningToggleEnabled() throws {
+    func test_goldTier_deadReckoningToggleDisabled() throws {
         launch(tier: "Gold")
         openAddLocationAlarm()
 
@@ -285,37 +271,51 @@ final class TierGatingUITests: XCTestCase {
         picker.buttons.element(boundBy: 1).tap() // "Time (before arrival)"
 
         let toggle = app.switches["deadReckoningToggle"]
-        XCTAssertTrue(scrollIntoView(toggle))
-        XCTAssertTrue(toggle.isEnabled, "Dead Reckoning must be usable at Gold.")
-        XCTAssertFalse(lockBadgeExists(tier: "gold"))
+        XCTAssertTrue(scrollIntoView(toggle), "Dead Reckoning toggle must still be visible at Gold.")
+        XCTAssertFalse(toggle.isEnabled, "Dead Reckoning requires Platinum.")
+        XCTAssertTrue(lockBadgeExists(tier: "platinum"))
     }
 
-    // MARK: - Trigger Mode picker: Distance/Standard disabled, Silver+ enabled
-
-    func test_standardTier_triggerModePickerDisabled() throws {
-        launch(tier: "Standard")
-        openAddLocationAlarm()
-
-        let picker = app.segmentedControls["triggerModePicker"]
-        XCTAssertTrue(scrollIntoView(picker), "Trigger Mode picker must still be visible on Standard tier.")
-        XCTAssertFalse(picker.isEnabled, "Time-based trigger mode requires Silver+ — the whole control is gated (no per-segment disable in a segmented Picker).")
-        XCTAssertTrue(lockBadgeExists(tier: "silver"))
-    }
-
-    func test_silverTier_triggerModePickerEnabled() throws {
-        launch(tier: "Silver")
+    func test_platinumTier_deadReckoningToggleEnabled() throws {
+        launch(tier: "Platinum")
         openAddLocationAlarm()
 
         let picker = app.segmentedControls["triggerModePicker"]
         XCTAssertTrue(scrollIntoView(picker))
-        XCTAssertTrue(picker.isEnabled, "Trigger Mode picker must be enabled at Silver+.")
-        XCTAssertFalse(lockBadgeExists(tier: "silver"))
+        picker.buttons.element(boundBy: 1).tap() // "Time (before arrival)"
+
+        let toggle = app.switches["deadReckoningToggle"]
+        XCTAssertTrue(scrollIntoView(toggle))
+        XCTAssertTrue(toggle.isEnabled, "Dead Reckoning must be usable at Platinum.")
+        XCTAssertFalse(lockBadgeExists(tier: "platinum"))
     }
 
-    // MARK: - Transit Alarm menu row: Standard disabled, Silver+ enabled
+    // MARK: - Trigger Mode picker: Distance/Silver disabled, Gold+ enabled
 
-    func test_standardTier_transitAlarmMenuRowDisabled() throws {
-        launch(tier: "Standard")
+    func test_silverTier_triggerModePickerDisabled() throws {
+        launch(tier: "Silver")
+        openAddLocationAlarm()
+
+        let picker = app.segmentedControls["triggerModePicker"]
+        XCTAssertTrue(scrollIntoView(picker), "Trigger Mode picker must still be visible on Silver tier.")
+        XCTAssertFalse(picker.isEnabled, "Time-based trigger mode requires Gold+ — the whole control is gated (no per-segment disable in a segmented Picker).")
+        XCTAssertTrue(lockBadgeExists(tier: "gold"))
+    }
+
+    func test_goldTier_triggerModePickerEnabled() throws {
+        launch(tier: "Gold")
+        openAddLocationAlarm()
+
+        let picker = app.segmentedControls["triggerModePicker"]
+        XCTAssertTrue(scrollIntoView(picker))
+        XCTAssertTrue(picker.isEnabled, "Trigger Mode picker must be enabled at Gold+.")
+        XCTAssertFalse(lockBadgeExists(tier: "gold"))
+    }
+
+    // MARK: - Transit Alarm menu row: Silver disabled, Gold+ enabled
+
+    func test_silverTier_transitAlarmMenuRowDisabled() throws {
+        launch(tier: "Silver")
 
         let addMenuButton = app.buttons["addAlarmMenuButton"]
         XCTAssertTrue(addMenuButton.waitForExistence(timeout: 3))
@@ -324,14 +324,14 @@ final class TierGatingUITests: XCTestCase {
         let transitButton = app.buttons["transitAlarmMenuButton"]
         let transitMenuItem = app.menuItems["transitAlarmMenuButton"]
         let found = transitButton.waitForExistence(timeout: 2) || transitMenuItem.waitForExistence(timeout: 1)
-        XCTAssertTrue(found, "Transit Alarm row must still be VISIBLE on Standard tier — gated, not hidden.")
+        XCTAssertTrue(found, "Transit Alarm row must still be VISIBLE on Silver tier — gated, not hidden.")
 
         let row = transitButton.exists ? transitButton : transitMenuItem
-        XCTAssertFalse(row.isEnabled, "Transit Alarms require Silver+ — Standard only gets Location alarms.")
+        XCTAssertFalse(row.isEnabled, "Transit Alarms require Gold+ — Silver only gets Location alarms.")
     }
 
-    func test_silverTier_transitAlarmMenuRowEnabled() throws {
-        launch(tier: "Silver")
+    func test_goldTier_transitAlarmMenuRowEnabled() throws {
+        launch(tier: "Gold")
 
         let addMenuButton = app.buttons["addAlarmMenuButton"]
         XCTAssertTrue(addMenuButton.waitForExistence(timeout: 3))
@@ -343,10 +343,10 @@ final class TierGatingUITests: XCTestCase {
         XCTAssertTrue(found)
 
         let row = transitButton.exists ? transitButton : transitMenuItem
-        XCTAssertTrue(row.isEnabled, "Transit Alarms must be usable at Silver+.")
+        XCTAssertTrue(row.isEnabled, "Transit Alarms must be usable at Gold+.")
     }
 
-    // MARK: - Sound library: Free locked on bundled sounds, Standard+ unlocked
+    // MARK: - Sound library: Free locked on bundled sounds, Silver+ unlocked
 
     func test_freeTier_bundledSoundRowLocked() throws {
         launch(tier: "Free")
@@ -357,7 +357,7 @@ final class TierGatingUITests: XCTestCase {
         collapsedRow.tap()
 
         // "Boat Horn.wav" is one of the bundled travel sounds — see
-        // GeoAlarm/Sounds/. Requires Standard+; system sounds (Vibrate/
+        // GeoAlarm/Sounds/. Requires Silver+; system sounds (Vibrate/
         // Default) are always free and not covered here.
         // Expanding the list adds ~10+ new rows below the already-scrolled
         // position of collapsedRow — a flat waitForExistence(timeout: 2)
@@ -365,11 +365,11 @@ final class TierGatingUITests: XCTestCase {
         // every other row in this file (caught in CI, 2026-07-12).
         let boatHornRow = formRow("soundRow.Boat Horn.wav")
         XCTAssertTrue(scrollIntoView(boatHornRow), "Bundled sound rows must still be VISIBLE on Free tier — gated, not hidden.")
-        XCTAssertTrue(lockBadgeExists(tier: "standard"), "A Standard-required lock badge must appear on locked bundled sound rows.")
+        XCTAssertTrue(lockBadgeExists(tier: "silver"), "A Silver-required lock badge must appear on locked bundled sound rows.")
     }
 
-    func test_standardTier_bundledSoundRowUnlocked() throws {
-        launch(tier: "Standard")
+    func test_silverTier_bundledSoundRowUnlocked() throws {
+        launch(tier: "Silver")
         openAddLocationAlarm()
 
         let collapsedRow = formRow("soundPickerCollapsedRow")
@@ -388,22 +388,9 @@ final class TierGatingUITests: XCTestCase {
         XCTAssertTrue(collapsedRow.waitForExistence(timeout: 2))
     }
 
-    // MARK: - Calendar Scanning: Silver disabled, Gold enabled
+    // MARK: - Calendar Scanning: Gold disabled, Platinum enabled
 
-    func test_silverTier_calendarScanningRowDisabled() throws {
-        launch(tier: "Silver")
-
-        app.buttons["settingsButton"].tap()
-        XCTAssertTrue(app.navigationBars["Settings"].waitForExistence(timeout: 3))
-
-        let row = app.cells["calendarScanningRow"].exists
-            ? app.cells["calendarScanningRow"]
-            : app.buttons["calendarScanningRow"]
-        XCTAssertTrue(scrollIntoView(row), "Calendar Scanning row must still be visible at Silver.")
-        XCTAssertFalse(row.isEnabled, "Calendar Scanning requires Gold.")
-    }
-
-    func test_goldTier_calendarScanningRowEnabled() throws {
+    func test_goldTier_calendarScanningRowDisabled() throws {
         launch(tier: "Gold")
 
         app.buttons["settingsButton"].tap()
@@ -412,13 +399,26 @@ final class TierGatingUITests: XCTestCase {
         let row = app.cells["calendarScanningRow"].exists
             ? app.cells["calendarScanningRow"]
             : app.buttons["calendarScanningRow"]
-        XCTAssertTrue(scrollIntoView(row))
-        XCTAssertTrue(row.isEnabled, "Calendar Scanning must be usable at Gold.")
+        XCTAssertTrue(scrollIntoView(row), "Calendar Scanning row must still be visible at Gold.")
+        XCTAssertFalse(row.isEnabled, "Calendar Scanning requires Platinum.")
     }
 
-    // MARK: - Auto-Notify Defaults (Settings): Free disabled, Standard+ enabled
+    func test_platinumTier_calendarScanningRowEnabled() throws {
+        launch(tier: "Platinum")
+
+        app.buttons["settingsButton"].tap()
+        XCTAssertTrue(app.navigationBars["Settings"].waitForExistence(timeout: 3))
+
+        let row = app.cells["calendarScanningRow"].exists
+            ? app.cells["calendarScanningRow"]
+            : app.buttons["calendarScanningRow"]
+        XCTAssertTrue(scrollIntoView(row))
+        XCTAssertTrue(row.isEnabled, "Calendar Scanning must be usable at Platinum.")
+    }
+
+    // MARK: - Auto-Notify Defaults (Settings): Free disabled, Silver+ enabled
     //
-    // Same gate as the per-alarm autoNotifyToggle (Standard+) — these two
+    // Same gate as the per-alarm autoNotifyToggle (Silver+) — these two
     // buttons manage the *default* contact list that pre-fills that toggle,
     // so they must honor the identical tier boundary. Added 2026-07-11 after
     // Bob reported them rendering fully active on Free tier in a screenshot.
@@ -434,13 +434,13 @@ final class TierGatingUITests: XCTestCase {
         XCTAssertTrue(scrollIntoView(addFromContacts), "Add from Contacts must still be visible on Free tier.")
         XCTAssertTrue(addManually.waitForExistence(timeout: 2))
 
-        XCTAssertFalse(addFromContacts.isEnabled, "Add from Contacts requires Standard+ — contact notify starts at Standard.")
-        XCTAssertFalse(addManually.isEnabled, "Add Manually requires Standard+.")
-        XCTAssertTrue(lockBadgeExists(tier: "standard"))
+        XCTAssertFalse(addFromContacts.isEnabled, "Add from Contacts requires Silver+ — contact notify starts at Silver.")
+        XCTAssertFalse(addManually.isEnabled, "Add Manually requires Silver+.")
+        XCTAssertTrue(lockBadgeExists(tier: "silver"))
     }
 
-    func test_standardTier_autoNotifyDefaultsButtonsEnabled() throws {
-        launch(tier: "Standard")
+    func test_silverTier_autoNotifyDefaultsButtonsEnabled() throws {
+        launch(tier: "Silver")
 
         app.buttons["settingsButton"].tap()
         XCTAssertTrue(app.navigationBars["Settings"].waitForExistence(timeout: 3))
@@ -450,41 +450,41 @@ final class TierGatingUITests: XCTestCase {
         XCTAssertTrue(scrollIntoView(addFromContacts))
         XCTAssertTrue(addManually.waitForExistence(timeout: 2))
 
-        XCTAssertTrue(addFromContacts.isEnabled, "Add from Contacts must be usable at Standard+.")
-        XCTAssertTrue(addManually.isEnabled, "Add Manually must be usable at Standard+.")
+        XCTAssertTrue(addFromContacts.isEnabled, "Add from Contacts must be usable at Silver+.")
+        XCTAssertTrue(addManually.isEnabled, "Add Manually must be usable at Silver+.")
     }
 
-    // MARK: - Set Up Automation (Settings, Auto-SMS section): Standard disabled, Silver+ enabled
+    // MARK: - Set Up Automation (Settings, Auto-SMS section): Silver disabled, Gold+ enabled
     //
     // Added 2026-07-11 per Bob: this deep-links to Shortcuts' automation
-    // creation screen, and leaving it tappable below Silver was judged a
-    // confusing "backdoor" — a Free/Standard user could build the whole
+    // creation screen, and leaving it tappable below Gold was judged a
+    // confusing "backdoor" — a Free/Silver user could build the whole
     // Shortcuts automation manually even though the toggle that actually
-    // activates it (autoSMSAutomationToggle) is Silver-gated. Gating this
-    // button too closes that loophole and matches Silver's paywall intent.
+    // activates it (autoSMSAutomationToggle) is Gold-gated. Gating this
+    // button too closes that loophole and matches Gold's paywall intent.
 
-    func test_standardTier_setUpAutomationButtonDisabled() throws {
-        launch(tier: "Standard")
-
-        app.buttons["settingsButton"].tap()
-        XCTAssertTrue(app.navigationBars["Settings"].waitForExistence(timeout: 3))
-
-        let button = app.buttons["setUpAutomationButton"]
-        XCTAssertTrue(scrollIntoView(button), "Set Up Automation must still be visible on Standard tier.")
-        XCTAssertFalse(button.isEnabled, "Set Up Automation requires Silver+ — it's a backdoor to the automation the Silver-gated toggle activates.")
-        XCTAssertTrue(lockBadgeExists(tier: "silver"))
-    }
-
-    func test_silverTier_setUpAutomationButtonEnabled() throws {
+    func test_silverTier_setUpAutomationButtonDisabled() throws {
         launch(tier: "Silver")
 
         app.buttons["settingsButton"].tap()
         XCTAssertTrue(app.navigationBars["Settings"].waitForExistence(timeout: 3))
 
         let button = app.buttons["setUpAutomationButton"]
+        XCTAssertTrue(scrollIntoView(button), "Set Up Automation must still be visible on Silver tier.")
+        XCTAssertFalse(button.isEnabled, "Set Up Automation requires Gold+ — it's a backdoor to the automation the Gold-gated toggle activates.")
+        XCTAssertTrue(lockBadgeExists(tier: "gold"))
+    }
+
+    func test_goldTier_setUpAutomationButtonEnabled() throws {
+        launch(tier: "Gold")
+
+        app.buttons["settingsButton"].tap()
+        XCTAssertTrue(app.navigationBars["Settings"].waitForExistence(timeout: 3))
+
+        let button = app.buttons["setUpAutomationButton"]
         XCTAssertTrue(scrollIntoView(button))
-        XCTAssertTrue(button.isEnabled, "Set Up Automation must be usable at Silver+.")
-        XCTAssertFalse(lockBadgeExists(tier: "silver"))
+        XCTAssertTrue(button.isEnabled, "Set Up Automation must be usable at Gold+.")
+        XCTAssertFalse(lockBadgeExists(tier: "gold"))
     }
 
     // MARK: - Free-tier alarm cap: "+" button disables after one active alarm

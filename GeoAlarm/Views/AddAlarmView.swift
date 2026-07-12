@@ -350,7 +350,7 @@ struct AddAlarmView: View {
                 // Distance (radius) vs Time (minutes before arrival).
                 // SwiftUI's segmented Picker style has no per-segment disabled
                 // state, so this gates the WHOLE control rather than just the
-                // "Time" segment — below Silver it's frozen on whatever value
+                // "Time" segment — below Gold it's frozen on whatever value
                 // it already has (Distance, per the onAppear clamp above),
                 // with a lock badge rather than a half-disabled control.
                 Picker(selection: $viewModel.triggerMode) {
@@ -362,7 +362,7 @@ struct AddAlarmView: View {
                 }
                 .pickerStyle(.segmented)
                 .accessibilityIdentifier("triggerModePicker")
-                .tierGated(minimumTier: .silver)
+                .tierGated(minimumTier: .gold)
 
                 if viewModel.triggerMode == .distance {
                     VStack(alignment: .leading, spacing: 4) {
@@ -414,7 +414,7 @@ struct AddAlarmView: View {
                         }
                     }
                     .accessibilityIdentifier("deadReckoningToggle")
-                    .tierGated(minimumTier: .gold)
+                    .tierGated(minimumTier: .platinum)
                 }
             } header: {
                 Text("Trigger", bundle: bundle)
@@ -435,7 +435,7 @@ struct AddAlarmView: View {
                     }
                 }
                 .accessibilityIdentifier("repeatToggle")
-                .tierGated(minimumTier: .silver)
+                .tierGated(minimumTier: .gold)
 
                 if viewModel.isRepeating {
                     HStack(spacing: 8) {
@@ -458,7 +458,7 @@ struct AddAlarmView: View {
                     }
                 }
                 .accessibilityIdentifier("activeTimeWindowToggle")
-                .tierGated(minimumTier: .standard)
+                .tierGated(minimumTier: .silver)
 
                 if viewModel.hasTimeWindow {
                     DatePicker(
@@ -542,7 +542,7 @@ struct AddAlarmView: View {
                 // queryable/scrollable element for "activeDaysRow".
                 .accessibilityElement(children: .contain)
                 .accessibilityIdentifier("activeDaysRow")
-                .tierGated(minimumTier: .silver)
+                .tierGated(minimumTier: .gold)
                 HStack(spacing: 6) {
                     Image(systemName: viewModel.activeDays == Set(1...7) ? "checkmark.circle" : "calendar")
                         .foregroundColor(viewModel.activeDays == Set(1...7) ? .green : .accentColor)
@@ -571,7 +571,7 @@ struct AddAlarmView: View {
                     }
                 }
                 .accessibilityIdentifier("autoNotifyToggle")
-                .tierGated(minimumTier: .standard)
+                .tierGated(minimumTier: .silver)
 
                 // Defensive: only show contact management if BOTH the toggle
                 // is on AND the tier actually allows it. Covers the case
@@ -582,7 +582,7 @@ struct AddAlarmView: View {
                 // still render underneath a locked toggle, which would be
                 // confusing and would let a Free user manage contacts for a
                 // feature they can't actually use.
-                if viewModel.notifyContact && EntitlementManager.isEntitled(to: .standard) {
+                if viewModel.notifyContact && EntitlementManager.isEntitled(to: .silver) {
                     // Existing contacts — swipe to delete
                     ForEach(viewModel.notifyContactList) { contact in
                         contactRow(contact)
@@ -630,13 +630,13 @@ struct AddAlarmView: View {
                           text: $viewModel.runShortcutName)
                     .autocorrectionDisabled()
                     .accessibilityIdentifier("runShortcutNameField")
-                    .tierGated(minimumTier: .gold)
+                    .tierGated(minimumTier: .platinum)
             } header: {
                 Text("Run Shortcut on Alarm", bundle: bundle)
             } footer: {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("runShortcut.formFooter", bundle: bundle)
-                    Text("runShortcut.goldRequired", bundle: bundle)
+                    Text("runShortcut.platinumRequired", bundle: bundle)
                         .foregroundColor(.secondary)
                         .fontWeight(.semibold)
                 }
@@ -733,7 +733,7 @@ struct AddAlarmView: View {
                 viewModel.reset()
                 // Honor the Settings default for the trigger input mode on new
                 // alarms — clamped to Distance if the tier doesn't allow Time
-                // (Silver+ only). See TriggerMode.allowed(requested:tier:).
+                // (Gold+ only). See TriggerMode.allowed(requested:tier:).
                 let requestedMode = TriggerMode(rawValue: defaultTriggerModeRaw) ?? .distance
                 viewModel.triggerMode = TriggerMode.allowed(requested: requestedMode, tier: EntitlementManager.currentTier)
                 autofillCurrentLocationIfNeeded()

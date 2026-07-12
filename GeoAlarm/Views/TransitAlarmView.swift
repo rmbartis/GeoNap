@@ -446,7 +446,7 @@ struct TransitAlarmView: View {
 
                 // Distance (radius) vs Time (minutes before arrival) — identical
                 // to AddAlarmView's Trigger section, including the tier gate
-                // (Time requires Silver+; see that file's comment for why the
+                // (Time requires Gold+; see that file's comment for why the
                 // whole control is gated rather than just the Time segment).
                 Picker(selection: $triggerMode) {
                     ForEach(TriggerMode.allCases) { mode in
@@ -457,7 +457,7 @@ struct TransitAlarmView: View {
                 }
                 .pickerStyle(.segmented)
                 .accessibilityIdentifier("triggerModePicker")
-                .tierGated(minimumTier: .silver)
+                .tierGated(minimumTier: .gold)
 
                 if triggerMode == .distance {
                     VStack(alignment: .leading, spacing: 4) {
@@ -509,7 +509,7 @@ struct TransitAlarmView: View {
                         }
                     }
                     .accessibilityIdentifier("deadReckoningToggle")
-                    .tierGated(minimumTier: .gold)
+                    .tierGated(minimumTier: .platinum)
                 }
             } header: {
                 Text("Trigger", bundle: bundle)
@@ -530,7 +530,7 @@ struct TransitAlarmView: View {
                     }
                 }
                 .accessibilityIdentifier("repeatToggle")
-                .tierGated(minimumTier: .silver)
+                .tierGated(minimumTier: .gold)
 
                 if isRepeating {
                     HStack(spacing: 8) {
@@ -551,7 +551,7 @@ struct TransitAlarmView: View {
                     }
                 }
                 .accessibilityIdentifier("activeTimeWindowToggle")
-                .tierGated(minimumTier: .standard)
+                .tierGated(minimumTier: .silver)
 
                 if hasTimeWindow {
                     DatePicker(selection: $windowStart, displayedComponents: .hourAndMinute) {
@@ -621,7 +621,7 @@ struct TransitAlarmView: View {
                 // accessibility node from .accessibilityIdentifier(_:) alone.
                 .accessibilityElement(children: .contain)
                 .accessibilityIdentifier("activeDaysRow")
-                .tierGated(minimumTier: .silver)
+                .tierGated(minimumTier: .gold)
                 HStack(spacing: 6) {
                     Image(systemName: activeDays == Set(1...7) ? "checkmark.circle" : "calendar")
                         .foregroundColor(activeDays == Set(1...7) ? .green : .accentColor)
@@ -649,11 +649,11 @@ struct TransitAlarmView: View {
                     }
                 }
                 .accessibilityIdentifier("autoNotifyToggle")
-                .tierGated(minimumTier: .standard)
+                .tierGated(minimumTier: .silver)
 
                 // Defensive: see AddAlarmView.swift's identical guard for
                 // why this checks both the toggle AND the tier.
-                if notifyContact && EntitlementManager.isEntitled(to: .standard) {
+                if notifyContact && EntitlementManager.isEntitled(to: .silver) {
                     ForEach(notifyContactList) { contact in
                         contactRow(contact)
                     }
@@ -693,13 +693,13 @@ struct TransitAlarmView: View {
                           text: $runShortcutName)
                     .autocorrectionDisabled()
                     .accessibilityIdentifier("runShortcutNameField")
-                    .tierGated(minimumTier: .gold)
+                    .tierGated(minimumTier: .platinum)
             } header: {
                 Text("Run Shortcut on Alarm", bundle: bundle)
             } footer: {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("runShortcut.formFooter", bundle: bundle)
-                    Text("runShortcut.goldRequired", bundle: bundle)
+                    Text("runShortcut.platinumRequired", bundle: bundle)
                         .foregroundColor(.secondary)
                         .fontWeight(.semibold)
                 }

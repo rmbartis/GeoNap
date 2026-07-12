@@ -7,7 +7,7 @@
 // This is deliberately NOT AlarmKit (see GeoAlarmScheduler.swift) — AlarmKit
 // is reserved for the actual geofence alarm firing (full-screen, cuts through
 // silent mode). A "here's what we found, come take a look" heads-up is a much
-// lighter-weight interaction, so it uses the standard UNUserNotificationCenter
+// lighter-weight interaction, so it uses the silver UNUserNotificationCenter
 // local-notification API instead, matching how GeoNap's privacy text already
 // describes notifications working ("local notifications entirely on-device
 // using iOS's UNUserNotificationCenter" — see privacy.body.notifications).

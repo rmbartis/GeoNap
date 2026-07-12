@@ -60,10 +60,10 @@
 // silently replaced, not queued. This is independent of the staleness cutoff
 // removed above and is also called out in the Help text.
 //
-// Silver-tier gate (added 2026-07-11): hands-free Auto-SMS
-// requires Silver — see monetization-tier-pricing memory and the
-// EntitlementManager.isEntitled(to: .silver) guard in perform() below.
-// Mirrors RunAlarmShortcutIntent's Gold-tier gate exactly (same reasoning:
+// Gold-tier gate (added 2026-07-11): hands-free Auto-SMS
+// requires Gold — see monetization-tier-pricing memory and the
+// EntitlementManager.isEntitled(to: .gold) guard in perform() below.
+// Mirrors RunAlarmShortcutIntent's Platinum-tier gate exactly (same reasoning:
 // gating must happen inside the intent itself, not just a Settings toggle,
 // since Shortcuts-exposed intents bypass in-app UI entirely).
 
@@ -187,17 +187,17 @@ struct NotifyContactsIntent: AppIntent {
         defaults.removeObject(forKey: phonesKey)
         defaults.removeObject(forKey: tsKey)
 
-        // Silver-tier gate. This is the load-bearing check for hands-free
-        // Auto-SMS — Notify Contacts is a Silver feature (see
+        // Gold-tier gate. This is the load-bearing check for hands-free
+        // Auto-SMS — Notify Contacts is a Gold feature (see
         // monetization-tier-pricing memory), and this intent is reachable
         // directly from a Shortcuts automation, bypassing any in-app UI
         // lock entirely. AlarmManager.queueAutoNotify also gates the
         // automation-suppression branch so a non-entitled device never
         // relies on hands-free delivery in the first place, but that's
         // defense in depth, not the enforcement point — this guard is.
-        // Mirrors RunAlarmShortcutIntent.perform()'s identical Gold-tier
+        // Mirrors RunAlarmShortcutIntent.perform()'s identical Platinum-tier
         // gate exactly.
-        guard EntitlementManager.isEntitled(to: .silver) else {
+        guard EntitlementManager.isEntitled(to: .gold) else {
             return .result(value: NotifyContactsResult(body: nil, recipients: nil))
         }
 

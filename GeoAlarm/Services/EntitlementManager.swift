@@ -17,24 +17,24 @@
 //     whatever the actual purchase-verification call ends up being) gets
 //     wired into `currentTier`'s RELEASE branch — and ONLY that branch.
 //     No other file should ever read a receipt, a product ID, or
-//     `AppStorageKey.goldTierUnlocked` directly. Apple's own purchase gate
+//     `AppStorageKey.platinumTierUnlocked` directly. Apple's own purchase gate
 //     and this app's testing/simulation gate are the SAME control point —
 //     testOverride (DEBUG-only) just short-circuits the exact same
 //     `currentTier` property that the real StoreKit check will eventually
 //     populate; it is not a parallel or bypassable mechanism.
 //   - If you're about to add a new gated feature and find yourself writing
-//     `UserDefaults.standard.bool(forKey: AppStorageKey.goldTierUnlocked)`
+//     `UserDefaults.standard.bool(forKey: AppStorageKey.platinumTierUnlocked)`
 //     or any other independent "am I entitled" check, stop — call
 //     `EntitlementManager.isEntitled(to:)` instead. A second control point
 //     is exactly the loophole StoreKit review (and simple bugs) will find.
 //   - Verified 2026-07-11: grepped the whole target for "StoreKit",
-//     "goldTierUnlocked", and "isEntitled"/"currentTier"/"AppTier." —
-//     every real usage funnels through this file; `goldTierUnlocked` is
+//     "platinumTierUnlocked", and "isEntitled"/"currentTier"/"AppTier." —
+//     every real usage funnels through this file; `platinumTierUnlocked` is
 //     defined in AppSettings.swift but not read by anything yet (reserved
 //     for the future StoreKit writer, see TODO(StoreKit) below).
 // ═══════════════════════════════════════════════════════════════════════
 //
-// GeoNap's monetization plan (Free/Standard/Silver/Gold — see the
+// GeoNap's monetization plan (Free/Silver/Gold/Platinum — see the
 // monetization-tier-pricing project memory, tagged in git as
 // pre-apple-store-and-pricing-tier-support) has NO StoreKit/IAP
 // implementation yet. This type exists so gated features have exactly one
@@ -42,28 +42,28 @@
 // StoreKit 2 `Transaction.currentEntitlements`, receipt validation, etc. —
 // without touching every call site again.
 //
-// Policy as of 2026-07-11 (Bob): distribution builds report `.gold` for
+// Policy as of 2026-07-11 (Bob): distribution builds report `.platinum` for
 // EVERY user, unconditionally, until real StoreKit/IAP lands — there's no
-// purchase flow yet, so locking real users out of Gold with no way to buy it
+// purchase flow yet, so locking real users out of Platinum with no way to buy it
 // would just be a broken experience, not a paywall. `AppStorageKey
-// .goldTierUnlocked` is reserved for the future purchase/restore writer
+// .platinumTierUnlocked` is reserved for the future purchase/restore writer
 // (see TODO(StoreKit) below) but is NOT read here right now — don't
 // resurrect the old "RELEASE reads UserDefaults, defaults locked" behavior
 // by accident; that was superseded by this instruction.
 //
 // This means `currentTier` is a stub everywhere today:
-//   - RELEASE (including TestFlight, which archives Release): always `.gold`.
+//   - RELEASE (including TestFlight, which archives Release): always `.platinum`.
 //   - DEBUG (Xcode → device/simulator, and `xcodebuild test`): `testOverride`
-//     if set, else `.gold` — so ordinary local development still sees every
+//     if set, else `.platinum` — so ordinary local development still sees every
 //     feature unlocked unless a test or the Settings "Tier Simulation"
 //     section deliberately dials it down.
 //
 // TODO(StoreKit): once a real purchase/restore flow exists, replace the
 // RELEASE branch below with actual entitlement verification (and give
-// `AppStorageKey.goldTierUnlocked` a real writer), rather than the
-// unconditional `.gold`. When that lands, keep the DEBUG bypass — it's still
+// `AppStorageKey.platinumTierUnlocked` a real writer), rather than the
+// unconditional `.platinum`. When that lands, keep the DEBUG bypass — it's still
 // useful for local development — but audit every call site that currently
-// assumes "RELEASE == everyone is Gold" no longer holds.
+// assumes "RELEASE == everyone is Platinum" no longer holds.
 // nonisolated throughout (added 2026-07-11, fixing a Swift 6 build warning):
 // both AppTier and EntitlementManager must be callable from RunAlarmShortcutIntent
 // .perform() and NotifyContactsIntent.perform(), which run OUTSIDE the main
@@ -100,7 +100,7 @@ import Foundation
 /// enabled/disabled state until this was added).
 ///
 /// DEBUG-only, like `testOverride` itself: RELEASE builds never change tier
-/// at runtime (`currentTier` is hardcoded `.gold`), so there's nothing to
+/// at runtime (`currentTier` is hardcoded `.platinum`), so there's nothing to
 /// observe there, and `TierGatedModifier.swift` only references this type
 /// inside a matching `#if DEBUG` block.
 final class TierChangeObserver: ObservableObject {
@@ -141,18 +141,18 @@ final class TierChangeObserver: ObservableObject {
 
 enum AppTier: Int, Comparable, CaseIterable, Hashable, CustomStringConvertible {
     case free = 0
-    case standard = 1
-    case silver = 2
-    case gold = 3
+    case silver = 1
+    case gold = 2
+    case platinum = 3
 
     nonisolated static func < (lhs: AppTier, rhs: AppTier) -> Bool { lhs.rawValue < rhs.rawValue }
 
     nonisolated var description: String {
         switch self {
         case .free:     return "Free"
-        case .standard: return "Standard"
-        case .silver:   return "Silver"
-        case .gold:     return "Gold"
+        case .silver: return "Silver"
+        case .gold:   return "Gold"
+        case .platinum:     return "Platinum"
         }
     }
 }
@@ -160,7 +160,7 @@ enum AppTier: Int, Comparable, CaseIterable, Hashable, CustomStringConvertible {
 enum EntitlementManager {
 
     #if DEBUG
-    /// Test/QA override. When non-nil, short-circuits the `.gold` DEBUG
+    /// Test/QA override. When non-nil, short-circuits the `.platinum` DEBUG
     /// default below with this exact tier. Three callers:
     ///   - XCTest cases set this to exercise a specific tier deterministically
     ///     (see EntitlementManagerTests.swift, RunAlarmShortcutTests.swift).
@@ -194,31 +194,31 @@ enum EntitlementManager {
 
     nonisolated static var currentTier: AppTier {
         #if DEBUG
-        return testOverride ?? .gold
+        return testOverride ?? .platinum
         #else
-        return .gold
+        return .platinum
         #endif
     }
 
     /// True when the current tier is `tier` or higher — tiers are additive
-    /// (Gold includes everything Silver includes, etc.), so this is a
+    /// (Platinum includes everything Gold includes, etc.), so this is a
     /// `>=` comparison against `AppTier`'s raw-value ordering, not equality.
     nonisolated static func isEntitled(to tier: AppTier) -> Bool {
         currentTier >= tier
     }
 
     /// Convenience for the one gate that exists today (Run Shortcut on
-    /// Alarm). Equivalent to `isEntitled(to: .gold)`. New gates against a
+    /// Alarm). Equivalent to `isEntitled(to: .platinum)`. New gates against a
     /// different tier should call `isEntitled(to:)` directly so the call
     /// site documents which tier it requires.
-    nonisolated static var isGoldTier: Bool { isEntitled(to: .gold) }
+    nonisolated static var isPlatinumTier: Bool { isEntitled(to: .platinum) }
 
     #if DEBUG
     /// Parses a `--uitesting-tier <name>` pair out of launch arguments
-    /// (case-insensitive tier name — "free", "Standard", "GOLD", etc.).
+    /// (case-insensitive tier name — "free", "Silver", "PLATINUM", etc.).
     /// Returns nil if the flag isn't present or the value doesn't match a
     /// known tier, in which case the caller should leave `testOverride`
-    /// untouched (falls back to the ordinary `.gold` DEBUG default).
+    /// untouched (falls back to the ordinary `.platinum` DEBUG default).
     nonisolated static func parseTierLaunchArgument(from arguments: [String]) -> AppTier? {
         guard let flagIndex = arguments.firstIndex(of: "--uitesting-tier"),
               arguments.indices.contains(flagIndex + 1) else { return nil }

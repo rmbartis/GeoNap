@@ -1,7 +1,7 @@
 // Copyright © 2026 Robert Bartis. All rights reserved.
 
 // GeoAlarmLiveActivityWidget.swift
-// Renders the Gold-tier Live Activity started/updated/ended by
+// Renders the Platinum-tier Live Activity started/updated/ended by
 // LiveActivityManager.swift (main app target) — Lock Screen banner +
 // Dynamic Island compact/minimal/expanded presentations.
 //

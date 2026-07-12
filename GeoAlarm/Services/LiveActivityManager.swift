@@ -1,7 +1,7 @@
 // Copyright © 2026 Robert Bartis. All rights reserved.
 
 // LiveActivityManager.swift
-// Owns the Gold-tier Live Activity / Dynamic Island lifecycle — see
+// Owns the Platinum-tier Live Activity / Dynamic Island lifecycle — see
 // GeoAlarmActivityAttributes.swift for what this is and why it's separate
 // from AlarmKit's own built-in Live Activity.
 //
@@ -22,7 +22,7 @@
 // coincidence.
 //
 // Every method here is a silent no-op on failure or when gated out (below
-// Gold, system Live Activities disabled, etc.) — this is a nice-to-have
+// Platinum, system Live Activities disabled, etc.) — this is a nice-to-have
 // overlay on top of the real alarm-firing mechanism (AlarmKit / region
 // monitoring), never a requirement for it. Nothing in here should ever be
 // able to affect whether an alarm actually fires.
@@ -40,7 +40,7 @@ final class LiveActivityManager {
 
     // MARK: - Lifecycle
 
-    /// Starts a Live Activity for `alarm` if: Gold tier (see
+    /// Starts a Live Activity for `alarm` if: Platinum tier (see
     /// EntitlementManager — the single point of control for tier, per the
     /// monetization-tier-pricing memory; this does NOT duplicate that
     /// check, just reacts to it), the system currently allows Live
@@ -52,7 +52,7 @@ final class LiveActivityManager {
     /// behalf (see AlarmManager.startMonitoring's liveActivityTrackedIDs).
     @discardableResult
     func start(for alarm: NapAlarm) -> Bool {
-        guard EntitlementManager.isEntitled(to: .gold) else { return false }
+        guard EntitlementManager.isEntitled(to: .platinum) else { return false }
         guard ActivityAuthorizationInfo().areActivitiesEnabled else {
             DebugLogger.shared.log("Live Activity: system authorization disabled — skipped for '\(alarm.name)'", category: "LiveActivity")
             return false
@@ -89,7 +89,7 @@ final class LiveActivityManager {
 
     /// Updates the running Activity's content state, if one exists for this
     /// alarm. A no-op — not an error — when there isn't one, which is the
-    /// common case (below Gold, or the system declined to start one), so
+    /// common case (below Platinum, or the system declined to start one), so
     /// every call site can call this unconditionally on every location fix
     /// without checking first.
     func update(alarmID: UUID, distanceRemaining: Double?, etaSeconds: Double?) {
@@ -116,11 +116,11 @@ final class LiveActivityManager {
     }
 
     /// Ends every running Activity. Called from Settings' DEBUG-only Tier
-    /// Simulation picker when dialing down below Gold, so a Live Activity
+    /// Simulation picker when dialing down below Platinum, so a Live Activity
     /// never keeps running for a tier that shouldn't have it.
     ///
     /// TODO(StoreKit): once real purchase/expiry events exist, call this
-    /// from wherever a real Gold→lower downgrade is detected too — there is
+    /// from wherever a real Platinum→lower downgrade is detected too — there is
     /// no such event yet (see EntitlementManager's TODO(StoreKit)).
     func endAll() {
         for (_, activity) in activities {

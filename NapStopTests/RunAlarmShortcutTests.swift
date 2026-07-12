@@ -182,14 +182,14 @@ final class RunAlarmShortcutQueueingTests: XCTestCase {
     /// UserDefaults for a Shortcuts automation to pick up.
     ///
     /// One test per AppTier case, explicitly — not a single loop — so a
-    /// failure at, say, Silver reads as "test_silverTier_..." in the test
+    /// failure at, say, Gold reads as "test_goldTier_..." in the test
     /// report rather than a loop index. Run Shortcut is currently the ONLY
-    /// feature with a real code-level gate (Free/Standard/Silver's other
+    /// feature with a real code-level gate (Free/Silver/Gold's other
     /// plan-level restrictions — alarm count, sound library, transit
     /// agency-location, Auto-SMS, GTFS caching, calendar-scan — have no
     /// enforcement in code yet, see monetization-tier-pricing memory), so
-    /// Free/Standard/Silver all assert the SAME "disabled" outcome here for
-    /// now; only Gold differs. When another feature gets its own gate, give
+    /// Free/Silver/Gold all assert the SAME "disabled" outcome here for
+    /// now; only Platinum differs. When another feature gets its own gate, give
     /// it its own per-tier suite alongside this one rather than folding it
     /// into this file.
 
@@ -197,19 +197,19 @@ final class RunAlarmShortcutQueueingTests: XCTestCase {
         assertRunShortcutDisabled(at: .free)
     }
 
-    func test_standardTier_runShortcutDisabled_writesNoPendingName() {
-        assertRunShortcutDisabled(at: .standard)
-    }
-
     func test_silverTier_runShortcutDisabled_writesNoPendingName() {
         assertRunShortcutDisabled(at: .silver)
+    }
+
+    func test_goldTier_runShortcutDisabled_writesNoPendingName() {
+        assertRunShortcutDisabled(at: .gold)
     }
 
     /// Sanity check that the gate is genuinely conditional, not just always
     /// closed — pins the one tier where Run Shortcut IS allowed, so a future
     /// change that accidentally hardcodes the gate shut would fail here too.
-    func test_goldTier_runShortcutEnabled_writesPendingName() {
-        EntitlementManager.testOverride = .gold
+    func test_platinumTier_runShortcutEnabled_writesPendingName() {
+        EntitlementManager.testOverride = .platinum
 
         let alarm = makeAlarm(runShortcutName: "Welcome Home")
         sut.add(alarm: alarm)
@@ -228,7 +228,7 @@ final class RunAlarmShortcutQueueingTests: XCTestCase {
         sut.simulateRegionEntered(regionID: alarm.id.uuidString)
 
         XCTAssertNil(UserDefaults.standard.string(forKey: RunShortcutDefaultsKey.pendingShortcutName),
-            "\(tier) is below Gold — must not queue a Shortcut name, even if one is configured on the alarm.",
+            "\(tier) is below Platinum — must not queue a Shortcut name, even if one is configured on the alarm.",
             file: file, line: line)
     }
 }

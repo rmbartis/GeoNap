@@ -274,12 +274,12 @@ nonisolated enum AppStorageKey {
 
     /// Reserved for a future purchase/restore writer — see the TODO(StoreKit)
     /// comment on EntitlementManager.swift. NOT currently read anywhere:
-    /// as of 2026-07-11, EntitlementManager.currentTier reports `.gold`
-    /// unconditionally in RELEASE (distribution stays Gold for everyone
+    /// as of 2026-07-11, EntitlementManager.currentTier reports `.platinum`
+    /// unconditionally in RELEASE (distribution stays Platinum for everyone
     /// until a real purchase flow exists), so this key is unused dead
     /// weight for now, kept only so the eventual StoreKit integration has
     /// somewhere to write the result without inventing a new key then.
-    static let goldTierUnlocked = "goldTierUnlocked"
+    static let platinumTierUnlocked = "platinumTierUnlocked"
 
     // MARK: Calendar Scanning
     // All calendar-scan keys default to "off"/empty — scanning is strictly

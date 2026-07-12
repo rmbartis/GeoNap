@@ -1,7 +1,7 @@
 // Copyright © 2026 Robert Bartis. All rights reserved.
 
 // GeoAlarmActivityAttributes.swift
-// ActivityAttributes for the Gold-tier Live Activity / Dynamic Island
+// ActivityAttributes for the Platinum-tier Live Activity / Dynamic Island
 // countdown. This is the copy used by the GeoAlarmLiveActivityExtension
 // widget target, which renders the Activity — see
 // GeoAlarmLiveActivityWidget.swift in this same folder.

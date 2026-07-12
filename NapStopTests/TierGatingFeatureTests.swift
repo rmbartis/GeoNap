@@ -2,16 +2,16 @@
 
 // TierGatingFeatureTests.swift
 // Per-tier unit tests for the 2026-07-11 full-app tier gating pass — added
-// after Run Shortcut on Alarm (Gold) was the only gated feature, per Bob's
+// after Run Shortcut on Alarm (Platinum) was the only gated feature, per Bob's
 // explicit request for "a CI test suite for each tier control that should
 // be enabled ... while controls that should be disabled ... [are]."
 //
 // Covers, per AppTier where applicable:
 //   - AlarmManager.isAtFreeTierLimit / add(alarm:) — Free's 1-active-alarm cap
-//   - TriggerMode.allowed(requested:tier:) — Time-based requires Silver+
-//   - AlarmManager.queueAutoNotify — Free gets nothing, Standard gets prompted
-//     only, Silver+ can additionally go hands-free (mirrors
-//     NotifyContactsIntent.perform()'s own Silver gate, which — like
+//   - TriggerMode.allowed(requested:tier:) — Time-based requires Gold+
+//   - AlarmManager.queueAutoNotify — Free gets nothing, Silver gets prompted
+//     only, Gold+ can additionally go hands-free (mirrors
+//     NotifyContactsIntent.perform()'s own Gold gate, which — like
 //     RunAlarmShortcutIntent.perform() — is not called directly by any test;
 //     see AutoSMSFreshnessTests.swift's header for why)
 //
@@ -72,8 +72,8 @@ final class FreeTierAlarmCapTests: XCTestCase {
             "A second alarm on Free tier must be saved but inserted inactive, not silently dropped.")
     }
 
-    func test_standardTierAndAbove_noCapApplies() {
-        for tier: AppTier in [.standard, .silver, .gold] {
+    func test_silverTierAndAbove_noCapApplies() {
+        for tier: AppTier in [.silver, .gold, .platinum] {
             EntitlementManager.testOverride = tier
             let localSut = AlarmManager()
             localSut.add(alarm: makeAlarm(name: "One"))
@@ -86,7 +86,7 @@ final class FreeTierAlarmCapTests: XCTestCase {
     }
 }
 
-// MARK: - Trigger Mode gate (Time-based requires Silver+)
+// MARK: - Trigger Mode gate (Time-based requires Gold+)
 
 final class TriggerModeGateTests: XCTestCase {
 
@@ -97,15 +97,15 @@ final class TriggerModeGateTests: XCTestCase {
         }
     }
 
-    func test_timeRequested_belowSilver_clampsToDistance() {
-        for tier: AppTier in [.free, .standard] {
+    func test_timeRequested_belowGold_clampsToDistance() {
+        for tier: AppTier in [.free, .silver] {
             XCTAssertEqual(TriggerMode.allowed(requested: .time, tier: tier), .distance,
                 "\(tier) must not get Time-based trigger mode — clamp to Distance.")
         }
     }
 
-    func test_timeRequested_silverAndAbove_allowed() {
-        for tier: AppTier in [.silver, .gold] {
+    func test_timeRequested_goldAndAbove_allowed() {
+        for tier: AppTier in [.gold, .platinum] {
             XCTAssertEqual(TriggerMode.allowed(requested: .time, tier: tier), .time,
                 "\(tier) must be allowed Time-based trigger mode.")
         }
@@ -155,50 +155,28 @@ final class AutoNotifyTierGateTests: XCTestCase {
             "Free tier must not write pending body/phones for the Shortcuts automation either.")
     }
 
-    func test_standardTier_promptedComposeSheet_queued() {
-        EntitlementManager.testOverride = .standard
+    func test_silverTier_promptedComposeSheet_queued() {
+        EntitlementManager.testOverride = .silver
         sut.add(alarm: makeNotifyAlarm())
         sut.simulateRegionEntered(regionID: sut.alarms.first!.id.uuidString)
 
-        XCTAssertNotNil(sut.pendingContactMessage, "Standard tier must queue the prompted compose sheet.")
+        XCTAssertNotNil(sut.pendingContactMessage, "Silver tier must queue the prompted compose sheet.")
     }
 
-    func test_standardTier_handsFreeToggleTrue_stillPromptsAndDoesNotSuppress() {
+    func test_silverTier_handsFreeToggleTrue_stillPromptsAndDoesNotSuppress() {
         // Defense in depth: even if autoSMSAutomationEnabled is somehow true
-        // on a Standard-tier device (stale value from a simulated downgrade
-        // — the toggle itself is tierGated(minimumTier: .silver) in
-        // SettingsView, so this shouldn't happen via normal use), Standard
+        // on a Silver-tier device (stale value from a simulated downgrade
+        // — the toggle itself is tierGated(minimumTier: .gold) in
+        // SettingsView, so this shouldn't happen via normal use), Silver
         // must still fall back to the compose sheet rather than silently
         // suppressing it with nothing to replace it.
-        EntitlementManager.testOverride = .standard
-        UserDefaults.standard.set(true, forKey: AppStorageKey.autoSMSAutomationEnabled)
-        sut.add(alarm: makeNotifyAlarm())
-        sut.simulateRegionEntered(regionID: sut.alarms.first!.id.uuidString)
-
-        XCTAssertNotNil(sut.pendingContactMessage,
-            "Standard tier must never suppress the compose sheet, even if the hands-free flag is stale-true.")
-    }
-
-    func test_silverTier_handsFreeToggleTrue_suppressesComposeSheet() {
         EntitlementManager.testOverride = .silver
         UserDefaults.standard.set(true, forKey: AppStorageKey.autoSMSAutomationEnabled)
         sut.add(alarm: makeNotifyAlarm())
         sut.simulateRegionEntered(regionID: sut.alarms.first!.id.uuidString)
 
-        XCTAssertNil(sut.pendingContactMessage,
-            "Silver tier with hands-free enabled must suppress the compose sheet — the Shortcuts automation handles delivery instead.")
-        XCTAssertEqual(UserDefaults.standard.string(forKey: AutoNotifyDefaultsKey.pendingBody)?.isEmpty, false,
-            "The pending body must still be written for NotifyContactsIntent to pick up.")
-    }
-
-    func test_silverTier_handsFreeToggleFalse_stillPrompts() {
-        EntitlementManager.testOverride = .silver
-        UserDefaults.standard.set(false, forKey: AppStorageKey.autoSMSAutomationEnabled)
-        sut.add(alarm: makeNotifyAlarm())
-        sut.simulateRegionEntered(regionID: sut.alarms.first!.id.uuidString)
-
         XCTAssertNotNil(sut.pendingContactMessage,
-            "Silver tier with hands-free OFF must still use the prompted compose sheet.")
+            "Silver tier must never suppress the compose sheet, even if the hands-free flag is stale-true.")
     }
 
     func test_goldTier_handsFreeToggleTrue_suppressesComposeSheet() {
@@ -207,6 +185,28 @@ final class AutoNotifyTierGateTests: XCTestCase {
         sut.add(alarm: makeNotifyAlarm())
         sut.simulateRegionEntered(regionID: sut.alarms.first!.id.uuidString)
 
-        XCTAssertNil(sut.pendingContactMessage, "Gold includes Silver's hands-free capability.")
+        XCTAssertNil(sut.pendingContactMessage,
+            "Gold tier with hands-free enabled must suppress the compose sheet — the Shortcuts automation handles delivery instead.")
+        XCTAssertEqual(UserDefaults.standard.string(forKey: AutoNotifyDefaultsKey.pendingBody)?.isEmpty, false,
+            "The pending body must still be written for NotifyContactsIntent to pick up.")
+    }
+
+    func test_goldTier_handsFreeToggleFalse_stillPrompts() {
+        EntitlementManager.testOverride = .gold
+        UserDefaults.standard.set(false, forKey: AppStorageKey.autoSMSAutomationEnabled)
+        sut.add(alarm: makeNotifyAlarm())
+        sut.simulateRegionEntered(regionID: sut.alarms.first!.id.uuidString)
+
+        XCTAssertNotNil(sut.pendingContactMessage,
+            "Gold tier with hands-free OFF must still use the prompted compose sheet.")
+    }
+
+    func test_platinumTier_handsFreeToggleTrue_suppressesComposeSheet() {
+        EntitlementManager.testOverride = .platinum
+        UserDefaults.standard.set(true, forKey: AppStorageKey.autoSMSAutomationEnabled)
+        sut.add(alarm: makeNotifyAlarm())
+        sut.simulateRegionEntered(regionID: sut.alarms.first!.id.uuidString)
+
+        XCTAssertNil(sut.pendingContactMessage, "Platinum includes Gold's hands-free capability.")
     }
 }

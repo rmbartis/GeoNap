@@ -60,12 +60,12 @@ struct SettingsView: View {
     #if DEBUG
     // Tier Simulation (DEBUG only) — mirrors EntitlementManager.testOverride
     // so the picker shows the right selection if you navigate away and back
-    // within a session. Resets to "real" (Gold, per the DEBUG default) on
+    // within a session. Resets to "real" (Platinum, per the DEBUG default) on
     // every fresh launch, same as EntitlementManager.testOverride itself,
     // since neither is persisted to UserDefaults. A --uitesting-tier launch
     // argument (see NapStopApp.init()) can also set testOverride before this
     // view ever appears — this initial value picks that up correctly too.
-    @State private var simulatedTier: AppTier = EntitlementManager.testOverride ?? .gold
+    @State private var simulatedTier: AppTier = EntitlementManager.testOverride ?? .platinum
     #endif
 
     private var distanceUnit: DistanceUnit {
@@ -112,7 +112,7 @@ struct SettingsView: View {
                             title: "Coordinates",
                             isPresented: $infoCoords,
                             helpTitle: "Coordinate Format",
-                            helpBody: "Sets how geographic coordinates are entered and displayed when creating alarms.\n\n• DD – Decimal Degrees (40.712800, -74.006000)\nStandard format used by Google Maps, Apple Maps, and most GPS apps.\n\n• DMS – Degrees Minutes Seconds (40°42′46″N)\nTraditional map format used on paper charts and military navigation.\n\n• DDM – Degrees Decimal Minutes (40°42.767′N)\nCommon on handheld Garmin GPS devices and marine/aviation equipment.\n\nDD is recommended for most users."
+                            helpBody: "Sets how geographic coordinates are entered and displayed when creating alarms.\n\n• DD – Decimal Degrees (40.712800, -74.006000)\nSilver format used by Google Maps, Apple Maps, and most GPS apps.\n\n• DMS – Degrees Minutes Seconds (40°42′46″N)\nTraditional map format used on paper charts and military navigation.\n\n• DDM – Degrees Decimal Minutes (40°42.767′N)\nCommon on handheld Garmin GPS devices and marine/aviation equipment.\n\nDD is recommended for most users."
                         )
                     }
                     .pickerStyle(.segmented)
@@ -139,7 +139,7 @@ struct SettingsView: View {
                     }
                     .pickerStyle(.segmented)
                     .accessibilityIdentifier("settingsTriggerModePicker")
-                    .tierGated(minimumTier: .silver)
+                    .tierGated(minimumTier: .gold)
                 } header: {
                     Text("Alarm Trigger", bundle: bundle)
                 } footer: {
@@ -236,7 +236,7 @@ struct SettingsView: View {
                         }
                     }
                     .accessibilityIdentifier("addFromContactsButton")
-                    .tierGated(minimumTier: .standard)
+                    .tierGated(minimumTier: .silver)
 
                     Button {
                         showManualEntry = true
@@ -248,7 +248,7 @@ struct SettingsView: View {
                         }
                     }
                     .accessibilityIdentifier("addManuallyButton")
-                    .tierGated(minimumTier: .standard)
+                    .tierGated(minimumTier: .silver)
                 } header: {
                     Text("Auto-Notify Defaults", bundle: bundle)
                 } footer: {
@@ -263,7 +263,7 @@ struct SettingsView: View {
                 Section {
                     // NavigationLink respects .disabled() correctly (unlike
                     // the onTapGesture-based Sound rows), so .tierGated
-                    // works as-is here. Gold-gated (calendar-scan
+                    // works as-is here. Platinum-gated (calendar-scan
                     // auto-scheduling — see monetization-tier-pricing
                     // memory). Note: CalendarScanSettingsView is also
                     // reachable via a background-task notification tap
@@ -278,7 +278,7 @@ struct SettingsView: View {
                         }
                     }
                     .accessibilityIdentifier("calendarScanningRow")
-                    .tierGated(minimumTier: .gold)
+                    .tierGated(minimumTier: .platinum)
                 }
 
                 // MARK: Transit Feed Cache
@@ -540,7 +540,7 @@ struct SettingsView: View {
     #if DEBUG
     // MARK: - Tier simulation section (DEBUG only)
 
-    /// Lets Bob see the locked (non-Gold) Run Shortcut experience on a
+    /// Lets Bob see the locked (non-Platinum) Run Shortcut experience on a
     /// simulator or device without hand-editing EntitlementManager.swift and
     /// rebuilding. Wrapped entirely in #if DEBUG at both the declaration
     /// site and every call site (see `body` above) — this view, its backing
@@ -560,17 +560,17 @@ struct SettingsView: View {
                 EntitlementManager.testOverride = newValue
                 DebugLogger.shared.log("Tier Simulation: override set to \(newValue)", category: "Settings")
                 // A Live Activity started under a higher simulated tier
-                // must not keep running once dialed below Gold — see
+                // must not keep running once dialed below Platinum — see
                 // LiveActivityManager.endAll()'s TODO(StoreKit) for the
                 // real (non-DEBUG) equivalent of this once purchases exist.
-                if newValue < .gold {
+                if newValue < .platinum {
                     LiveActivityManager.shared.endAll()
                 }
             }
         } header: {
             Text("Tier Simulation")
         } footer: {
-            Text("DEBUG builds report Gold by default so local testing isn't blocked by the missing StoreKit integration. Pick a lower tier to confirm gated features — like Run Shortcut on Alarm — stay visible but disabled. Distribution (Release/TestFlight) builds ignore this entirely and always report Gold for now; this section itself never appears outside Debug builds.")
+            Text("DEBUG builds report Platinum by default so local testing isn't blocked by the missing StoreKit integration. Pick a lower tier to confirm gated features — like Run Shortcut on Alarm — stay visible but disabled. Distribution (Release/TestFlight) builds ignore this entirely and always report Platinum for now; this section itself never appears outside Debug builds.")
         }
     }
     #endif
@@ -594,11 +594,11 @@ struct SettingsView: View {
                     helpBody: "GeoNap always caches a downloaded transit feed (routes and stops for an agency) for 7 days, so revisiting the same agency doesn't re-download every time.\n\nTurn this on to override that fixed 7-day window with your own value — anywhere from 1 to 30 days, or Infinite so it never expires automatically.\n\nUse Clear Cache below at any time to force a fresh download on your next visit, regardless of this setting."
                 )
             }
-            // Meaningless below Silver — GTFS caching only matters once
-            // Transit Alarms are actually usable (gated at Silver+ in
+            // Meaningless below Gold — GTFS caching only matters once
+            // Transit Alarms are actually usable (gated at Gold+ in
             // ContentView.swift's "+" menu). "Clear Cache" below stays
             // ungated — it's a harmless no-op with nothing cached yet.
-            .tierGated(minimumTier: .silver)
+            .tierGated(minimumTier: .gold)
 
             if gtfsCacheCustomRetentionEnabled {
                 Stepper(value: gtfsCacheRetentionStepIndex, in: 0...30) {
@@ -678,12 +678,12 @@ struct SettingsView: View {
         Section {
             // Hands-free switch: when on, the app suppresses its own pre-filled
             // compose sheet because the Shortcuts automation sends the SMS instead.
-            // Requires Silver+ — Standard only gets prompted/tap-to-send (see
+            // Requires Gold+ — Silver only gets prompted/tap-to-send (see
             // monetization-tier-pricing memory). Gating this toggle is the UI
             // half; AlarmManager.queueAutoNotify and NotifyContactsIntent
             // .perform() both independently re-check the tier too, so this
             // toggle being disabled isn't the only thing standing between a
-            // sub-Silver device and hands-free delivery.
+            // sub-Gold device and hands-free delivery.
             Toggle(isOn: $autoSMSAutomationEnabled) {
                 VStack(alignment: .leading, spacing: 2) {
                     Text("settings.autoSMS.automationToggle", bundle: bundle)
@@ -693,7 +693,7 @@ struct SettingsView: View {
                 }
             }
             .accessibilityIdentifier("autoSMSAutomationToggle")
-            .tierGated(minimumTier: .silver)
+            .tierGated(minimumTier: .gold)
 
             // Description, with the one-time Shortcuts setup steps tucked
             // behind an info icon instead of always-visible inline text —
@@ -740,7 +740,7 @@ struct SettingsView: View {
                 }
             }
             .accessibilityIdentifier("setUpAutomationButton")
-            .tierGated(minimumTier: .silver)
+            .tierGated(minimumTier: .gold)
         } header: {
             Text("Auto-SMS (No Approval Needed)", bundle: bundle)
         } footer: {
