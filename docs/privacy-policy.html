@@ -27,7 +27,7 @@
 <body>
 
   <h1>GeoNap Privacy Policy</h1>
-  <p class="updated">Last updated: July 11, 2026</p>
+  <p class="updated">Last updated: July 12, 2026</p>
 
   <p>GeoNap ("the app") is developed and operated by Robert Bartis ("I", "me", or "my"). This policy explains what information the app collects, how it is used, and the choices you have.</p>
 
@@ -42,13 +42,18 @@
   </ul>
 
   <h3>Crash and Diagnostic Data</h3>
-  <p>The app uses <strong>Firebase Crashlytics</strong> (provided by Google) to automatically collect crash reports and basic diagnostic information when the app encounters an error. This data includes:</p>
+  <p>GeoNap's crash and error logging runs <strong>entirely on-device</strong> using Apple's own OSLog framework — the same mechanism behind Console.app and the system's own crash reports. No third-party crash-reporting or analytics SDK is integrated into the app, and no crash, error, or diagnostic data is transmitted to me or to any third party. Anything captured this way stays in the system logs on your device (and, if you choose to enable the app's own optional debug log in Settings → Support, in a log file you can view and share yourself).</p>
+  <p>You can see what diagnostic data Apple's own OS collects, and control whether it's shared, in Settings → Privacy & Security → Analytics & Improvements.</p>
+
+  <h3>Calendar Data (Calendar Scanning)</h3>
+  <p>If you turn on the optional <strong>Calendar Scanning</strong> feature in Settings, GeoNap reads events from the calendars you choose, looking for upcoming events with a location (a flight, a train, a meeting) so it can suggest a location-based alarm for each one.</p>
   <ul>
-    <li>Device model and iOS version</li>
-    <li>App version and build number</li>
-    <li>Stack traces at the time of a crash</li>
+    <li>Calendar Scanning is <strong>off by default</strong> — you must turn it on, and you choose which calendars are included.</li>
+    <li>Calendar data is read <strong>entirely on your device</strong>; it is never uploaded, stored outside the app, or shared with third parties.</li>
+    <li>Only the <strong>location text</strong> of a candidate event (e.g. "Grand Central Terminal") is sent to Apple's geocoding service to convert it into map coordinates — the same lookup used when you manually search for an address to drop a pin.</li>
+    <li>Every suggested alarm is reviewed by you before it's added; nothing is created automatically.</li>
   </ul>
-  <p>This information is used solely to identify and fix software defects. It does not include your name, email, or precise location. Google's privacy practices are described at <a href="https://policies.google.com/privacy" target="_blank">policies.google.com/privacy</a>.</p>
+  <p>You can turn Calendar Scanning off at any time in Settings → Calendar Scanning, and revoke calendar access entirely in <em>Settings → Privacy & Security → Calendars → GeoNap</em>.</p>
 
   <h3>Data You Enter</h3>
   <p>Alarm names, locations, radii, and settings you configure are stored <strong>locally on your device</strong> using Apple's SwiftData framework, optionally synced to your personal iCloud account. This data never passes through servers I operate.</p>
@@ -81,8 +86,9 @@
   <p>There are no user accounts, no sign-in, and no advertising in this app.</p>
 
   <h2>3. Third-Party Services</h2>
-  <p>The only third-party SDK integrated into GeoNap is <strong>Firebase Crashlytics</strong> (Google). No analytics, advertising, or social SDKs are included.</p>
+  <p><strong>No third-party analytics, advertising, or crash-reporting SDK is integrated into GeoNap.</strong> Crash and diagnostic logging is handled entirely on-device via Apple's own OSLog framework, as described above.</p>
   <p>GTFS transit schedule data (used for transit feed features) is downloaded directly from public agency sources and is not associated with your identity in any way.</p>
+  <p>If you use Calendar Scanning, a candidate event's location text is sent to <strong>Apple's geocoding service</strong> to resolve it to map coordinates — the same service used for manual address search.</p>
   <p>Apple's iCloud/CloudKit and WatchConnectivity frameworks are used as described above to sync your data across your own devices — I do not have access to this data, and Apple's handling of it is governed by <a href="https://www.apple.com/legal/privacy/" target="_blank">Apple's privacy policy</a>.</p>
 
   <h2>4. Children's Privacy</h2>
@@ -91,14 +97,15 @@
   <h2>5. Your Choices</h2>
   <ul>
     <li><strong>Location access</strong> — you can change location permissions at any time in <em>Settings → Privacy & Security → Location Services → GeoNap</em>. Restricting location access will prevent alarms from triggering in the background.</li>
+    <li><strong>Calendar Scanning</strong> — off by default; turn it on or off at any time in <em>Settings → Calendar Scanning</em>, or revoke calendar access entirely in <em>Settings → Privacy & Security → Calendars → GeoNap</em>.</li>
     <li><strong>iCloud sync</strong> — you can disable iCloud for GeoNap in <em>Settings → [your name] → iCloud → GeoNap</em>. Alarm data, and any Auto-Notify contacts you've added, will remain local only.</li>
     <li><strong>Auto-Notify contacts</strong> — you can remove any contact you've added from an alarm's Auto-Notify list or from Auto-Notify Defaults at any time in the app; removing a contact deletes it from the synced record.</li>
     <li><strong>Apple Watch</strong> — uninstalling GeoNap from your Watch, or unpairing the Watch, stops any further data from being shared with it. You can also turn logging of pairing-status changes off by disabling the debug log (see below).</li>
-    <li><strong>Crash reporting</strong> — crash reports are linked to an anonymous installation ID generated by Firebase. There is no way to associate them with you personally.</li>
+    <li><strong>Crash and diagnostic data</strong> — handled entirely on-device; there is nothing to opt out of within GeoNap itself. You can control what Apple's OS shares with it in <em>Settings → Privacy & Security → Analytics & Improvements</em>.</li>
   </ul>
 
   <h2>6. Data Retention and Deletion</h2>
-  <p>All alarm data, and any Auto-Notify contacts, stored on your device are deleted when you delete the app. Deleting the GeoNap Watch app removes the copy of your alarm data stored in its shared App Group container on that Watch. Crash reports retained by Firebase are subject to Google's standard retention policies.</p>
+  <p>All alarm data, and any Auto-Notify contacts, stored on your device are deleted when you delete the app. Deleting the GeoNap Watch app removes the copy of your alarm data stored in its shared App Group container on that Watch. Crash and diagnostic logging stays on-device and is not retained by me or any third party.</p>
 
   <h2>7. Changes to This Policy</h2>
   <p>If this policy changes materially, the updated version will be posted at this URL with a revised "Last updated" date.</p>

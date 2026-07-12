@@ -429,7 +429,6 @@
 				686A0F1B2FC337E40079F963 /* Sources */,
 				686A0F1C2FC337E40079F963 /* Frameworks */,
 				686A0F1D2FC337E40079F963 /* Resources */,
-				686A0FD02FC3AADC0079F963 /* ShellScript */,
 				685A95FB30031ED000124C21 /* Embed Foundation Extensions */,
 				685A962C3003278C00124C21 /* Embed Watch Content */,
 			);
@@ -637,25 +636,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		686A0FD02FC3AADC0079F963 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"$(SRCROOT)/GeoAlarm/GoogleService-Info.plist",
-			);
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "if [[ \"$SDKROOT\" == *\"simulator\"* ]]; then\n  echo \"Skipping Crashlytics dSYM upload for simulator build\"\n  exit 0\nfi\n\"${BUILD_DIR%Build/*}SourcePackages/checkouts/firebase-ios-sdk/Crashlytics/run\"\n";
-		};
 		689554102FC52E1C007CA05F /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
