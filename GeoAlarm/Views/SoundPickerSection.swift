@@ -140,6 +140,12 @@ struct SoundPickerSection: View {
         .onTapGesture {
             withAnimation(.easeInOut(duration: 0.22)) { isExpanded = true }
         }
+        // See AddAlarmView.swift's activeDaysRow for why this is needed —
+        // a plain HStack (this row uses .onTapGesture, not a Button) doesn't
+        // get its own accessibility node from .accessibilityIdentifier(_:)
+        // alone. `.contain` keeps previewButton individually tappable while
+        // making the row itself queryable/scrollable/tappable as one element.
+        .accessibilityElement(children: .contain)
         .accessibilityIdentifier("soundPickerCollapsedRow")
     }
 
@@ -200,6 +206,8 @@ struct SoundPickerSection: View {
                 player.stop()
                 withAnimation(.easeInOut(duration: 0.22)) { isExpanded = false }
             }
+            // Same reasoning as collapsedRow above.
+            .accessibilityElement(children: .contain)
             .accessibilityIdentifier("soundRow.\(sound.id)")
         }
     }

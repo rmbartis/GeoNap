@@ -116,6 +116,25 @@ final class TierGatingUITests: XCTestCase {
             || app.images[identifier].waitForExistence(timeout: 1)
     }
 
+    /// A Form/Section row built from a plain HStack (rather than a Button or
+    /// Toggle) — e.g. activeDaysRow, soundPickerCollapsedRow, soundRow.* —
+    /// commonly surfaces as XCUIElementTypeCell rather than
+    /// XCUIElementTypeOther once it's inside a Form, especially when it also
+    /// contains a nested interactive Button (the day buttons inside
+    /// activeDaysRow; the preview Button inside soundPickerCollapsedRow/
+    /// soundRow.*). Querying app.otherElements[...] alone for these missed
+    /// every one of them regardless of tier (caught in CI, 2026-07-11/12) —
+    /// same root cause NapStopUITests.languageRow already documented and
+    /// worked around for languageSettingsRow. Fall back through
+    /// button → cell → otherElements rather than assuming one element type.
+    private func formRow(_ identifier: String) -> XCUIElement {
+        let button = app.buttons[identifier]
+        if button.waitForExistence(timeout: 1) { return button }
+        let cell = app.cells[identifier]
+        if cell.waitForExistence(timeout: 1) { return cell }
+        return app.otherElements[identifier]
+    }
+
     // MARK: - Run Shortcut field: visible but disabled below Gold
 
     func test_freeTier_runShortcutFieldVisibleButDisabled() throws {
@@ -218,7 +237,7 @@ final class TierGatingUITests: XCTestCase {
         XCTAssertFalse(repeatToggle.isEnabled, "Repeat requires Silver+.")
         XCTAssertTrue(lockBadgeExists(tier: "silver"))
 
-        let activeDaysRow = app.otherElements["activeDaysRow"]
+        let activeDaysRow = formRow("activeDaysRow")
         XCTAssertTrue(scrollIntoView(activeDaysRow), "Active Days row must still be visible on Standard tier.")
         XCTAssertFalse(activeDaysRow.isEnabled, "Active Days requires Silver+.")
     }
@@ -232,7 +251,7 @@ final class TierGatingUITests: XCTestCase {
         XCTAssertTrue(repeatToggle.isEnabled, "Repeat must be usable at Silver+.")
         XCTAssertFalse(lockBadgeExists(tier: "silver"))
 
-        let activeDaysRow = app.otherElements["activeDaysRow"]
+        let activeDaysRow = formRow("activeDaysRow")
         XCTAssertTrue(scrollIntoView(activeDaysRow))
         XCTAssertTrue(activeDaysRow.isEnabled, "Active Days must be usable at Silver+.")
     }
@@ -333,15 +352,19 @@ final class TierGatingUITests: XCTestCase {
         launch(tier: "Free")
         openAddLocationAlarm()
 
-        let collapsedRow = app.otherElements["soundPickerCollapsedRow"]
+        let collapsedRow = formRow("soundPickerCollapsedRow")
         XCTAssertTrue(scrollIntoView(collapsedRow), "Sound picker must be visible on Free tier.")
         collapsedRow.tap()
 
         // "Boat Horn.wav" is one of the bundled travel sounds — see
         // GeoAlarm/Sounds/. Requires Standard+; system sounds (Vibrate/
         // Default) are always free and not covered here.
-        let boatHornRow = app.otherElements["soundRow.Boat Horn.wav"]
-        XCTAssertTrue(boatHornRow.waitForExistence(timeout: 2), "Bundled sound rows must still be VISIBLE on Free tier — gated, not hidden.")
+        // Expanding the list adds ~10+ new rows below the already-scrolled
+        // position of collapsedRow — a flat waitForExistence(timeout: 2)
+        // isn't enough; this needs the same scroll-into-view retry loop as
+        // every other row in this file (caught in CI, 2026-07-12).
+        let boatHornRow = formRow("soundRow.Boat Horn.wav")
+        XCTAssertTrue(scrollIntoView(boatHornRow), "Bundled sound rows must still be VISIBLE on Free tier — gated, not hidden.")
         XCTAssertTrue(lockBadgeExists(tier: "standard"), "A Standard-required lock badge must appear on locked bundled sound rows.")
     }
 
@@ -349,12 +372,14 @@ final class TierGatingUITests: XCTestCase {
         launch(tier: "Standard")
         openAddLocationAlarm()
 
-        let collapsedRow = app.otherElements["soundPickerCollapsedRow"]
+        let collapsedRow = formRow("soundPickerCollapsedRow")
         XCTAssertTrue(scrollIntoView(collapsedRow))
         collapsedRow.tap()
 
-        let boatHornRow = app.otherElements["soundRow.Boat Horn.wav"]
-        XCTAssertTrue(boatHornRow.waitForExistence(timeout: 2))
+        // See test_freeTier_bundledSoundRowLocked for why this needs
+        // scrollIntoView rather than a flat waitForExistence.
+        let boatHornRow = formRow("soundRow.Boat Horn.wav")
+        XCTAssertTrue(scrollIntoView(boatHornRow))
         boatHornRow.tap()
 
         // Selecting it should collapse the list back to the single summary

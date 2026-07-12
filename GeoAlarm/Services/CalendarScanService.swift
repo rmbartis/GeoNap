@@ -20,7 +20,7 @@ import MapKit
 /// One calendar "account" (e.g. iCloud, a Google account, an Exchange
 /// account) grouping the individual EKCalendars it owns. Used to build the
 /// first-run "select calendars" sheet, grouped by source.
-struct CalendarSourceGroup: Identifiable, Equatable {
+nonisolated struct CalendarSourceGroup: Identifiable, Equatable {
     let id: String                 // EKSource.sourceIdentifier
     let title: String              // EKSource.title
     let sourceTypeRaw: Int         // EKSource.sourceType.rawValue
@@ -44,7 +44,7 @@ struct CalendarSourceGroup: Identifiable, Equatable {
 }
 
 /// A single EKCalendar, reduced to the fields the scan UI needs.
-struct CalendarInfo: Identifiable, Equatable {
+nonisolated struct CalendarInfo: Identifiable, Equatable {
     let id: String          // EKCalendar.calendarIdentifier
     let title: String
     let colorHex: String?
@@ -56,7 +56,7 @@ struct CalendarInfo: Identifiable, Equatable {
 /// resolvable location. Nothing is persisted until the user explicitly adds
 /// it as an alarm from the review sheet — the scan itself never creates
 /// alarms.
-struct CalendarTripCandidate: Identifiable, Equatable, Codable {
+nonisolated struct CalendarTripCandidate: Identifiable, Equatable, Codable {
     /// EKEvent.eventIdentifier, or a generated UUID string for the rare event
     /// that doesn't have one (EventKit marks it optional).
     let id: String
@@ -75,7 +75,7 @@ struct CalendarTripCandidate: Identifiable, Equatable, Codable {
 
 /// Where a candidate's coordinate came from — informational, useful for
 /// logging why a particular event was or wasn't included.
-enum CalendarScanLocationSource: Equatable {
+nonisolated enum CalendarScanLocationSource: Equatable {
     /// Event had `structuredLocation` with its own `CLLocation` — no
     /// geocoding needed, and generally the more trustworthy of the two.
     case structured
@@ -87,7 +87,7 @@ enum CalendarScanLocationSource: Equatable {
 /// pulled into a plain struct so extraction can be unit tested without a
 /// live EventKit store (mirrors the "pure logic only" convention used
 /// elsewhere in this test target).
-struct CalendarEventLocationInput: Equatable {
+nonisolated struct CalendarEventLocationInput: Equatable {
     let structuredLocationTitle: String?
     let structuredLocationLatitude: Double?
     let structuredLocationLongitude: Double?
@@ -107,7 +107,7 @@ struct CalendarEventLocationInput: Equatable {
 /// Result of extracting a usable location from an event. `latitude`/`longitude`
 /// are nil when `source == .geocoded` and geocoding hasn't run yet — the
 /// caller (CalendarScanService.scanForCandidates) resolves it via CLGeocoder.
-struct CalendarExtractedLocation: Equatable {
+nonisolated struct CalendarExtractedLocation: Equatable {
     let title: String
     let latitude: Double?
     let longitude: Double?
@@ -117,7 +117,7 @@ struct CalendarExtractedLocation: Equatable {
 /// Pure, EventKit-free location-extraction logic. Kept as a standalone enum
 /// (rather than a CalendarScanService instance method) so it's trivially
 /// unit testable with no dependency on a live EKEventStore.
-enum CalendarScanLocationExtractor {
+nonisolated enum CalendarScanLocationExtractor {
 
     /// Extracts the best available location from an event, preferring the
     /// geo-tagged `structuredLocation` over the plain-text `location` field.
@@ -156,7 +156,7 @@ protocol CalendarScanGeocoding {
 /// CLGeocoder.geocodeAddressString(_:) was deprecated in iOS 26 in favor of
 /// this. A fresh MKGeocodingRequest per call, matching the "fresh request
 /// per attempt" pattern used for GTFS feed reachability retries.
-struct MapKitGeocoder: CalendarScanGeocoding {
+nonisolated struct MapKitGeocoder: CalendarScanGeocoding {
     func geocode(addressString: String) async -> CLLocationCoordinate2D? {
         guard let request = MKGeocodingRequest(addressString: addressString),
               let mapItems = try? await request.mapItems else { return nil }
@@ -241,14 +241,18 @@ final class CalendarScanService: ObservableObject {
     private static let geocodeMaxRetries = 2
     private static let geocodeRetryDelay: UInt64 = 1_000_000_000 // 1 s
 
-    // `geocoder` defaults to nil (rather than `= MapKitGeocoder()` as a default
-    // parameter value) and is resolved inside the init body instead. Default
-    // parameter expressions are evaluated in a nonisolated context regardless
-    // of the initializer's own actor isolation, and MapKitGeocoder's synthesized
-    // init() is inferred @MainActor (project-wide SWIFT_DEFAULT_ACTOR_ISOLATION),
-    // so using it as a default value produced a "main actor-isolated initializer
-    // called in a synchronous nonisolated context" warning. Building it here
-    // instead — inside this @MainActor init's body — sidesteps that entirely.
+    // `geocoder` defaults to nil and is resolved inside the init body rather
+    // than as a `= MapKitGeocoder()` default parameter expression. This used
+    // to be required: default parameter expressions evaluate in a nonisolated
+    // context regardless of the initializer's own isolation, and
+    // MapKitGeocoder's synthesized init() was inferred @MainActor (project-
+    // wide SWIFT_DEFAULT_ACTOR_ISOLATION), which produced a "main actor-
+    // isolated initializer called in a synchronous nonisolated context"
+    // warning. MapKitGeocoder is now declared `nonisolated` (2026-07-11,
+    // CI-warnings cleanup — see CalendarScanGeocoding/MapKitGeocoder below),
+    // which fixes that at the root; this resolve-in-body structure is no
+    // longer required but is kept as-is since it's still correct and
+    // changing it back has no warning benefit.
     init(store: EKEventStore = EKEventStore(), geocoder: CalendarScanGeocoding? = nil) {
         self.store = store
         self.geocoder = geocoder ?? MapKitGeocoder()

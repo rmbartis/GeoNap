@@ -95,10 +95,29 @@ final class WatchConnectivityManagerTests: XCTestCase {
 
     // MARK: - Session header includes pairing snapshot
 
+    /// DebugLogger.writeSessionHeader() computes the header synchronously but
+    /// performs the actual file write on its own background queue — so
+    /// reading logFileURL immediately after setting `isEnabled = true` races
+    /// that write and intermittently fails with "no such file" (seen in CI:
+    /// the file genuinely doesn't exist yet at read time). Poll with a
+    /// bounded timeout instead of assuming the write has landed.
     func test_sessionHeader_includesWatchPairingLine() throws {
         logger.resetForTesting()
         logger.isEnabled = true // real setter — exercises writeSessionHeader()
-        let logContents = try String(contentsOf: logger.logFileURL, encoding: .utf8)
+
+        let deadline = Date().addingTimeInterval(5)
+        var logContents = ""
+        while Date() < deadline {
+            if let contents = try? String(contentsOf: logger.logFileURL, encoding: .utf8),
+               !contents.isEmpty {
+                logContents = contents
+                break
+            }
+            Thread.sleep(forTimeInterval: 0.05)
+        }
+
+        XCTAssertFalse(logContents.isEmpty,
+                        "Session header was never written to \(logger.logFileURL.path) within the timeout.")
         XCTAssertTrue(logContents.contains("Watch:"),
                       "Session header must include a Watch pairing status line.")
     }

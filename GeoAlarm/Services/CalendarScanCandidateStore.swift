@@ -24,7 +24,7 @@ import Foundation
 
 /// A candidate's location at a point in time, used to detect whether the
 /// underlying calendar event's location changed since it was last handled.
-struct CalendarCandidateLocationSnapshot: Codable, Equatable {
+nonisolated struct CalendarCandidateLocationSnapshot: Codable, Equatable {
     let locationTitle: String
     let latitude: Double
     let longitude: Double
@@ -46,12 +46,12 @@ struct CalendarCandidateLocationSnapshot: Codable, Equatable {
 
 /// What the user did with a candidate, and the location snapshot it had at
 /// that time — the snapshot is what makes re-offer-on-change possible.
-enum CalendarScanCandidateAction: String, Codable {
+nonisolated enum CalendarScanCandidateAction: String, Codable {
     case added
     case declined
 }
 
-struct CalendarScanHandledRecord: Codable, Equatable {
+nonisolated struct CalendarScanHandledRecord: Codable, Equatable {
     let action: CalendarScanCandidateAction
     let snapshot: CalendarCandidateLocationSnapshot
 }
@@ -60,7 +60,7 @@ struct CalendarScanHandledRecord: Codable, Equatable {
 
 /// Combines a fresh scan's results with the existing pending list and handled
 /// records to decide what should actually be shown to the user next.
-enum CalendarScanCandidateMerger {
+nonisolated enum CalendarScanCandidateMerger {
 
     struct Result: Equatable {
         let pending: [CalendarTripCandidate]

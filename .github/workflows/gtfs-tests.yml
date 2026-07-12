@@ -322,6 +322,7 @@ jobs:
           name: ui-test-xcresult
           path: ~/Library/Developer/Xcode/DerivedData/**/Logs/Test/*.xcresult
           retention-days: 14
+          if-no-files-found: ignore
 
   # ──────────────────────────────────────────────────────────────────────────
   # Job 5 — Apple Watch unit tests (every commit)
@@ -417,5 +418,4 @@ jobs:
           name: watch-ui-test-xcresult
           path: ~/Library/Developer/Xcode/DerivedData/**/Logs/Test/*.xcresult
           retention-days: 14
-          if-no-files-found: ignore
           if-no-files-found: ignore

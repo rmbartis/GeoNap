@@ -530,6 +530,17 @@ struct AddAlarmView: View {
                         .buttonStyle(.plain)
                     }
                 }
+                // Plain HStacks don't get their own accessibility node in
+                // SwiftUI just from .accessibilityIdentifier(_:) — unlike a
+                // native control (TextField, Toggle), which always does.
+                // Without .accessibilityElement(children: .contain), this
+                // row was invisible to XCUITest under ANY element type
+                // (button/cell/otherElements all failed) despite genuinely
+                // being on screen — caught in CI, 2026-07-11/12. `.contain`
+                // (not `.combine`) keeps the day-toggle Buttons inside it
+                // individually tappable while making the row itself a
+                // queryable/scrollable element for "activeDaysRow".
+                .accessibilityElement(children: .contain)
                 .accessibilityIdentifier("activeDaysRow")
                 .tierGated(minimumTier: .silver)
                 HStack(spacing: 6) {

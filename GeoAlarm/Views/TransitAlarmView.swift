@@ -616,6 +616,10 @@ struct TransitAlarmView: View {
                         .buttonStyle(.plain)
                     }
                 }
+                // See AddAlarmView.swift's identical Active Days row for why
+                // this is needed — a plain HStack doesn't get its own
+                // accessibility node from .accessibilityIdentifier(_:) alone.
+                .accessibilityElement(children: .contain)
                 .accessibilityIdentifier("activeDaysRow")
                 .tierGated(minimumTier: .silver)
                 HStack(spacing: 6) {
