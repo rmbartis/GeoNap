@@ -51,13 +51,13 @@ enum TriggerMode: String, Codable, CaseIterable, Identifiable {
     }
 
     /// Clamps `requested` to `.distance` if it's `.time` but `tier` doesn't
-    /// allow Time-based alarms (Silver+ — see monetization-tier-pricing
+    /// allow Time-based alarms (Gold+ — see monetization-tier-pricing
     /// memory). Extracted as a pure function (added 2026-07-11) so the
     /// clamp logic used by both AddAlarmView's onAppear default and
     /// TransitAlarmView's @State default has one implementation and one
     /// place to unit test, instead of two inline copies that could drift.
     static func allowed(requested: TriggerMode, tier: AppTier) -> TriggerMode {
-        (requested == .time && tier < .silver) ? .distance : requested
+        (requested == .time && tier < .gold) ? .distance : requested
     }
 }
 
