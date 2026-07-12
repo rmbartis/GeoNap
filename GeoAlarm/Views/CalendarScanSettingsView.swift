@@ -40,6 +40,14 @@ struct CalendarScanSettingsView: View {
     @State private var showReviewSheet = false
     @State private var showNoResultsAlert = false
 
+    /// Set right after auto-disambiguating a name collision in decide(_:for:)
+    /// below, so the review sheet can show the same red-exclamation "look and
+    /// feel" as the manual duplicate-name warning in AddAlarmView/
+    /// TransitAlarmView — just after the fact, since this flow has no name
+    /// field or Save button to gate. Cleared automatically a few seconds
+    /// later by scheduleNoticeClear() (Bob, 2026-07-12).
+    @State private var duplicateRenameNotice: DuplicateRenameNotice? = nil
+
     private var scanMode: CalendarScanMode {
         CalendarScanMode(rawValue: scanModeRaw) ?? .automatic
     }
@@ -191,6 +199,7 @@ struct CalendarScanSettingsView: View {
         .sheet(isPresented: $showReviewSheet) {
             CalendarTripCandidateReviewSheet(
                 candidates: candidates,
+                duplicateRenameNotice: duplicateRenameNotice,
                 onAdd: { candidate in decide(.added, for: candidate) },
                 onDecline: { candidate in decide(.declined, for: candidate) }
             )
@@ -250,7 +259,25 @@ struct CalendarScanSettingsView: View {
                 DebugLogger.shared.log("Calendar Scanning: removing stale alarm '\(stale.name)' before re-adding updated event \(candidate.id)", category: "CalendarScan")
                 alarmManager.delete(alarm: stale)
             }
-            alarmManager.add(alarm: napAlarm(from: candidate))
+
+            // Duplicate-name guard (Bob, 2026-07-12): this flow has no name
+            // field or Save button to disable the way AddAlarmView/
+            // TransitAlarmView do, since accepting a candidate is a single
+            // tap — so instead of blocking, auto-disambiguate with the
+            // event's date and surface a transient notice styled like those
+            // forms' warning, rather than silently creating a same-named
+            // alarm with no feedback at all. See
+            // Array<NapAlarm>.containsName(_:excluding:) for the shared
+            // duplicate check every one of these three call sites uses.
+            let baseName = candidate.title.isEmpty ? candidate.locationTitle : candidate.title
+            var finalName = baseName
+            if alarmManager.alarms.containsName(baseName) {
+                finalName = "\(baseName) (\(Self.disambiguationDateFormatter.string(from: candidate.startDate)))"
+                DebugLogger.shared.log("Calendar Scanning: '\(baseName)' collided with an existing alarm name — saved as '\(finalName)' instead", category: "CalendarScan")
+                duplicateRenameNotice = DuplicateRenameNotice(original: baseName, renamed: finalName)
+                scheduleNoticeClear()
+            }
+            alarmManager.add(alarm: napAlarm(from: candidate, name: finalName))
         }
         let handled = CalendarScanCandidateStore.loadHandled()
         let (updatedPending, updatedHandled) = CalendarScanCandidateMerger.applyDecision(
@@ -261,15 +288,37 @@ struct CalendarScanSettingsView: View {
         candidates = updatedPending
     }
 
+    /// Short "(Jul 15)"-style suffix used to disambiguate a colliding name —
+    /// deliberately terser than CalendarTripCandidateReviewSheet's own
+    /// dateFormatter (medium date + short time), since this is appended
+    /// inline to an alarm name rather than shown as its own label.
+    private static let disambiguationDateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "MMM d"
+        return formatter
+    }()
+
+    /// Clears duplicateRenameNotice a few seconds after it's set — long
+    /// enough to read, short enough not to linger once the user has moved on
+    /// to reviewing other candidates.
+    private func scheduleNoticeClear() {
+        Task {
+            try? await Task.sleep(nanoseconds: 4_000_000_000)
+            duplicateRenameNotice = nil
+        }
+    }
+
     /// Builds a plain-vanilla NapAlarm from a scan candidate — sensible
     /// defaults (200 m radius, on-arrival, non-repeating). The user can edit
     /// any of these afterward from the normal alarm list, same as any other
     /// alarm; there's no separate "calendar alarm" type (mirrors the
     /// isTransitAlarm pattern's decision to feed into the same NapAlarm
-    /// model rather than a parallel one).
-    private func napAlarm(from candidate: CalendarTripCandidate) -> NapAlarm {
+    /// model rather than a parallel one). `name` is passed in rather than
+    /// re-derived here so decide(_:for:) can supply the disambiguated name
+    /// when one was needed.
+    private func napAlarm(from candidate: CalendarTripCandidate, name: String) -> NapAlarm {
         NapAlarm(
-            name: candidate.title.isEmpty ? candidate.locationTitle : candidate.title,
+            name: name,
             latitude: candidate.latitude,
             longitude: candidate.longitude,
             radius: 200,
@@ -404,6 +453,13 @@ private struct CalendarFirstRunSheet: View {
 
 // MARK: - Trip candidate review sheet (Phase 2/3)
 
+/// A one-time "we auto-renamed this to avoid a duplicate" notice — see
+/// CalendarScanSettingsView.decide(_:for:).
+private struct DuplicateRenameNotice {
+    let original: String
+    let renamed: String
+}
+
 /// Lists the trips currently awaiting a decision — found by the most recent
 /// scan, manual or background (Phase 3 persists this list, so it also shows
 /// candidates a background scan found before the user opened this screen).
@@ -418,6 +474,12 @@ private struct CalendarTripCandidateReviewSheet: View {
     /// that change, so the list updates without this view needing its own
     /// copy of the data.
     let candidates: [CalendarTripCandidate]
+    /// Set by the parent right after an auto-disambiguated add — see
+    /// CalendarScanSettingsView.decide(_:for:). Rendered above the list (or
+    /// the empty state) with the same red-exclamation "look and feel" as the
+    /// duplicate-name warning in AddAlarmView/TransitAlarmView, until the
+    /// parent clears it a few seconds later.
+    let duplicateRenameNotice: DuplicateRenameNotice?
     let onAdd: (CalendarTripCandidate) -> Void
     let onDecline: (CalendarTripCandidate) -> Void
 
@@ -433,19 +495,35 @@ private struct CalendarTripCandidateReviewSheet: View {
 
     var body: some View {
         NavigationStack {
-            Group {
-                if candidates.isEmpty {
-                    ContentUnavailableView {
-                        Label {
-                            Text("settings.calendarScan.noResultsTitle", bundle: bundle)
-                        } icon: {
-                            Image(systemName: "calendar.badge.checkmark")
-                        }
+            VStack(spacing: 0) {
+                if let notice = duplicateRenameNotice {
+                    HStack(spacing: 6) {
+                        Image(systemName: "exclamationmark.circle.fill")
+                            .foregroundColor(.red)
+                        Text(String(format: NSLocalizedString("calendarScan.duplicateRenamed", bundle: bundle, comment: ""), notice.original, notice.renamed))
+                            .font(.caption)
+                            .foregroundColor(.red)
+                        Spacer()
                     }
-                } else {
-                    List {
-                        ForEach(candidates) { candidate in
-                            row(for: candidate)
+                    .padding(.horizontal)
+                    .padding(.vertical, 8)
+                    .background(Color(.systemGroupedBackground))
+                }
+
+                Group {
+                    if candidates.isEmpty {
+                        ContentUnavailableView {
+                            Label {
+                                Text("settings.calendarScan.noResultsTitle", bundle: bundle)
+                            } icon: {
+                                Image(systemName: "calendar.badge.checkmark")
+                            }
+                        }
+                    } else {
+                        List {
+                            ForEach(candidates) { candidate in
+                                row(for: candidate)
+                            }
                         }
                     }
                 }

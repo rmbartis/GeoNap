@@ -513,3 +513,27 @@ extension NapAlarm {
         ]
     }
 }
+
+// MARK: - Shared duplicate-name check
+
+extension Array where Element == NapAlarm {
+    /// Case-insensitive, whitespace-trimmed name lookup — the single
+    /// implementation behind every duplicate-name check in the app
+    /// (AlarmViewModel.isDuplicateName, TransitAlarmView.isDuplicateName,
+    /// CalendarScanSettingsView's auto-disambiguation), added 2026-07-12 so
+    /// the exact normalization rule can't drift between call sites the way
+    /// the tier names once did across separate copies of similar logic.
+    /// Two alarms sharing a name are genuinely ambiguous at notification
+    /// time — the fired notification only shows the alarm's name — not just
+    /// a cosmetic collision, so "Work" and " work " count as the same name.
+    /// `excludedID` lets a caller editing an existing alarm skip comparing
+    /// it against itself.
+    func containsName(_ name: String, excluding excludedID: UUID? = nil) -> Bool {
+        let trimmed = name.trimmingCharacters(in: .whitespaces).lowercased()
+        guard !trimmed.isEmpty else { return false }
+        return contains {
+            $0.id != excludedID &&
+            $0.name.trimmingCharacters(in: .whitespaces).lowercased() == trimmed
+        }
+    }
+}

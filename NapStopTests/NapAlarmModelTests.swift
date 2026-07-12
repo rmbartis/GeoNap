@@ -224,4 +224,53 @@ final class SoundRegressionTests: XCTestCase {
 
     // ('audio' background-mode test removed — AlarmKit owns alarm sound now, so
     //  the app no longer needs the audio background mode.)
+
+    // MARK: - Array<NapAlarm>.containsName(_:excluding:)
+    // The single shared duplicate-name check behind AlarmViewModel,
+    // TransitAlarmView, and CalendarScanSettingsView (Bob, 2026-07-12) —
+    // extracted specifically so the exact normalization rule can't drift
+    // between them the way the tier names once did across separate copies
+    // of similar logic.
+
+    func test_containsName_true_forExactMatch() {
+        let alarms = [NapAlarm(name: "Home", latitude: 1, longitude: 1)]
+        XCTAssertTrue(alarms.containsName("Home"))
+    }
+
+    func test_containsName_isCaseInsensitive() {
+        let alarms = [NapAlarm(name: "Home", latitude: 1, longitude: 1)]
+        XCTAssertTrue(alarms.containsName("HOME"))
+        XCTAssertTrue(alarms.containsName("home"))
+    }
+
+    func test_containsName_isWhitespaceTrimmed() {
+        let alarms = [NapAlarm(name: "Home", latitude: 1, longitude: 1)]
+        XCTAssertTrue(alarms.containsName("  Home  "))
+    }
+
+    func test_containsName_false_forDifferentName() {
+        let alarms = [NapAlarm(name: "Home", latitude: 1, longitude: 1)]
+        XCTAssertFalse(alarms.containsName("Work"))
+    }
+
+    func test_containsName_false_forEmptyQuery() {
+        // An empty/placeholder name should never be treated as "matching"
+        // every other alarm — that's the separate empty-name check's job.
+        let alarms = [NapAlarm(name: "Home", latitude: 1, longitude: 1)]
+        XCTAssertFalse(alarms.containsName("   "))
+    }
+
+    func test_containsName_excludesGivenID() {
+        // Editing an alarm without renaming it must not flag it as a
+        // duplicate of itself.
+        let home = NapAlarm(name: "Home", latitude: 1, longitude: 1)
+        XCTAssertFalse([home].containsName("Home", excluding: home.id))
+    }
+
+    func test_containsName_excludingID_stillMatchesOtherAlarms() {
+        let home  = NapAlarm(name: "Home", latitude: 1, longitude: 1)
+        let other = NapAlarm(name: "Home", latitude: 2, longitude: 2)
+        XCTAssertTrue([home, other].containsName("Home", excluding: home.id),
+            "Excluding one alarm's ID must not suppress a genuine duplicate from a DIFFERENT alarm")
+    }
 }

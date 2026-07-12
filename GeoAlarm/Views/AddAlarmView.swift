@@ -111,6 +111,17 @@ struct AddAlarmView: View {
             Section {
                 TextField(NSLocalizedString("Name (e.g. Penn Station)", bundle: bundle, comment: ""), text: $viewModel.name)
                     .autocorrectionDisabled()
+                    .accessibilityIdentifier("alarmNameField")
+                if viewModel.isDuplicateName {
+                    HStack(spacing: 6) {
+                        Image(systemName: "exclamationmark.circle.fill")
+                            .foregroundColor(.red)
+                        Text("An alarm with this name already exists. Choose a different name.", bundle: bundle)
+                            .font(.caption)
+                            .foregroundColor(.red)
+                    }
+                    .accessibilityIdentifier("duplicateNameWarning")
+                }
                 TextField(NSLocalizedString("Note (shown in notification)", bundle: bundle, comment: ""), text: $viewModel.note)
             } header: {
                 Text("Alarm Details", bundle: bundle)
@@ -739,12 +750,21 @@ struct AddAlarmView: View {
                 // Pre-fill the coordinate entry fields with the alarm's location
                 coordLatEntry = CoordinateParser.format(latitude:  alarm.latitude,  format: coordFormat)
                 coordLonEntry = CoordinateParser.format(longitude: alarm.longitude, format: coordFormat)
+                // Duplicate-name check needs the exclusion set rebuilt every
+                // time too (load(alarm:) above isn't didInitNewAlarm-guarded),
+                // otherwise editing this alarm without renaming it would flag
+                // itself as a duplicate of... itself.
+                viewModel.refreshOtherAlarmNames(from: alarmManager.alarms)
             } else if !didInitNewAlarm {
                 // New alarm: start clean and default the centre to the user's
                 // CURRENT location so "set an alarm here, then leave" works as
                 // expected. Runs once so returning from a sub-sheet won't wipe input.
                 didInitNewAlarm = true
                 viewModel.reset()
+                // Snapshot of every other alarm's name, so isDuplicateName can
+                // warn in real time as the user types and disable Save until
+                // the name is unique — see AlarmViewModel.refreshOtherAlarmNames.
+                viewModel.refreshOtherAlarmNames(from: alarmManager.alarms)
                 // Honor the Settings default for the trigger input mode on new
                 // alarms — clamped to Distance if the tier doesn't allow Time
                 // (Gold+ only). See TriggerMode.allowed(requested:tier:).

@@ -38,6 +38,11 @@ struct TransitAlarmView: View {
     var onCancel: () -> Void
 
     @EnvironmentObject var locationManager: LocationManager
+    // Needed for the duplicate-name check below — TransitAlarmView only ever
+    // creates NEW alarms (no edit mode, unlike AddAlarmView), so unlike
+    // AlarmViewModel.isDuplicateName there's no "exclude the alarm being
+    // edited" case to handle here.
+    @EnvironmentObject var alarmManager: AlarmManager
     @Environment(\.languageBundle) private var bundle
 
     #if DEBUG
@@ -132,6 +137,15 @@ struct TransitAlarmView: View {
     /// and `saveAlarm()` (Bob, 2026-07-04).
     private var hasAutoNotifyWithNoContacts: Bool {
         notifyContact && notifyContactList.isEmpty
+    }
+
+    /// True when the entered name (trimmed + lowercased) matches an existing
+    /// alarm. Mirrors `AlarmViewModel.isDuplicateName` — same reasoning
+    /// (two alarms sharing a name are ambiguous at notification time), but
+    /// with no "exclude the one being edited" case since this view only
+    /// ever creates new alarms.
+    private var isDuplicateName: Bool {
+        alarmManager.alarms.containsName(alarmName)
     }
 
     @StateObject private var service = GTFSService()
@@ -418,6 +432,17 @@ struct TransitAlarmView: View {
                 TextField(NSLocalizedString("Name (e.g. Penn Station)", bundle: bundle, comment: ""),
                           text: $alarmName)
                     .autocorrectionDisabled()
+                    .accessibilityIdentifier("alarmNameField")
+                if isDuplicateName {
+                    HStack(spacing: 6) {
+                        Image(systemName: "exclamationmark.circle.fill")
+                            .foregroundColor(.red)
+                        Text("An alarm with this name already exists. Choose a different name.", bundle: bundle)
+                            .font(.caption)
+                            .foregroundColor(.red)
+                    }
+                    .accessibilityIdentifier("duplicateNameWarning")
+                }
                 TextField(NSLocalizedString("Note (shown in notification)", bundle: bundle, comment: ""),
                           text: $note)
             } header: {
@@ -738,7 +763,8 @@ struct TransitAlarmView: View {
                         .frame(maxWidth: .infinity)
                 }
                 .disabled(alarmName.trimmingCharacters(in: .whitespaces).isEmpty
-                          || hasAutoNotifyWithNoContacts)
+                          || hasAutoNotifyWithNoContacts
+                          || isDuplicateName)
             }
         }
     }
@@ -909,6 +935,7 @@ struct TransitAlarmView: View {
         // disabled in this state, but guard the actual save too (mirrors
         // AlarmViewModel.buildAlarm()'s hard block; Bob, 2026-07-04).
         guard !hasAutoNotifyWithNoContacts else { return }
+        guard !isDuplicateName else { return }
         let alarm = NapAlarm(
             name: alarmName.trimmingCharacters(in: .whitespaces),
             latitude: stop.latitude,

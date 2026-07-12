@@ -180,6 +180,95 @@ final class AlarmViewModelTests: XCTestCase {
         XCTAssertNil(sut.validationError)
     }
 
+    // MARK: - Duplicate name guard (isDuplicateName / refreshOtherAlarmNames)
+    // Two alarms sharing a name are ambiguous at notification time (the fired
+    // notification only shows the alarm's name), so — like the Auto-Notify
+    // guard above — this has to block both isValid (real-time Save/Update
+    // disable) and buildAlarm() (hard block with validationError), not just
+    // one or the other (Bob, 2026-07-12).
+
+    func test_isDuplicateName_false_beforeRefresh() {
+        // Without calling refreshOtherAlarmNames(from:), there's nothing to
+        // compare against — a fresh AlarmViewModel must never report a
+        // duplicate it was never told about.
+        sut.name = "Home"
+        XCTAssertFalse(sut.isDuplicateName)
+    }
+
+    func test_isDuplicateName_true_whenNameMatchesExistingAlarm() {
+        let existing = NapAlarm(name: "Home", latitude: 1, longitude: 1)
+        sut.refreshOtherAlarmNames(from: [existing])
+        sut.name = "Home"
+        XCTAssertTrue(sut.isDuplicateName)
+    }
+
+    func test_isDuplicateName_isCaseInsensitiveAndTrimmed() {
+        let existing = NapAlarm(name: "Home", latitude: 1, longitude: 1)
+        sut.refreshOtherAlarmNames(from: [existing])
+        sut.name = "  HOME  "
+        XCTAssertTrue(sut.isDuplicateName,
+            "Name comparison must ignore case and surrounding whitespace")
+    }
+
+    func test_isDuplicateName_false_whenNameIsUnique() {
+        let existing = NapAlarm(name: "Home", latitude: 1, longitude: 1)
+        sut.refreshOtherAlarmNames(from: [existing])
+        sut.name = "Work"
+        XCTAssertFalse(sut.isDuplicateName)
+    }
+
+    func test_isDuplicateName_false_whenNameEmpty() {
+        // Empty names are the separate empty-name check's job, not flagged
+        // here as a "duplicate" of every other alarm with a placeholder name.
+        let existing = NapAlarm(name: "Home", latitude: 1, longitude: 1)
+        sut.refreshOtherAlarmNames(from: [existing])
+        sut.name = "   "
+        XCTAssertFalse(sut.isDuplicateName)
+    }
+
+    func test_isDuplicateName_false_whenEditingTheSameAlarm() {
+        // Editing an alarm without renaming it must not flag it as a
+        // duplicate of itself.
+        let existing = NapAlarm(name: "Home", latitude: 1, longitude: 1)
+        sut.load(alarm: existing)
+        sut.refreshOtherAlarmNames(from: [existing])
+        XCTAssertFalse(sut.isDuplicateName)
+    }
+
+    func test_isDuplicateName_true_whenEditingCollidesWithAnotherAlarm() {
+        let existing  = NapAlarm(name: "Home", latitude: 1, longitude: 1)
+        let otherOne  = NapAlarm(name: "Work", latitude: 2, longitude: 2)
+        sut.load(alarm: existing)
+        sut.refreshOtherAlarmNames(from: [existing, otherOne])
+        sut.name = "Work"
+        XCTAssertTrue(sut.isDuplicateName,
+            "Renaming the alarm being edited to match a DIFFERENT existing alarm must still be caught")
+    }
+
+    func test_isValid_false_whenNameIsDuplicate() {
+        let existing = NapAlarm(name: "Home", latitude: 1, longitude: 1)
+        sut.refreshOtherAlarmNames(from: [existing])
+        sut.name      = "Home"
+        sut.latitude  = 37.7749
+        sut.longitude = -122.4194
+        sut.radius    = 250
+        XCTAssertFalse(sut.isValid,
+            "Save/Update must be disabled while the name duplicates an existing alarm")
+    }
+
+    func test_buildAlarm_returnsNil_andSetsError_whenNameIsDuplicate() {
+        let existing = NapAlarm(name: "Home", latitude: 1, longitude: 1)
+        sut.refreshOtherAlarmNames(from: [existing])
+        sut.name      = "Home"
+        sut.latitude  = 37.7749
+        sut.longitude = -122.4194
+        sut.radius    = 250
+
+        let alarm = sut.buildAlarm()
+        XCTAssertNil(alarm)
+        XCTAssertNotNil(sut.validationError)
+    }
+
     // MARK: - load (edit mode)
 
     func test_load_populatesFields() {

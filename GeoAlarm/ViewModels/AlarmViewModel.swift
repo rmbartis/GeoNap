@@ -72,12 +72,38 @@ final class AlarmViewModel: ObservableObject {
     // MARK: - Validation
     @Published private(set) var validationError: String?
 
+    /// Snapshot of every OTHER alarm (excluding the one being edited, if
+    /// any), taken via refreshOtherAlarmNames(from:) when the form appears.
+    /// Deliberately a point-in-time snapshot rather than a live binding to
+    /// AlarmManager — nothing else can create an alarm while this form is
+    /// open, so it only needs to be captured once; isDuplicateName below
+    /// re-evaluates live against it on every keystroke since `name` is
+    /// @Published.
+    private var otherAlarms: [NapAlarm] = []
+
+    /// Populates otherAlarms from the full alarm list, excluding the alarm
+    /// currently being edited (if any) so editing an alarm without renaming
+    /// it doesn't flag itself as a duplicate of itself.
+    func refreshOtherAlarmNames(from alarms: [NapAlarm]) {
+        otherAlarms = alarms.filter { $0.id != editingID }
+    }
+
+    /// True when the entered name matches an existing alarm other than the
+    /// one being edited. See Array<NapAlarm>.containsName(_:excluding:) —
+    /// the shared normalization every duplicate-name check in the app uses.
+    /// Empty names are handled by the separate empty-name check, not flagged
+    /// here as a "duplicate" of every other alarm with a placeholder-empty name.
+    var isDuplicateName: Bool {
+        otherAlarms.containsName(name)
+    }
+
     var isValid: Bool {
         !name.trimmingCharacters(in: .whitespaces).isEmpty &&
         radius.rounded() >= 200 &&         // round to avoid imperial unit conversion drift (655 ft = 199.64 m)
         (latitude != 0 || longitude != 0) &&
         CLLocationCoordinate2DIsValid(CLLocationCoordinate2D(latitude: latitude, longitude: longitude)) &&
-        !hasAutoNotifyWithNoContacts
+        !hasAutoNotifyWithNoContacts &&
+        !isDuplicateName
     }
 
     /// True when Auto-Notify is toggled on but there's nobody to notify — the
@@ -145,6 +171,10 @@ final class AlarmViewModel: ObservableObject {
         let trimmedName = name.trimmingCharacters(in: .whitespaces)
         guard !trimmedName.isEmpty else {
             validationError = "Please enter a name for this alarm."
+            return nil
+        }
+        guard !isDuplicateName else {
+            validationError = "An alarm named \"\(trimmedName)\" already exists. Please use a different name."
             return nil
         }
         guard radius.rounded() >= 200 else {
