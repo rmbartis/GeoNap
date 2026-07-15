@@ -129,10 +129,13 @@ enum CuratedFeeds {
         ),
         CuratedFeed(
             name: "PATH",
-            region: "USA · New York",
-            // Port Authority Trans-Hudson (NY ⇄ NJ). PANYNJ has no stable keyless
-            // direct ZIP, so we use the freely accessible Trillium-hosted mirror
-            // (no API key / registration). Verified June 2026.
+            region: "USA · New York / New Jersey",
+            // Port Authority Trans-Hudson (NY ⇄ NJ). Half the system — Hoboken,
+            // Journal Square, Grove Street, Harrison, Newark — is in New Jersey,
+            // not just Manhattan/NY, so the region label needs to say both.
+            // PANYNJ has no stable keyless direct ZIP, so we use the freely
+            // accessible Trillium-hosted mirror (no API key / registration).
+            // Verified June 2026.
             // NOTE: NJ Transit rail/bus still omitted — see header (account login).
             feedURL: "https://data.trilliumtransit.com/gtfs/path-nj-us/path-nj-us.zip",
             routeTypes: "Rapid Transit · Rail"
