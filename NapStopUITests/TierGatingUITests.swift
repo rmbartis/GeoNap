@@ -226,7 +226,19 @@ final class TierGatingUITests: XCTestCase {
         XCTAssertFalse(lockBadgeExists(tier: "silver"))
     }
 
-    // MARK: - Repeat toggle + Active Days: Silver disabled, Gold+ enabled
+    // MARK: - Repeat toggle + Active Days
+    //
+    // Active Days has TWO independent gates that must BOTH pass before it's
+    // interactable: the Gold+ tier gate (shared with Repeat), and — added
+    // 2026-07-23 per Bob ("Active Days should only be enabled if Repeat is
+    // on; right now it's enabled even with Repeat off, which makes no
+    // sense") — the Repeat toggle's own on/off state. Reaching Gold tier
+    // alone used to be sufficient to interact with Active Days even with
+    // Repeat off; a day-of-week restriction is meaningless for a one-shot
+    // (non-repeating) alarm, so that was a bug, not a feature. See
+    // TierGatedModifier.swift's `enabledIf` parameter for how the two gates
+    // combine without one silently overriding the other, and
+    // TransitAlarmView.swift / AddAlarmView.swift for the call sites.
 
     func test_silverTier_repeatAndActiveDaysDisabled() throws {
         launch(tier: "Silver")
@@ -239,10 +251,13 @@ final class TierGatingUITests: XCTestCase {
 
         let activeDaysRow = formRow("activeDaysRow")
         XCTAssertTrue(scrollIntoView(activeDaysRow), "Active Days row must still be visible on Silver tier.")
-        XCTAssertFalse(activeDaysRow.isEnabled, "Active Days requires Gold+.")
+        XCTAssertFalse(activeDaysRow.isEnabled, "Active Days requires Gold+ regardless of Repeat state.")
     }
 
-    func test_goldTier_repeatAndActiveDaysEnabled() throws {
+    func test_goldTier_repeatOff_activeDaysStillDisabled() throws {
+        // Reaching Gold clears the TIER gate, but Repeat defaults to off —
+        // Active Days must stay disabled until Repeat is explicitly turned
+        // on. This is the exact regression Bob reported.
         launch(tier: "Gold")
         openAddLocationAlarm()
 
@@ -253,7 +268,42 @@ final class TierGatingUITests: XCTestCase {
 
         let activeDaysRow = formRow("activeDaysRow")
         XCTAssertTrue(scrollIntoView(activeDaysRow))
-        XCTAssertTrue(activeDaysRow.isEnabled, "Active Days must be usable at Gold+.")
+        XCTAssertFalse(activeDaysRow.isEnabled, "Active Days must stay disabled while Repeat is off, even at Gold+ tier — a day-of-week restriction is meaningless for a one-shot alarm.")
+    }
+
+    func test_goldTier_repeatOn_activeDaysEnabled() throws {
+        launch(tier: "Gold")
+        openAddLocationAlarm()
+
+        let repeatToggle = app.switches["repeatToggle"]
+        XCTAssertTrue(scrollIntoView(repeatToggle))
+        XCTAssertTrue(repeatToggle.isEnabled, "Repeat must be usable at Gold+.")
+        repeatToggle.tap()
+
+        let activeDaysRow = formRow("activeDaysRow")
+        XCTAssertTrue(scrollIntoView(activeDaysRow))
+        XCTAssertTrue(activeDaysRow.isEnabled, "Active Days must become enabled once Repeat is turned on at Gold+.")
+    }
+
+    func test_goldTier_activeDays_redisablesWhenRepeatToggledBackOff() throws {
+        // Round-trip: turning Repeat back off must re-disable Active Days
+        // immediately, not just leave it enabled from when Repeat was
+        // briefly on.
+        launch(tier: "Gold")
+        openAddLocationAlarm()
+
+        let repeatToggle = app.switches["repeatToggle"]
+        XCTAssertTrue(scrollIntoView(repeatToggle))
+        repeatToggle.tap()
+
+        let activeDaysRow = formRow("activeDaysRow")
+        XCTAssertTrue(scrollIntoView(activeDaysRow))
+        XCTAssertTrue(activeDaysRow.isEnabled, "Active Days must be enabled while Repeat is on.")
+
+        XCTAssertTrue(scrollIntoView(repeatToggle))
+        repeatToggle.tap()
+
+        XCTAssertFalse(activeDaysRow.isEnabled, "Active Days must re-disable immediately when Repeat is turned back off.")
     }
 
     // MARK: - Dead Reckoning on Signal Loss: Gold disabled, Platinum enabled

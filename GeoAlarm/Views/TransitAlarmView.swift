@@ -657,7 +657,12 @@ struct TransitAlarmView: View {
                 // accessibility node from .accessibilityIdentifier(_:) alone.
                 .accessibilityElement(children: .contain)
                 .accessibilityIdentifier("activeDaysRow")
-                .tierGated(minimumTier: .gold)
+                // Active Days only means anything for a repeating alarm, so
+                // it stays visible-but-disabled (same pattern as tier gating)
+                // whenever Repeat is off, on top of the existing Gold+ tier
+                // gate. See TierGatedModifier.swift's `enabledIf` doc for why
+                // this can't just be a separate .disabled(!isRepeating).
+                .tierGated(minimumTier: .gold, enabledIf: isRepeating)
                 HStack(spacing: 6) {
                     Image(systemName: activeDays == Set(1...7) ? "checkmark.circle" : "calendar")
                         .foregroundColor(activeDays == Set(1...7) ? .green : .accentColor)
@@ -665,8 +670,11 @@ struct TransitAlarmView: View {
                 }
                 .font(.caption)
                 .foregroundColor(.secondary)
+                .opacity(isRepeating ? 1.0 : 0.5)
             } header: {
                 Text("Active Days", bundle: bundle)
+            } footer: {
+                Text("activeDays.repeatRequired", bundle: bundle)
             }
 
             // MARK: Auto-Notify Contacts
@@ -858,6 +866,12 @@ struct TransitAlarmView: View {
     }
 
     private func toggleDay(_ weekday: Int) {
+        // Active Days only means anything for a repeating alarm — the day
+        // buttons are disabled in the UI while Repeat is off (see the
+        // .tierGated(enabledIf: isRepeating) below), but guard here too so
+        // a stray tap (e.g. from an accessibility action that bypasses the
+        // disabled state) can't silently mutate activeDays anyway.
+        guard isRepeating else { return }
         if activeDays.contains(weekday) {
             guard activeDays.count > 1 else { return }
             activeDays.remove(weekday)

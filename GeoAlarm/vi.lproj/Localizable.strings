@@ -40,6 +40,7 @@
 "From" = "Từ";
 "Until" = "Đến";
 "Active Days" = "Ngày hoạt động";
+"activeDays.repeatRequired" = "Yêu cầu bật Lặp lại.";
 "Every day" = "Mỗi ngày";
 "Weekdays only" = "Chỉ ngày trong tuần";
 "Weekends only" = "Chỉ cuối tuần";
@@ -234,7 +235,8 @@ Nút Lưu bị tắt cho đến khi nhập tên và ghim vị trí. iOS cho phé
 
 "help.body.radius" = "Bán kính xác định vùng địa lý — ranh giới hình tròn quanh ghim của bạn. Khi bạn vượt qua ranh giới đó (vào hoặc ra), báo thức kêu.\n\nBán kính 200 m phù hợp cho một ga hoặc tòa nhà. Dùng 500–1000 m cho các mốc rộng hơn như trung tâm thành phố hoặc khu vực sân bay, giúp bạn có thêm thời gian chuẩn bị trước khi đến.\n\nBạn có thể chuyển đổi giữa mét/kilômét và feet/dặm trong Cài đặt.";
 
-"help.body.repeat" = "Báo thức một lần kêu một lần và ở trạng thái đã kích hoạt cho đến khi bạn bật lại thủ công. Hữu ích cho một chuyến đi đơn lẻ hoặc nhắc nhở một lần.\n\nBáo thức lặp lại tự động đặt lại sau khi bạn rời vùng, vì vậy sẽ kêu lại vào lần tiếp theo bạn đi qua cùng vị trí đó. Hoàn hảo cho người đi lại hàng ngày.";
+"help.body.repeat" = "Báo thức một lần kêu một lần và ở trạng thái đã kích hoạt cho đến khi bạn bật lại thủ công. Hữu ích cho một chuyến đi đơn lẻ hoặc nhắc nhở một lần.\n\nBáo thức lặp lại tự động đặt lại sau khi bạn rời vùng, vì vậy sẽ kêu lại vào lần tiếp theo bạn đi qua cùng vị trí đó. Hoàn hảo cho người đi lại hàng ngày.\n\nNgày hoạt động (bên dưới) chỉ hoạt động với báo thức lặp lại — hãy bật Lặp lại trước để giới hạn những ngày báo thức có thể kêu.";
+"help.body.activeDays" = "Ngày hoạt động cho phép báo thức lặp lại chỉ kêu vào những ngày bạn chọn — ví dụ chỉ ngày trong tuần cho việc đi làm hàng ngày. Tính năng này chỉ áp dụng cho báo thức lặp lại: hãy bật Lặp lại trước, sau đó chọn ngày. Khi Lặp lại đang tắt, bộ chọn ngày sẽ bị vô hiệu hóa và báo thức sẽ kêu mọi ngày khi đang hoạt động.";
 
 "help.body.timeWindow" = "Khung thời gian giới hạn khi nào báo thức được phép kêu. Ví dụ, khung 07:00–09:00 nghĩa là báo thức chỉ kích hoạt trong giờ đi làm buổi sáng của bạn.\n\nNhãn tóm tắt bên dưới bộ chọn hiển thị chính xác khung thời gian dài bao lâu, ví dụ \"Hoạt động 2 giờ · 7:00 – 9:00\".\n\nKhung thời gian qua đêm được hỗ trợ (ví dụ 22:00–06:00). Khi giờ Từ muộn hơn Đến, báo thức hoạt động qua nửa đêm đến sáng hôm sau. Tóm tắt chuyển màu cam và hiển thị \"ngày hôm sau\" nhắc nhở.";
 

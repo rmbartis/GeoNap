@@ -97,34 +97,121 @@ final class TimeWindowTests: XCTestCase {
     }
 
     // MARK: Day-of-week filter
+    //
+    // The day-of-week filter only applies to REPEATING alarms (see
+    // NapAlarm.isWithinWindow) — Active Days is meaningless, and disabled in
+    // the UI, for a one-shot alarm. Every test below sets isRepeating = true
+    // explicitly so it's actually exercising the filter under test, rather
+    // than accidentally passing because the filter is skipped entirely.
+    // See the "Repeat off ignores stale Active Days" section further down
+    // for the isRepeating == false side of this.
 
     func test_activeDayFilter_blocksAlarmOnWrongDay() {
         let alarm = makeAlarm()
         alarm.hasTimeWindow = false
+        alarm.isRepeating = true
         // Monday only (weekday 2)
         alarm.activeDays = [2]
         // Feed a Sunday (weekday 1)
         let sunday = weekday(1)
         XCTAssertFalse(alarm.isWithinWindow(at: sunday),
-                       "Alarm restricted to Monday must not fire on Sunday")
+                       "Repeating alarm restricted to Monday must not fire on Sunday")
     }
 
     func test_activeDayFilter_allowsAlarmOnCorrectDay() {
         let alarm = makeAlarm()
         alarm.hasTimeWindow = false
+        alarm.isRepeating = true
         alarm.activeDays = [2]   // Monday only
         let monday = weekday(2)
         XCTAssertTrue(alarm.isWithinWindow(at: monday),
-                      "Alarm restricted to Monday must fire on Monday")
+                      "Repeating alarm restricted to Monday must fire on Monday")
     }
 
     func test_everyDay_alwaysAllowed() {
         let alarm = makeAlarm()
         alarm.hasTimeWindow = false
+        alarm.isRepeating = true
         alarm.activeDaysRaw = 127   // all days
         for wd in 1...7 {
             XCTAssertTrue(alarm.isWithinWindow(at: weekday(wd)),
-                          "All-day alarm must fire on weekday \(wd)")
+                          "All-day repeating alarm must fire on weekday \(wd)")
+        }
+    }
+
+    // MARK: Repeat off ignores stale Active Days
+    //
+    // Reproduces the exact scenario Bob described: turn Repeat on, restrict
+    // Active Days to specific weekdays, then turn Repeat back off. The
+    // activeDaysRaw bitmask is NOT reset just because the UI control that
+    // set it became disabled — nothing currently clears it on the
+    // NapAlarm/AlarmViewModel side (see AlarmViewModelFieldTests's
+    // test_buildAlarm_preserves_activeDays, which deliberately allows
+    // activeDays to be set independent of isRepeating at the model layer).
+    // So the firing-time guard in isWithinWindow is what actually has to
+    // make the stale restriction inert.
+
+    func test_repeatDisabledAfterSettingActiveDays_ignoresStaleRestriction() {
+        let alarm = makeAlarm()
+        alarm.hasTimeWindow = false
+        // Simulate: Repeat was on, user picked Monday only, then Repeat was
+        // turned back off — activeDays is left restricted on the model.
+        alarm.isRepeating = true
+        alarm.activeDays = [2]   // Monday only
+        alarm.isRepeating = false
+
+        // A wrong day (Sunday) must now fire anyway, since Active Days no
+        // longer applies once the alarm isn't repeating.
+        let sunday = weekday(1)
+        XCTAssertTrue(alarm.isWithinWindow(at: sunday),
+                      "Once Repeat is off, a stale Active Days restriction must be ignored — the alarm must fire on any day")
+    }
+
+    func test_repeatDisabledAfterSettingActiveDays_firesOnEveryWeekday() {
+        let alarm = makeAlarm()
+        alarm.hasTimeWindow = false
+        alarm.isRepeating = true
+        alarm.activeDays = Set(2...6)   // weekdays only
+        alarm.isRepeating = false
+
+        for wd in 1...7 {
+            XCTAssertTrue(alarm.isWithinWindow(at: weekday(wd)),
+                          "Non-repeating alarm must fire on weekday \(wd) regardless of a stale weekdays-only Active Days restriction")
+        }
+    }
+
+    func test_reEnablingRepeat_reappliesStaleActiveDaysRestriction() {
+        // The inverse: turning Repeat back ON must reinstate whatever
+        // Active Days restriction was already stored — it's not cleared by
+        // being temporarily inert, only by being inapplicable.
+        let alarm = makeAlarm()
+        alarm.hasTimeWindow = false
+        alarm.isRepeating = true
+        alarm.activeDays = [2]   // Monday only
+        alarm.isRepeating = false
+        XCTAssertTrue(alarm.isWithinWindow(at: weekday(1)), "Sanity check: Sunday must fire while Repeat is off")
+
+        alarm.isRepeating = true
+        XCTAssertFalse(alarm.isWithinWindow(at: weekday(1)),
+                       "Re-enabling Repeat must reinstate the stored Monday-only restriction — Sunday must no longer fire")
+        XCTAssertTrue(alarm.isWithinWindow(at: weekday(2)),
+                      "Re-enabling Repeat must still allow Monday, the previously-selected day")
+    }
+
+    func test_neverRepeating_customActiveDays_alwaysIgnored() {
+        // A non-repeating alarm that never had Repeat turned on at all
+        // (activeDays set directly, isRepeating left at its default false)
+        // must behave identically to one that had Repeat toggled off —
+        // Active Days is inert whenever isRepeating is false, regardless of
+        // how it got that way.
+        let alarm = makeAlarm()
+        alarm.hasTimeWindow = false
+        alarm.activeDays = [2]   // Monday only; isRepeating stays false (default)
+        XCTAssertFalse(alarm.isRepeating, "Sanity check: NapAlarm defaults to non-repeating")
+
+        for wd in 1...7 {
+            XCTAssertTrue(alarm.isWithinWindow(at: weekday(wd)),
+                          "Non-repeating alarm must fire on weekday \(wd) — Active Days never applies without Repeat")
         }
     }
 
@@ -132,6 +219,7 @@ final class TimeWindowTests: XCTestCase {
 
     func test_combined_correctDay_inWindow_returnsTrue() {
         let alarm = windowAlarm(startH: 7, startM: 0, endH: 9, endM: 0)
+        alarm.isRepeating = true
         // Weekdays only (Mon–Fri = 2–6)
         alarm.activeDays = Set(2...6)
         let tuesday8am = weekdayAtTime(weekday: 3, h: 8, m: 0)
@@ -140,6 +228,7 @@ final class TimeWindowTests: XCTestCase {
 
     func test_combined_correctDay_outsideWindow_returnsFalse() {
         let alarm = windowAlarm(startH: 7, startM: 0, endH: 9, endM: 0)
+        alarm.isRepeating = true
         alarm.activeDays = Set(2...6)
         let tuesday11am = weekdayAtTime(weekday: 3, h: 11, m: 0)
         XCTAssertFalse(alarm.isWithinWindow(at: tuesday11am))
@@ -147,9 +236,22 @@ final class TimeWindowTests: XCTestCase {
 
     func test_combined_wrongDay_inWindow_returnsFalse() {
         let alarm = windowAlarm(startH: 7, startM: 0, endH: 9, endM: 0)
+        alarm.isRepeating = true
         alarm.activeDays = Set(2...6)   // weekdays only
         let saturday8am = weekdayAtTime(weekday: 7, h: 8, m: 0)
         XCTAssertFalse(alarm.isWithinWindow(at: saturday8am))
+    }
+
+    func test_combined_nonRepeating_wrongDayButInWindow_stillFires() {
+        // Time window still applies independently of Repeat — only the
+        // day-of-week half of the combined check is gated on isRepeating.
+        let alarm = windowAlarm(startH: 7, startM: 0, endH: 9, endM: 0)
+        alarm.isRepeating = true
+        alarm.activeDays = Set(2...6)   // weekdays only
+        alarm.isRepeating = false
+        let saturday8am = weekdayAtTime(weekday: 7, h: 8, m: 0)
+        XCTAssertTrue(alarm.isWithinWindow(at: saturday8am),
+                      "Non-repeating alarm must fire on Saturday, inside its time window, ignoring the stale weekdays-only Active Days restriction")
     }
 
     // MARK: - Helpers

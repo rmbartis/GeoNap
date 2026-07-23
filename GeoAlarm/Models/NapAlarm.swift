@@ -336,8 +336,20 @@ final class NapAlarm {
     func isWithinWindow(at date: Date = Date()) -> Bool {
         let cal = Calendar.current
 
-        // Day-of-week check (weekday: 1 = Sun … 7 = Sat)
-        if !isEveryDay {
+        // Day-of-week check (weekday: 1 = Sun … 7 = Sat).
+        // Only applies to REPEATING alarms — Active Days is disabled in the
+        // UI whenever Repeat is off (AddAlarmView.swift / TransitAlarmView.swift,
+        // see TierGatedModifier's `enabledIf`), but the underlying
+        // activeDaysRaw bitmask isn't reset just because the control got
+        // disabled: a user can turn Repeat on, restrict to e.g. weekdays,
+        // then turn Repeat back off, leaving that restriction stored on the
+        // alarm even though it's no longer visible or editable. Without this
+        // `isRepeating` guard, a one-shot alarm created that way would
+        // silently fail to fire on the "wrong" day — worse, invisibly so,
+        // since the UI shows no active restriction once Repeat is off.
+        // (Bob, 2026-07-23: "does this mean [Active Days are] ignored during
+        // alarm firing evaluation? They should be.")
+        if isRepeating && !isEveryDay {
             let weekday = cal.component(.weekday, from: date)
             guard activeDays.contains(weekday) else { return false }
         }

@@ -14,6 +14,20 @@
 // get real per-tier gates, apply `.tierGated(minimumTier:)` to them too
 // rather than inventing a second pattern.
 //
+// Extended 2026-07-22 with an `enabledIf` parameter so a control can be
+// gated on BOTH tier entitlement AND an in-form condition without stacking a
+// second, independent `.disabled(_:)` next to this modifier. Two chained
+// `.disabled(_:)` calls don't AND together the way you'd expect — SwiftUI's
+// `isEnabled` environment value is simply overwritten by whichever modifier
+// sits closest to the actual control, so a plain `.disabled(!isRepeating)`
+// placed next to `.tierGated(...)` would silently make one of the two gates
+// a no-op depending on ordering. Routing the extra condition through this
+// modifier's own single `.disabled(_:)` call sidesteps that entirely.
+// First consumer: Active Days in AddAlarmView.swift / TransitAlarmView.swift,
+// which must additionally require the Repeat toggle to be on (Bob reported
+// Active Days was interactable with Repeat off, which made no sense — a
+// day-of-week restriction only means anything for a repeating alarm).
+//
 // Re-render note (corrected 2026-07-11, second pass): this DOES live-update
 // now. The first version of this comment claimed a same-screen tier change
 // (e.g. Settings' Tier Simulation picker changing tier while a gated
@@ -34,6 +48,16 @@ import SwiftUI
 
 struct TierGated: ViewModifier {
     let minimumTier: AppTier
+    /// Extra non-tier condition that must ALSO be true for the control to be
+    /// enabled (e.g. "Repeat is on"). Defaults to true so existing call
+    /// sites that only care about tier are unaffected. Deliberately does NOT
+    /// affect the lock badge below — that badge specifically communicates
+    /// "your tier is insufficient," which stays accurate regardless of
+    /// `enabledIf`; the `enabledIf`-only-false case (tier is fine, the other
+    /// condition isn't met) is expected to be explained by the caller via
+    /// its own footer/hint text instead, since there's nothing tier-related
+    /// to show a lock for.
+    var enabledIf: Bool = true
 
     #if DEBUG
     // Makes this modifier re-render whenever the simulated tier changes,
@@ -45,12 +69,13 @@ struct TierGated: ViewModifier {
     #endif
 
     private var isEntitled: Bool { EntitlementManager.isEntitled(to: minimumTier) }
+    private var isFullyEnabled: Bool { isEntitled && enabledIf }
 
     func body(content: Content) -> some View {
         HStack(spacing: 8) {
             content
-                .disabled(!isEntitled)
-                .opacity(isEntitled ? 1.0 : 0.5)
+                .disabled(!isFullyEnabled)
+                .opacity(isFullyEnabled ? 1.0 : 0.5)
 
             if !isEntitled {
                 Spacer(minLength: 4)
@@ -69,7 +94,12 @@ struct TierGated: ViewModifier {
 extension View {
     /// Disables this view and shows a lock + required-tier badge when the
     /// current device tier is below `minimumTier`. See TierGatedModifier.swift.
-    func tierGated(minimumTier: AppTier) -> some View {
-        modifier(TierGated(minimumTier: minimumTier))
+    ///
+    /// `enabledIf` lets a caller AND in an additional, non-tier condition
+    /// (e.g. Active Days requiring Repeat to be on) without stacking a
+    /// second `.disabled(_:)` next to this call — see the file header for
+    /// why that doesn't compose the way you'd expect.
+    func tierGated(minimumTier: AppTier, enabledIf: Bool = true) -> some View {
+        modifier(TierGated(minimumTier: minimumTier, enabledIf: enabledIf))
     }
 }

@@ -215,6 +215,126 @@ final class LocalizationTests: XCTestCase {
         }
     }
 
+    // MARK: - Active Days requires Repeat (2026-07-23)
+    //
+    // Active Days used to be interactable in the per-alarm form even with
+    // Repeat off, which made no sense — a day-of-week restriction is
+    // meaningless for a one-shot alarm. Fixed in TransitAlarmView.swift /
+    // AddAlarmView.swift (see TierGatedModifier.swift's `enabledIf`
+    // parameter). These tests cover the documentation side of that fix: the
+    // new Help section (help.body.activeDays) and the always-visible form
+    // footer (activeDays.repeatRequired) must exist, be translated, and
+    // actually name "Repeat" (in that language's own word for it) rather
+    // than just existing as a vague placeholder.
+
+    /// Maps each language to its own translation of "Repeat" — the word
+    /// that MUST appear in both help.body.activeDays and
+    /// activeDays.repeatRequired, so a reader in any language can tell the
+    /// dependency is on the Repeat control specifically, not just told
+    /// "some other setting" in the abstract.
+    private let repeatWord: [String: String] = [
+        "en": "Repeat",
+        "de": "Wiederholen",
+        "es": "Repetir",
+        "fr": "Répéter",
+        "it": "Ripeti",
+        "pt": "Repetir",
+        "ru": "Повтор",
+        "ar": "التكرار",
+        "hi": "दोहराएँ",
+        "ja": "繰り返し",
+        "th": "ทำซ้ำ",
+        "vi": "Lặp lại",
+        "zh-Hans": "重复",
+    ]
+
+    /// Both new keys must exist in every language file.
+    func test_allLanguages_haveActiveDaysHelpKeys() throws {
+        let requiredKeys = ["help.body.activeDays", "activeDays.repeatRequired"]
+        for lang in repeatWord.keys.sorted() {
+            let url = try stringsURL(for: lang, sourceFile: #file)
+            let raw = try String(contentsOf: url, encoding: .utf8)
+            for key in requiredKeys {
+                XCTAssertTrue(
+                    raw.contains("\"\(key)\""),
+                    "\(lang): required key '\(key)' is missing from Localizable.strings"
+                )
+            }
+        }
+    }
+
+    /// help.body.activeDays (the Help screen section) must actually name
+    /// "Repeat" in every language — the whole point of this key is to make
+    /// the Repeat dependency clear, so silently translating around the word
+    /// would defeat the purpose.
+    func test_activeDaysHelpBody_allLanguages_mentionsRepeat() throws {
+        for (lang, repeat_) in repeatWord.sorted(by: { $0.key < $1.key }) {
+            let url = try stringsURL(for: lang, sourceFile: #file)
+            let raw = try String(contentsOf: url, encoding: .utf8)
+            let val = try XCTUnwrap(
+                value(for: "help.body.activeDays", in: raw),
+                "\(lang): help.body.activeDays key missing"
+            )
+            XCTAssertTrue(
+                val.contains(repeat_),
+                "\(lang) help.body.activeDays must mention '\(repeat_)' (that language's word for Repeat) — got: \(val)"
+            )
+        }
+    }
+
+    /// The always-visible section footer (activeDays.repeatRequired) must
+    /// also name "Repeat" in every language, not just a vague "another
+    /// setting must be on" placeholder.
+    func test_activeDaysFooter_allLanguages_mentionsRepeat() throws {
+        for (lang, repeat_) in repeatWord.sorted(by: { $0.key < $1.key }) {
+            let url = try stringsURL(for: lang, sourceFile: #file)
+            let raw = try String(contentsOf: url, encoding: .utf8)
+            let val = try XCTUnwrap(
+                value(for: "activeDays.repeatRequired", in: raw),
+                "\(lang): activeDays.repeatRequired key missing"
+            )
+            XCTAssertTrue(
+                val.contains(repeat_),
+                "\(lang) activeDays.repeatRequired must mention '\(repeat_)' (that language's word for Repeat) — got: \(val)"
+            )
+            XCTAssertFalse(val.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+                           "\(lang) activeDays.repeatRequired must not be empty")
+        }
+    }
+
+    /// The Repeat help section itself (help.body.repeat) should cross-link
+    /// back to Active Days, in every language, so the dependency is
+    /// discoverable from either direction.
+    func test_repeatHelpBody_allLanguages_mentionsActiveDays() throws {
+        let activeDaysWord: [String: String] = [
+            "en": "Active Days",
+            "de": "Aktive Tage",
+            "es": "Días activos",
+            "fr": "Jours actifs",
+            "it": "Giorni attivi",
+            "pt": "Dias ativos",
+            "ru": "Активные дни",
+            "ar": "الأيام النشطة",
+            "hi": "सक्रिय दिन",
+            "ja": "有効な曜日",
+            "th": "วันที่ใช้งาน",
+            "vi": "Ngày hoạt động",
+            "zh-Hans": "有效日期",
+        ]
+        for (lang, activeDays) in activeDaysWord.sorted(by: { $0.key < $1.key }) {
+            let url = try stringsURL(for: lang, sourceFile: #file)
+            let raw = try String(contentsOf: url, encoding: .utf8)
+            let val = try XCTUnwrap(
+                value(for: "help.body.repeat", in: raw),
+                "\(lang): help.body.repeat key missing"
+            )
+            XCTAssertTrue(
+                val.contains(activeDays),
+                "\(lang) help.body.repeat must mention '\(activeDays)' (that language's phrase for Active Days) — got: \(val)"
+            )
+        }
+    }
+
     // MARK: - Auto-SMS section keys (SettingsView)
 
     /// Every language file must contain all keys used by the Auto-SMS section.

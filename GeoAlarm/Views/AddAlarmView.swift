@@ -567,7 +567,12 @@ struct AddAlarmView: View {
                 // queryable/scrollable element for "activeDaysRow".
                 .accessibilityElement(children: .contain)
                 .accessibilityIdentifier("activeDaysRow")
-                .tierGated(minimumTier: .gold)
+                // Active Days only means anything for a repeating alarm, so
+                // it stays visible-but-disabled (same pattern as tier gating)
+                // whenever Repeat is off, on top of the existing Gold+ tier
+                // gate. See TierGatedModifier.swift's `enabledIf` doc for why
+                // this can't just be a separate .disabled(!viewModel.isRepeating).
+                .tierGated(minimumTier: .gold, enabledIf: viewModel.isRepeating)
                 HStack(spacing: 6) {
                     Image(systemName: viewModel.activeDays == Set(1...7) ? "checkmark.circle" : "calendar")
                         .foregroundColor(viewModel.activeDays == Set(1...7) ? .green : .accentColor)
@@ -575,8 +580,11 @@ struct AddAlarmView: View {
                 }
                 .font(.caption)
                 .foregroundColor(.secondary)
+                .opacity(viewModel.isRepeating ? 1.0 : 0.5)
             } header: {
                 Text("Active Days", bundle: bundle)
+            } footer: {
+                Text("activeDays.repeatRequired", bundle: bundle)
             }
 
             // MARK: Auto-Notify Contacts
@@ -870,6 +878,12 @@ struct AddAlarmView: View {
     }
 
     private func toggleDay(_ weekday: Int) {
+        // Active Days only means anything for a repeating alarm — the day
+        // buttons are disabled in the UI while Repeat is off (see the
+        // .tierGated(enabledIf:) below), but guard here too so a stray tap
+        // (e.g. from an accessibility action that bypasses the disabled
+        // state) can't silently mutate activeDays anyway.
+        guard viewModel.isRepeating else { return }
         if viewModel.activeDays.contains(weekday) {
             guard viewModel.activeDays.count > 1 else { return }
             viewModel.activeDays.remove(weekday)

@@ -40,6 +40,7 @@
 "From" = "De";
 "Until" = "Até";
 "Active Days" = "Dias ativos";
+"activeDays.repeatRequired" = "Requer que Repetir esteja ativado.";
 "Every day" = "Todos os dias";
 "Weekdays only" = "Somente dias úteis";
 "Weekends only" = "Somente fins de semana";
@@ -234,7 +235,8 @@ O botão Salvar fica desativado até que um nome seja inserido e uma localizaç�
 
 "help.body.radius" = "O raio define a cerca geográfica — o limite circular ao redor do seu marcador. Quando você cruza esse limite (entrando ou saindo), o alarme dispara.\n\nUm raio de 200 m é adequado para uma única estação ou edifício. Use 500–1000 m para pontos de referência maiores, como o centro de uma cidade ou área de aeroporto, dando mais tempo para se preparar antes de chegar.\n\nVocê pode alternar entre metros/quilômetros e pés/milhas nas Configurações.";
 
-"help.body.repeat" = "Alarmes únicos disparam uma vez e ficam no estado ativado até que você os reative manualmente. Útil para uma única viagem ou lembrete avulso.\n\nAlarmes repetitivos são redefinidos automaticamente depois que você sai da região, disparando novamente na próxima vez que você passar pelo mesmo local. Perfeito para quem viaja diariamente.";
+"help.body.repeat" = "Alarmes únicos disparam uma vez e ficam no estado ativado até que você os reative manualmente. Útil para uma única viagem ou lembrete avulso.\n\nAlarmes repetitivos são redefinidos automaticamente depois que você sai da região, disparando novamente na próxima vez que você passar pelo mesmo local. Perfeito para quem viaja diariamente.\n\nDias ativos (abaixo) só funciona com alarmes repetitivos — ative primeiro o Repetir para restringir os dias em que ele pode disparar.";
+"help.body.activeDays" = "Dias ativos permite que um alarme repetitivo dispare apenas nos dias que você escolher — por exemplo, somente dias úteis para quem viaja diariamente. Aplica-se apenas a alarmes repetitivos: ative primeiro o Repetir e depois escolha os dias. Enquanto o Repetir estiver desativado, o seletor de dias permanece desativado e o alarme dispara todos os dias em que estiver ativo.";
 
 "help.body.timeWindow" = "Uma janela de tempo limita quando o alarme pode disparar. Por exemplo, uma janela de 07:00–09:00 significa que o alarme só é acionado durante o horário do seu deslocamento matutino.\n\nUm rótulo resumido abaixo dos seletores mostra exatamente a duração da janela, p. ex., \"Ativo por 2 h · 7:00 – 9:00\".\n\nJanelas noturnas são suportadas (p. ex., 22:00–06:00). Quando o horário De for posterior ao Até, o alarme fica ativo pela madrugada até a manhã seguinte. O resumo fica laranja e exibe \"dia seguinte\" como lembrete.";
 

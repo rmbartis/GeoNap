@@ -20,6 +20,7 @@ struct HelpView: View {
         ("Transit Alarms",                      "help.body.transitAlarms"),
         ("Calendar Scanning",                   "help.body.calendarScanning"),
         ("Repeat",                              "help.body.repeat"),
+        ("Active Days",                         "help.body.activeDays"),
         ("Active time window",                  "help.body.timeWindow"),
         ("Notifications",                       "help.body.notifications"),
         ("Alarm sound / vibrate",               "help.body.soundVibrate"),
@@ -72,6 +73,8 @@ struct HelpView: View {
                             titleKey: "Calendar Scanning",    bodyKey: "help.body.calendarScanning")
                 helpSection(symbol: "repeat",       color: .indigo,
                             titleKey: "Repeat",               bodyKey: "help.body.repeat")
+                helpSection(symbol: "calendar",     color: .indigo,
+                            titleKey: "Active Days",          bodyKey: "help.body.activeDays")
                 helpSection(symbol: "clock",        color: .purple,
                             titleKey: "Active time window",   bodyKey: "help.body.timeWindow")
                 helpSection(symbol: "bell.badge",   color: .red,
