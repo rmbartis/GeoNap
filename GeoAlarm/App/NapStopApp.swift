@@ -46,12 +46,21 @@ struct NapStopApp: App {
     /// deterministically, with no dependency on CloudKit/network availability
     /// in CI (Bob, 2026-07-05 — previously the UI test suite assumed a
     /// `--reset-alarms` flag that was never actually implemented anywhere).
+    ///
+    /// Never force-crashes on a bad on-disk store (Bob, 2026-07-25, after a
+    /// TestFlight crash: NapStopApp.init() -> swift_unexpectedError from a
+    /// `try!` here). A device that loses power mid-write — e.g. the battery
+    /// dying while an alarm was being saved — can leave the local SQLite/WAL
+    /// store corrupted; that used to mean a permanent crash-on-launch loop,
+    /// since both the CloudKit attempt and the local fallback point at the
+    /// same on-disk file and would fail identically forever. See
+    /// ModelContainerFactory.swift for the recovery (delete the corrupted
+    /// store and rebuild) and the last-resort in-memory fallback below.
     private let container: ModelContainer = {
-        let schema = Schema([NapAlarm.self, GTFSFeedModel.self, AutoNotifyDefaultsRecord.self])
+        let schema = ModelContainerFactory.schema
 
         if ProcessInfo.processInfo.arguments.contains("--uitesting") {
-            let testConfig = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
-            return try! ModelContainer(for: schema, configurations: [testConfig])
+            return ModelContainerFactory.makeInMemory(schema: schema)
         }
 
         let cloudConfig = ModelConfiguration(
@@ -62,9 +71,18 @@ struct NapStopApp: App {
         if let c = try? ModelContainer(for: schema, configurations: [cloudConfig]) {
             return c
         }
-        // Fallback: local storage only
-        let localConfig = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
-        return try! ModelContainer(for: schema, configurations: [localConfig])
+
+        if let recovered = try? ModelContainerFactory.recoveringLocalContainer(schema: schema) {
+            return recovered
+        }
+
+        // Absolute last resort — the CloudKit attempt above AND the
+        // corrupted-store recovery both failed (e.g. genuinely out of disk
+        // space). Run in memory rather than crash: the app stays launchable
+        // for this session (no persisted alarms survive it) instead of
+        // repeating the fatal crash this replaces.
+        CrashReporter.log("ModelContainer: all disk-backed attempts failed at launch — running in-memory for this session")
+        return ModelContainerFactory.makeInMemory(schema: schema)
     }()
 
     init() {

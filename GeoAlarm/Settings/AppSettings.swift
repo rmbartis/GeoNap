@@ -397,5 +397,5 @@ nonisolated enum AppStorageKey {
 /// The one unavoidable exception is docs/privacy-policy.html, a static file
 /// with no build step, which must be kept in sync by hand if this ever changes.
 nonisolated enum SupportContact {
-    static let email = "geonapios@gmail.com"
+    static let email = "geonap@mba-labs.com"
 }

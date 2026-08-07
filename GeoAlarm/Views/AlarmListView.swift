@@ -119,7 +119,12 @@ struct AlarmRowView: View {
                 .foregroundColor(.secondary)
 
                 // Row 2: optional badges — only shown when at least one is set
-                if alarm.isRepeating || alarm.hasTimeWindow || alarm.isTransitAlarm || !alarm.isEveryDay || alarm.notifyContact || alarm.notificationSound == .vibrate {
+                // Note: no separate `!alarm.isEveryDay` clause here — a stale
+                // day restriction left over from a since-disabled Repeat
+                // toggle must not surface a badge row on its own. isRepeating
+                // (below) already covers the only case where the days badge
+                // can render (see NapAlarm.activeDaysLabel).
+                if alarm.isRepeating || alarm.hasTimeWindow || alarm.isTransitAlarm || alarm.notifyContact || alarm.notificationSound == .vibrate {
                     HStack(spacing: 10) {
                         if alarm.isTransitAlarm, let rt = alarm.transitRouteType {
                             Image(systemName: rt.systemImage)

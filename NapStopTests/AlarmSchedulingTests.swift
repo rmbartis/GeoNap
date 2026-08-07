@@ -382,15 +382,19 @@ final class ActiveDaysTests: XCTestCase {
     }
 
     // MARK: activeDaysLabel
+    // activeDaysLabel is only meaningful for repeating alarms, so every test
+    // below that expects a non-nil label sets isRepeating = true explicitly.
 
     func test_activeDaysLabel_weekdays() {
         let a = alarm()
+        a.isRepeating = true
         a.activeDays = Set(2...6)
         XCTAssertEqual(a.activeDaysLabel(locale: Locale(identifier: "en_US"), bundle: .main), "Weekdays")
     }
 
     func test_activeDaysLabel_weekends() {
         let a = alarm()
+        a.isRepeating = true
         a.activeDays = [1, 7]
         XCTAssertEqual(a.activeDaysLabel(locale: Locale(identifier: "en_US"), bundle: .main), "Weekends")
     }
@@ -398,6 +402,7 @@ final class ActiveDaysTests: XCTestCase {
     func test_activeDaysLabel_customAbbreviations() {
         // Mon + Wed + Fri = weekdays 2, 4, 6
         let a = alarm()
+        a.isRepeating = true
         a.activeDays = [2, 4, 6]
         let label = a.activeDaysLabel(locale: Locale(identifier: "en_US"), bundle: .main) ?? ""
         XCTAssertTrue(label.contains("Mo"), "Label must contain Mo")
@@ -408,8 +413,24 @@ final class ActiveDaysTests: XCTestCase {
 
     func test_activeDaysLabel_nilWhenEveryDay() {
         let a = alarm()
+        a.isRepeating = true
         a.activeDaysRaw = 127
         XCTAssertNil(a.activeDaysLabel(locale: Locale(identifier: "en_US"), bundle: .main))
+    }
+
+    /// Reproduces the reported bug: pick Active Days while Repeat is on,
+    /// then turn Repeat off. The bitmask is deliberately left in place (same
+    /// as the isWithinWindow firing guard), but the label must stop
+    /// surfacing the stale restriction once isRepeating is false.
+    func test_activeDaysLabel_nilWhenNotRepeating_evenWithDaysSelected() {
+        let a = alarm()
+        a.isRepeating = true
+        a.activeDays = Set(2...6)
+        XCTAssertNotNil(a.activeDaysLabel(locale: Locale(identifier: "en_US"), bundle: .main))
+
+        a.isRepeating = false
+        XCTAssertNil(a.activeDaysLabel(locale: Locale(identifier: "en_US"), bundle: .main),
+                     "Active Days must not appear in the summary once Repeat is off")
     }
 
     // MARK: Round-trip

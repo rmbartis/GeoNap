@@ -142,8 +142,16 @@ final class NapAlarm {
     /// Pass the in-app `locale` (for the system's localized weekday symbols) and the
     /// in-app `bundle` (for the "Weekdays"/"Weekends" labels), so it follows the
     /// language chosen inside the app, not just the device language.
+    ///
+    /// Only meaningful for repeating alarms — Active Days is disabled in the
+    /// UI whenever Repeat is off, but (like the `isWithinWindow` guard above)
+    /// the underlying activeDaysRaw bitmask isn't reset just because the
+    /// control got disabled. Without this `isRepeating` guard, a one-shot
+    /// alarm that once had a day restriction (Repeat toggled on, days
+    /// picked, then Repeat toggled back off) would keep showing that stale
+    /// restriction on the summary screen even though it no longer applies.
     func activeDaysLabel(locale: Locale, bundle: Bundle) -> String? {
-        guard !isEveryDay else { return nil }
+        guard isRepeating, !isEveryDay else { return nil }
         let weekdays: Set<Int> = [2, 3, 4, 5, 6]
         let weekend:  Set<Int> = [1, 7]
         if activeDays == weekdays { return NSLocalizedString("Weekdays", bundle: bundle, comment: "") }
