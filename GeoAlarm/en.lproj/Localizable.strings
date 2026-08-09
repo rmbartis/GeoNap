@@ -483,3 +483,6 @@ The Save button is disabled until a name has been entered and a location has bee
 "settings.upgrade.currentTier" = "Current Plan";
 "settings.upgrade.seePlans" = "See Plans";
 "settings.upgrade.manageSubscription" = "Manage Subscription";
+
+/* Missing-key fix, 2026-08-09: section header used by SettingsView but never added to any language file */
+"Alarm Trigger" = "Alarm Trigger";

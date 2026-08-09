@@ -367,7 +367,7 @@ Die Schaltfläche Speichern ist deaktiviert, bis ein Name und ein Standort festg
 "Set Up Automation" = "Automation einrichten";
 "settings.autoSMS.footer" = "GeoNap kann einen Alarm nicht erkennen, solange die App nicht geöffnet ist. Die Automation läuft daher erst, wenn Sie GeoNap das nächste Mal nach einem Alarm öffnen. Aktivieren Sie den Schalter oben, damit die App nicht zusätzlich ihr eigenes Verfassen-Fenster zeigt.";
 "settings.autoSMS.automationToggleHelp" = "Aktivieren Sie dies erst, nachdem Sie die Einrichtung unten abgeschlossen haben, damit GeoNap nicht mehr den eigenen Sendebildschirm zeigt.";
-"settings.autoSMS.automationToggle" = "Shortcuts-Automation eingerichtet";
+"settings.autoSMS.automationToggle" = "Kurzbefehle-Automation eingerichtet";
 /* AlarmFiringView */
 "Snooze 10 min" = "10 Min. schlummern";
 "Slide to dismiss" = "Zum Beenden wischen";
@@ -429,3 +429,50 @@ Die Schaltfläche Speichern ist deaktiviert, bis ein Name und ein Standort festg
 "Apple Watch" = "Apple Watch";
 "privacy.body.contacts" = "Wenn du die optionale Funktion Auto-Benachrichtigung nutzt, kannst du Kontakte auswählen, die automatisch benachrichtigt werden, wenn ein Alarm auslöst. Die Auswahl eines Kontakts erfolgt über Apples systemeigene Kontaktauswahl – GeoNap erhält dabei nie umfassenden oder dauerhaften Zugriff auf dein Adressbuch, sondern nur auf den oder die von dir gewählten Kontakt(e).\n\nFür jeden hinzugefügten Kontakt speichert GeoNap nur dessen Namen und Telefonnummer oder E-Mail-Adresse – nichts weiter aus der Kontaktkarte. Dies wird mit SwiftData gespeichert und, wie deine Alarme, optional über iCloud synchronisiert, sodass deine Auto-Benachrichtigungs-Kontakte auf deinen anderen Geräten mit derselben Apple-ID erscheinen.\n\nKontaktinformationen werden niemals an einen von mir betriebenen Server übertragen. Sie werden nur verwendet, um die von dir konfigurierte Nachricht zu adressieren, die über Nachrichten oder eine von dir kontrollierte Kurzbefehle-Automatisierung gesendet wird. Du kannst einen Kontakt jederzeit in den Einstellungen aus einem Alarm oder aus den Auto-Benachrichtigungs-Standardwerten entfernen.";
 "privacy.body.appleWatch" = "Wenn du GeoNap mit einer gekoppelten Apple Watch nutzt, teilt die iPhone-App deine aktiven Alarme (Name, aus dem Standort abgeleitete Region, Radius und Status) mit der Watch-App, damit sie diese anzeigen und dich benachrichtigen kann.\n\nDiese Daten werden über Apples WatchConnectivity-Framework direkt von Gerät zu Gerät gesendet – sie laufen nie über einen von mir betriebenen Server. Auf der Watch werden sie in einem gemeinsamen App-Gruppen-Container gespeichert, der lokal auf diesem Gerät liegt, sodass sowohl die Watch-App als auch ihre Komplikation darauf zugreifen können – eine iCloud-Synchronisierung von der Watch aus findet nicht statt.\n\nWenn du das optionale Debug-Protokoll aktivierst, kann es festhalten, wann eine Watch gekoppelt oder entkoppelt wird oder wann die GeoNap-Watch-App installiert oder entfernt wird, um Synchronisierungsprobleme zu diagnostizieren. Deine Alarmdaten selbst werden dabei nicht protokolliert. Das Deinstallieren von GeoNap von deiner Watch oder das Entkoppeln der Watch entfernt diese geteilte Kopie.";
+
+/* Paywall (item 10/18) */
+"paywall.title" = "Mehr freischalten mit GeoNap";
+"paywall.subtitle" = "Vergleiche die Pläne und wähle den passenden für deine Reisen.";
+"paywall.currentPlan" = "Aktueller Plan: %@";
+"paywall.freeTier.title" = "Free";
+"paywall.freeTier.caption" = "1 aktiver Alarm · Auslösung nach Entfernung · Systemtöne";
+"paywall.silver.caption" = "Unbegrenzte Alarme, Auto-Notify & individuelle Töne";
+"paywall.silver.feature1" = "Unbegrenzte aktive Alarme";
+"paywall.silver.feature2" = "Automatische SMS-Benachrichtigung an Kontakte";
+"paywall.silver.feature3" = "Individuelle & Premium-Alarmtöne";
+"paywall.silver.feature4" = "Zeitplanung mit aktivem Zeitfenster";
+"paywall.gold.caption" = "Transit-Alarme, freihändiger SMS-Versand & Wiederholungsmodus";
+"paywall.gold.feature1" = "Alles aus Silver, plus:";
+"paywall.gold.feature2" = "Transit-Alarme (Unternehmen, Linie & Haltestelle)";
+"paywall.gold.feature3" = "Auslösemodus „Zeit vor Ankunft“";
+"paywall.gold.feature4" = "Wiederholungsmodus mit Hysterese";
+"paywall.gold.feature5" = "Freihändige Auto-SMS-Automatisierung";
+"paywall.gold.feature6" = "Individuelle Cache-Dauer für Transit-Feeds";
+"paywall.platinum.caption" = "Kurzbefehle ausführen, Live Activity & Kalenderscan";
+"paywall.platinum.feature1" = "Alles aus Gold, plus:";
+"paywall.platinum.feature2" = "Kurzbefehl ausführen, wenn ein Alarm ausgelöst wird";
+"paywall.platinum.feature3" = "Live Activity / Dynamic Island";
+"paywall.platinum.feature4" = "Kalenderscan für Reisealarme";
+"paywall.platinum.feature5" = "Positionsschätzung bei Signalverlust";
+"paywall.platinum.feature6" = "Einmaliger Kauf — dauerhaft freigeschaltet";
+"paywall.period.year" = "/ Jahr";
+"paywall.period.oneTime" = "einmalig";
+"paywall.action.subscribe" = "Abonnieren";
+"paywall.action.buy" = "Kaufen";
+"paywall.action.included" = "Enthalten";
+"paywall.action.restorePurchases" = "Käufe wiederherstellen";
+"paywall.legal.termsOfUse" = "Nutzungsbedingungen";
+"paywall.legal.privacyPolicy" = "Datenschutzrichtlinie";
+"paywall.legal.disclosure" = "Silver und Gold verlängern sich automatisch jedes Jahr, sofern nicht mindestens 24 Stunden vor Ablauf des aktuellen Zeitraums gekündigt wird. Verwalten oder kündigen jederzeit unter Einstellungen → Abonnements auf deinem Gerät. Platinum ist ein einmaliger Kauf, kein Abonnement.";
+"paywall.error.title" = "Kauf fehlgeschlagen";
+"paywall.error.generic" = "Etwas ist schiefgelaufen. Bitte versuche es erneut.";
+"paywall.pending" = "Dein Kauf wartet auf Genehmigung.";
+"paywall.notNow" = "Nicht jetzt";
+"paywall.loadingProducts" = "Pläne werden geladen…";
+"settings.upgrade.sectionTitle" = "Plan";
+"settings.upgrade.currentTier" = "Aktueller Plan";
+"settings.upgrade.seePlans" = "Pläne ansehen";
+"settings.upgrade.manageSubscription" = "Abonnement verwalten";
+
+/* Missing-key fix, 2026-08-09: section header used by SettingsView but never added to any language file */
+"Alarm Trigger" = "Alarm-Auslöser";

@@ -450,3 +450,50 @@
 "Apple Watch" = "Apple Watch";
 "privacy.body.contacts" = "如果你使用可选的自动通知功能，可以选择在闹钟触发时自动收到消息的联系人。选择联系人使用的是 Apple 系统自带的联系人选择器——GeoNap 永远不会批量或持续访问你的通讯录，只能访问你所选择的联系人。\n\n对于你添加的每个联系人，GeoNap 只会存储其姓名和电话号码或电子邮件地址——不存储联系人名片中的其他任何信息。此数据通过 SwiftData 保存，与你的闹钟一样，可选择通过 iCloud 同步，以便你的自动通知联系人出现在登录同一 Apple ID 的其他设备上。\n\n联系人信息永远不会传输到我运营的任何服务器。它仅用于确定你所设置消息的收件人，消息通过“信息”应用或你自行控制的“快捷指令”自动化发送。你可以随时在设置中从某个闹钟或自动通知默认列表中移除联系人。";
 "privacy.body.appleWatch" = "如果你将 GeoNap 与已配对的 Apple Watch 一起使用，iPhone 应用会将你的活跃闹钟（名称、由位置推导出的区域、半径和状态）与 Watch 应用共享，以便它显示并提醒你。\n\n此数据通过 Apple 的 WatchConnectivity 框架直接在设备之间传输，绝不会经过我运营的任何服务器。在 Watch 上，数据存储在该设备本地的共享 App Group 容器中，以便 Watch 应用及其复杂功能（complication）都能读取——数据不会从 Watch 同步到 iCloud。\n\n如果你启用了可选的调试日志，日志可能会记录 Watch 何时配对或取消配对，或 GeoNap Watch 应用何时安装或删除，以帮助诊断同步问题。它不会记录你的闹钟数据本身。从 Watch 卸载 GeoNap，或取消配对，都会删除这份共享副本。";
+
+/* Paywall (item 10/18) */
+"paywall.title" = "解锁 GeoNap 更多功能";
+"paywall.subtitle" = "比较各个方案，选择最适合你出行方式的一个。";
+"paywall.currentPlan" = "当前方案：%@";
+"paywall.freeTier.title" = "Free";
+"paywall.freeTier.caption" = "1 个活跃闹钟 · 仅距离触发 · 系统声音";
+"paywall.silver.caption" = "无限闹钟、自动通知与自定义铃声";
+"paywall.silver.feature1" = "无限数量的活跃闹钟";
+"paywall.silver.feature2" = "到达后自动短信通知联系人";
+"paywall.silver.feature3" = "自定义与高级闹钟铃声";
+"paywall.silver.feature4" = "可设置有效时间段的日程安排";
+"paywall.gold.caption" = "交通闹钟、免提短信与重复模式";
+"paywall.gold.feature1" = "包含 Silver 的全部功能，另外还有：";
+"paywall.gold.feature2" = "交通闹钟（运营商、路线与站点）";
+"paywall.gold.feature3" = "抵达前时间触发模式";
+"paywall.gold.feature4" = "带滞回的重复模式";
+"paywall.gold.feature5" = "免提自动短信自动化";
+"paywall.gold.feature6" = "自定义交通数据缓存时长";
+"paywall.platinum.caption" = "运行快捷指令、实时活动与日历扫描";
+"paywall.platinum.feature1" = "包含 Gold 的全部功能，另外还有：";
+"paywall.platinum.feature2" = "闹钟触发时运行快捷指令";
+"paywall.platinum.feature3" = "实时活动 / 灵动岛";
+"paywall.platinum.feature4" = "为行程闹钟扫描日历";
+"paywall.platinum.feature5" = "信号丢失时的位置推算";
+"paywall.platinum.feature6" = "一次性购买 — 永久拥有";
+"paywall.period.year" = "/ 年";
+"paywall.period.oneTime" = "一次性购买";
+"paywall.action.subscribe" = "订阅";
+"paywall.action.buy" = "购买";
+"paywall.action.included" = "已包含";
+"paywall.action.restorePurchases" = "恢复购买";
+"paywall.legal.termsOfUse" = "使用条款";
+"paywall.legal.privacyPolicy" = "隐私政策";
+"paywall.legal.disclosure" = "Silver 与 Gold 会每年自动续订，除非在当前订阅期结束前至少 24 小时取消。你可以随时在设备的“设置”→“订阅”中管理或取消。Platinum 为一次性购买，不是订阅。";
+"paywall.error.title" = "购买失败";
+"paywall.error.generic" = "出现问题，请重试。";
+"paywall.pending" = "你的购买正在等待批准。";
+"paywall.notNow" = "暂不";
+"paywall.loadingProducts" = "正在加载方案…";
+"settings.upgrade.sectionTitle" = "方案";
+"settings.upgrade.currentTier" = "当前方案";
+"settings.upgrade.seePlans" = "查看方案";
+"settings.upgrade.manageSubscription" = "管理订阅";
+
+/* Missing-key fix, 2026-08-09: section header used by SettingsView but never added to any language file */
+"Alarm Trigger" = "闹钟触发方式";

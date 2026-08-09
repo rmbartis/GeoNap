@@ -454,3 +454,50 @@ Xem Cai dat - SMS Tu dong (Khong can phe duyet) de biet huong dan tung buoc.\n\n
 "Apple Watch" = "Apple Watch";
 "privacy.body.contacts" = "Nếu bạn dùng tính năng tùy chọn Tự động thông báo, bạn có thể chọn các liên hệ để tự động nhắn tin khi báo thức kích hoạt. Việc chọn liên hệ sử dụng trình chọn liên hệ hệ thống của Apple — GeoNap không bao giờ có quyền truy cập hàng loạt hay liên tục vào danh bạ của bạn, chỉ (những) liên hệ bạn chọn.\n\nVới mỗi liên hệ bạn thêm, GeoNap chỉ lưu tên và số điện thoại hoặc email của họ — không lưu gì khác từ thẻ liên hệ. Dữ liệu này được lưu bằng SwiftData và, giống như báo thức của bạn, được đồng bộ tùy chọn qua iCloud để các liên hệ Tự động thông báo của bạn xuất hiện trên các thiết bị khác đăng nhập cùng Apple ID.\n\nThông tin liên hệ không bao giờ được gửi đến bất kỳ máy chủ nào do tôi vận hành. Nó chỉ được dùng để gửi tin nhắn bạn đã cấu hình, qua Tin nhắn hoặc một automation Shortcuts do bạn kiểm soát. Bạn có thể xóa một liên hệ khỏi báo thức hoặc khỏi danh sách mặc định Tự động thông báo bất cứ lúc nào trong Cài đặt.";
 "privacy.body.appleWatch" = "Nếu bạn dùng GeoNap với Apple Watch đã ghép nối, ứng dụng iPhone sẽ chia sẻ các báo thức đang hoạt động của bạn (tên, khu vực suy ra từ vị trí, bán kính và trạng thái) với ứng dụng Watch để nó có thể hiển thị và cảnh báo cho bạn.\n\nDữ liệu này được gửi trực tiếp giữa các thiết bị bằng framework WatchConnectivity của Apple; nó không bao giờ đi qua bất kỳ máy chủ nào do tôi vận hành. Trên Watch, dữ liệu được lưu trong một App Group dùng chung, cục bộ trên thiết bị đó, để cả ứng dụng Watch và complication của nó có thể đọc được — dữ liệu không được đồng bộ lên iCloud từ Watch.\n\nNếu bạn bật nhật ký gỡ lỗi tùy chọn, nó có thể ghi lại thời điểm Watch được ghép nối hoặc hủy ghép nối, hoặc khi ứng dụng GeoNap trên Watch được cài đặt hoặc gỡ bỏ, để giúp chẩn đoán sự cố đồng bộ. Nó không ghi lại dữ liệu báo thức của bạn. Việc gỡ cài đặt GeoNap khỏi Watch, hoặc hủy ghép nối Watch, sẽ xóa bản sao dùng chung này.";
+
+/* Paywall (item 10/18) */
+"paywall.title" = "Mở khóa thêm với GeoNap";
+"paywall.subtitle" = "So sánh các gói và chọn gói phù hợp với cách bạn di chuyển.";
+"paywall.currentPlan" = "Gói hiện tại của bạn: %@";
+"paywall.freeTier.title" = "Free";
+"paywall.freeTier.caption" = "1 báo thức đang hoạt động · Chỉ kích hoạt theo khoảng cách · Âm thanh hệ thống";
+"paywall.silver.caption" = "Báo thức không giới hạn, Auto-Notify và âm thanh tùy chỉnh";
+"paywall.silver.feature1" = "Báo thức đang hoạt động không giới hạn";
+"paywall.silver.feature2" = "Tự động nhắn tin SMS cho liên hệ khi đến nơi";
+"paywall.silver.feature3" = "Âm thanh báo thức tùy chỉnh và cao cấp";
+"paywall.silver.feature4" = "Lên lịch với khung thời gian hoạt động";
+"paywall.gold.caption" = "Báo thức giao thông công cộng, SMS rảnh tay và chế độ lặp lại";
+"paywall.gold.feature1" = "Tất cả tính năng của Silver, cùng với:";
+"paywall.gold.feature2" = "Báo thức giao thông công cộng (hãng, tuyến và điểm dừng)";
+"paywall.gold.feature3" = "Chế độ kích hoạt theo thời gian trước khi đến";
+"paywall.gold.feature4" = "Chế độ lặp lại có độ trễ (hysteresis)";
+"paywall.gold.feature5" = "Tự động hóa Auto-SMS rảnh tay";
+"paywall.gold.feature6" = "Tùy chỉnh thời gian lưu bộ nhớ đệm dữ liệu giao thông";
+"paywall.platinum.caption" = "Chạy Shortcuts, Live Activity và quét lịch";
+"paywall.platinum.feature1" = "Tất cả tính năng của Gold, cùng với:";
+"paywall.platinum.feature2" = "Chạy một Shortcut khi báo thức kích hoạt";
+"paywall.platinum.feature3" = "Live Activity / Dynamic Island";
+"paywall.platinum.feature4" = "Quét lịch để tạo báo thức chuyến đi";
+"paywall.platinum.feature5" = "Ước tính vị trí khi mất tín hiệu";
+"paywall.platinum.feature6" = "Mua một lần — sở hữu mãi mãi";
+"paywall.period.year" = "/ năm";
+"paywall.period.oneTime" = "mua một lần";
+"paywall.action.subscribe" = "Đăng ký";
+"paywall.action.buy" = "Mua";
+"paywall.action.included" = "Đã bao gồm";
+"paywall.action.restorePurchases" = "Khôi phục giao dịch mua";
+"paywall.legal.termsOfUse" = "Điều khoản sử dụng";
+"paywall.legal.privacyPolicy" = "Chính sách quyền riêng tư";
+"paywall.legal.disclosure" = "Silver và Gold tự động gia hạn mỗi năm trừ khi hủy ít nhất 24 giờ trước khi kỳ hiện tại kết thúc. Bạn có thể quản lý hoặc hủy bất cứ lúc nào trong Cài đặt → Đăng ký trên thiết bị của mình. Platinum là giao dịch mua một lần, không phải gói đăng ký.";
+"paywall.error.title" = "Mua hàng thất bại";
+"paywall.error.generic" = "Đã xảy ra sự cố. Vui lòng thử lại.";
+"paywall.pending" = "Giao dịch mua của bạn đang chờ phê duyệt.";
+"paywall.notNow" = "Để sau";
+"paywall.loadingProducts" = "Đang tải các gói…";
+"settings.upgrade.sectionTitle" = "Gói";
+"settings.upgrade.currentTier" = "Gói hiện tại";
+"settings.upgrade.seePlans" = "Xem các gói";
+"settings.upgrade.manageSubscription" = "Quản lý gói đăng ký";
+
+/* Missing-key fix, 2026-08-09: section header used by SettingsView but never added to any language file */
+"Alarm Trigger" = "Kích hoạt báo thức";

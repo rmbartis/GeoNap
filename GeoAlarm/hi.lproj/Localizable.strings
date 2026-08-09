@@ -388,7 +388,7 @@
 "Set Up Automation" = "ऑटोमेशन सेटअप करें";
 "settings.autoSMS.footer" = "जब तक ऐप खुला नहीं होता, GeoNap अलार्म का पता नहीं लगा सकता, इसलिए अलार्म बजने के बाद अगली बार GeoNap खोलने पर ऑटोमेशन चलता है। ऊपर दिया स्विच चालू करें ताकि ऐप अपनी खुद की कंपोज़ स्क्रीन भी न दिखाए।";
 "settings.autoSMS.automationToggleHelp" = "नीचे दी गई सेटअप पूरी करने के बाद ही इसे चालू करें, ताकि GeoNap अपनी खुद की भेजने वाली स्क्रीन दिखाना बंद कर दे।";
-"settings.autoSMS.automationToggle" = "मैंने Shortcuts ऑटोमेशन सेट कर लिया है";
+"settings.autoSMS.automationToggle" = "मैंने शॉर्टकट ऑटोमेशन सेट कर लिया है";
 /* AlarmFiringView */
 "Snooze 10 min" = "10 मिनट के लिए स्नूज़";
 "Slide to dismiss" = "खारिज करने के लिए स्लाइड करें";
@@ -450,3 +450,50 @@
 "Apple Watch" = "Apple Watch";
 "privacy.body.contacts" = "अगर आप वैकल्पिक ऑटो-नोटिफ़ाई सुविधा का उपयोग करते हैं, तो अलार्म बजने पर स्वचालित रूप से संदेश भेजने के लिए संपर्क चुन सकते हैं। संपर्क चुनने के लिए Apple के सिस्टम संपर्क चयनकर्ता का उपयोग होता है — GeoNap को कभी भी आपकी संपर्क सूची तक थोक या निरंतर पहुँच नहीं मिलती, केवल आपके चुने गए संपर्क(संपर्कों) तक।\n\nआपके जोड़े गए हर संपर्क के लिए, GeoNap केवल उसका नाम और फ़ोन नंबर या ईमेल पता सहेजता है — उनके संपर्क कार्ड से और कुछ नहीं। यह SwiftData का उपयोग करके सहेजा जाता है और, आपके अलार्म की तरह, वैकल्पिक रूप से iCloud के माध्यम से सिंक होता है ताकि आपके ऑटो-नोटिफ़ाई संपर्क उसी Apple ID से जुड़े आपके अन्य डिवाइस पर भी दिखें।\n\nसंपर्क जानकारी मेरे द्वारा संचालित किसी भी सर्वर पर कभी नहीं भेजी जाती। इसका उपयोग केवल आपके द्वारा कॉन्फ़िगर किए गए संदेश को संबोधित करने के लिए किया जाता है, जो Messages या आपके नियंत्रण वाले Shortcuts ऑटोमेशन के ज़रिए भेजा जाता है। आप किसी भी समय Settings में जाकर किसी अलार्म या ऑटो-नोटिफ़ाई डिफ़ॉल्ट से कोई संपर्क हटा सकते हैं।";
 "privacy.body.appleWatch" = "अगर आप जोड़ी गई Apple Watch के साथ GeoNap का उपयोग करते हैं, तो iPhone ऐप आपके सक्रिय अलार्म (नाम, स्थान-व्युत्पन्न क्षेत्र, त्रिज्या और स्थिति) को Watch ऐप के साथ साझा करता है ताकि वह उन्हें दिखा सके और आपको सचेत कर सके।\n\nयह डेटा Apple के WatchConnectivity फ़्रेमवर्क के ज़रिए डिवाइस-से-डिवाइस भेजा जाता है; यह मेरे द्वारा संचालित किसी सर्वर से कभी नहीं गुज़रता। Watch पर, यह उस डिवाइस के लिए स्थानीय एक साझा App Group कंटेनर में संग्रहीत होता है, ताकि Watch ऐप और उसका कॉम्प्लिकेशन दोनों इसे पढ़ सकें — यह Watch से iCloud में सिंक नहीं होता।\n\nअगर आप वैकल्पिक डीबग लॉग चालू करते हैं, तो यह सिंक समस्याओं का निदान करने में मदद के लिए यह रिकॉर्ड कर सकता है कि Watch कब जोड़ी या अनजोड़ी गई, या GeoNap Watch ऐप कब इंस्टॉल या हटाई गई। यह आपके अलार्म डेटा को खुद रिकॉर्ड नहीं करता। अपनी Watch से GeoNap हटाने, या Watch को अनजोड़ने से, यह साझा कॉपी हट जाती है।";
+
+/* Paywall (item 10/18) */
+"paywall.title" = "GeoNap के साथ और अधिक अनलॉक करें";
+"paywall.subtitle" = "प्लान की तुलना करें और अपनी यात्रा के अनुसार सही प्लान चुनें।";
+"paywall.currentPlan" = "आपका वर्तमान प्लान: %@";
+"paywall.freeTier.title" = "Free";
+"paywall.freeTier.caption" = "1 सक्रिय अलार्म · केवल दूरी ट्रिगर · सिस्टम साउंड";
+"paywall.silver.caption" = "असीमित अलार्म, Auto-Notify और कस्टम साउंड";
+"paywall.silver.feature1" = "असीमित सक्रिय अलार्म";
+"paywall.silver.feature2" = "पहुंचने पर संपर्कों को स्वचालित SMS सूचना";
+"paywall.silver.feature3" = "कस्टम और प्रीमियम अलार्म साउंड";
+"paywall.silver.feature4" = "सक्रिय समय विंडो के साथ शेड्यूलिंग";
+"paywall.gold.caption" = "ट्रांज़िट अलार्म, हैंड्स-फ़्री SMS और रिपीट मोड";
+"paywall.gold.feature1" = "Silver की सभी सुविधाएं, साथ ही:";
+"paywall.gold.feature2" = "ट्रांज़िट अलार्म (एजेंसी, रूट और स्टॉप)";
+"paywall.gold.feature3" = "पहुंचने से पहले समय पर आधारित ट्रिगर मोड";
+"paywall.gold.feature4" = "हिस्टेरेसिस के साथ रिपीट मोड";
+"paywall.gold.feature5" = "हैंड्स-फ़्री Auto-SMS ऑटोमेशन";
+"paywall.gold.feature6" = "ट्रांज़िट फ़ीड कैश की अवधि कस्टमाइज़ करें";
+"paywall.platinum.caption" = "शॉर्टकट चलाएं, Live Activity और कैलेंडर स्कैनिंग";
+"paywall.platinum.feature1" = "Gold की सभी सुविधाएं, साथ ही:";
+"paywall.platinum.feature2" = "अलार्म बजने पर शॉर्टकट चलाएं";
+"paywall.platinum.feature3" = "Live Activity / Dynamic Island";
+"paywall.platinum.feature4" = "यात्रा अलार्म के लिए कैलेंडर स्कैनिंग";
+"paywall.platinum.feature5" = "सिग्नल खोने पर स्थिति का अनुमान (डेड रेकनिंग)";
+"paywall.platinum.feature6" = "एक बार की खरीद — हमेशा के लिए आपका";
+"paywall.period.year" = "/ वर्ष";
+"paywall.period.oneTime" = "एक बार की खरीद";
+"paywall.action.subscribe" = "सदस्यता लें";
+"paywall.action.buy" = "खरीदें";
+"paywall.action.included" = "शामिल है";
+"paywall.action.restorePurchases" = "खरीदारी पुनर्स्थापित करें";
+"paywall.legal.termsOfUse" = "उपयोग की शर्तें";
+"paywall.legal.privacyPolicy" = "गोपनीयता नीति";
+"paywall.legal.disclosure" = "मौजूदा अवधि समाप्त होने से कम से कम 24 घंटे पहले रद्द न किए जाने पर Silver और Gold हर साल अपने आप नवीनीकृत होते हैं। अपने डिवाइस पर सेटिंग्स → सदस्यताएं में कभी भी प्रबंधित या रद्द करें। Platinum एक बार की खरीद है, सदस्यता नहीं।";
+"paywall.error.title" = "खरीद विफल";
+"paywall.error.generic" = "कुछ गलत हो गया। कृपया पुनः प्रयास करें।";
+"paywall.pending" = "आपकी खरीद स्वीकृति की प्रतीक्षा में है।";
+"paywall.notNow" = "अभी नहीं";
+"paywall.loadingProducts" = "प्लान लोड हो रहे हैं…";
+"settings.upgrade.sectionTitle" = "प्लान";
+"settings.upgrade.currentTier" = "वर्तमान प्लान";
+"settings.upgrade.seePlans" = "प्लान देखें";
+"settings.upgrade.manageSubscription" = "सदस्यता प्रबंधित करें";
+
+/* Missing-key fix, 2026-08-09: section header used by SettingsView but never added to any language file */
+"Alarm Trigger" = "अलार्म ट्रिगर";

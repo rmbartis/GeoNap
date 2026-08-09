@@ -428,3 +428,50 @@ Il pulsante Salva è disabilitato finché non hai inserito un nome e fissato una
 "Apple Watch" = "Apple Watch";
 "privacy.body.contacts" = "Se usi la funzione opzionale Auto-Notifica, puoi scegliere dei contatti da avvisare automaticamente quando una sveglia si attiva. La scelta di un contatto usa il selettore di contatti di sistema di Apple — GeoNap non ottiene mai un accesso massivo o continuo alla tua rubrica, solo al contatto o ai contatti che scegli.\n\nPer ogni contatto aggiunto, GeoNap memorizza solo il suo nome e numero di telefono o indirizzo email — nient'altro dalla sua scheda contatto. Questo viene salvato tramite SwiftData e, come le tue sveglie, è sincronizzato facoltativamente tramite iCloud in modo che i tuoi contatti Auto-Notifica compaiano sugli altri tuoi dispositivi con lo stesso ID Apple.\n\nLe informazioni di contatto non vengono mai trasmesse a nessun server da me gestito. Vengono usate solo per indirizzare il messaggio che configuri, inviato tramite Messaggi o un'automazione Comandi Rapidi sotto il tuo controllo. Puoi rimuovere un contatto da una sveglia o dai valori predefiniti di Auto-Notifica in qualsiasi momento dalle Impostazioni.";
 "privacy.body.appleWatch" = "Se usi GeoNap con un Apple Watch abbinato, l'app iPhone condivide le tue sveglie attive (nome, area derivata dalla posizione, raggio e stato) con l'app Watch così che possa mostrarle e avvisarti.\n\nQuesti dati vengono inviati da dispositivo a dispositivo tramite il framework WatchConnectivity di Apple; non passano mai da alcun server da me gestito. Sull'Watch, vengono memorizzati in un contenitore di App Group condiviso e locale a quel dispositivo, così che sia l'app Watch sia la sua complicazione possano leggerli — non vengono sincronizzati con iCloud dall'Watch.\n\nSe attivi il log di debug opzionale, questo può registrare quando un Watch viene abbinato o disabbinato, o quando l'app GeoNap Watch viene installata o rimossa, per aiutare a diagnosticare problemi di sincronizzazione. Non registra i dati delle tue sveglie. Disinstallare GeoNap dal tuo Watch, o disabbinarlo, rimuove questa copia condivisa.";
+
+/* Paywall (item 10/18) */
+"paywall.title" = "Sblocca di più con GeoNap";
+"paywall.subtitle" = "Confronta i piani e scegli quello adatto ai tuoi viaggi.";
+"paywall.currentPlan" = "Il tuo piano attuale: %@";
+"paywall.freeTier.title" = "Free";
+"paywall.freeTier.caption" = "1 allarme attivo · Attivazione per distanza · Suoni di sistema";
+"paywall.silver.caption" = "Allarmi illimitati, Auto-Notify e suoni personalizzati";
+"paywall.silver.feature1" = "Allarmi attivi illimitati";
+"paywall.silver.feature2" = "Notifica automatica ai contatti via SMS";
+"paywall.silver.feature3" = "Suoni di allarme personalizzati e premium";
+"paywall.silver.feature4" = "Pianificazione con finestra oraria attiva";
+"paywall.gold.caption" = "Allarmi per i trasporti, SMS a mani libere e modalità ripetizione";
+"paywall.gold.feature1" = "Tutto ciò che offre Silver, più:";
+"paywall.gold.feature2" = "Allarmi per i trasporti (azienda, linea e fermata)";
+"paywall.gold.feature3" = "Modalità di attivazione in base al tempo di arrivo";
+"paywall.gold.feature4" = "Modalità ripetizione con isteresi";
+"paywall.gold.feature5" = "Automazione Auto-SMS a mani libere";
+"paywall.gold.feature6" = "Durata personalizzata della cache dei trasporti";
+"paywall.platinum.caption" = "Esegui Shortcuts, Live Activity e scansione calendario";
+"paywall.platinum.feature1" = "Tutto ciò che offre Gold, più:";
+"paywall.platinum.feature2" = "Esegui uno Shortcut quando scatta un allarme";
+"paywall.platinum.feature3" = "Live Activity / Dynamic Island";
+"paywall.platinum.feature4" = "Scansione del calendario per allarmi di viaggio";
+"paywall.platinum.feature5" = "Stima della posizione in caso di perdita del segnale";
+"paywall.platinum.feature6" = "Acquisto una tantum — tuo per sempre";
+"paywall.period.year" = "/ anno";
+"paywall.period.oneTime" = "una tantum";
+"paywall.action.subscribe" = "Abbonati";
+"paywall.action.buy" = "Acquista";
+"paywall.action.included" = "Incluso";
+"paywall.action.restorePurchases" = "Ripristina acquisti";
+"paywall.legal.termsOfUse" = "Termini di utilizzo";
+"paywall.legal.privacyPolicy" = "Informativa sulla privacy";
+"paywall.legal.disclosure" = "Silver e Gold si rinnovano automaticamente ogni anno se non annullati almeno 24 ore prima della fine del periodo in corso. Gestisci o annulla in qualsiasi momento in Impostazioni → Abbonamenti sul tuo dispositivo. Platinum è un acquisto una tantum, non un abbonamento.";
+"paywall.error.title" = "Acquisto non riuscito";
+"paywall.error.generic" = "Qualcosa è andato storto. Riprova.";
+"paywall.pending" = "Il tuo acquisto è in attesa di approvazione.";
+"paywall.notNow" = "Non ora";
+"paywall.loadingProducts" = "Caricamento piani…";
+"settings.upgrade.sectionTitle" = "Piano";
+"settings.upgrade.currentTier" = "Piano attuale";
+"settings.upgrade.seePlans" = "Vedi i piani";
+"settings.upgrade.manageSubscription" = "Gestisci abbonamento";
+
+/* Missing-key fix, 2026-08-09: section header used by SettingsView but never added to any language file */
+"Alarm Trigger" = "Attivatore allarme";

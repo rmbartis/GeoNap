@@ -405,8 +405,9 @@ nonisolated enum AppStorageKey {
 /// this constant rather than hardcoding the address — Help's Localizable.strings
 /// entries hold a %@ placeholder that HelpView.swift fills in from here.
 ///
-/// The one unavoidable exception is docs/privacy-policy.html, a static file
-/// with no build step, which must be kept in sync by hand if this ever changes.
+/// The one unavoidable exception is docs/privacy.html (renamed from
+/// privacy-policy.html), a static file with no build step, which must be
+/// kept in sync by hand if this ever changes.
 nonisolated enum SupportContact {
     static let email = "geonap@mba-labs.com"
 }

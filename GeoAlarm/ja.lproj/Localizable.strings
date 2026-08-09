@@ -450,3 +450,50 @@
 "Apple Watch" = "Apple Watch";
 "privacy.body.contacts" = "オプションの自動通知機能を使うと、アラームが鳴ったときに自動的にメッセージを送る連絡先を選べます。連絡先の選択にはAppleのシステム連絡先ピッカーを使用します — GeoNapがあなたの連絡先に一括または継続的にアクセスすることは決してなく、選んだ連絡先のみにアクセスします。\n\n追加した連絡先ごとに、GeoNapはその名前と電話番号またはメールアドレスのみを保存します — 連絡先カードのそれ以外の情報は保存しません。これはSwiftDataを使って保存され、アラームと同様に、オプションでiCloud経由で同期されるため、自動通知の連絡先は同じApple IDでサインインした他のデバイスにも表示されます。\n\n連絡先情報が私の運営するサーバーに送信されることは決してありません。設定したメッセージの宛先として使われるだけで、メッセージアプリまたはあなたが管理するショートカットの自動化を通じて送信されます。アラームまたは自動通知のデフォルトから、いつでも設定画面で連絡先を削除できます。";
 "privacy.body.appleWatch" = "ペアリングされたApple WatchとともにGeoNapを使用する場合、iPhoneアプリはアクティブなアラーム（名前、位置情報から導かれた領域、半径、状態）をWatchアプリと共有し、表示や通知ができるようにします。\n\nこのデータはAppleのWatchConnectivityフレームワークを使ってデバイス間で直接送信され、私が運営するサーバーを経由することは決してありません。Watch側では、そのデバイスにローカルな共有App Groupコンテナに保存され、Watchアプリとそのコンプリケーションの両方が読み取れるようになっています — WatchからiCloudへ同期されることはありません。\n\nオプションのデバッグログを有効にすると、同期の問題を診断するために、Watchのペアリング/ペアリング解除や、GeoNap Watchアプリのインストール/削除のタイミングが記録されることがあります。アラームデータ自体は記録されません。WatchからGeoNapをアンインストールする、またはペアリングを解除すると、この共有コピーは削除されます。";
+
+/* Paywall (item 10/18) */
+"paywall.title" = "GeoNapでもっと便利に";
+"paywall.subtitle" = "プランを比較して、旅のスタイルに合うものを選びましょう。";
+"paywall.currentPlan" = "現在のプラン: %@";
+"paywall.freeTier.title" = "Free";
+"paywall.freeTier.caption" = "アクティブなアラーム1件・距離トリガーのみ・システムサウンド";
+"paywall.silver.caption" = "アラーム無制限、Auto-Notify、カスタムサウンド";
+"paywall.silver.feature1" = "アクティブなアラームが無制限";
+"paywall.silver.feature2" = "到着時に連絡先へ自動でSMS通知";
+"paywall.silver.feature3" = "カスタム・プレミアムアラームサウンド";
+"paywall.silver.feature4" = "アクティブな時間帯でのスケジュール設定";
+"paywall.gold.caption" = "乗り換えアラーム、ハンズフリーSMS、リピートモード";
+"paywall.gold.feature1" = "Silverのすべての機能に加えて:";
+"paywall.gold.feature2" = "乗り換えアラーム（事業者・路線・停留所）";
+"paywall.gold.feature3" = "到着前の時間で作動するトリガーモード";
+"paywall.gold.feature4" = "ヒステリシス付きリピートモード";
+"paywall.gold.feature5" = "ハンズフリーAuto-SMSオートメーション";
+"paywall.gold.feature6" = "交通データキャッシュの保持期間をカスタマイズ";
+"paywall.platinum.caption" = "ショートカット実行、ライブアクティビティ、カレンダースキャン";
+"paywall.platinum.feature1" = "Goldのすべての機能に加えて:";
+"paywall.platinum.feature2" = "アラーム作動時にショートカットを実行";
+"paywall.platinum.feature3" = "ライブアクティビティ / Dynamic Island";
+"paywall.platinum.feature4" = "旅程アラームのためのカレンダースキャン";
+"paywall.platinum.feature5" = "電波が途切れた際の位置推定（デッドレコニング）";
+"paywall.platinum.feature6" = "買い切り — ずっとあなたのもの";
+"paywall.period.year" = "/ 年";
+"paywall.period.oneTime" = "買い切り";
+"paywall.action.subscribe" = "登録する";
+"paywall.action.buy" = "購入";
+"paywall.action.included" = "含まれています";
+"paywall.action.restorePurchases" = "購入を復元";
+"paywall.legal.termsOfUse" = "利用規約";
+"paywall.legal.privacyPolicy" = "プライバシーポリシー";
+"paywall.legal.disclosure" = "SilverとGoldは、現在の期間終了の少なくとも24時間前にキャンセルしない限り、毎年自動的に更新されます。デバイスの「設定」→「サブスクリプション」からいつでも管理・キャンセルできます。Platinumはサブスクリプションではなく、買い切りの購入です。";
+"paywall.error.title" = "購入に失敗しました";
+"paywall.error.generic" = "問題が発生しました。もう一度お試しください。";
+"paywall.pending" = "購入は承認待ちです。";
+"paywall.notNow" = "後で";
+"paywall.loadingProducts" = "プランを読み込み中…";
+"settings.upgrade.sectionTitle" = "プラン";
+"settings.upgrade.currentTier" = "現在のプラン";
+"settings.upgrade.seePlans" = "プランを見る";
+"settings.upgrade.manageSubscription" = "サブスクリプションを管理";
+
+/* Missing-key fix, 2026-08-09: section header used by SettingsView but never added to any language file */
+"Alarm Trigger" = "アラームのトリガー";

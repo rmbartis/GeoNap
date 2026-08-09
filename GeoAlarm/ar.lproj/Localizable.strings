@@ -450,3 +450,50 @@
 "Apple Watch" = "Apple Watch";
 "privacy.body.contacts" = "إذا استخدمت ميزة الإشعار التلقائي الاختيارية، يمكنك اختيار جهات اتصال لإرسال رسالة لها تلقائيًا عند تفعيل منبّه. اختيار جهة اتصال يستخدم منتقي جهات اتصال النظام من Apple — لا يحصل GeoNap أبدًا على وصول جماعي أو مستمر إلى دفتر جهات اتصالك، فقط جهة (جهات) الاتصال التي تختارها.\n\nلكل جهة اتصال تضيفها، يخزّن GeoNap اسمها ورقم هاتفها أو بريدها الإلكتروني فقط — لا شيء آخر من بطاقة جهة الاتصال. يُحفظ هذا باستخدام SwiftData، ومثل منبّهاتك، يُزامَن اختياريًا عبر iCloud بحيث تظهر جهات اتصال الإشعار التلقائي على أجهزتك الأخرى المسجّلة بنفس معرّف Apple.\n\nلا تُرسل معلومات جهة الاتصال أبدًا إلى أي خادم أُشغّله. تُستخدم فقط لتوجيه الرسالة التي تُعدّها، والمُرسلة عبر الرسائل أو أتمتة الاختصارات التي تتحكم بها. يمكنك إزالة جهة اتصال من منبّه أو من إعدادات الإشعار التلقائي الافتراضية في أي وقت من الإعدادات.";
 "privacy.body.appleWatch" = "إذا استخدمت GeoNap مع Apple Watch مقترنة، يشارك تطبيق iPhone منبّهاتك النشطة (الاسم، والمنطقة المشتقة من الموقع، ونصف القطر، والحالة) مع تطبيق الساعة ليتمكن من عرضها والتنبيه لها.\n\nتُرسل هذه البيانات من جهاز إلى جهاز باستخدام إطار عمل WatchConnectivity من Apple؛ ولا تمر أبدًا عبر أي خادم أُشغّله. على الساعة، تُخزَّن في حاوية مجموعة تطبيقات مشتركة محلية لذلك الجهاز، بحيث يمكن لتطبيق الساعة والمضاعفة (complication) الخاصة به قراءتها — ولا تُزامَن مع iCloud من الساعة.\n\nإذا فعّلت سجل التصحيح الاختياري، فقد يسجّل وقت اقتران الساعة أو فصلها، أو وقت تثبيت أو إزالة تطبيق GeoNap على الساعة، للمساعدة في تشخيص مشكلات المزامنة. لا يسجّل بيانات منبّهاتك نفسها. إلغاء تثبيت GeoNap من ساعتك، أو فصل اقترانها، يزيل هذه النسخة المشتركة.";
+
+/* Paywall (item 10/18) */
+"paywall.title" = "افتح المزيد مع GeoNap";
+"paywall.subtitle" = "قارن الخطط واختر ما يناسب طريقة سفرك.";
+"paywall.currentPlan" = "خطتك الحالية: %@";
+"paywall.freeTier.title" = "Free";
+"paywall.freeTier.caption" = "منبّه نشط واحد · التفعيل حسب المسافة فقط · أصوات النظام";
+"paywall.silver.caption" = "منبّهات غير محدودة، الإشعار التلقائي وأصوات مخصصة";
+"paywall.silver.feature1" = "عدد غير محدود من المنبّهات النشطة";
+"paywall.silver.feature2" = "إشعار جهات الاتصال تلقائيًا برسالة نصية عند الوصول";
+"paywall.silver.feature3" = "أصوات منبّه مخصصة ومميزة";
+"paywall.silver.feature4" = "جدولة ضمن نافذة زمنية نشطة";
+"paywall.gold.caption" = "منبّهات النقل العام، رسائل نصية دون تدخل، ووضع التكرار";
+"paywall.gold.feature1" = "كل ما في Silver، بالإضافة إلى:";
+"paywall.gold.feature2" = "منبّهات النقل العام (الشركة، الخط، والمحطة)";
+"paywall.gold.feature3" = "وضع التفعيل حسب الوقت المتبقي قبل الوصول";
+"paywall.gold.feature4" = "وضع التكرار مع هامش تأخير";
+"paywall.gold.feature5" = "أتمتة الرسائل النصية التلقائية دون تدخل";
+"paywall.gold.feature6" = "مدة تخزين مؤقت مخصصة لبيانات النقل العام";
+"paywall.platinum.caption" = "تشغيل الاختصارات، Live Activity، ومسح التقويم";
+"paywall.platinum.feature1" = "كل ما في Gold، بالإضافة إلى:";
+"paywall.platinum.feature2" = "تشغيل اختصار عند تفعيل المنبّه";
+"paywall.platinum.feature3" = "Live Activity / Dynamic Island";
+"paywall.platinum.feature4" = "مسح التقويم لاقتراح منبّهات الرحلات";
+"paywall.platinum.feature5" = "تقدير الموقع عند فقدان الإشارة";
+"paywall.platinum.feature6" = "شراء لمرة واحدة — ملك لك إلى الأبد";
+"paywall.period.year" = "/ سنويًا";
+"paywall.period.oneTime" = "شراء لمرة واحدة";
+"paywall.action.subscribe" = "اشترك";
+"paywall.action.buy" = "شراء";
+"paywall.action.included" = "مُضمّن";
+"paywall.action.restorePurchases" = "استعادة المشتريات";
+"paywall.legal.termsOfUse" = "شروط الاستخدام";
+"paywall.legal.privacyPolicy" = "سياسة الخصوصية";
+"paywall.legal.disclosure" = "يتجدد اشتراكا Silver وGold تلقائيًا كل عام ما لم يتم الإلغاء قبل 24 ساعة على الأقل من نهاية الفترة الحالية. يمكنك الإدارة أو الإلغاء في أي وقت من الإعدادات ← الاشتراكات على جهازك. أما Platinum فهو شراء لمرة واحدة وليس اشتراكًا.";
+"paywall.error.title" = "فشلت عملية الشراء";
+"paywall.error.generic" = "حدث خطأ ما. حاول مرة أخرى.";
+"paywall.pending" = "عملية الشراء بانتظار الموافقة.";
+"paywall.notNow" = "ليس الآن";
+"paywall.loadingProducts" = "جارٍ تحميل الخطط…";
+"settings.upgrade.sectionTitle" = "الخطة";
+"settings.upgrade.currentTier" = "الخطة الحالية";
+"settings.upgrade.seePlans" = "عرض الخطط";
+"settings.upgrade.manageSubscription" = "إدارة الاشتراك";
+
+/* Missing-key fix, 2026-08-09: section header used by SettingsView but never added to any language file */
+"Alarm Trigger" = "مشغّل التنبيه";

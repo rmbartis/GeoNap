@@ -97,23 +97,36 @@ Added `GeoNap.storekit` (inside the synchronized `GeoAlarm/` folder), matching l
 
 ## Phase 4 — Content and compliance updates
 
-### 13. Rewrite the App Store description to disclose pricing — **I execute**
-The current draft (`docs/appstore-copy.md`) reads like a fully free app — no mention of tiers or pricing anywhere. Apple requires subscription pricing and terms to be disclosed in the app's description or metadata; this needs a rewrite.
+### 13. Rewrite the App Store description to disclose pricing — ✅ **DONE (2026-08-09)**
+Added a "Plans & Pricing" section to `docs/appstore-copy.md`'s Description, listing all 4 tiers with prices and what each unlocks, plus the required auto-renewal/Family Sharing/regional-pricing disclosure language. Also folded in the newer Gold/Platinum features (Transit Alarms, Run Shortcut, Live Activity, Calendar Scanning, Dead Reckoning) that weren't mentioned anywhere in the old copy at all. 2,992 / 4,000 characters.
 
-### 14. Write (or adopt Apple's standard) Terms of Use — **I execute, you review**
-Needs to be linked both in App Store Connect and on the in-app paywall.
+Noticed but NOT changed (out of this item's scope): the Support URL still points to the old `github.com/rmbartis/GeoNap` and the Privacy Policy URL still points to the old `rmbartis.github.io/GeoNap/privacy-policy` — the latter is explicitly item 15's job ("Confirm the Privacy Policy link still works"), and the former isn't tracked anywhere yet. Flagging both — let me know if you want the Support URL updated to the mba-labs.com product page or a support email.
 
-### 15. Confirm the Privacy Policy link still works — **You manage, I can verify**
-The privacy policy file was renamed recently (`privacy-policy.html` → `privacy.html`). If your App Store Connect listing or in-app link still points to the old filename, it's now a dead link — worth checking before submission.
+### 14. Write (or adopt Apple's standard) Terms of Use — 🟡 **MOSTLY DONE — You confirm one setting**
+**Decided 2026-08-09: adopt Apple's Standard EULA**, not a custom Terms of Use — fastest, no drafting/legal-review risk for a solo launch.
 
-### 16. Complete the App Privacy questionnaire in App Store Connect — **You manage**
-The data-collection disclosure form. Should already be straightforward since it was reconciled against the privacy policy in an earlier pass — just needs your login to submit.
+- ✅ In-app paywall (item 10) already links to it: `https://www.apple.com/legal/internet-services/itunes/dev/stdeula/`.
+- ❓ App Store Connect: go to App Information → License Agreement and confirm it's left on "Apple's Standard License Agreement" (the default) rather than a custom EULA — if you've never touched that field, this is already correct with nothing to do. Let me know once confirmed and I'll mark this fully done.
 
-### 17. Update App Review notes to explain the purchase flow — **I execute**
-Apple's reviewer needs to know how to test all 4 tiers. The in-app DEBUG-only tier simulator won't exist in the release build, so the notes need to point reviewers to a Sandbox test account instead.
+### 15. Confirm the Privacy Policy link still works — 🟡 **VERIFIED, ONE FIELD LEFT — You manage**
+Checked directly: the old `rmbartis.github.io/GeoNap/privacy-policy` link is dead (confirmed empty/unreachable, 2026-08-09) — the file was renamed to `privacy.html` a while back and GitHub Pages never had a matching route. `mba-labs.com/products/geonap/#pv-sec-privacy` is live and confirmed working with the current privacy statement. The in-app link (PaywallView → PrivacyView) was never affected — it's an in-app screen, not an external URL.
 
-### 18. Localize the new paywall and purchase-related text — **I execute**
-Same 13-language treatment as the rest of the app.
+- ✅ `docs/appstore-copy.md`'s Privacy Policy URL field updated to the live mba-labs.com link.
+- ✅ Stale doc-comment in `AppSettings.swift` referencing the old filename corrected.
+- ❓ **App Store Connect itself**: go to App Information → Privacy Policy URL and confirm/update it to `https://mba-labs.com/products/geonap/#pv-sec-privacy` — this is the one place I can't edit directly. Let me know once it's set and I'll mark this fully done.
+
+### 16. Complete the App Privacy questionnaire in App Store Connect — 🟡 **GUIDE READY — You manage**
+The data-collection disclosure form. Requires your login, so I can't submit it — but `docs/app-privacy-questionnaire-guide.md` (added 2026-08-09) has exact answers for every data type GeoNap actually touches (Precise Location, Contact Name/Phone for Auto-Notify — both "App Functionality," "Not Linked to You," "Not Used for Tracking"), derived directly from the codebase and `docs/privacy.html`, so this should be a fast copy-through rather than an interpretation exercise. Let me know once submitted and I'll mark this done.
+
+### 17. Update App Review notes to explain the purchase flow — ✅ **DONE (2026-08-09)**
+Added a new "App Review Notes" section to `docs/appstore-copy.md` (distinct from the existing Beta Review Notes, which are TestFlight-only) — explains the 4-tier structure, exactly where to find the paywall, that testing purchases uses the reviewer's own Sandbox account, the Restore Purchases/Manage Subscription locations, and a per-tier feature breakdown so the reviewer knows what to expect unlocking at each level. You'll paste this into ASC's App Review Information → Notes field at submission time (Phase 6, item 24).
+
+### 18. Localize the new paywall and purchase-related text — ✅ **DONE (2026-08-09)**
+Translated all 38 paywall strings + 4 Settings "Plan" section strings into all 12 remaining languages (Spanish, French, German, Italian, Portuguese, Arabic, Hindi, Japanese, Simplified Chinese, Russian, Thai, Vietnamese) — same key set added to every `.lproj/Localizable.strings` file. Tier names (Free/Silver/Gold/Platinum) intentionally left untranslated in every language, matching the existing convention elsewhere in the app (`AppTier.description` is hardcoded English everywhere, e.g. the Transit Alarm lock badge). Verified all 13 files now carry the identical 38-key set with no syntax issues.
+
+Build in Xcode and spot-check a couple of languages (e.g. switch in-app language to Spanish or Arabic in Settings → Language, then open the paywall) before considering this fully verified.
+
+**QA follow-up (2026-08-09):** spot-checking surfaced two pre-existing (not part of this item's new work) inconsistencies, now fixed: (1) "Alarm Trigger" section header was never added to ANY language file including English — added to all 13. (2) German/Hindi/Thai left "Shortcuts" as literal English instead of Apple's own localized app name (Kurzbefehle / शॉर्टकट / ทางลัด) used elsewhere in the same files; Thai also left "Auto-SMS" fully untranslated unlike every other language. Fixed the prominent short strings (section headers, toggle labels, my new paywall Platinum strings) in all three; the longer multi-sentence help paragraphs mentioning "Shortcuts" were left as-is for now — flag if you want those swept too.
 
 ---
 
