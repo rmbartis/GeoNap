@@ -40,7 +40,14 @@ enum ProductID {
 
     /// Free has no product ID — it's just the absence of any purchase, so
     /// this returns nil rather than a case for it.
-    static func tier(for productID: String) -> AppTier? {
+    ///
+    /// Marked `nonisolated` because this is a pure lookup with no actor
+    /// state — under this project's default main-actor isolation it would
+    /// otherwise infer @MainActor, which triggered a build warning when
+    /// called from PurchaseManager.resolveHighestTier(from:) (itself
+    /// `nonisolated` on purpose, so it stays synchronously unit-testable).
+    /// (Bob, 2026-08-09)
+    nonisolated static func tier(for productID: String) -> AppTier? {
         switch productID {
         case platinum:     return .platinum
         case goldAnnual:   return .gold
@@ -150,27 +157,41 @@ final class PurchaseManager: ObservableObject {
 
     /// The single place this file writes to EntitlementManager. Walks every
     /// current, verified entitlement — subscriptions AND non-consumables —
-    /// maps each owned product ID to the tier it grants via
-    /// `ProductID.tier(for:)`, and keeps the highest one. Platinum's
-    /// non-consumable and an active Gold/Silver subscription aren't
-    /// mutually exclusive (a customer could own Platinum with no active
-    /// subscription, or vice versa), so this always reflects the best tier
-    /// currently owned, not just the most recent purchase.
+    /// and collects the owned product IDs; `resolveHighestTier(from:)` below
+    /// does the actual tier-mapping/max logic. Platinum's non-consumable and
+    /// an active Gold/Silver subscription aren't mutually exclusive (a
+    /// customer could own Platinum with no active subscription, or vice
+    /// versa), so this always reflects the best tier currently owned, not
+    /// just the most recent purchase.
     func updateEntitledTier() async {
         var owned: Set<String> = []
-        var highest: AppTier = .free
 
         for await result in Transaction.currentEntitlements {
             guard let transaction = try? checkVerified(result) else { continue }
             owned.insert(transaction.productID)
-            if let tier = ProductID.tier(for: transaction.productID), tier > highest {
-                highest = tier
-            }
         }
 
         purchasedProductIDs = owned
-        EntitlementManager.verifiedTier = highest
+        EntitlementManager.verifiedTier = Self.resolveHighestTier(from: owned)
         hasCompletedInitialEntitlementCheck = true
+    }
+
+    /// Pure tier-resolution logic, split out of `updateEntitledTier()` so it's
+    /// unit-testable without mocking StoreKit's `Transaction`/
+    /// `VerificationResult` (which have no public initializers). Maps each
+    /// owned product ID to the tier it grants via `ProductID.tier(for:)` and
+    /// returns the highest; an unrecognized product ID is ignored rather than
+    /// treated as an error, since a future product this build doesn't know
+    /// about yet should degrade gracefully, not crash or block the rest of
+    /// the entitlement check (Bob, 2026-08-09).
+    nonisolated static func resolveHighestTier(from productIDs: some Sequence<String>) -> AppTier {
+        var highest: AppTier = .free
+        for id in productIDs {
+            if let tier = ProductID.tier(for: id), tier > highest {
+                highest = tier
+            }
+        }
+        return highest
     }
 
     // MARK: - Transaction updates listener

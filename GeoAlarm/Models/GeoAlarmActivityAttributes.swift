@@ -61,10 +61,57 @@ struct GeoAlarmActivityAttributes: ActivityAttributes {
         /// app's UserDefaults.standard suite — piggybacking the value on the
         /// existing app-process -> extension-process update path avoids
         /// needing an App Group entitlement just for this one setting.
-        /// Defaults to "imperial" (matches every other distanceUnit call
-        /// site's fallback) if somehow missing after decode (e.g. an Activity
-        /// still running from before this field existed).
+        /// Defaults to "imperial" if missing from a decoded payload — e.g. an
+        /// Activity snapshot the OS persisted from before this field
+        /// existed, replayed after a future app update adds a new field to
+        /// ContentState — see the custom init(from:) below.
+        ///
+        /// (Bob, 2026-08-09: this "= imperial" default by itself only covers
+        /// the memberwise initializer just below — Swift's SYNTHESIZED
+        /// Decodable does not consult a stored property's declared default
+        /// for a key that's missing from the decoded payload; it throws
+        /// DecodingError.keyNotFound instead. That was the actual, verified
+        /// behavior here until this fix — see
+        /// NapStopTests/GeoAlarmActivityAttributesTests.swift. The custom
+        /// init(from:) below is what makes this doc comment's promise true
+        /// for decoding; the default-value syntax alone never did.)
         var distanceUnitRaw: String = "imperial"
+
+        // MARK: - Codable
+        //
+        // Hand-written instead of relying on synthesis, specifically so a
+        // decoded payload missing distanceUnitRaw (added after this
+        // struct's other fields already shipped) falls back to "imperial"
+        // instead of throwing — see the doc comment above. Only init(from:)
+        // needs to be custom; encode(to:) is left to the compiler's
+        // synthesis (it always has every field on hand to write, nothing to
+        // default there) — Swift synthesizes Decodable and Encodable
+        // independently, so providing just this one half doesn't disable
+        // synthesis of the other. The memberwise initializer below is also
+        // now hand-written, purely because declaring ANY initializer
+        // suppresses Swift's automatic memberwise init — its signature and
+        // defaults are unchanged from what synthesis produced before this
+        // fix (see LiveActivityManager.swift's two call sites and this
+        // file's own #Preview in GeoAlarmLiveActivityWidget.swift, neither
+        // touched by this change).
+        private enum CodingKeys: String, CodingKey {
+            case distanceRemaining, etaSeconds, lastUpdated, distanceUnitRaw
+        }
+
+        init(distanceRemaining: Double?, etaSeconds: Double?, lastUpdated: Date, distanceUnitRaw: String = "imperial") {
+            self.distanceRemaining = distanceRemaining
+            self.etaSeconds = etaSeconds
+            self.lastUpdated = lastUpdated
+            self.distanceUnitRaw = distanceUnitRaw
+        }
+
+        public init(from decoder: Decoder) throws {
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+            distanceRemaining = try container.decodeIfPresent(Double.self, forKey: .distanceRemaining)
+            etaSeconds = try container.decodeIfPresent(Double.self, forKey: .etaSeconds)
+            lastUpdated = try container.decode(Date.self, forKey: .lastUpdated)
+            distanceUnitRaw = try container.decodeIfPresent(String.self, forKey: .distanceUnitRaw) ?? "imperial"
+        }
     }
 
     /// Alarm identity + fields the widget needs to render but that never

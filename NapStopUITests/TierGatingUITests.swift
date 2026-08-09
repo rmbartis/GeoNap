@@ -104,6 +104,20 @@ final class TierGatingUITests: XCTestCase {
         return false
     }
 
+    /// `isEnabled` proved unreliable in XCUITest on iOS 26.5 sim for
+    /// controls whose enabled state changes at runtime (not at initial
+    /// launch) — confirmed broken for both a merged
+    /// `.accessibilityElement(children: .contain)` container and a plain
+    /// Button by repeated failed fix attempts, despite correct on-device
+    /// behavior (Bob, 2026-08-09). This polls `accessibilityValue` instead —
+    /// a separately computed property that refreshes correctly.
+    @discardableResult
+    private func waitForValue(_ element: XCUIElement, _ expected: String, timeout: TimeInterval = 3) -> Bool {
+        let predicate = NSPredicate(format: "value == %@", expected)
+        let exp = XCTNSPredicateExpectation(predicate: predicate, object: element)
+        return XCTWaiter().wait(for: [exp], timeout: timeout) == .completed
+    }
+
     /// The lock/tier badge renders via SwiftUI's `Label`, which — like the
     /// Menu rows and Picker rows elsewhere in this app — doesn't reliably
     /// surface as one specific XCUIElementType across OS versions. Check
@@ -282,7 +296,21 @@ final class TierGatingUITests: XCTestCase {
 
         let activeDaysRow = formRow("activeDaysRow")
         XCTAssertTrue(scrollIntoView(activeDaysRow))
-        XCTAssertTrue(activeDaysRow.isEnabled, "Active Days must become enabled once Repeat is turned on at Gold+.")
+        // `isEnabled` is NOT trustworthy here in XCUITest on iOS 26.5 sim —
+        // confirmed broken for both the merged "activeDaysRow" container AND
+        // the individual day Button by two separate failed fix attempts
+        // (2026-08-09), even though on-device tap behavior is correct
+        // (confirmed twice by Bob, including tapping a day button and
+        // watching it respond immediately). Assert on real functional
+        // behavior instead: all days default selected
+        // (AlarmViewModel.activeDays = Set(1...7)), so tapping Sunday while
+        // Repeat is on must deselect it — and only if the row is genuinely
+        // interactive.
+        let sundayButton = app.buttons["activeDaysRow.dayButton.1"]
+        XCTAssertTrue(sundayButton.waitForExistence(timeout: 2))
+        XCTAssertEqual(sundayButton.value as? String, "selected", "Precondition: Sunday starts selected — all days default on.")
+        sundayButton.tap()
+        XCTAssertTrue(waitForValue(sundayButton, "not selected"), "Tapping a day button must toggle it once Repeat is turned on at Gold+ — Active Days must be genuinely interactive, not just visually enabled.")
     }
 
     func test_goldTier_activeDays_redisablesWhenRepeatToggledBackOff() throws {
@@ -298,12 +326,27 @@ final class TierGatingUITests: XCTestCase {
 
         let activeDaysRow = formRow("activeDaysRow")
         XCTAssertTrue(scrollIntoView(activeDaysRow))
-        XCTAssertTrue(activeDaysRow.isEnabled, "Active Days must be enabled while Repeat is on.")
+        // See test_goldTier_repeatOn_activeDaysEnabled for why this checks
+        // real functional behavior (does a tap actually toggle the day)
+        // rather than the isEnabled trait, which isn't trustworthy here.
+        let sundayButton = app.buttons["activeDaysRow.dayButton.1"]
+        XCTAssertTrue(sundayButton.waitForExistence(timeout: 2))
+        sundayButton.tap()
+        XCTAssertTrue(waitForValue(sundayButton, "not selected"), "Active Days must be interactive while Repeat is on.")
 
         XCTAssertTrue(scrollIntoView(repeatToggle))
         repeatToggle.tap()
+        // Synchronize on the toggle's own value flipping before probing
+        // Active Days again, rather than racing the disable.
+        XCTAssertTrue(waitForValue(repeatToggle, "0"), "Repeat toggle should reflect off state after tapping.")
 
-        XCTAssertFalse(activeDaysRow.isEnabled, "Active Days must re-disable immediately when Repeat is turned back off.")
+        sundayButton.tap()
+        // If Active Days correctly re-disabled, this tap is a no-op and the
+        // value stays "not selected" (unchanged from above). If the row
+        // were still (incorrectly) interactive, this tap would flip it back
+        // to "selected" — which is exactly what this asserts does NOT
+        // happen.
+        XCTAssertEqual(sundayButton.value as? String, "not selected", "Active Days must re-disable immediately when Repeat is turned back off — a tap after that must be a no-op.")
     }
 
     // MARK: - Dead Reckoning on Signal Loss: Gold disabled, Platinum enabled

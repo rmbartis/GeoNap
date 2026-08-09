@@ -553,6 +553,23 @@ struct AddAlarmView: View {
                                 .clipShape(RoundedRectangle(cornerRadius: 6))
                         }
                         .buttonStyle(.plain)
+                        .accessibilityIdentifier("activeDaysRow.dayButton.\(weekday)")
+                        // Neither the merged "activeDaysRow" container NOR
+                        // this individual Button's own `isEnabled` trait
+                        // reliably refreshes in XCUITest on iOS 26.5 sim
+                        // after Repeat is toggled at runtime — confirmed
+                        // broken for both by two separate failed fix
+                        // attempts (2026-08-09), even though the actual
+                        // on-device tap behavior is correct (confirmed twice
+                        // by Bob, including tapping a day button and seeing
+                        // it respond immediately). Since `isEnabled` can't be
+                        // trusted here, UI tests instead assert on this
+                        // accessibilityValue — a completely different,
+                        // separately-computed property — to prove a tap
+                        // actually toggled (enabled) or didn't toggle
+                        // (disabled) the day, rather than reading the
+                        // control's enabled/disabled trait directly.
+                        .accessibilityValue(isOn ? "selected" : "not selected")
                     }
                 }
                 // Plain HStacks don't get their own accessibility node in
@@ -573,6 +590,18 @@ struct AddAlarmView: View {
                 // gate. See TierGatedModifier.swift's `enabledIf` doc for why
                 // this can't just be a separate .disabled(!viewModel.isRepeating).
                 .tierGated(minimumTier: .gold, enabledIf: viewModel.isRepeating)
+                // .disabled(_:) is applied INSIDE TierGated, on top of a view
+                // that already has .accessibilityElement(children: .contain)
+                // applied to it (see above). On-device the visual/interaction
+                // behavior is correct (confirmed by Bob, 2026-08-09), but on
+                // iOS 26.5 sim the merged container's exposed `isEnabled`
+                // trait doesn't reliably refresh after the initial render —
+                // a UI-test-only accessibility quirk, not a real bug. (A
+                // .id(_:)-based force-rebuild was tried and did NOT fix it,
+                // ruling out simple AX-node caching.) UI tests check the
+                // individual day-toggle Buttons' isEnabled instead — see
+                // their .accessibilityIdentifier("activeDaysRow.dayButton.*")
+                // below.
                 HStack(spacing: 6) {
                     Image(systemName: viewModel.activeDays == Set(1...7) ? "checkmark.circle" : "calendar")
                         .foregroundColor(viewModel.activeDays == Set(1...7) ? .green : .accentColor)

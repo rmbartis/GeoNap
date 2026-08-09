@@ -650,6 +650,12 @@ struct TransitAlarmView: View {
                                 .clipShape(RoundedRectangle(cornerRadius: 6))
                         }
                         .buttonStyle(.plain)
+                        .accessibilityIdentifier("activeDaysRow.dayButton.\(weekday)")
+                        // See AddAlarmView.swift's identical row — isEnabled
+                        // isn't trustworthy for this control in XCUITest on
+                        // iOS 26.5 sim, so UI tests assert on this value
+                        // instead (Bob, 2026-08-09).
+                        .accessibilityValue(isOn ? "selected" : "not selected")
                     }
                 }
                 // See AddAlarmView.swift's identical Active Days row for why
@@ -663,6 +669,10 @@ struct TransitAlarmView: View {
                 // gate. See TierGatedModifier.swift's `enabledIf` doc for why
                 // this can't just be a separate .disabled(!isRepeating).
                 .tierGated(minimumTier: .gold, enabledIf: isRepeating)
+                // See AddAlarmView.swift's identical row for the accessibility
+                // caveat — on-device behavior is correct, but the merged
+                // container's isEnabled trait doesn't reliably refresh in UI
+                // tests on iOS 26.5 sim (Bob, 2026-08-09).
                 HStack(spacing: 6) {
                     Image(systemName: activeDays == Set(1...7) ? "checkmark.circle" : "calendar")
                         .foregroundColor(activeDays == Set(1...7) ? .green : .accentColor)

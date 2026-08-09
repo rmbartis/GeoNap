@@ -54,11 +54,23 @@ final class GTFSService: ObservableObject {
             retentionDays: retentionDays
         )
 
-        if useCache, let dir = feed.cachedDirectoryURL {
+        if useCache, let dir = feed.cachedDirectoryURL, FileManager.default.fileExists(atPath: dir.path) {
             let retentionDescription = retentionDays >= AppStorageKey.gtfsCacheInfiniteRetention ? "infinite" : "\(retentionDays)d"
             DebugLogger.shared.log("GTFS cache hit for '\(feed.name)' — loading from \(dir.lastPathComponent) (retention=\(retentionDescription))", category: "GTFS")
             await parse(from: dir)
         } else {
+            if useCache {
+                // Cache metadata says fresh (isCached + lastDownloaded within
+                // retention), but the extracted files aren't on disk. This
+                // happens after a delete/reinstall: GTFSFeedModel lives in the
+                // CloudKit-backed SwiftData store and syncs back down, but the
+                // extracted GTFS files live in the local-only Caches
+                // directory, which the reinstall wipes. Without this check,
+                // parse(from:) silently returns zero routes/stops from a
+                // missing directory instead of re-downloading (Bob, 2026-08-09
+                // — reported as "No Routes Found" for Amtrak after reinstall).
+                DebugLogger.shared.log("GTFS cache metadata present for '\(feed.name)' but on-disk directory missing (likely reinstall) — re-downloading", category: "GTFS")
+            }
             await downloadAndParse(feed: feed)
         }
     }
