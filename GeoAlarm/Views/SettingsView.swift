@@ -33,6 +33,15 @@ struct SettingsView: View {
     @State private var showClearedBanner = false
     // Controls the "GTFS cache cleared" feedback
     @State private var showGTFSCacheClearedBanner = false
+    // Controls the Paywall sheet (item 10), opened from the Plan section's
+    // "See Plans" row below.
+    @State private var showPaywall = false
+
+    // Makes the Plan section's "Current Plan" text re-render live if a
+    // purchase/restore completes while Settings happens to be open — the
+    // same mechanism `.tierGated` uses, applied directly here since this
+    // text isn't itself a gated control.
+    @ObservedObject private var tierChangeObserver = TierChangeObserver.shared
 
     /// Timestamp format used in the "Debug Log - <date - timestamp>" mail subject.
     private static let debugLogTimestampFormatter: DateFormatter = {
@@ -87,6 +96,24 @@ struct SettingsView: View {
     var body: some View {
         NavigationStack {
             Form {
+
+                // MARK: Plan (item 10 entry point)
+                Section {
+                    LabeledContent {
+                        Text(EntitlementManager.currentTier.description)
+                            .foregroundStyle(.secondary)
+                    } label: {
+                        Text("settings.upgrade.currentTier", bundle: bundle)
+                    }
+                    Button {
+                        showPaywall = true
+                    } label: {
+                        Text("settings.upgrade.seePlans", bundle: bundle)
+                    }
+                    .accessibilityIdentifier("seePlansButton")
+                } header: {
+                    Text("settings.upgrade.sectionTitle", bundle: bundle)
+                }
 
                 // MARK: Units
                 Section {
@@ -378,6 +405,9 @@ struct SettingsView: View {
             }
             .sheet(item: $pendingMailMessage) { message in
                 MailComposeView(message: message)
+            }
+            .sheet(isPresented: $showPaywall) {
+                PaywallView()
             }
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {

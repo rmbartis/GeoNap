@@ -77,8 +77,10 @@ Added `PurchaseManager.swift` (StoreKit 2) as the sole file that talks to StoreK
 
 Nothing purchasable yet — that's item 10 (the paywall UI), which is what will actually call `purchase(_:)`.
 
-### 10. Build the purchase screen (paywall) — **I execute, you test**
-The screen where a user compares Free/Silver/Gold/Platinum and taps to buy. Needs a "Restore Purchases" button (Apple requires this) and links to your Terms of Use and Privacy Policy.
+### 10. Build the purchase screen (paywall) — ✅ **DONE (2026-08-09)**
+Added `PaywallView.swift`: compares Free/Silver/Gold/Platinum with live StoreKit pricing, Subscribe/Buy actions per tier, a required "Restore Purchases" button, and links to Privacy Policy (in-app, `PrivacyView`) and Terms of Use (Apple's Standard EULA as an interim stand-in until item 14 lands — swap then). Entry points: tapping any `.tierGated` lock badge now opens it, and Settings has a new "Plan" section with a "See Plans" row. Clean build, no warnings.
+
+English-only strings for now — the other 12 languages are item 18's separate scope, not part of this item.
 
 ### 10a. Replace the placeholder review screenshots with real paywall screenshots — **You manage**
 ⚠️ **Follow-up, blocked until item 10 is done.** Silver, Gold, and Platinum were each set up in Phase 2 with a placeholder review screenshot (a Settings screen showing the locked features), since the real paywall didn't exist yet. Once this item's paywall is built and running in Simulator/on a device, take a real screenshot of it — exactly 640 × 920 px, PNG or JPEG, no alpha channel — and upload it to each of the three products' App Store Connect pages (Subscriptions → [Silver/Gold] → Localization → English (U.S.) → Review Screenshot; In-App Purchases → Platinum → same field), replacing the placeholder. **This is what item 6b was waiting on** — once the real screenshot is in for all three, go back and click "Add for Review" on the subscription group and on Platinum.

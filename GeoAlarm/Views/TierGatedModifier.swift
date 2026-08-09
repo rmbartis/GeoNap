@@ -74,6 +74,16 @@ struct TierGated: ViewModifier {
     // doc comment in EntitlementManager.swift.
     @ObservedObject private var tierChangeObserver = TierChangeObserver.shared
 
+    /// Presents PaywallView (item 10) when the lock badge is tapped. Kept as
+    /// an `.onTapGesture` on the existing `Label` rather than converting it
+    /// to a real `Button` — a `Button` would change the element's underlying
+    /// accessibility type, which would break `TierGatingUITests
+    /// .lockBadgeExists(tier:)`'s existing staticTexts/otherElements/images
+    /// query (see that test's own comment on why it doesn't check
+    /// `app.buttons`). Same pattern SoundPickerSection.swift already uses
+    /// for its own manual lock badge.
+    @State private var showPaywall = false
+
     private var isEntitled: Bool { EntitlementManager.isEntitled(to: minimumTier) }
     private var isFullyEnabled: Bool { isEntitled && enabledIf }
 
@@ -90,9 +100,14 @@ struct TierGated: ViewModifier {
                     .foregroundStyle(.secondary)
                     .labelStyle(.titleAndIcon)
                     .fixedSize()
-                    .accessibilityLabel("Requires \(minimumTier.description) tier")
+                    .contentShape(Rectangle())
+                    .onTapGesture { showPaywall = true }
+                    .accessibilityLabel("Requires \(minimumTier.description) tier — tap to see plans")
                     .accessibilityIdentifier("tierGatedLock.\(minimumTier.description.lowercased())")
             }
+        }
+        .sheet(isPresented: $showPaywall) {
+            PaywallView()
         }
     }
 }
