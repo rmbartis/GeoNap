@@ -102,21 +102,21 @@ Added a "Plans & Pricing" section to `docs/appstore-copy.md`'s Description, list
 
 Noticed but NOT changed (out of this item's scope): the Support URL still points to the old `github.com/rmbartis/GeoNap` and the Privacy Policy URL still points to the old `rmbartis.github.io/GeoNap/privacy-policy` — the latter is explicitly item 15's job ("Confirm the Privacy Policy link still works"), and the former isn't tracked anywhere yet. Flagging both — let me know if you want the Support URL updated to the mba-labs.com product page or a support email.
 
-### 14. Write (or adopt Apple's standard) Terms of Use — 🟡 **MOSTLY DONE — You confirm one setting**
+### 14. Write (or adopt Apple's standard) Terms of Use — ✅ **DONE (2026-08-09)**
 **Decided 2026-08-09: adopt Apple's Standard EULA**, not a custom Terms of Use — fastest, no drafting/legal-review risk for a solo launch.
 
 - ✅ In-app paywall (item 10) already links to it: `https://www.apple.com/legal/internet-services/itunes/dev/stdeula/`.
-- ❓ App Store Connect: go to App Information → License Agreement and confirm it's left on "Apple's Standard License Agreement" (the default) rather than a custom EULA — if you've never touched that field, this is already correct with nothing to do. Let me know once confirmed and I'll mark this fully done.
+- ✅ App Store Connect confirmed: App Information → License Agreement shows "Apple's Standard License Agreement" (the default, unedited).
 
-### 15. Confirm the Privacy Policy link still works — 🟡 **VERIFIED, ONE FIELD LEFT — You manage**
-Checked directly: the old `rmbartis.github.io/GeoNap/privacy-policy` link is dead (confirmed empty/unreachable, 2026-08-09) — the file was renamed to `privacy.html` a while back and GitHub Pages never had a matching route. `mba-labs.com/products/geonap/#pv-sec-privacy` is live and confirmed working with the current privacy statement. The in-app link (PaywallView → PrivacyView) was never affected — it's an in-app screen, not an external URL.
+### 15. Confirm the Privacy Policy link still works — ✅ **DONE (2026-08-09)**
+Checked directly: the old `rmbartis.github.io/GeoNap/privacy-policy` link is dead (confirmed empty/unreachable) — the file was renamed to `privacy.html` a while back and GitHub Pages never had a matching route. `mba-labs.com/products/geonap/#pv-sec-privacy` is live and confirmed working with the current privacy statement. The in-app link (PaywallView → PrivacyView) was never affected — it's an in-app screen, not an external URL.
 
 - ✅ `docs/appstore-copy.md`'s Privacy Policy URL field updated to the live mba-labs.com link.
 - ✅ Stale doc-comment in `AppSettings.swift` referencing the old filename corrected.
-- ❓ **App Store Connect itself**: go to App Information → Privacy Policy URL and confirm/update it to `https://mba-labs.com/products/geonap/#pv-sec-privacy` — this is the one place I can't edit directly. Let me know once it's set and I'll mark this fully done.
+- ✅ App Store Connect confirmed: App Privacy page → Privacy Policy URL shows `https://mba-labs.com/products/geonap/#pv-sec-privacy`.
 
-### 16. Complete the App Privacy questionnaire in App Store Connect — 🟡 **GUIDE READY — You manage**
-The data-collection disclosure form. Requires your login, so I can't submit it — but `docs/app-privacy-questionnaire-guide.md` (added 2026-08-09) has exact answers for every data type GeoNap actually touches (Precise Location, Contact Name/Phone for Auto-Notify — both "App Functionality," "Not Linked to You," "Not Used for Tracking"), derived directly from the codebase and `docs/privacy.html`, so this should be a fast copy-through rather than an interpretation exercise. Let me know once submitted and I'll mark this done.
+### 16. Complete the App Privacy questionnaire in App Store Connect — ✅ **DONE (2026-08-09)**
+Filled out per `docs/app-privacy-questionnaire-guide.md`: Precise Location and Contact Info (Name, Phone Number) both declared "App Functionality," "Not Linked to You," "Not Used for Tracking." Confirmed no warning indicators remained on any data type, and published.
 
 ### 17. Update App Review notes to explain the purchase flow — ✅ **DONE (2026-08-09)**
 Added a new "App Review Notes" section to `docs/appstore-copy.md` (distinct from the existing Beta Review Notes, which are TestFlight-only) — explains the 4-tier structure, exactly where to find the paywall, that testing purchases uses the reviewer's own Sandbox account, the Restore Purchases/Manage Subscription locations, and a per-tier feature breakdown so the reviewer knows what to expect unlocking at each level. You'll paste this into ASC's App Review Information → Notes field at submission time (Phase 6, item 24).
@@ -132,8 +132,8 @@ Build in Xcode and spot-check a couple of languages (e.g. switch in-app language
 
 ## Phase 5 — Testing
 
-### 19. Test all three purchases in Sandbox — **You manage**
-Using a Sandbox tester Apple ID and the StoreKit test config from step 12: confirm buying, upgrading Silver→Gold, downgrading, and Restore Purchases all work correctly.
+### 19. Test all three purchases in Sandbox — ✅ **DONE (2026-08-09)**
+Tested on a physical device against Apple's real Sandbox (not the local `.storekit` config) using tester `support@mba-labs.com`. Confirmed: buying Silver, Gold, and Platinum each unlock correctly; upgrading Silver→Gold works; downgrading Gold→Silver correctly schedules for the next renewal (confirmed via ASC's native subscription management sheet) rather than switching immediately, matching expected StoreKit behavior; Restore Purchases recovers ownership after reinstall.
 
 ### 20. Run a TestFlight beta pass on the real purchase flow — **You manage**
 Distinct from any earlier TestFlight pass — this one specifically needs to exercise real purchases (via Sandbox), not the old DEBUG-only tier simulator.
