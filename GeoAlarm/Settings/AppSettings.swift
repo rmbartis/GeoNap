@@ -272,14 +272,25 @@ nonisolated enum AppStorageKey {
     /// or "time" (minutes before arrival). Stored as TriggerMode.rawValue.
     static let defaultTriggerMode = "defaultTriggerMode"
 
-    /// Reserved for a future purchase/restore writer — see the TODO(StoreKit)
-    /// comment on EntitlementManager.swift. NOT currently read anywhere:
-    /// as of 2026-07-11, EntitlementManager.currentTier reports `.platinum`
-    /// unconditionally in RELEASE (distribution stays Platinum for everyone
-    /// until a real purchase flow exists), so this key is unused dead
-    /// weight for now, kept only so the eventual StoreKit integration has
-    /// somewhere to write the result without inventing a new key then.
+    /// SUPERSEDED (2026-08-08) — never got a real writer, and can't have
+    /// one now: a single Bool can only represent "Platinum or not," but
+    /// GeoNap ships 4 tiers. The real StoreKit integration
+    /// (PurchaseManager.swift) writes to `verifiedTierRawValue` below
+    /// instead. Left defined (unused) rather than deleted, in case any old
+    /// TestFlight install has this key set from a stray manual test —
+    /// nothing reads it, so a stale value here is inert either way.
     static let platinumTierUnlocked = "platinumTierUnlocked"
+
+    /// The real purchase/restore writer for `EntitlementManager.verifiedTier`
+    /// (an `AppTier.rawValue` Int, not a Bool — see `platinumTierUnlocked`
+    /// above for why that key couldn't be reused). Written by
+    /// `EntitlementManager.verifiedTier`'s own `didSet`, every time
+    /// PurchaseManager resolves a fresh entitlement check; read once,
+    /// synchronously, at process launch to seed `verifiedTier` before the
+    /// first async StoreKit check completes. Not meant to be read or
+    /// written from anywhere else — see EntitlementManager.swift's "single
+    /// point of control" header comment.
+    static let verifiedTierRawValue = "verifiedTierRawValue"
 
     // MARK: Calendar Scanning
     // All calendar-scan keys default to "off"/empty — scanning is strictly

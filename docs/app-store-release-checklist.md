@@ -72,8 +72,10 @@ From our earlier pricing discussion: Apple's default pricing tracks currency exc
 ### 8. Turn on the In-App Purchase capability in Xcode — ✅ **DONE (2026-08-08)**
 Added to the GeoNap target's Signing & Capabilities (not the Watch app/widget/Live Activity extension — only the main app calls StoreKit). Clean build confirmed successful.
 
-### 9. Replace the simulated tier system with a real purchase check — **I execute, you test**
-Right now, `EntitlementManager` doesn't check any real purchase — it just assumes every release-build user is Platinum. This step swaps that out for Apple's real purchase-checking system (StoreKit), so the app actually knows what a user paid for. Per the existing "single point of control" rule already documented in the code, this change should touch *only* that one property — everything else in the app already reads through it correctly, so nothing else needs to change.
+### 9. Replace the simulated tier system with a real purchase check — ✅ **DONE (2026-08-08)**
+Added `PurchaseManager.swift` (StoreKit 2) as the sole file that talks to StoreKit directly — loads the three products, resolves the highest owned tier from `Transaction.currentEntitlements`, listens for renewals/Family Sharing/Ask to Buy via `Transaction.updates`, and exposes `purchase(_:)`/`restorePurchases()` for the paywall (item 10) to call. `EntitlementManager.verifiedTier` is the new real entitlement, and RELEASE's `currentTier` now reads it instead of hardcoded `.platinum`; DEBUG is unchanged (`testOverride ?? .platinum`), per the existing documented policy. Per the "single point of control" rule, no other file was touched — every gated feature still reads through `EntitlementManager.isEntitled(to:)` exactly as before. Clean build, no warnings, tagged checkpoint before this landed: `pre-app-store-entitlement-changes`.
+
+Nothing purchasable yet — that's item 10 (the paywall UI), which is what will actually call `purchase(_:)`.
 
 ### 10. Build the purchase screen (paywall) — **I execute, you test**
 The screen where a user compares Free/Silver/Gold/Platinum and taps to buy. Needs a "Restore Purchases" button (Apple requires this) and links to your Terms of Use and Privacy Policy.

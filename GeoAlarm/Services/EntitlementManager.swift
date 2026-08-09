@@ -13,57 +13,61 @@
 // GTFS caching, Auto-SMS hands-free, Calendar Scanning, the Free-tier
 // alarm cap, the Sound library — calls through this one property/function,
 // nothing else. This is deliberate and load-bearing, not incidental:
-//   - When real StoreKit/IAP lands, `Transaction.currentEntitlements` (or
-//     whatever the actual purchase-verification call ends up being) gets
-//     wired into `currentTier`'s RELEASE branch — and ONLY that branch.
-//     No other file should ever read a receipt, a product ID, or
-//     `AppStorageKey.platinumTierUnlocked` directly. Apple's own purchase gate
-//     and this app's testing/simulation gate are the SAME control point —
-//     testOverride (DEBUG-only) just short-circuits the exact same
-//     `currentTier` property that the real StoreKit check will eventually
-//     populate; it is not a parallel or bypassable mechanism.
+//   - As of 2026-08-08 (item 9), real StoreKit/IAP is wired in:
+//     `PurchaseManager` is the ONLY file that talks to StoreKit directly
+//     (loads products, initiates purchases, verifies transactions, listens
+//     for `Transaction.updates`), and its job ends at writing the result
+//     into `EntitlementManager.verifiedTier` — nothing else reads a
+//     `Transaction`, receipt, or product ID directly. Apple's own purchase
+//     gate and this app's testing/simulation gate are the SAME control
+//     point — `testOverride` (DEBUG-only) just short-circuits the exact
+//     same `currentTier` property that `verifiedTier` populates in RELEASE;
+//     it is not a parallel or bypassable mechanism.
 //   - If you're about to add a new gated feature and find yourself writing
 //     `UserDefaults.standard.bool(forKey: AppStorageKey.platinumTierUnlocked)`
 //     or any other independent "am I entitled" check, stop — call
 //     `EntitlementManager.isEntitled(to:)` instead. A second control point
 //     is exactly the loophole StoreKit review (and simple bugs) will find.
-//   - Verified 2026-07-11: grepped the whole target for "StoreKit",
-//     "platinumTierUnlocked", and "isEntitled"/"currentTier"/"AppTier." —
-//     every real usage funnels through this file; `platinumTierUnlocked` is
-//     defined in AppSettings.swift but not read by anything yet (reserved
-//     for the future StoreKit writer, see TODO(StoreKit) below).
+//   - Verified 2026-07-11 (still true after the 2026-08-08 StoreKit wiring):
+//     grepped the whole target for "StoreKit", "platinumTierUnlocked", and
+//     "isEntitled"/"currentTier"/"AppTier." — every real usage funnels
+//     through this file. `platinumTierUnlocked` (AppSettings.swift) is
+//     superseded dead weight now — see its doc comment — the real writer
+//     landed as a new key, `AppStorageKey.verifiedTierRawValue`, since a
+//     single Bool can't represent 4 tiers.
 // ═══════════════════════════════════════════════════════════════════════
 //
 // GeoNap's monetization plan (Free/Silver/Gold/Platinum — see the
 // monetization-tier-pricing project memory, tagged in git as
-// pre-apple-store-and-pricing-tier-support) has NO StoreKit/IAP
-// implementation yet. This type exists so gated features have exactly one
-// place to check, ready to be swapped for a real entitlement check —
-// StoreKit 2 `Transaction.currentEntitlements`, receipt validation, etc. —
-// without touching every call site again.
+// pre-apple-store-and-pricing-tier-support) now has a real StoreKit 2
+// implementation (PurchaseManager.swift, added 2026-08-08 — see git tag
+// pre-app-store-entitlement-changes for the last commit before this
+// landed). This type is the one place gated features check, and RELEASE
+// now reflects real entitlements instead of a stub.
 //
-// Policy as of 2026-07-11 (Bob): distribution builds report `.platinum` for
-// EVERY user, unconditionally, until real StoreKit/IAP lands — there's no
-// purchase flow yet, so locking real users out of Platinum with no way to buy it
-// would just be a broken experience, not a paywall. `AppStorageKey
-// .platinumTierUnlocked` is reserved for the future purchase/restore writer
-// (see TODO(StoreKit) below) but is NOT read here right now — don't
-// resurrect the old "RELEASE reads UserDefaults, defaults locked" behavior
-// by accident; that was superseded by this instruction.
-//
-// This means `currentTier` is a stub everywhere today:
-//   - RELEASE (including TestFlight, which archives Release): always `.platinum`.
-//   - DEBUG (Xcode → device/simulator, and `xcodebuild test`): `testOverride`
-//     if set, else `.platinum` — so ordinary local development still sees every
-//     feature unlocked unless a test or the Settings "Tier Simulation"
-//     section deliberately dials it down.
-//
-// TODO(StoreKit): once a real purchase/restore flow exists, replace the
-// RELEASE branch below with actual entitlement verification (and give
-// `AppStorageKey.platinumTierUnlocked` a real writer), rather than the
-// unconditional `.platinum`. When that lands, keep the DEBUG bypass — it's still
-// useful for local development — but audit every call site that currently
-// assumes "RELEASE == everyone is Platinum" no longer holds.
+// Policy as of 2026-08-08 (Bob):
+//   - RELEASE (including TestFlight, which archives Release): reports
+//     `verifiedTier` — the highest tier PurchaseManager has verified via
+//     `Transaction.currentEntitlements`, defaulting to `.free` for a device
+//     with no purchase history. `verifiedTier` is seeded at process-launch
+//     from its last known value in UserDefaults (`AppStorageKey
+//     .verifiedTierRawValue`) so a cold launch doesn't show a false "no
+//     entitlement" flash for an existing subscriber before PurchaseManager's
+//     async StoreKit check completes a moment later.
+//   - DEBUG (Xcode → device/simulator, and `xcodebuild test`): unchanged —
+//     `testOverride` if set, else `.platinum` — so ordinary local
+//     development still sees every feature unlocked unless a test or the
+//     Settings "Tier Simulation" section deliberately dials it down.
+//     PurchaseManager still runs and updates `verifiedTier` in DEBUG builds
+//     too (so a StoreKit Configuration File test — item 12 — exercises the
+//     real code path end to end and you can inspect `verifiedTier` directly
+//     if you want to confirm it), but `currentTier` itself ignores
+//     `verifiedTier` entirely in DEBUG (its fallback is always `.platinum`,
+//     never `verifiedTier`) — this is an intentional carry-over of the
+//     pre-existing "DEBUG always looks unlocked" convenience, not an
+//     oversight. Real end-to-end "does a purchase actually unlock the
+//     feature" testing happens on a RELEASE-config build (TestFlight, or a
+//     manually Release-configured local run).
 // nonisolated throughout (added 2026-07-11, fixing a Swift 6 build warning):
 // both AppTier and EntitlementManager must be callable from RunAlarmShortcutIntent
 // .perform() and NotifyContactsIntent.perform(), which run OUTSIDE the main
@@ -81,28 +85,32 @@
 // low-contention (set once by a test's setUp/tearDown, a Settings picker
 // change, or one launch-time read — never concurrently written from
 // multiple places at once in practice).
-#if DEBUG
 import Combine
 import Foundation
 
-/// Notifies every SwiftUI view using `.tierGated(minimumTier:)` whenever
-/// `EntitlementManager.testOverride` changes, so gated controls re-render
-/// immediately — regardless of whether the control that changed the tier
-/// (Settings' Tier Simulation picker, most commonly) lives on a different
-/// screen or the SAME screen as the gated control. Plain SwiftUI view
-/// identity/re-render rules only guarantee a fresh render when NAVIGATING
-/// to a screen after the tier changed elsewhere — they do nothing for a
-/// gated control sitting on the very screen where the tier just changed,
-/// which is exactly the bug this fixes (see monetization-tier-pricing
-/// memory: the Auto-SMS hands-free toggle, Calendar Scanning row, and GTFS
-/// cache toggle all live in SettingsView.swift alongside the Tier
-/// Simulation picker itself, and stayed stuck showing the wrong
-/// enabled/disabled state until this was added).
+/// Notifies every SwiftUI view using `.tierGated(minimumTier:)` whenever the
+/// device's tier changes, so gated controls re-render immediately —
+/// regardless of whether the control that changed the tier (Settings' Tier
+/// Simulation picker in DEBUG, or a real purchase/restore/renewal completing
+/// in any build) lives on a different screen or the SAME screen as the gated
+/// control. Plain SwiftUI view identity/re-render rules only guarantee a
+/// fresh render when NAVIGATING to a screen after the tier changed
+/// elsewhere — they do nothing for a gated control sitting on the very
+/// screen where the tier just changed, which is exactly the bug this fixes
+/// (see monetization-tier-pricing memory: the Auto-SMS hands-free toggle,
+/// Calendar Scanning row, and GTFS cache toggle all live in
+/// SettingsView.swift alongside the Tier Simulation picker itself, and
+/// stayed stuck showing the wrong enabled/disabled state until this was
+/// added).
 ///
-/// DEBUG-only, like `testOverride` itself: RELEASE builds never change tier
-/// at runtime (`currentTier` is hardcoded `.platinum`), so there's nothing to
-/// observe there, and `TierGatedModifier.swift` only references this type
-/// inside a matching `#if DEBUG` block.
+/// Originally DEBUG-only (RELEASE used to hardcode `.platinum` for
+/// everyone, so tier never changed at runtime there). As of the real
+/// StoreKit integration (2026-08-08, item 9), RELEASE tier CAN change at
+/// runtime too — `PurchaseManager` calls `EntitlementManager.verifiedTier =`
+/// after a purchase, a restore, or an out-of-band `Transaction.updates`
+/// event (renewal, Family Sharing grant, Ask to Buy approval) — so this type
+/// and `TierGatedModifier.swift`'s observation of it are both unconditional
+/// now, not `#if DEBUG`.
 final class TierChangeObserver: ObservableObject {
     // nonisolated (added after a build failure): this project's default
     // actor isolation setting infers @MainActor onto ordinary members the
@@ -123,10 +131,12 @@ final class TierChangeObserver: ObservableObject {
     private nonisolated init() {}
 
     /// Always publishes on the main thread — `objectWillChange.send()` is a
-    /// SwiftUI/Combine contract that expects that, and `testOverride` could
-    /// in principle be set from a background thread (e.g. an XCTest running
-    /// off-main), even though every real call site today — the Settings
-    /// picker, NapStopApp.init()'s launch-argument parsing — is main-thread.
+    /// SwiftUI/Combine contract that expects that, and both `testOverride`
+    /// and `verifiedTier` could in principle be set from a background thread
+    /// (an XCTest running off-main, or PurchaseManager's transaction
+    /// listener task), even though the most common real call sites — the
+    /// Settings picker, NapStopApp.init()'s launch-argument parsing — are
+    /// main-thread.
     nonisolated func notifyChange() {
         if Thread.isMainThread {
             objectWillChange.send()
@@ -137,7 +147,6 @@ final class TierChangeObserver: ObservableObject {
         }
     }
 }
-#endif
 
 enum AppTier: Int, Comparable, CaseIterable, Hashable, CustomStringConvertible {
     case free = 0
@@ -192,11 +201,43 @@ enum EntitlementManager {
     }
     #endif
 
+    /// The real, StoreKit-verified tier — the highest tier PurchaseManager
+    /// has confirmed via `Transaction.currentEntitlements`, or `.free` for a
+    /// device with no purchase history. This is what RELEASE's
+    /// `currentTier` reports (see below).
+    ///
+    /// Seeded synchronously from its last known value in UserDefaults
+    /// (`AppStorageKey.verifiedTierRawValue`) rather than starting at
+    /// `.free` every launch — PurchaseManager's real StoreKit check is
+    /// async and takes a moment even though it's normally fast, and without
+    /// this seed an existing subscriber would see every gated feature
+    /// flash locked for that brief window on every cold launch, including
+    /// offline. `didSet` writes the fresh value back to UserDefaults (so the
+    /// NEXT cold launch has an up-to-date seed) and notifies
+    /// `TierChangeObserver` so any visible `.tierGated` control re-renders
+    /// immediately — the same mechanism `testOverride` already used, now
+    /// shared by the real entitlement path too.
+    ///
+    /// `nonisolated(unsafe)`, matching `testOverride` above: PurchaseManager
+    /// writes this from `@MainActor` call sites in practice (its transaction
+    /// listener loop and its `@MainActor` class), but `currentTier` must
+    /// stay callable from non-MainActor contexts (App Intents' `perform()`),
+    /// so the property itself can't be actor-isolated.
+    nonisolated(unsafe) static var verifiedTier: AppTier = {
+        let raw = UserDefaults.standard.integer(forKey: AppStorageKey.verifiedTierRawValue)
+        return AppTier(rawValue: raw) ?? .free
+    }() {
+        didSet {
+            UserDefaults.standard.set(verifiedTier.rawValue, forKey: AppStorageKey.verifiedTierRawValue)
+            TierChangeObserver.shared.notifyChange()
+        }
+    }
+
     nonisolated static var currentTier: AppTier {
         #if DEBUG
         return testOverride ?? .platinum
         #else
-        return .platinum
+        return verifiedTier
         #endif
     }
 

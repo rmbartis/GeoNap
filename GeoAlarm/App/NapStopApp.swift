@@ -190,6 +190,13 @@ struct RootView: View {
                 // fire can present a system alarm. Lazily re-checked before each
                 // fire, but requesting at launch surfaces the prompt early.
                 Task { await GeoAlarmScheduler.ensureAuthorized() }
+                // Phase 3, item 9: start StoreKit's transaction listener and
+                // run the first entitlement check. Called here (not
+                // NapStopApp.init()) because `App.init()` isn't reliably
+                // MainActor-isolated, and PurchaseManager is a `@MainActor`
+                // class — same reasoning as the other launch-time async
+                // kick-offs on this screen.
+                PurchaseManager.shared.start()
                 // Phase 3: (re-)submit the next Calendar Scanning background
                 // refresh request. No-ops internally unless scanning is
                 // enabled and Scan Mode is Automatic.

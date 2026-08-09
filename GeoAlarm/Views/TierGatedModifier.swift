@@ -35,14 +35,23 @@
 // worth handling — that was wrong. Auto-SMS hands-free, Calendar Scanning,
 // and GTFS cache all live in SettingsView.swift right alongside the picker
 // itself, and stayed visually enabled after switching tiers until this was
-// fixed. Fixed by observing `TierChangeObserver` (in EntitlementManager.swift,
-// DEBUG-only), which `EntitlementManager.testOverride`'s `didSet` notifies on
-// every change — so every `.tierGated` view anywhere re-renders immediately,
-// regardless of which screen changed the tier. (An earlier attempt added
-// `.id(simulatedTier)` to SettingsView's Form instead — removed once this
-// more general, less fragile fix landed; per-screen `.id()` hacks would have
-// needed re-deriving for every future screen that mixes a tier-changing
-// control with a gated one.)
+// fixed. Fixed by observing `TierChangeObserver` (in EntitlementManager.swift),
+// which both `EntitlementManager.testOverride`'s `didSet` (DEBUG) and
+// `EntitlementManager.verifiedTier`'s `didSet` (real StoreKit entitlement
+// changes, any build) notify on every change — so every `.tierGated` view
+// anywhere re-renders immediately, regardless of which screen or mechanism
+// changed the tier. (An earlier attempt added `.id(simulatedTier)` to
+// SettingsView's Form instead — removed once this more general, less
+// fragile fix landed; per-screen `.id()` hacks would have needed
+// re-deriving for every future screen that mixes a tier-changing control
+// with a gated one.)
+//
+// Unconditional as of 2026-08-08 (item 9): this used to only observe
+// TierChangeObserver in DEBUG, because RELEASE hardcoded `.platinum` for
+// everyone and tier never changed at runtime there. Now that real
+// StoreKit/IAP is wired in, RELEASE tier CAN change mid-session (a purchase
+// completing, a restore, a subscription renewal) — so this needs to
+// re-render in RELEASE too, not just DEBUG.
 
 import SwiftUI
 
@@ -59,14 +68,11 @@ struct TierGated: ViewModifier {
     /// to show a lock for.
     var enabledIf: Bool = true
 
-    #if DEBUG
-    // Makes this modifier re-render whenever the simulated tier changes,
-    // anywhere in the app — see the file-header note above and
-    // TierChangeObserver's doc comment in EntitlementManager.swift.
-    // RELEASE builds never change tier at runtime, so there's nothing to
-    // observe there and this is compiled out entirely.
+    // Makes this modifier re-render whenever the tier changes, anywhere in
+    // the app (simulated in DEBUG, or a real StoreKit entitlement change in
+    // any build) — see the file-header note above and TierChangeObserver's
+    // doc comment in EntitlementManager.swift.
     @ObservedObject private var tierChangeObserver = TierChangeObserver.shared
-    #endif
 
     private var isEntitled: Bool { EntitlementManager.isEntitled(to: minimumTier) }
     private var isFullyEnabled: Bool { isEntitled && enabledIf }
