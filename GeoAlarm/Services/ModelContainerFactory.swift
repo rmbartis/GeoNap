@@ -29,7 +29,15 @@ import SwiftData
 enum ModelContainerFactory {
 
     /// The schema used by the main app's store.
-    static let schema = Schema([NapAlarm.self, GTFSFeedModel.self, AutoNotifyDefaultsRecord.self])
+    ///
+    /// Marked `nonisolated`: it's referenced from the default parameter
+    /// values below (`schema: Schema = schema`), which evaluate in a
+    /// nonisolated context even though the functions themselves are
+    /// `@MainActor`. Without this, the project's default main-actor
+    /// isolation flags that as a cross-isolation access. `Schema` conforms
+    /// to `Sendable`, so plain `nonisolated` — not `nonisolated(unsafe)` —
+    /// is all that's needed here.
+    nonisolated static let schema = Schema([NapAlarm.self, GTFSFeedModel.self, AutoNotifyDefaultsRecord.self])
 
     /// An isolated in-memory container — used for `--uitesting` launches so
     /// every run starts with zero alarms, deterministically, with no

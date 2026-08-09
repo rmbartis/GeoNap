@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		681CEDB230283A4300D58B82 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 681CEDB130283A4300D58B82 /* StoreKit.framework */; };
 		685A95E530031ECF00124C21 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 685A95E430031ECF00124C21 /* WidgetKit.framework */; };
 		685A95E730031ECF00124C21 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 685A95E630031ECF00124C21 /* SwiftUI.framework */; };
 		685A95F630031ED000124C21 /* GeoAlarmLiveActivityExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 685A95E330031ECF00124C21 /* GeoAlarmLiveActivityExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -106,6 +107,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		681CEDB130283A4300D58B82 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		685A95E330031ECF00124C21 /* GeoAlarmLiveActivityExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = GeoAlarmLiveActivityExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		685A95E430031ECF00124C21 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		685A95E630031ECF00124C21 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
@@ -242,6 +244,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				686A100D2FC48EB90079F963 /* ZIPFoundation in Frameworks */,
+				681CEDB230283A4300D58B82 /* StoreKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -298,6 +301,7 @@
 		686A100B2FC48EB90079F963 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				681CEDB130283A4300D58B82 /* StoreKit.framework */,
 				685A95E430031ECF00124C21 /* WidgetKit.framework */,
 				685A95E630031ECF00124C21 /* SwiftUI.framework */,
 			);

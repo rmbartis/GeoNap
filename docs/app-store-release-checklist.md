@@ -8,40 +8,59 @@ Already completed and not repeated here: Crashlytics/Firebase removal, Help text
 
 ---
 
-## Phase 1 — Account setup (blocks everything else)
+## Phase 1 — Account setup (blocks everything else) — ✅ COMPLETE (2026-08-08)
 
-### 1. Confirm Paid Apps Agreement, tax forms, and banking are on file — **You manage**
+### 1. Confirm Paid Apps Agreement, tax forms, and banking are on file — ✅ **DONE (2026-08-08)**
 Nothing involving money — subscriptions or the one-time purchase — can go live in App Store Connect until this is complete. Do this first; it can take time to process.
 
-- **1a. Sign the Paid Apps Agreement.** As the Account Holder, go to App Store Connect → Business → Agreements, find the "Paid Apps" row, and click "View and Agree to Terms." This is the actual gate — nothing else in this checklist can start until it's signed.
-- **1b. Complete your tax forms.** Still on the Agreements page, find the Tax Forms section and click "Add Tax Info" next to the form you need. If you're US-based, this is a W-9. Depending on where your account is registered, Apple may ask for additional forms.
-- **1c. Add your banking information.** Only becomes available once the agreement is signed and tax forms are submitted — Apple requires both first before it lets you enter where to send payments.
-- **Timing:** once everything above is submitted, the paid contract itself usually activates within about 24 hours — but tax form processing can take up to 90 days in some cases. Since this blocks every Phase 2+ task (creating Silver, Gold, and Platinum), start this as early as possible.
+- **1a. Sign the Paid Apps Agreement.** ✅ Done. As the Account Holder, go to App Store Connect → Business → Agreements, find the "Paid Apps" row, and click "View and Agree to Terms." This is the actual gate — nothing else in this checklist can start until it's signed.
+- **1b. Complete your tax forms.** ✅ Done. Still on the Agreements page, find the Tax Forms section and click "Add Tax Info" next to the form you need. If you're US-based, this is a W-9. Depending on where your account is registered, Apple may ask for additional forms.
+- **1c. Add your banking information.** ✅ Done. Only becomes available once the agreement is signed and tax forms are submitted — Apple requires both first before it lets you enter where to send payments.
+- **Timing:** once everything above is submitted, the paid contract itself usually activates within about 24 hours — but tax form processing can take up to 90 days in some cases. Worth double-checking the Agreements page in a few weeks to confirm tax processing has fully cleared, even though Phase 2 is unblocked now.
 
-### 2. Decide whether to enroll in Apple's Small Business Program — **You manage**
+### 2. Decide whether to enroll in Apple's Small Business Program — ⏳ **SUBMITTED (2026-08-08) — awaiting Apple approval**
 If your annual proceeds are under $1M, this drops Apple's commission from 30% to 15% on everything. Worth confirming before products go live, since it affects what you actually net per sale.
 
 - Requires step 1a (Paid Apps Agreement signed) to be done first, but does NOT depend on 1b/1c — you can apply in parallel with tax forms/banking rather than waiting.
 - Go to developer.apple.com/app-store/small-business-program, click Enroll, and sign in with your Apple Developer account.
 - Apple pre-fills your name, email, and Team ID. Review it, answer whether you have any other linked/associated developer accounts, and submit.
-- Takes about 5 minutes to fill out, but Apple's review can take over a month — apply now even if you don't need the lower rate immediately, since there's no downside to having it approved early.
-- Once approved, your proceeds adjust 15 days after the end of the fiscal calendar month in which the enrollment was approved — not instantly.
+- Takes about 5 minutes to fill out, but Apple's review can take over a month — application submitted; commission stays at the standard 30% until Apple approves it.
+- Once approved, your proceeds adjust 15 days after the end of the fiscal calendar month in which the enrollment was approved — not instantly. **Follow-up needed:** check back on approval status in ~4–6 weeks.
 
 ---
 
-## Phase 2 — Configure the 3 purchasable products in App Store Connect
+## Phase 2 — Configure the 3 purchasable products in App Store Connect — 🟡 METADATA COMPLETE, 6b INTENTIONALLY DEFERRED (2026-08-08)
 
-### 3. Create a Subscription Group with Silver and Gold as ranked levels — **You manage**
+Phase 1 is complete. Detailed click-by-click steps for all five items are in `docs/app-store-connect-phase2-steps.md`.
+
+Items 3, 4, 5, and 6a are all done — every product (Silver, Gold, Platinum) is fully configured with pricing, localization, and a placeholder review screenshot. **Not marking Phase 2 fully complete yet**, because 6b ("Add for Review") is deliberately held until item 10a swaps in the real paywall screenshot — submitting now with the placeholder risks locking the metadata mid-review. That's the one remaining item, and it's expected to stay open until Phase 3's paywall (item 10) is built. Item 7 (regional pricing) is optional and can wait.
+
+### 3. Create a Subscription Group with Silver and Gold as ranked levels — ✅ **DONE (2026-08-08)**
 Silver ($2.99/yr) and Gold ($6.99/yr) both need to live in one subscription group, with Gold ranked above Silver. This is what lets a user upgrade from Silver to Gold (or downgrade back) with Apple handling the price proration automatically — without this grouping, switching tiers doesn't work cleanly.
 
-### 4. Add localized listing info for Silver and Gold — **Split**
-Each subscription product needs a display name, description, and a review screenshot in App Store Connect. I can draft the English copy; you'll need to add it (and any other languages you want at launch) into ASC directly, since that's account-side.
+- ✅ Group "GeoNap Tiers" created, Silver and Gold both created inside it with correct Product IDs and 1-year duration.
+- ✅ Ranking fixed and confirmed persisted after reload: Level 1 = Gold, Level 2 = Silver.
 
-### 5. Create Platinum as a one-time (non-consumable) purchase — **You manage**
-This is a separate product type from Silver/Gold — it sits outside the subscription group since it's a single payment, not a recurring one. Decide whether to allow Family Sharing on it.
+### 4. Add localized listing info for Silver and Gold — ✅ **DONE (2026-08-08)**
+Each subscription product needs a display name, description, and a review screenshot in App Store Connect.
 
-### 6. Attach all three products to the next app version for review — **You manage**
-The very first time any IAP goes live, it has to be submitted for review attached to an actual app build — none of the three can go live standalone.
+- ✅ Display Name entered for both (`GeoNap Silver`, `GeoNap Gold`).
+- ✅ Description confirmed filled in for both: Silver = "Unlimited alarms, Auto-Notify & custom sounds"; Gold = "Transit agency alarms, hands-free SMS & repeat mode."
+- ✅ Review Screenshot uploaded to Review Information → Screenshot for both (placeholder: Settings screen showing the Gold-locked Alarm Trigger and Silver-locked Auto-Notify Defaults rows, cropped/resized to exactly 640×920px, no alpha).
+
+### 5. Create Platinum as a one-time (non-consumable) purchase — ✅ **DONE (2026-08-08)**
+This is a separate product type from Silver/Gold — it sits outside the subscription group since it's a single payment, not a recurring one. **Decided 2026-08-08: Family Sharing ON** (adoption/goodwill value on a pre-launch $12.99 one-time purchase outweighs the small per-seat revenue at stake, and doesn't touch the real recurring revenue engine of Silver/Gold).
+
+- ✅ Availability, Price Schedule ($12.99 USD), Display Name, Description all done.
+- ✅ Review Screenshot uploaded to Review Information → Screenshot (same placeholder image as Silver/Gold, 640×920px).
+- ✅ Family Sharing confirmed On ("This in-app purchase can be shared by everyone in a family group").
+- Skippable/not required: the "App Store Promotion" image (optional, only needed if featuring Platinum editorially), Review Notes (optional), Tax Category (default "Match to parent app" is fine as-is).
+
+### 6. Finish Silver/Gold/Platinum metadata and attach all three to the next app version for review — **You manage**
+The very first time any IAP goes live, it has to be submitted for review attached to an actual app build — none of the three can go live standalone. Two parts:
+
+- **6a. Finish each product's metadata.** ✅ **DONE (2026-08-08)** — Silver, Gold, and Platinum all fully complete (pricing, localization, screenshot). Subscription Group's own localization (group display name `GeoNap`) also confirmed saved.
+- **6b. Click "Add for Review"** on the subscription group page (covers Silver + Gold together) and on the Platinum IAP page, to attach all three to the next app version. **Hold off on this until item 10a's real screenshot is in place** — submitting now with the placeholder screenshot risks locking that metadata while Apple reviews it, meaning you'd have to wait it out (or pull the submission) before swapping in the real one later. Not started — blocked on 6a first, then waits for 10a regardless.
 
 ### 7. (Optional, can wait until after launch) Set lower pricing for price-sensitive countries — **You manage**
 From our earlier pricing discussion: Apple's default pricing tracks currency exchange, not what people can actually afford. Setting custom lower prices for countries like Vietnam, Indonesia, the Philippines, and India (roughly 40% of the US price) captures buyers in the exact markets GeoNap's commuter audience lives in. Not required to launch — can be added later once you see real conversion data.
@@ -50,14 +69,17 @@ From our earlier pricing discussion: Apple's default pricing tracks currency exc
 
 ## Phase 3 — Build the actual purchase system (the biggest gap)
 
-### 8. Turn on the In-App Purchase capability in Xcode — **You manage**
-A one-time setting in Signing & Capabilities. Needs your Apple ID signed into Xcode.
+### 8. Turn on the In-App Purchase capability in Xcode — ✅ **DONE (2026-08-08)**
+Added to the GeoNap target's Signing & Capabilities (not the Watch app/widget/Live Activity extension — only the main app calls StoreKit). Clean build confirmed successful.
 
 ### 9. Replace the simulated tier system with a real purchase check — **I execute, you test**
 Right now, `EntitlementManager` doesn't check any real purchase — it just assumes every release-build user is Platinum. This step swaps that out for Apple's real purchase-checking system (StoreKit), so the app actually knows what a user paid for. Per the existing "single point of control" rule already documented in the code, this change should touch *only* that one property — everything else in the app already reads through it correctly, so nothing else needs to change.
 
 ### 10. Build the purchase screen (paywall) — **I execute, you test**
 The screen where a user compares Free/Silver/Gold/Platinum and taps to buy. Needs a "Restore Purchases" button (Apple requires this) and links to your Terms of Use and Privacy Policy.
+
+### 10a. Replace the placeholder review screenshots with real paywall screenshots — **You manage**
+⚠️ **Follow-up, blocked until item 10 is done.** Silver, Gold, and Platinum were each set up in Phase 2 with a placeholder review screenshot (a Settings screen showing the locked features), since the real paywall didn't exist yet. Once this item's paywall is built and running in Simulator/on a device, take a real screenshot of it — exactly 640 × 920 px, PNG or JPEG, no alpha channel — and upload it to each of the three products' App Store Connect pages (Subscriptions → [Silver/Gold] → Localization → English (U.S.) → Review Screenshot; In-App Purchases → Platinum → same field), replacing the placeholder. **This is what item 6b was waiting on** — once the real screenshot is in for all three, go back and click "Add for Review" on the subscription group and on Platinum.
 
 ### 11. Add a "Manage Subscription" link in Settings — **I execute**
 A simple link that sends Silver/Gold subscribers to Apple's own subscription-management screen to cancel or change plans.
@@ -102,7 +124,9 @@ Distinct from any earlier TestFlight pass — this one specifically needs to exe
 ## Phase 6 — Final release mechanics
 
 ### 21. Bump version and build numbers — **I execute**
-Across all 4 targets (GeoNap, Watch app, Watch widget, Live Activity extension). Just tell me the numbers.
+Across all 4 targets (GeoNap, Watch app, Watch widget, Live Activity extension). **Decided 2026-08-08: marketing version `1.0`** — set on the App Store Connect "iOS App Version 1.0" record (App Store tab, `Prepare for Submission` status), which is this app's first-ever public release.
+
+⚠️ **Not yet applied in Xcode.** The project is currently `MARKETING_VERSION = 1.61`, `CURRENT_PROJECT_VERSION = 62` (project.pbxproj) — left as-is deliberately, since Phase 3–5 still need several more TestFlight builds first and TestFlight isn't tied to the ASC version record. Don't change it yet. Right before the real archive for item 24, this needs to become `MARKETING_VERSION = 1.0` (matching the ASC record exactly, or the build won't be selectable for it) with `CURRENT_PROJECT_VERSION` bumped forward from wherever TestFlight testing left off (build numbers must keep increasing — don't reset to 1). Tell me when you're ready for this and I'll make the change across all 4 targets.
 
 ### 22. Switch archive signing from Development to Distribution — **You manage**
 In Signing & Capabilities, for each of the 4 targets.
