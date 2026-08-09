@@ -482,3 +482,4 @@ The Save button is disabled until a name has been entered and a location has bee
 "settings.upgrade.sectionTitle" = "Plan";
 "settings.upgrade.currentTier" = "Current Plan";
 "settings.upgrade.seePlans" = "See Plans";
+"settings.upgrade.manageSubscription" = "Manage Subscription";

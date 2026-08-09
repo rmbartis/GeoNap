@@ -85,11 +85,13 @@ English-only strings for now — the other 12 languages are item 18's separate s
 ### 10a. Replace the placeholder review screenshots with real paywall screenshots — **You manage**
 ⚠️ **Follow-up, blocked until item 10 is done.** Silver, Gold, and Platinum were each set up in Phase 2 with a placeholder review screenshot (a Settings screen showing the locked features), since the real paywall didn't exist yet. Once this item's paywall is built and running in Simulator/on a device, take a real screenshot of it — exactly 640 × 920 px, PNG or JPEG, no alpha channel — and upload it to each of the three products' App Store Connect pages (Subscriptions → [Silver/Gold] → Localization → English (U.S.) → Review Screenshot; In-App Purchases → Platinum → same field), replacing the placeholder. **This is what item 6b was waiting on** — once the real screenshot is in for all three, go back and click "Add for Review" on the subscription group and on Platinum.
 
-### 11. Add a "Manage Subscription" link in Settings — **I execute**
-A simple link that sends Silver/Gold subscribers to Apple's own subscription-management screen to cancel or change plans.
+### 11. Add a "Manage Subscription" link in Settings — ✅ **DONE (2026-08-09)**
+Added a "Manage Subscription" row to the Plan section (right below "See Plans"), backed by StoreKit's native `.manageSubscriptionsSheet` SwiftUI modifier — no custom UI needed, Apple provides the whole sheet. Shown unconditionally rather than gated on current ownership. Clean build.
 
-### 12. Create a StoreKit test configuration file — **I execute**
-Lets you test purchases directly in the Xcode Simulator without needing a live App Store Connect connection or real money.
+### 12. Create a StoreKit test configuration file — ✅ **DONE (2026-08-09)**
+Added `GeoNap.storekit` (inside the synchronized `GeoAlarm/` folder), matching live ASC pricing/ranking: Silver $2.99/yr, Gold $6.99/yr (Level 1), Platinum $12.99 one-time. Selected in Product → Scheme → Edit Scheme → Run → Options.
+
+**End-to-end confirmed working (2026-08-09)** on a Release-configured Simulator build (DEBUG intentionally ignores real StoreKit results — see item 9): started on Free, all three lock badges present; purchased Silver → Gold/Platinum badges remained, Silver's cleared and Plan showed Silver; repeated through Gold and Platinum, each unlocking correctly. Confirms items 9, 10, and 12 all work together correctly.
 
 ---
 

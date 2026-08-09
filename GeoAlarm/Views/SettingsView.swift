@@ -7,6 +7,7 @@ import SwiftUI
 import SwiftData
 import ContactsUI
 import MessageUI
+import StoreKit
 
 struct SettingsView: View {
 
@@ -36,6 +37,13 @@ struct SettingsView: View {
     // Controls the Paywall sheet (item 10), opened from the Plan section's
     // "See Plans" row below.
     @State private var showPaywall = false
+    // Controls Apple's native "Manage Subscriptions" sheet (item 11) — a
+    // StoreKit-provided screen, not anything GeoNap builds itself. Shown
+    // unconditionally rather than gated on currently owning Silver/Gold:
+    // Apple's own sheet already handles "no subscriptions" gracefully, and
+    // a fixed row is simpler and more robust than trying to track "ever had
+    // a subscription" ourselves from a live entitlements snapshot.
+    @State private var showManageSubscriptions = false
 
     // Makes the Plan section's "Current Plan" text re-render live if a
     // purchase/restore completes while Settings happens to be open — the
@@ -111,6 +119,12 @@ struct SettingsView: View {
                         Text("settings.upgrade.seePlans", bundle: bundle)
                     }
                     .accessibilityIdentifier("seePlansButton")
+                    Button {
+                        showManageSubscriptions = true
+                    } label: {
+                        Text("settings.upgrade.manageSubscription", bundle: bundle)
+                    }
+                    .accessibilityIdentifier("manageSubscriptionButton")
                 } header: {
                     Text("settings.upgrade.sectionTitle", bundle: bundle)
                 }
@@ -409,6 +423,9 @@ struct SettingsView: View {
             .sheet(isPresented: $showPaywall) {
                 PaywallView()
             }
+            // Apple-provided system sheet (StoreKit's SwiftUI integration) —
+            // no custom UI to build here, just present it.
+            .manageSubscriptionsSheet(isPresented: $showManageSubscriptions)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     Button {
