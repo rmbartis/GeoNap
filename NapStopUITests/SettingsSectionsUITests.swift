@@ -95,6 +95,21 @@ final class SettingsSectionsUITests: XCTestCase {
         return true
     }
 
+    /// Same button/menuItem/staticText fallback pattern as the Distance-row
+    /// tap below — factored out so the distance-unit-picker test can select
+    /// an explicit unit twice (once to force a known starting state, once to
+    /// switch away from it) without duplicating the three-way lookup.
+    @discardableResult
+    private func selectDistanceUnitOption(_ label: String) -> Bool {
+        let button = app.buttons[label]
+        let menuItem = app.menuItems[label]
+        let text = app.staticTexts[label]
+        let found = button.waitForExistence(timeout: 2) || menuItem.waitForExistence(timeout: 1) || text.waitForExistence(timeout: 1)
+        guard found else { return false }
+        (button.exists ? button : (menuItem.exists ? menuItem : text)).tap()
+        return true
+    }
+
     // MARK: - Every section renders
 
     func test_settings_everySectionHeaderRenders() throws {
@@ -133,18 +148,31 @@ final class SettingsSectionsUITests: XCTestCase {
         launch(tier: "Free")
         openSettings()
 
-        // Default is Imperial (DistanceUnit.imperial) — Preview section
-        // shows "1640 ft" for a 500 m sample radius before any change.
+        // CORRECTED (real xcodebuild run, full-suite pass): this used to
+        // just assert "1640 ft" on the assumption that Imperial is always
+        // the default. DistanceUnit is stored via @AppStorage/UserDefaults,
+        // which — unlike the SwiftData store (wiped every launch by
+        // ModelContainerFactory.makeInMemory under --uitesting) — PERSISTS
+        // across app relaunches on the same simulator. When this test had
+        // already run once earlier on the same simulator (e.g. a prior
+        // filtered run), the unit was left set to Metric, and "default is
+        // Imperial" was false from the very first assertion. Force a known
+        // unit explicitly before asserting on it, rather than trusting
+        // whatever UserDefaults happens to already contain — makes the test
+        // repeatable regardless of simulator history.
+        XCTAssertTrue(tapWhenReady(app.staticTexts["Distance"]), "Distance row never became tappable.")
+        XCTAssertTrue(selectDistanceUnitOption("Imperial (ft / mi)"), "Imperial option must appear after tapping the Distance row.")
+
         // Preview is the LAST section in the Form (Units, which contains
         // "Distance", is near the top) — scrollIntoView only ever scrolls
         // forward/down, so once we've scrolled all the way down to Preview
-        // to check the default, there is no way to scroll back up to reach
+        // to check this, there is no way to scroll back up to reach
         // "Distance" again. Close and reopen Settings between the two
         // checks to reset the Form's scroll position to the top, rather
         // than trying to scroll backward.
         XCTAssertTrue(scrollIntoView(app.staticTexts["Sample radius"]))
         XCTAssertTrue(app.staticTexts["1640 ft"].waitForExistence(timeout: 2),
-                      "Default distance unit is Imperial — sample radius must read \"1640 ft\".")
+                      "After explicitly selecting Imperial, sample radius must read \"1640 ft\".")
 
         let doneButton = app.navigationBars["Settings"].buttons["Done"]
         XCTAssertTrue(doneButton.waitForExistence(timeout: 2))
@@ -170,14 +198,7 @@ final class SettingsSectionsUITests: XCTestCase {
         // addAlarm() above already works around for the "Location Alarm"
         // row — same fallback pattern here rather than assuming one
         // element type.
-        let metricButton = app.buttons["Metric (m / km)"]
-        let metricMenuItem = app.menuItems["Metric (m / km)"]
-        let metricText = app.staticTexts["Metric (m / km)"]
-        let metricFound = metricButton.waitForExistence(timeout: 2)
-            || metricMenuItem.waitForExistence(timeout: 1)
-            || metricText.waitForExistence(timeout: 1)
-        XCTAssertTrue(metricFound, "Metric option must appear after tapping the Distance row.")
-        (metricButton.exists ? metricButton : (metricMenuItem.exists ? metricMenuItem : metricText)).tap()
+        XCTAssertTrue(selectDistanceUnitOption("Metric (m / km)"), "Metric option must appear after tapping the Distance row.")
 
         // Whether this was a pushed list (auto-pops on selection) or a menu
         // overlay (dismisses itself), no manual back-navigation is needed

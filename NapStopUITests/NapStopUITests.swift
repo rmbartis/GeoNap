@@ -136,6 +136,34 @@ final class NapStopUITests: XCTestCase {
         return false
     }
 
+    /// Same scrolling loop as tapWhenReady, but checks a set of candidate
+    /// elements on every step instead of committing to one type ahead of
+    /// time — see test_switchingLanguage_rebuildsWithoutCrashing_... for why
+    /// picking a type via a single pre-scroll existence check is unsafe for
+    /// an off-screen row. Taps and returns whichever candidate is found
+    /// first, or nil if none appear within maxScrollAttempts.
+    @discardableResult
+    private func tapWhenReadyOneOf(_ elements: [XCUIElement], maxScrollAttempts: Int = 16) -> XCUIElement? {
+        if let found = elements.first(where: { $0.waitForExistence(timeout: 2) }) {
+            found.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+            return found
+        }
+        for attempt in 0..<maxScrollAttempts {
+            if attempt < 6 {
+                let start = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.92))
+                let end = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.78))
+                start.press(forDuration: 0.05, thenDragTo: end)
+            } else {
+                app.swipeUp()
+            }
+            if let found = elements.first(where: { $0.waitForExistence(timeout: 1) }) {
+                found.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+                return found
+            }
+        }
+        return nil
+    }
+
     /// Opens the "+" menu and chooses "Location Alarm", landing on AddAlarmView.
     ///
     /// SwiftUI's `Menu` renders its items as a native UIMenu/context-menu overlay,
@@ -272,21 +300,29 @@ final class NapStopUITests: XCTestCase {
         app.buttons["settingsButton"].tap()
         XCTAssertTrue(app.navigationBars["Settings"].waitForExistence(timeout: 3))
 
-        // Target the row's own identifier, not the "Language" Text fragment
-        // inside its label — see tapWhenReady's doc comment for why the Text
-        // alone was an unreliable hit-test target. A Form-embedded Picker's
-        // row isn't guaranteed to surface as XCUIElementTypeButton across
-        // OS versions (same discrepancy as the "Location Alarm" menu row
-        // above), so fall back through button → cell → any element carrying
-        // the identifier rather than assuming one element type.
-        let languageRow: XCUIElement = {
-            let button = app.buttons["languageSettingsRow"]
-            if button.waitForExistence(timeout: 1) { return button }
-            let cell = app.cells["languageSettingsRow"]
-            if cell.waitForExistence(timeout: 1) { return cell }
-            return app.otherElements["languageSettingsRow"]
-        }()
-        XCTAssertTrue(tapWhenReady(languageRow), "Language row never became tappable")
+        // CORRECTED (real xcodebuild run, full-suite pass): the previous
+        // version picked an element type (button vs. cell vs. otherElement)
+        // via a single 1s existence check made BEFORE any scrolling
+        // happened, then hard-coded that choice for the rest of the test.
+        // "languageSettingsRow" sits below the Time section (per
+        // SettingsView.swift's Form order) and starts off-screen, so none
+        // of the three candidates existed within that first 1s window —
+        // the closure always fell through to the otherElements default.
+        // This Picker has no explicit .pickerStyle, and per the same
+        // finding already documented for the Distance picker in
+        // SettingsSectionsUITests.swift, that means it actually renders as
+        // a .menu-style Picker (a Button that opens an overlay), not a
+        // pushed list — so the identifier belongs to a Button, and an
+        // otherElements query for it can never match, no matter how much
+        // scrolling follows. Fix: check all three candidate types on EVERY
+        // scroll step (same scrollIntoViewOneOf pattern used elsewhere in
+        // this suite) instead of committing to one type before scrolling
+        // starts.
+        let languageButton = app.buttons["languageSettingsRow"]
+        let languageCell = app.cells["languageSettingsRow"]
+        let languageOther = app.otherElements["languageSettingsRow"]
+        let languageRow = tapWhenReadyOneOf([languageButton, languageCell, languageOther])
+        XCTAssertNotNil(languageRow, "Language row never became tappable")
 
         // AppLanguage.displayName is the language's own native name — "Español"
         // is stable regardless of which language was active before switching.
