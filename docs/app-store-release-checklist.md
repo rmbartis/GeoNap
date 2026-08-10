@@ -130,13 +130,13 @@ Build in Xcode and spot-check a couple of languages (e.g. switch in-app language
 
 ---
 
-## Phase 5 — Testing
+## Phase 5 — Testing — ✅ COMPLETE (2026-08-10)
 
 ### 19. Test all three purchases in Sandbox — ✅ **DONE (2026-08-09)**
 Tested on a physical device against Apple's real Sandbox (not the local `.storekit` config) using tester `support@mba-labs.com`. Confirmed: buying Silver, Gold, and Platinum each unlock correctly; upgrading Silver→Gold works; downgrading Gold→Silver correctly schedules for the next renewal (confirmed via ASC's native subscription management sheet) rather than switching immediately, matching expected StoreKit behavior; Restore Purchases recovers ownership after reinstall.
 
-### 20. Run a TestFlight beta pass on the real purchase flow — **You manage**
-Distinct from any earlier TestFlight pass — this one specifically needs to exercise real purchases (via Sandbox), not the old DEBUG-only tier simulator.
+### 20. Run a TestFlight beta pass on the real purchase flow — ✅ **DONE (2026-08-10)**
+Distinct from any earlier TestFlight pass — this one specifically needed to exercise real purchases (via Sandbox), not the old DEBUG-only tier simulator. Tagged `beta-paywall` at completion.
 
 ---
 
