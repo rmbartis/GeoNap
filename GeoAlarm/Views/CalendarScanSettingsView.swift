@@ -350,6 +350,23 @@ struct CalendarScanSettingsView: View {
                 showFirstRunSheet = true
             }
         }
+        // Bug fix (2026-08-18): notification permission was previously only
+        // ever requested from the "Notify Me About New Trips" toggle's
+        // onChange handler below — but that toggle defaults to true, so a
+        // user who enables Calendar Scanning and never manually flips it
+        // off-then-on was NEVER prompted for notification permission at all.
+        // Confirmed on a real device: iOS's Settings → GeoNap page had no
+        // "Notifications" row whatsoever (that row only appears once
+        // requestAuthorization has been called at least once), even though
+        // the scan pipeline was correctly finding and saving candidates —
+        // postNewTripsNotification's authorization guard just silently
+        // no-op'd every time. Requesting here, at the moment scanning is
+        // first turned on, closes that gap; the onChange handler stays as a
+        // harmless secondary trigger for anyone who later toggles
+        // notifyOnResults off and back on after initially denying.
+        if notifyOnResults {
+            Task { await CalendarScanNotifier.requestAuthorizationIfNeeded() }
+        }
     }
 
     // MARK: - Per-source calendar rows

@@ -140,23 +140,32 @@ Distinct from any earlier TestFlight pass — this one specifically needed to ex
 
 ---
 
-## Phase 6 — Final release mechanics
+## Phase 6 — Final release mechanics — ✅ COMPLETE (2026-08-10)
 
-### 21. Bump version and build numbers — **I execute**
-Across all 4 targets (GeoNap, Watch app, Watch widget, Live Activity extension). **Decided 2026-08-08: marketing version `1.0`** — set on the App Store Connect "iOS App Version 1.0" record (App Store tab, `Prepare for Submission` status), which is this app's first-ever public release.
+### 21. Bump version and build numbers — ✅ **DONE**
+`MARKETING_VERSION = 1.0`, `CURRENT_PROJECT_VERSION = 63` confirmed in `project.pbxproj` across targets, matching the ASC "iOS App Version 1.0" record. Commit `a270a69` "Bump version to 1.0 (build 63) for App Store submission."
 
-⚠️ **Not yet applied in Xcode.** The project is currently `MARKETING_VERSION = 1.61`, `CURRENT_PROJECT_VERSION = 62` (project.pbxproj) — left as-is deliberately, since Phase 3–5 still need several more TestFlight builds first and TestFlight isn't tied to the ASC version record. Don't change it yet. Right before the real archive for item 24, this needs to become `MARKETING_VERSION = 1.0` (matching the ASC record exactly, or the build won't be selectable for it) with `CURRENT_PROJECT_VERSION` bumped forward from wherever TestFlight testing left off (build numbers must keep increasing — don't reset to 1). Tell me when you're ready for this and I'll make the change across all 4 targets.
+### 22. Switch archive signing from Development to Distribution — ✅ **DONE**
+All 4 targets use `CODE_SIGN_STYLE = Automatic`, which resolves to a Distribution certificate/profile automatically for the Archive action — confirmed in `project.pbxproj`. Commit `f4fb97e` "Config for release scheme" is the final signing/scheme prep pass.
 
-### 22. Switch archive signing from Development to Distribution — **You manage**
-In Signing & Capabilities, for each of the 4 targets.
+### 23. Export compliance declaration — ✅ **DONE**
+Answered at submission time per the app-store-submission-ready milestone below.
 
-### 23. Export compliance declaration — **You manage**
-Answered at submission time; standard iOS encryption typically qualifies for the usual exemption.
-
-### 24. Submit for App Review — **You manage**
-The final step, once everything above is complete.
+### 24. Submit for App Review — ✅ **DONE (2026-08-10)**
+Tagged `app-store-submission-ready`. **The app is currently under Apple App Review as of this writing.**
 
 ---
 
 ## Deferred (post-release, low priority)
-- **Rename `runShortcut.goldRequired` string key** to match the new tier name — purely internal cleanup, no user-facing effect. (Note: this key name is now stale after the Gold→Platinum rename for the lifetime tier — worth folding into whichever pass touches that string next.)
+- ~~Rename `runShortcut.goldRequired` string key~~ — ✅ **DONE.** Confirmed renamed to `runShortcut.platinumRequired` in `en.lproj/Localizable.strings` (and, presumably, the other 12 languages — worth a quick grep across all `.lproj` folders to confirm full coverage if this matters later, not re-verified language-by-language here).
+
+---
+
+## Current status summary (verified 2026-08-18)
+
+**The app is under Apple App Review.** Every phase above is complete except:
+- **Item 6b / 10a** (Phase 2/3): confirmed resolved — the app couldn't be under review otherwise, since submitting for review requires the IAPs to have been attached (6b) after the real paywall screenshot replaced the placeholder (10a). Not independently re-verified screenshot-by-screenshot in App Store Connect, but the submission itself is the strongest possible confirmation.
+- **Item 7** (regional pricing for Vietnam/Indonesia/Philippines/India/Thailand/Malaysia): still optional, still open, does not block review. Worth doing once real conversion data comes in post-launch.
+- **Item 2** (Small Business Program): submitted 2026-08-08, was awaiting Apple approval as of that date — worth checking current status, since approval timing (up to a month+) may have resolved by now.
+
+While the app is in review, the highest-value open items are the Small Business Program status check and, once launch happens, the regional pricing pass.
