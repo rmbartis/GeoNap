@@ -111,8 +111,6 @@
 "Only want the alarm to fire during your morning commute? Set a time window and GeoAlarm will ignore the location outside those hours." = "تريد تشغيل التنبيه فقط خلال التنقل الصباحي؟ اضبط نافذة زمنية وسيتجاهل GeoNap الموقع خارج تلك الساعات.";
 "Always On location needed" = "يلزم تشغيل الموقع دائمًا";
 "GeoAlarm monitors your position in the background so it can alert you even while your phone is locked. Your location is never shared or stored outside the app." = "يراقب GeoNap موقعك في الخلفية حتى يتمكن من تنبيهك حتى عند قفل الهاتف. لن يتم مشاركة موقعك أو تخزينه خارج التطبيق.";
-"Allow location access" = "السماح بالوصول إلى الموقع";
-"Not now" = "ليس الآن";
 "Choose Your Language" = "اختر لغتك";
 "Select the language you'd like to use in GeoAlarm. You can change this at any time in Settings." = "اختر اللغة التي تريد استخدامها في GeoNap. يمكنك تغييرها في أي وقت من الإعدادات.";
 

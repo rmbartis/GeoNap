@@ -33,7 +33,10 @@ GeoNap is free to download and use, with optional paid tiers that unlock more:
 - **Gold ($6.99/year)** — Everything in Silver, plus Transit Alarms with live agency/route/stop schedules, a "time before arrival" trigger mode, repeating alarms with hysteresis, and hands-free Auto-SMS automation.
 - **Platinum ($12.99, one-time purchase)** — Everything in Gold, plus running a Shortcuts automation when an alarm fires, Live Activity / Dynamic Island support, Calendar Scanning to automatically suggest alarms for upcoming trips, and Dead Reckoning to keep time-based alarms accurate through brief GPS gaps.
 
-Silver and Gold are auto-renewing annual subscriptions billed to your Apple ID; manage or cancel anytime in your device's Subscription settings. Platinum is a one-time purchase with Family Sharing included. Prices shown in USD and may vary by region. See Terms of Use and Privacy Policy for full details.
+Silver and Gold are auto-renewing annual subscriptions billed to your Apple ID; manage or cancel anytime in your device's Subscription settings. Platinum is a one-time purchase with Family Sharing included. Prices shown in USD and may vary by region.
+
+Terms of Use (EULA): https://www.apple.com/legal/internet-services/itunes/dev/stdeula/
+Privacy Policy: https://mba-labs.com/products/geonap/#pv-sec-privacy
 
 **Fully localized**
 GeoNap is available in 13 languages: English, Spanish, French, German, Italian, Portuguese, Arabic, Hindi, Japanese, Simplified Chinese, Russian, Thai, and Vietnamese — with an in-app language switcher independent of your system settings.
@@ -60,6 +63,12 @@ https://mba-labs.com/products/geonap/#pv-sec-support
 
 ## Privacy Policy URL
 https://mba-labs.com/products/geonap/#pv-sec-privacy
+
+## Terms of Use (EULA)
+Using Apple's Standard EULA (no custom EULA). Reflected two ways per Guideline 3.1.2(c):
+1. Set in App Store Connect → App Information → License Agreement → "Apple's Standard License Agreement" (default; confirm it's not overridden with a blank custom one).
+2. Linked as plain text in the App Description above (App Store Connect auto-links bare URLs), since the standard EULA has no dedicated ASC field of its own the way Privacy Policy does.
+Standard EULA text: https://www.apple.com/legal/internet-services/itunes/dev/stdeula/
 
 ## Copyright
 © 2026 Robert Bartis

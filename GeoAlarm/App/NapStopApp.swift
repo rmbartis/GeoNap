@@ -157,6 +157,8 @@ struct RootView: View {
     @Environment(\.scenePhase) private var scenePhase
     @EnvironmentObject var locationManager: LocationManager
     @EnvironmentObject var alarmManager: AlarmManager
+    // Guards the launch-time location request below — see comment there.
+    @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding = false
 
     var body: some View {
         ContentView()
@@ -170,7 +172,19 @@ struct RootView: View {
                 alarmManager.setModelContext(modelContext)
                 AutoNotifyDefaultsStore.configure(modelContext)
                 alarmManager.locationManager = locationManager
-                locationManager.requestAlwaysAuthorization()
+                // Only fire this for users who've already completed onboarding.
+                // On a fresh install, ContentView's onAppear (this closure) runs
+                // at the same moment the onboarding fullScreenCover is presented
+                // — an unconditional call here raced ahead of onboarding's own
+                // "Continue" button and popped the system location prompt on top
+                // of the language picker (App Store Review Guideline 5.1.1(iv)
+                // rejection, found via device testing 2026-08-21, after the
+                // OnboardingView fix for the same guideline). For a returning
+                // user this is a harmless no-op if already authorized, or a
+                // legitimate re-prompt if they haven't decided yet.
+                if hasSeenOnboarding {
+                    locationManager.requestAlwaysAuthorization()
+                }
                 alarmManager.reregisterAllRegions()
                 // UI tests get an isolated in-memory SwiftData store (see
                 // `container` above), but AlarmKit alarms are OS-level state
@@ -189,7 +203,15 @@ struct RootView: View {
                 // AlarmKit (iOS 26+): prompt for alarm permission so a geofence
                 // fire can present a system alarm. Lazily re-checked before each
                 // fire, but requesting at launch surfaces the prompt early.
-                Task { await GeoAlarmScheduler.ensureAuthorized() }
+                // Same guard as the location request above and for the same
+                // reason — on a fresh install this raced ahead of onboarding's
+                // "Continue" button and popped the AlarmKit system dialog on
+                // top of the language picker (found via device testing
+                // 2026-08-21, same session as the location fix). First-time
+                // users now get this from OnboardingView's Continue button.
+                if hasSeenOnboarding {
+                    Task { await GeoAlarmScheduler.ensureAuthorized() }
+                }
                 // Phase 3, item 9: start StoreKit's transaction listener and
                 // run the first entitlement check. Called here (not
                 // NapStopApp.init()) because `App.init()` isn't reliably

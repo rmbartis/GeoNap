@@ -76,35 +76,50 @@ struct OnboardingView: View {
                     .buttonStyle(.borderedProminent)
                     .controlSize(.large)
 
+                    // "Skip" only skips the feature slides — it must not skip
+                    // the permission requests themselves, or the app is left
+                    // unable to geofence at all until some later, contextless
+                    // relaunch (see Continue's comment above for why that's a
+                    // problem). Same two calls as Continue.
                     Button {
-                        hasSeenOnboarding = true
+                        finishOnboardingAndRequestPermissions()
                     } label: {
                         Text("Skip", bundle: bundle)
                     }
                     .foregroundStyle(.secondary)
                 } else {
+                    // App Store Review Guideline 5.1.1(iv): the button here must
+                    // not pre-answer the permission dialog (no "Allow…" wording)
+                    // and must always proceed straight into the real system
+                    // permission prompt — no "Not now" skip option that lets the
+                    // user delay/dismiss it. Fixed 2026-08-21 after rejection.
+                    // Also requests AlarmKit authorization here (moved from an
+                    // unconditional launch-time call in NapStopApp.swift, which
+                    // had the same race-ahead-of-onboarding problem as location
+                    // did — found via device testing the same day).
                     Button {
-                        locationManager.requestAlwaysAuthorization()
-                        hasSeenOnboarding = true
+                        finishOnboardingAndRequestPermissions()
                     } label: {
-                        Text("Allow location access", bundle: bundle)
+                        Text("Continue", bundle: bundle)
                             .frame(maxWidth: .infinity)
                     }
                     .buttonStyle(.borderedProminent)
                     .controlSize(.large)
-
-                    Button {
-                        hasSeenOnboarding = true
-                    } label: {
-                        Text("Not now", bundle: bundle)
-                    }
-                    .foregroundStyle(.secondary)
                 }
             }
             .padding(.horizontal, 32)
             .padding(.bottom, 48)
             .padding(.top, 16)
         }
+    }
+
+    /// Shared by both "Continue" (last page) and "Skip" (feature-slide pages)
+    /// so neither path can dismiss onboarding without the real system
+    /// permission prompts actually firing — see the comments on each button.
+    private func finishOnboardingAndRequestPermissions() {
+        locationManager.requestAlwaysAuthorization()
+        Task { await GeoAlarmScheduler.ensureAuthorized() }
+        hasSeenOnboarding = true
     }
 
     // MARK: - Language picker page

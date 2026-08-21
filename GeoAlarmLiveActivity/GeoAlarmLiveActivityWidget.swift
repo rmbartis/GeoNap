@@ -87,9 +87,6 @@ private struct LockScreenView: View {
                     .font(.headline)
                     .foregroundStyle(.white)
                     .lineLimit(1)
-                Text(context.attributes.regionEventRaw == "onEntry" ? "Arriving soon" : "Leaving soon")
-                    .font(.caption)
-                    .foregroundStyle(.white.opacity(0.7))
             }
 
             Spacer()
