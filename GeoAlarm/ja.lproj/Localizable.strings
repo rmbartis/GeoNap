@@ -294,6 +294,7 @@
 "privacy.body.dataDeletion" = "アラーム行を左スワイプして個別のアラームを削除できます。デバイスからアプリを削除することですべてのデータを消去できます。GeoNapをアンインストールするとローカルに保存されたすべてのアラーム記録が削除されます。iCloud同期が有効だった場合は、設定 → [ユーザー名] → iCloud → アカウントのストレージを管理 → GeoNapからアプリのCloudKitデータも削除できます。";
 
 "privacy.body.contact" = "プライバシーやデータの取り扱いについてご質問がある場合は、GeoNapの製品ページにあるApp Storeのサポートリンクからデベロッパーにお問い合わせください。";
+"privacy.footer.webVersion" = "このプライバシーステートメントは、mba-labs.com/products/geonap でもオンラインでご覧いただけます。";
 
 // MARK: - Swipe Action Labels
 "Delete" = "削除";

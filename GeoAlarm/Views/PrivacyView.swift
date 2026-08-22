@@ -59,6 +59,20 @@ struct PrivacyView: View {
                         .fixedSize(horizontal: false, vertical: true)
                 }
 
+                Divider()
+
+                // MARK: Web version
+                // Mirrors mba-labs.com's own "also available online" note on
+                // the live Privacy Statement section, in reverse — lets a
+                // reviewer or user jump from this in-app copy to the
+                // canonical web page (same URL as the ASC Privacy Policy URL
+                // field and the paywall's functional-link requirement,
+                // Guideline 3.1.2(c)). Added 2026-08-21.
+                Link(destination: URL(string: "https://mba-labs.com/products/geonap/#pv-sec-privacy")!) {
+                    Text("privacy.footer.webVersion", bundle: bundle)
+                        .font(.footnote)
+                }
+
                 Spacer(minLength: 32)
             }
             .padding(.horizontal, 20)

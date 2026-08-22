@@ -294,6 +294,7 @@
 "privacy.body.dataDeletion" = "您可以向左滑动任意闹钟行来删除单个闹钟，或通过从设备中移除应用来删除所有数据。卸载 GeoNap 将删除所有本地存储的闹钟记录。如果启用了 iCloud 同步，您还可以在设置 → [您的姓名] → iCloud → 管理账户存储 → GeoNap 中删除应用的 CloudKit 数据。";
 
 "privacy.body.contact" = "如果您对隐私或数据处理有疑问，可通过 App Store 上 GeoNap 产品页面的支持链接联系开发者。";
+"privacy.footer.webVersion" = "本隐私声明也可在 mba-labs.com/products/geonap 在线查看。";
 
 // MARK: - Swipe Action Labels
 "Delete" = "删除";

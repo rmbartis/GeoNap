@@ -294,6 +294,7 @@ Nút Lưu bị tắt cho đến khi nhập tên và ghim vị trí. iOS cho phé
 "privacy.body.dataDeletion" = "Bạn có thể xóa từng báo thức bằng cách vuốt sang trái trên bất kỳ hàng báo thức nào, hoặc xóa tất cả dữ liệu bằng cách xóa ứng dụng khỏi thiết bị. Gỡ cài đặt GeoNap xóa tất cả hồ sơ báo thức được lưu trữ cục bộ. Nếu đồng bộ iCloud được bật, bạn cũng có thể xóa dữ liệu CloudKit của ứng dụng trong Cài đặt → [Tên của bạn] → iCloud → Quản lý bộ nhớ tài khoản → GeoNap.";
 
 "privacy.body.contact" = "Nếu bạn có câu hỏi về quyền riêng tư hoặc xử lý dữ liệu, bạn có thể liên hệ với nhà phát triển qua liên kết hỗ trợ trong App Store trên trang sản phẩm GeoNap.";
+"privacy.footer.webVersion" = "Tuyên bố về quyền riêng tư này cũng có sẵn trực tuyến tại mba-labs.com/products/geonap.";
 
 // MARK: - Swipe Action Labels
 "Delete" = "Xóa";

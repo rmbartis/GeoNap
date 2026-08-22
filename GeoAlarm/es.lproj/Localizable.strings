@@ -273,6 +273,7 @@ El botón Guardar está desactivado hasta que hayas ingresado un nombre y fijado
 "privacy.body.analytics" = "GeoNap no incluye ningún SDK de análisis de terceros, redes publicitarias ni servicios de reporte de errores. La app no rastrea cómo la usas y no recopila información de diagnóstico más allá de lo que iOS proporciona de forma nativa.";
 "privacy.body.dataDeletion" = "Puedes eliminar alarmas individuales deslizando a la izquierda en cualquier fila de alarma, o eliminar todos los datos desinstalando la app. Si la sincronización con iCloud estaba habilitada, también puedes eliminar los datos de CloudKit de la app en Configuración → [Tu nombre] → iCloud → Administrar almacenamiento → GeoNap.";
 "privacy.body.contact" = "Si tienes preguntas sobre privacidad o manejo de datos, puedes comunicarte con el desarrollador a través del enlace de soporte en la página del producto de GeoNap en la App Store.";
+"privacy.footer.webVersion" = "Esta Declaración de Privacidad también está disponible en línea en mba-labs.com/products/geonap.";
 
 // MARK: - Swipe Action Labels
 "Delete" = "Eliminar";

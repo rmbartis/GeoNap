@@ -273,6 +273,7 @@ Die Schaltfläche Speichern ist deaktiviert, bis ein Name und ein Standort festg
 "privacy.body.analytics" = "GeoNap enthält keine Drittanbieter-Analyse-SDKs, Werbenetzwerke oder Absturzberichtsdienste. Die App verfolgt Ihre Nutzung nicht und sammelt keine Diagnoseinformationen über das hinaus, was iOS nativ bereitstellt.";
 "privacy.body.dataDeletion" = "Sie können einzelne Alarme löschen, indem Sie links auf eine Alarmzeile wischen, oder alle Daten löschen, indem Sie die App deinstallieren. Wenn iCloud-Synchronisierung aktiviert war, können Sie die CloudKit-Daten der App auch in Einstellungen → [Ihr Name] → iCloud → Speicher verwalten → GeoNap löschen.";
 "privacy.body.contact" = "Wenn Sie Fragen zum Datenschutz oder zur Datenbehandlung haben, können Sie den Entwickler über den Support-Link auf der GeoNap-Produktseite im App Store erreichen.";
+"privacy.footer.webVersion" = "Diese Datenschutzerklärung ist auch online unter mba-labs.com/products/geonap verfügbar.";
 
 // MARK: - Swipe Action Labels
 "Delete" = "Löschen";

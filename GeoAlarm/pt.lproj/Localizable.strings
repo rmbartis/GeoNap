@@ -294,6 +294,7 @@ O botão Salvar fica desativado até que um nome seja inserido e uma localizaç�
 "privacy.body.dataDeletion" = "Você pode excluir alarmes individuais deslizando para a esquerda em qualquer linha de alarme, ou excluir todos os dados removendo o app do seu dispositivo. Desinstalar o GeoNap remove todos os registros de alarme armazenados localmente. Se a sincronização iCloud estiver ativada, você também pode excluir os dados do CloudKit do app em Ajustes → [Seu Nome] → iCloud → Gerenciar Armazenamento da Conta → GeoNap.";
 
 "privacy.body.contact" = "Se você tiver dúvidas sobre privacidade ou tratamento de dados, pode entrar em contato com o desenvolvedor pelo link de suporte na App Store na página do produto GeoNap.";
+"privacy.footer.webVersion" = "Esta Declaração de Privacidade também está disponível on-line em mba-labs.com/products/geonap.";
 
 // MARK: - Swipe Action Labels
 "Delete" = "Eliminar";

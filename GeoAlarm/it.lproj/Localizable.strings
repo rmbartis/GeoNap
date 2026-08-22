@@ -273,6 +273,7 @@ Il pulsante Salva è disabilitato finché non hai inserito un nome e fissato una
 "privacy.body.analytics" = "GeoNap non include SDK di analisi di terze parti, reti pubblicitarie o servizi di segnalazione arresti anomali. L'app non traccia il tuo utilizzo e non raccoglie informazioni diagnostiche oltre a quelle fornite nativamente da iOS.";
 "privacy.body.dataDeletion" = "Puoi eliminare singoli allarmi scorrendo a sinistra su qualsiasi riga, o eliminare tutti i dati disinstallando l'app. Se la sincronizzazione iCloud era abilitata, puoi anche eliminare i dati CloudKit dell'app in Impostazioni → [Tuo nome] → iCloud → Gestisci spazio → GeoNap.";
 "privacy.body.contact" = "Se hai domande sulla privacy o sulla gestione dei dati, puoi contattare lo sviluppatore tramite il link di supporto nella pagina del prodotto GeoNap sull'App Store.";
+"privacy.footer.webVersion" = "Questa Informativa sulla privacy è disponibile anche online su mba-labs.com/products/geonap.";
 
 // MARK: - Swipe Action Labels
 "Delete" = "Elimina";

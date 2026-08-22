@@ -307,6 +307,7 @@ The Save button is disabled until a name has been entered and a location has bee
 "privacy.body.analytics" = "GeoNap does not include any third-party analytics SDKs, advertising networks, or crash reporting services. The app does not track how you use it and does not collect diagnostic information beyond what iOS provides natively in Settings → Privacy & Security → Analytics & Improvements.";
 "privacy.body.dataDeletion" = "You can delete individual alarms by swiping left on any alarm row, or delete all data by removing the app from your device. Uninstalling GeoNap removes all locally stored alarm records. If iCloud sync was enabled, you can also delete the app's CloudKit data in Settings → [Your Name] → iCloud → Manage Account Storage → GeoNap.";
 "privacy.body.contact" = "If you have questions about privacy or data handling, you can reach the developer through the App Store support link on GeoNap's product page.";
+"privacy.footer.webVersion" = "This Privacy Statement is also available online at mba-labs.com/products/geonap.";
 
 // MARK: - Swipe Action Labels
 "Delete" = "Delete";
