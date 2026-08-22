@@ -87,6 +87,11 @@ Please test: setting alarms in different location formats (DD/DMS/DDM), switchin
 
 ## App Review Notes (for the production submission reviewer — distinct from the Beta Review Notes below, which are for TestFlight)
 
+**Resubmission note (build 64):** This build addresses the three issues from the August 21, 2026 rejection of build 63:
+- **Guideline 4 (Watch icon):** The Apple Watch app icon's background was changed from a dark navy to a lighter blue so it renders as a proper circle on Apple Watch.
+- **Guideline 3.1.2(c) (subscription metadata):** The App Description now includes a functional link to Apple's Standard EULA, and the App Store Connect License Agreement and Privacy Policy URL fields have been confirmed correct. The in-app paywall already displayed subscription title, length, price, and Privacy Policy/Terms of Use links — that was unchanged.
+- **Guideline 5.1.1(iv) (location permission):** The onboarding screen's button was renamed from "Allow location access" to "Continue," and the "Not now" option that let users delay the system prompt was removed — tapping Continue (or Skip on an earlier onboarding page) now always proceeds straight into the real system permission dialogs for both Location and AlarmKit (alarm scheduling), rather than either showing a pre-answered button or letting the request be skipped indefinitely.
+
 GeoNap offers 4 tiers — Free, Silver ($2.99/year), Gold ($6.99/year), and Platinum ($12.99 one-time). No login or account is required; every tier is reachable immediately from a fresh install.
 
 **To review a paid tier's features:** open the app → tap the gear icon (Settings) → See Plans, or tap the lock badge next to any greyed-out feature — both open the in-app paywall. Select a plan and complete the purchase with your Sandbox tester account. Silver and Gold are auto-renewable annual subscriptions; Platinum is a one-time non-consumable purchase. The corresponding feature unlocks immediately after the purchase completes — no relaunch needed. A "Restore Purchases" button is on the paywall, and "Manage Subscription" is in Settings, per Guideline 3.1.2.
