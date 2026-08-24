@@ -164,16 +164,63 @@ final class PurchaseManager: ObservableObject {
     /// versa), so this always reflects the best tier currently owned, not
     /// just the most recent purchase.
     func updateEntitledTier() async {
-        var owned: Set<String> = []
+        var owned = await currentEntitlementProductIDs()
+        var resolvedTier = Self.resolveHighestTier(from: owned)
 
+        // Cold-launch guard, added 2026-08-24 after a user report: a
+        // Platinum purchase silently reverted to Free after a phone
+        // restart — with no refund, cancellation, or new purchase
+        // involved, at the same moment a separate bug was independently
+        // wiping the alarm list (see ModelContainerFactory.swift's
+        // history). Same root shape as that bug: `Transaction
+        // .currentEntitlements` reads StoreKit's on-device transaction
+        // cache, which — like CloudKit — can plausibly come back empty in
+        // the first moments after a reboot, before storekitd has finished
+        // warming up, not because the entitlement was actually lost.
+        // Without this guard, `verifiedTier`'s `didSet` immediately
+        // persists the wrongly-downgraded tier back to UserDefaults too,
+        // so even the seed for the NEXT cold launch is corrupted — the
+        // downgrade sticks instead of self-correcting on the next launch.
+        //
+        // Only kicks in for the FIRST check of a launch, and only when the
+        // fresh result would DOWNGRADE below what's already cached (a
+        // brand-new install resolving to .free, or a genuine upgrade,
+        // applies immediately with no delay). A later, real revocation —
+        // `Transaction.updates` firing for a refund/cancellation, or any
+        // later call to this method in the same session — is trusted
+        // immediately too, since by then StoreKit has clearly finished
+        // warming up.
+        if !hasCompletedInitialEntitlementCheck {
+            let cachedTier = EntitlementManager.verifiedTier
+            let maxAttempts = 3
+            var attempt = 1
+            while resolvedTier < cachedTier && attempt <= maxAttempts {
+                DebugLogger.shared.log("PurchaseManager: cold-launch entitlement check resolved to \(resolvedTier) but cached tier was \(cachedTier) — retry \(attempt)/\(maxAttempts)", category: "Purchase")
+                try? await Task.sleep(nanoseconds: 750_000_000)
+                owned = await currentEntitlementProductIDs()
+                resolvedTier = Self.resolveHighestTier(from: owned)
+                attempt += 1
+            }
+            if resolvedTier < cachedTier {
+                DebugLogger.shared.log("PurchaseManager: entitlement check still resolved below cached tier (\(resolvedTier) < \(cachedTier)) after \(maxAttempts) attempts — accepting downgrade", category: "Purchase")
+            }
+        }
+
+        purchasedProductIDs = owned
+        EntitlementManager.verifiedTier = resolvedTier
+        hasCompletedInitialEntitlementCheck = true
+    }
+
+    /// One pass over `Transaction.currentEntitlements`, collecting verified
+    /// product IDs. Split out of `updateEntitledTier()` so the cold-launch
+    /// retry loop above can re-run just this part without duplicating it.
+    private func currentEntitlementProductIDs() async -> Set<String> {
+        var owned: Set<String> = []
         for await result in Transaction.currentEntitlements {
             guard let transaction = try? checkVerified(result) else { continue }
             owned.insert(transaction.productID)
         }
-
-        purchasedProductIDs = owned
-        EntitlementManager.verifiedTier = Self.resolveHighestTier(from: owned)
-        hasCompletedInitialEntitlementCheck = true
+        return owned
     }
 
     /// Pure tier-resolution logic, split out of `updateEntitledTier()` so it's
