@@ -879,18 +879,56 @@ final class AlarmManager: NSObject, ObservableObject {
         WatchConnectivityManager.shared.updateWatch(with: alarms)
     }
 
+    /// Found 2026-08-24, tracking the reboot data-loss reports: this used to
+    /// fetch exactly once and set `alarms = []` on ANY throw — silently,
+    /// via `print`/`CrashReporter` only, which write to OSLog/Console, NOT
+    /// the in-app DebugLogger. Every reboot-test log Bob captured via
+    /// Settings → Debug Log came back completely clean (no
+    /// ModelContainerFactory retries, no errors of any kind) despite the
+    /// alarm list still coming back empty — which only makes sense if the
+    /// real failure was happening here, one step downstream of
+    /// ModelContainerFactory's (successful) container open, in a call that
+    /// was invisible to the log Bob was sending. A `fetch()` against a
+    /// freshly-opened CloudKit-mirrored store can plausibly still throw for
+    /// a moment right after boot even once `ModelContainer` itself opens
+    /// cleanly (the store's remote-import/merge may not have finished),
+    /// which fits every symptom: no crash, no corruption-recovery
+    /// triggered, just an empty list.
+    ///
+    /// IMPORTANT: this method has NEVER deleted anything — a thrown
+    /// `fetch()` only ever left the in-memory `alarms` array empty for that
+    /// session. If this was the real cause, existing alarms were likely
+    /// never actually destroyed, only failed to display.
+    ///
+    /// Now retries a few times before accepting an empty result, and logs
+    /// every attempt to DebugLogger (in addition to the existing
+    /// CrashReporter/OSLog logging) so a repeat of this is actually visible
+    /// in the log Bob already knows how to capture.
     private func load() {
         guard let context = modelContext else { return }
-        do {
-            alarms = try context.fetch(
-                FetchDescriptor<NapAlarm>(sortBy: [SortDescriptor(\.name)])
-            )
-            CrashReporter.setKey("alarmCount", value: alarms.count)
-            SpotlightManager.shared.reindexAll(alarms)
-        } catch {
-            print("❌ SwiftData load failed: \(error.localizedDescription)")
-            CrashReporter.record(error, context: "SwiftData.load")
-            alarms = []
+        let maxAttempts = 3
+        for attempt in 1...maxAttempts {
+            do {
+                let fetched = try context.fetch(
+                    FetchDescriptor<NapAlarm>(sortBy: [SortDescriptor(\.name)])
+                )
+                alarms = fetched
+                CrashReporter.setKey("alarmCount", value: alarms.count)
+                SpotlightManager.shared.reindexAll(alarms)
+                if attempt > 1 {
+                    DebugLogger.shared.log("AlarmManager.load(): fetch succeeded on attempt \(attempt)/\(maxAttempts) after earlier failure(s)", category: "AlarmManager")
+                }
+                return
+            } catch {
+                print("❌ SwiftData load failed (attempt \(attempt)/\(maxAttempts)): \(error.localizedDescription)")
+                CrashReporter.record(error, context: "SwiftData.load (attempt \(attempt)/\(maxAttempts))")
+                DebugLogger.shared.log("AlarmManager.load(): fetch attempt \(attempt)/\(maxAttempts) failed — \(error.localizedDescription)", category: "AlarmManager")
+                if attempt < maxAttempts {
+                    Thread.sleep(forTimeInterval: 0.5)
+                }
+            }
         }
+        DebugLogger.shared.log("AlarmManager.load(): all \(maxAttempts) fetch attempts failed — showing an empty alarm list for this session. Existing data was NOT deleted by this method; a successful fetch on a later launch (or a remote-change notification) should recover it.", category: "AlarmManager")
+        alarms = []
     }
 }
