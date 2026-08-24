@@ -63,24 +63,21 @@ struct NapStopApp: App {
             return ModelContainerFactory.makeInMemory(schema: schema)
         }
 
-        let cloudConfig = ModelConfiguration(
-            schema: schema,
-            isStoredInMemoryOnly: false,
-            cloudKitDatabase: .automatic
-        )
-        if let c = try? ModelContainer(for: schema, configurations: [cloudConfig]) {
+        // See ModelContainerFactory.openCloudKitContainerRecoveringIfNeeded's
+        // doc comment: this recovers a corrupted local store (e.g. from a
+        // device reboot cutting power mid-write) AND retries CloudKit
+        // against the freshly recovered file, so an iCloud-synced user's
+        // alarms redownload automatically instead of the app silently
+        // settling for an empty local-only store.
+        if let c = try? ModelContainerFactory.openCloudKitContainerRecoveringIfNeeded(schema: schema) {
             return c
         }
 
-        if let recovered = try? ModelContainerFactory.recoveringLocalContainer(schema: schema) {
-            return recovered
-        }
-
-        // Absolute last resort — the CloudKit attempt above AND the
-        // corrupted-store recovery both failed (e.g. genuinely out of disk
-        // space). Run in memory rather than crash: the app stays launchable
-        // for this session (no persisted alarms survive it) instead of
-        // repeating the fatal crash this replaces.
+        // Absolute last resort — every disk-backed attempt above failed
+        // (e.g. genuinely out of disk space). Run in memory rather than
+        // crash: the app stays launchable for this session (no persisted
+        // alarms survive it) instead of repeating the fatal crash this
+        // replaces.
         CrashReporter.log("ModelContainer: all disk-backed attempts failed at launch — running in-memory for this session")
         return ModelContainerFactory.makeInMemory(schema: schema)
     }()

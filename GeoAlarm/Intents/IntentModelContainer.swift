@@ -24,14 +24,11 @@ enum IntentModelContainer {
     @MainActor
     static func make() throws -> ModelContainer {
         let schema = Schema([NapAlarm.self, GTFSFeedModel.self])
-        let cloudConfig = ModelConfiguration(
-            schema: schema,
-            isStoredInMemoryOnly: false,
-            cloudKitDatabase: .automatic
-        )
-        if let c = try? ModelContainer(for: schema, configurations: [cloudConfig]) {
-            return c
-        }
-        return try ModelContainerFactory.recoveringLocalContainer(schema: schema)
+        // See ModelContainerFactory.openCloudKitContainerRecoveringIfNeeded's
+        // doc comment — recovers a corrupted local store and retries
+        // CloudKit against the freshly recovered file, rather than
+        // silently settling for local-only when the original failure was
+        // file corruption, not an iCloud/CloudKit problem.
+        return try ModelContainerFactory.openCloudKitContainerRecoveringIfNeeded(schema: schema)
     }
 }

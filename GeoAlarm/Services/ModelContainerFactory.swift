@@ -81,4 +81,45 @@ enum ModelContainerFactory {
             try? fm.removeItem(at: URL(fileURLWithPath: url.path + suffix))
         }
     }
+
+    /// Opens the CloudKit-backed store, recovering the on-disk local file
+    /// first if it's corrupted. Both call sites (NapStopApp, IntentModelContainer)
+    /// used to just fall from a failed CloudKit attempt straight to
+    /// `recoveringLocalContainer` and stop there — which works, but silently
+    /// strands the caller on a local-only store even when the failure was
+    /// local file corruption (not a CloudKit/iCloud problem), because
+    /// `recoveringLocalContainer` deletes-and-recreates the file WITHOUT
+    /// CloudKit. If the user has iCloud sync on, their alarms are still
+    /// sitting safely in their iCloud account, but nothing ever asks
+    /// CloudKit to redownload them into the freshly emptied local file —
+    /// so a device reboot that corrupts the WAL file (the same class of
+    /// abrupt-power-loss event `recoveringLocalContainer`'s doc comment
+    /// already describes) looked like permanent alarm data loss, even
+    /// though recovery from iCloud was one more attempt away. Found
+    /// 2026-08-24 from a user report: alarms all gone after a phone
+    /// restart.
+    ///
+    /// This retries the CloudKit config once more against the now-clean
+    /// file after recovery, so an iCloud-synced user gets their alarms
+    /// back automatically. If that retry also fails (offline, no iCloud
+    /// account — the ordinary, expected reasons CloudKit isn't available,
+    /// not corruption), the already-working local-only container from
+    /// recovery is still returned, so this never trades a working local
+    /// store for a thrown error.
+    @MainActor
+    static func openCloudKitContainerRecoveringIfNeeded(schema: Schema = schema) throws -> ModelContainer {
+        let cloudConfig = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false, cloudKitDatabase: .automatic)
+        if let c = try? ModelContainer(for: schema, configurations: [cloudConfig]) {
+            return c
+        }
+
+        let recovered = try recoveringLocalContainer(schema: schema)
+
+        if let resynced = try? ModelContainer(for: schema, configurations: [cloudConfig]) {
+            CrashReporter.log("ModelContainer: recovered corrupted store and resynced via CloudKit")
+            return resynced
+        }
+        CrashReporter.log("ModelContainer: recovered corrupted store as local-only — CloudKit retry unavailable (offline or no iCloud account)")
+        return recovered
+    }
 }

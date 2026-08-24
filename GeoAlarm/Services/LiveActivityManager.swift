@@ -38,6 +38,10 @@ final class LiveActivityManager {
 
     private var activities: [UUID: Activity<GeoAlarmActivityAttributes>] = [:]
 
+    /// Guards `reconcileWithSystem()` so it only does its scan once per
+    /// process lifetime — see that method's doc comment.
+    private var hasReconciled = false
+
     // MARK: - Lifecycle
 
     /// Starts a Live Activity for `alarm` if: Platinum tier (see
@@ -52,6 +56,7 @@ final class LiveActivityManager {
     /// behalf (see AlarmManager.startMonitoring's liveActivityTrackedIDs).
     @discardableResult
     func start(for alarm: NapAlarm) -> Bool {
+        reconcileWithSystem()
         guard EntitlementManager.isEntitled(to: .platinum) else { return false }
         guard ActivityAuthorizationInfo().areActivitiesEnabled else {
             DebugLogger.shared.log("Live Activity: system authorization disabled — skipped for '\(alarm.name)'", category: "LiveActivity")
@@ -127,6 +132,51 @@ final class LiveActivityManager {
             Task { await activity.end(nil, dismissalPolicy: .immediate) }
         }
         activities.removeAll()
+    }
+
+    /// One-time-per-process reconciliation against ActivityKit's own ground
+    /// truth (`Activity<GeoAlarmActivityAttributes>.activities`, an
+    /// OS-maintained list that survives the app being killed and
+    /// relaunched — unlike the `activities` dictionary above, which is
+    /// plain in-memory state and always starts empty on a fresh process).
+    ///
+    /// Without this, a fresh launch's empty dictionary passes the "already
+    /// running" guard in start(for:) even when a Live Activity for that
+    /// alarm is still running from a PREVIOUS process instance that never
+    /// got a matching end(alarmID:) call (e.g. iOS killed the app, then
+    /// relaunched it in the background to handle a geofence event) —
+    /// resulting in a second, independent Activity.request(...) for the
+    /// same alarm and two duplicate cards stacked on the Lock Screen, each
+    /// updating its distance readout on its own. Found 2026-08-23 from a
+    /// device screenshot showing exactly that for two different alarms.
+    ///
+    /// Called lazily from start(for:) rather than from AlarmManager/launch
+    /// code, so this class stays self-contained per its own doc comment
+    /// (nothing outside LiveActivityManager needs to know this exists).
+    private func reconcileWithSystem() {
+        guard !hasReconciled else { return }
+        hasReconciled = true
+
+        var byAlarmID: [UUID: [Activity<GeoAlarmActivityAttributes>]] = [:]
+        for activity in Activity<GeoAlarmActivityAttributes>.activities {
+            guard let alarmID = UUID(uuidString: activity.attributes.alarmID) else { continue }
+            byAlarmID[alarmID, default: []].append(activity)
+        }
+
+        for (alarmID, found) in byAlarmID {
+            // Keep the most recently updated one and adopt it into this
+            // process's dictionary so start(for:)'s guard sees it; end any
+            // others. Two-plus for the same alarm only ever comes from this
+            // exact relaunch bug — never a legitimate state.
+            let sorted = found.sorted { $0.content.state.lastUpdated > $1.content.state.lastUpdated }
+            activities[alarmID] = sorted.first
+            if sorted.count > 1 {
+                DebugLogger.shared.log("Live Activity: found \(sorted.count) duplicates for alarm \(alarmID) on relaunch — ending \(sorted.count - 1)", category: "LiveActivity")
+                for stale in sorted.dropFirst() {
+                    Task { await stale.end(nil, dismissalPolicy: .immediate) }
+                }
+            }
+        }
     }
 
     /// Reads the user's current distance-unit preference directly from
