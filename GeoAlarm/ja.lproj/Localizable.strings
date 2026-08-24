@@ -85,6 +85,10 @@
 "Enable Logging" = "ログを有効にする";
 "Log Cleared" = "ログを削除しました";
 "The debug log has been cleared. A new session header will be written on the next log entry." = "デバッグログが削除されました。次のエントリ時に新しいセッションヘッダーが書き込まれます。";
+"Clear Stale Notifications" = "古い通知を削除";
+"Cleanup Complete" = "クリーンアップ完了";
+"Cleared %d stale notification(s) that were no longer linked to an alarm in your list." = "リスト内のどのアラームにも関連付けられていなかった古い通知を%d件削除しました。";
+"No stale notifications were found. Everything on your device matches your current alarm list." = "古い通知は見つかりませんでした。デバイス上のすべてが現在のアラームリストと一致しています。";
 
 /* GTFS Transit Feed Cache (Settings) */
 "Transit Feed Cache" = "交通フィードキャッシュ";

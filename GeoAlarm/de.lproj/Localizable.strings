@@ -85,6 +85,10 @@
 "Enable Logging" = "Protokollierung aktivieren";
 "Log Cleared" = "Protokoll gelöscht";
 "The debug log has been cleared. A new session header will be written on the next log entry." = "Das Debug-Protokoll wurde gelöscht. Bei der nächsten Eintragung wird ein neuer Sitzungskopf geschrieben.";
+"Clear Stale Notifications" = "Veraltete Benachrichtigungen löschen";
+"Cleanup Complete" = "Bereinigung abgeschlossen";
+"Cleared %d stale notification(s) that were no longer linked to an alarm in your list." = "%d veraltete Benachrichtigung(en), die keinem Alarm in Ihrer Liste mehr zugeordnet waren, wurden entfernt.";
+"No stale notifications were found. Everything on your device matches your current alarm list." = "Es wurden keine veralteten Benachrichtigungen gefunden. Alles auf Ihrem Gerät stimmt mit Ihrer aktuellen Alarmliste überein.";
 
 /* GTFS Transit Feed Cache (Settings) */
 "Transit Feed Cache" = "Transit-Feed-Cache";

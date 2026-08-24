@@ -85,6 +85,10 @@
 "Enable Logging" = "Включить ведение журнала";
 "Log Cleared" = "Журнал очищен";
 "The debug log has been cleared. A new session header will be written on the next log entry." = "Журнал отладки очищен. При следующей записи будет добавлен новый заголовок сессии.";
+"Clear Stale Notifications" = "Очистить устаревшие уведомления";
+"Cleanup Complete" = "Очистка завершена";
+"Cleared %d stale notification(s) that were no longer linked to an alarm in your list." = "Удалено %d устаревших уведомлений, больше не связанных с будильником в вашем списке.";
+"No stale notifications were found. Everything on your device matches your current alarm list." = "Устаревших уведомлений не найдено. Всё на вашем устройстве соответствует текущему списку будильников.";
 
 /* GTFS Transit Feed Cache (Settings) */
 "Transit Feed Cache" = "Кэш транзитных фидов";

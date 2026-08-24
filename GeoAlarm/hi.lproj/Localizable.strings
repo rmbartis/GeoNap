@@ -85,6 +85,10 @@
 "Enable Logging" = "लॉगिंग सक्षम करें";
 "Log Cleared" = "लॉग साफ़ हो गया";
 "The debug log has been cleared. A new session header will be written on the next log entry." = "डीबग लॉग साफ़ हो गया। अगली लॉग प्रविष्टि पर एक नया सत्र हेडर लिखा जाएगा।";
+"Clear Stale Notifications" = "पुरानी सूचनाएं साफ़ करें";
+"Cleanup Complete" = "सफाई पूर्ण";
+"Cleared %d stale notification(s) that were no longer linked to an alarm in your list." = "%d पुरानी सूचनाएं हटा दी गईं जो अब आपकी सूची में किसी अलार्म से जुड़ी नहीं थीं।";
+"No stale notifications were found. Everything on your device matches your current alarm list." = "कोई पुरानी सूचना नहीं मिली। आपके डिवाइस पर सब कुछ आपकी वर्तमान अलार्म सूची से मेल खाता है।";
 
 /* GTFS Transit Feed Cache (Settings) */
 "Transit Feed Cache" = "ट्रांज़िट फ़ीड कैश";

@@ -34,6 +34,9 @@ struct SettingsView: View {
     @State private var showClearedBanner = false
     // Controls the "GTFS cache cleared" feedback
     @State private var showGTFSCacheClearedBanner = false
+    // Controls the "orphaned alarms cleaned up" feedback banner and its message.
+    @State private var showOrphanCleanupResult = false
+    @State private var orphanCleanupCount = 0
     // Controls the Paywall sheet (item 10), opened from the Plan section's
     // "See Plans" row below.
     @State private var showPaywall = false
@@ -66,6 +69,7 @@ struct SettingsView: View {
     @State private var infoLanguage    = false
     @State private var infoDebugLog    = false
     @State private var infoGTFSCache   = false
+    @State private var infoStaleNotifications = false
     // Controls the Auto-SMS one-time Shortcuts setup-steps popover
     @State private var showAutoSMSSetupInfo = false
 
@@ -572,6 +576,58 @@ struct SettingsView: View {
                 }
             }
 
+            // "Clear Stale Notifications" — shown unconditionally (not gated
+            // on debugLoggingEnabled): unlike the log tools above, this fixes
+            // a real user-facing problem, not a diagnostic aid. AlarmKit
+            // alarms and their Live Activities are OS-level state that
+            // survives a device reboot independently of the app's own
+            // SwiftData store. If that store is ever wiped and rebuilt (see
+            // ModelContainerFactory.swift's history — the exact scenario a
+            // user reported 2026-08-24, restarting their phone), AlarmKit
+            // doesn't lose the alarm — the app just loses its own record of
+            // it, leaving a notification/Live Activity the user can no
+            // longer manage from GeoNap even though the device still shows
+            // it. This compares what the device is still tracking against
+            // the app's current alarm list and clears anything with no
+            // match on both sides (AlarmKit itself and any Live Activity),
+            // rather than nuking every scheduled alarm the way the
+            // UI-test-only cancelAll() does. Named and worded (see
+            // SettingInfoLabel's helpBody below) to describe what it does —
+            // syncing device state with the app's list — without implying
+            // this is needed because of a bug (Bob, 2026-08-24: didn't want
+            // the control's name itself to read as an admission of one).
+            Button {
+                cleanUpOrphanedAlarms()
+            } label: {
+                HStack(spacing: 6) {
+                    Image(systemName: "bell.badge.slash")
+                        .foregroundStyle(.blue)
+                    SettingInfoLabel(
+                        title: "Clear Stale Notifications",
+                        isPresented: $infoStaleNotifications,
+                        helpTitle: "Stale Notifications",
+                        helpBody: "GeoNap's alarms live in two places: your alarm list in the app, and your iPhone's own alarm and notification system, which keeps running even when the app isn't open.\n\nThese normally stay in sync automatically. But after restoring alarms from iCloud, switching devices, or an alarm being removed in an unusual way, your iPhone may still show a notification or Live Activity for something no longer in your alarm list.\n\nThis clears any such leftover notifications. It never touches alarms that are still in your list, and is safe to run anytime."
+                    )
+                }
+            }
+            .accessibilityIdentifier("clearStaleNotificationsButton")
+            .alert(Text("Cleanup Complete", bundle: bundle), isPresented: $showOrphanCleanupResult) {
+                Button(role: .cancel) {} label: {
+                    Text("OK", bundle: bundle)
+                }
+            } message: {
+                // %d needs the actual count substituted via String(format:) —
+                // a plain Text(_:bundle:) interpolation only formats a raw
+                // localization KEY per-locale (see calendarScan.duplicateRenamed
+                // for the established pattern in this codebase), it doesn't
+                // itself substitute a count into %d.
+                if orphanCleanupCount > 0 {
+                    Text(String(format: NSLocalizedString("Cleared %d stale notification(s) that were no longer linked to an alarm in your list.", bundle: bundle, comment: ""), orphanCleanupCount))
+                } else {
+                    Text("No stale notifications were found. Everything on your device matches your current alarm list.", bundle: bundle)
+                }
+            }
+
         } header: {
             Text("Support", bundle: bundle)
         } footer: {
@@ -794,6 +850,24 @@ struct SettingsView: View {
             Text("settings.autoSMS.footer", bundle: bundle)
                 .font(.caption)
         }
+    }
+
+    // MARK: - Orphaned alarm cleanup
+
+    /// Cancels any AlarmKit alarm / Live Activity that has no matching
+    /// `NapAlarm` in the app's current SwiftData store. See the "Clean Up
+    /// Orphaned Alarms" button's comment above for why this can happen.
+    ///
+    /// Fetches directly from `modelContext` rather than trusting
+    /// `AlarmManager`'s in-memory `alarms` array — this is meant to reflect
+    /// exactly what's really in the database right now, independent of
+    /// whatever's cached in memory.
+    private func cleanUpOrphanedAlarms() {
+        let knownIDs = Set((try? modelContext.fetch(FetchDescriptor<NapAlarm>()))?.map(\.id) ?? [])
+        let cancelledAlarms = GeoAlarmScheduler.cancelOrphaned(knownAlarmIDs: knownIDs)
+        let endedActivities = LiveActivityManager.shared.endOrphaned(knownAlarmIDs: knownIDs)
+        orphanCleanupCount = max(cancelledAlarms, endedActivities)
+        showOrphanCleanupResult = true
     }
 
     // MARK: - Toggle binding

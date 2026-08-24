@@ -85,6 +85,10 @@
 "Enable Logging" = "Bật ghi nhật ký";
 "Log Cleared" = "Đã xóa nhật ký";
 "The debug log has been cleared. A new session header will be written on the next log entry." = "Nhật ký gỡ lỗi đã được xóa. Tiêu đề phiên mới sẽ được ghi vào mục nhập tiếp theo.";
+"Clear Stale Notifications" = "Xóa thông báo cũ";
+"Cleanup Complete" = "Đã dọn xong";
+"Cleared %d stale notification(s) that were no longer linked to an alarm in your list." = "Đã xóa %d thông báo cũ không còn liên kết với báo thức nào trong danh sách của bạn.";
+"No stale notifications were found. Everything on your device matches your current alarm list." = "Không tìm thấy thông báo cũ nào. Mọi thứ trên thiết bị của bạn khớp với danh sách báo thức hiện tại.";
 
 /* GTFS Transit Feed Cache (Settings) */
 "Transit Feed Cache" = "Bộ nhớ đệm nguồn cấp dữ liệu giao thông";

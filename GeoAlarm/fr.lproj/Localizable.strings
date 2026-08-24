@@ -85,6 +85,10 @@
 "Enable Logging" = "Activer la journalisation";
 "Log Cleared" = "Journal effacé";
 "The debug log has been cleared. A new session header will be written on the next log entry." = "Le journal de débogage a été effacé. Un nouvel en-tête de session sera écrit à la prochaine entrée.";
+"Clear Stale Notifications" = "Effacer les notifications obsolètes";
+"Cleanup Complete" = "Nettoyage terminé";
+"Cleared %d stale notification(s) that were no longer linked to an alarm in your list." = "%d notification(s) obsolète(s) qui n'étaient plus liées à une alarme de votre liste ont été supprimées.";
+"No stale notifications were found. Everything on your device matches your current alarm list." = "Aucune notification obsolète trouvée. Tout sur votre appareil correspond à votre liste d'alarmes actuelle.";
 
 /* GTFS Transit Feed Cache (Settings) */
 "Transit Feed Cache" = "Cache des flux de transport";

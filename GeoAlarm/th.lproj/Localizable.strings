@@ -85,6 +85,10 @@
 "Enable Logging" = "เปิดใช้การบันทึก";
 "Log Cleared" = "ล้างบันทึกแล้ว";
 "The debug log has been cleared. A new session header will be written on the next log entry." = "ล้างบันทึกการแก้จุดบกพร่องแล้ว หัวข้อเซสชันใหม่จะถูกเขียนในรายการถัดไป";
+"Clear Stale Notifications" = "ล้างการแจ้งเตือนที่ล้าสมัย";
+"Cleanup Complete" = "ล้างข้อมูลเสร็จสมบูรณ์";
+"Cleared %d stale notification(s) that were no longer linked to an alarm in your list." = "ล้างการแจ้งเตือนที่ล้าสมัย %d รายการที่ไม่ได้เชื่อมโยงกับสัญญาณเตือนในรายการของคุณแล้ว";
+"No stale notifications were found. Everything on your device matches your current alarm list." = "ไม่พบการแจ้งเตือนที่ล้าสมัย ทุกอย่างบนอุปกรณ์ของคุณตรงกับรายการสัญญาณเตือนปัจจุบัน";
 
 /* GTFS Transit Feed Cache (Settings) */
 "Transit Feed Cache" = "แคชฟีดขนส่ง";

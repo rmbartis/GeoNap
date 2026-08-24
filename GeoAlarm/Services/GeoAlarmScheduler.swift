@@ -227,4 +227,39 @@ enum GeoAlarmScheduler {
             DebugLogger.shared.log("AlarmKit cancelAll failed to read alarms: \(error.localizedDescription)", category: "AlarmKit")
         }
     }
+
+    /// Cancels every AlarmKit alarm whose id has no matching `NapAlarm` in
+    /// `knownAlarmIDs` — i.e. alarms the OS is still tracking (and will
+    /// still fire, with a Lock Screen notification/Live Activity) that the
+    /// app's own alarm list no longer has any record of.
+    ///
+    /// Added for Settings' "Clean Up Orphaned Alarms" tool, 2026-08-24:
+    /// AlarmKit alarms are OS-level state that persists across reboots
+    /// independently of the app's own SwiftData store (see
+    /// ModelContainerFactory.swift's history of that store getting
+    /// wiped/rebuilt after a device restart). When that happens, AlarmKit
+    /// alarms aren't lost — the app's record of them is — leaving alarms
+    /// the user can no longer see or cancel from GeoNap, even though the
+    /// system will still alert for them. This targets only that mismatch,
+    /// unlike `cancelAll()`, which nukes every AlarmKit alarm regardless of
+    /// whether the app still has a valid record for it.
+    ///
+    /// Returns the number cancelled, so the caller can show the user
+    /// something more useful than a blind "Done."
+    @discardableResult
+    static func cancelOrphaned(knownAlarmIDs: Set<UUID>) -> Int {
+        do {
+            let orphaned = try AlarmKit.AlarmManager.shared.alarms.filter { !knownAlarmIDs.contains($0.id) }
+            for alarm in orphaned {
+                cancel(id: alarm.id)
+            }
+            if !orphaned.isEmpty {
+                DebugLogger.shared.log("AlarmKit cancelOrphaned: cancelled \(orphaned.count) alarm(s) with no matching NapAlarm record", category: "AlarmKit")
+            }
+            return orphaned.count
+        } catch {
+            DebugLogger.shared.log("AlarmKit cancelOrphaned failed to read alarms: \(error.localizedDescription)", category: "AlarmKit")
+            return 0
+        }
+    }
 }

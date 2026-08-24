@@ -85,6 +85,10 @@
 "Enable Logging" = "تفعيل التسجيل";
 "Log Cleared" = "تم مسح السجل";
 "The debug log has been cleared. A new session header will be written on the next log entry." = "تم مسح سجل التصحيح. سيتم كتابة ترويسة جلسة جديدة عند الإدخال التالي.";
+"Clear Stale Notifications" = "مسح الإشعارات القديمة";
+"Cleanup Complete" = "اكتمل التنظيف";
+"Cleared %d stale notification(s) that were no longer linked to an alarm in your list." = "تم مسح %d إشعار(ات) قديمة لم تعد مرتبطة بأي تنبيه في قائمتك.";
+"No stale notifications were found. Everything on your device matches your current alarm list." = "لم يتم العثور على إشعارات قديمة. كل شيء على جهازك يطابق قائمة التنبيهات الحالية.";
 
 /* GTFS Transit Feed Cache (Settings) */
 "Transit Feed Cache" = "ذاكرة التخزين المؤقت لبيانات النقل";

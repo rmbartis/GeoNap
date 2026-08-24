@@ -85,6 +85,10 @@
 "Enable Logging" = "启用日志记录";
 "Log Cleared" = "日志已清除";
 "The debug log has been cleared. A new session header will be written on the next log entry." = "调试日志已清除。下次记录时将写入新的会话标题。";
+"Clear Stale Notifications" = "清除过期通知";
+"Cleanup Complete" = "清理完成";
+"Cleared %d stale notification(s) that were no longer linked to an alarm in your list." = "已清除 %d 条不再关联您列表中任何闹钟的过期通知。";
+"No stale notifications were found. Everything on your device matches your current alarm list." = "未发现过期通知。您设备上的所有内容都与当前的闹钟列表一致。";
 
 /* GTFS Transit Feed Cache (Settings) */
 "Transit Feed Cache" = "交通数据缓存";

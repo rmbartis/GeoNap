@@ -25,6 +25,7 @@
 // foreground launch, or a background Shortcut/widget/calendar-scan intent).
 import Foundation
 import SwiftData
+import CloudKit
 
 enum ModelContainerFactory {
 
@@ -89,37 +90,136 @@ enum ModelContainerFactory {
     /// strands the caller on a local-only store even when the failure was
     /// local file corruption (not a CloudKit/iCloud problem), because
     /// `recoveringLocalContainer` deletes-and-recreates the file WITHOUT
-    /// CloudKit. If the user has iCloud sync on, their alarms are still
-    /// sitting safely in their iCloud account, but nothing ever asks
-    /// CloudKit to redownload them into the freshly emptied local file —
-    /// so a device reboot that corrupts the WAL file (the same class of
-    /// abrupt-power-loss event `recoveringLocalContainer`'s doc comment
-    /// already describes) looked like permanent alarm data loss, even
-    /// though recovery from iCloud was one more attempt away. Found
-    /// 2026-08-24 from a user report: alarms all gone after a phone
-    /// restart.
+    /// CloudKit.
     ///
-    /// This retries the CloudKit config once more against the now-clean
-    /// file after recovery, so an iCloud-synced user gets their alarms
-    /// back automatically. If that retry also fails (offline, no iCloud
-    /// account — the ordinary, expected reasons CloudKit isn't available,
-    /// not corruption), the already-working local-only container from
-    /// recovery is still returned, so this never trades a working local
-    /// store for a thrown error.
+    /// SECOND finding, 2026-08-24: a build-64 fix that only added the
+    /// resync-after-recovery retry below wasn't enough — a user reproduced
+    /// total loss of brand-new alarms after a single clean, deliberate
+    /// power-off/power-on cycle (30s), which doesn't fit "abrupt power loss
+    /// corrupted the WAL file" (a clean shutdown lets iOS flush writes
+    /// normally). The far more likely trigger: CloudKit/network/iCloud
+    /// account state genuinely isn't ready yet in the first moment or two
+    /// after a phone reboots, so the FIRST `ModelContainer(...cloudConfig)`
+    /// attempt below throws for a completely ordinary, transient reason —
+    /// and the old code treated ANY failure there as proof of corruption,
+    /// immediately falling to `recoveringLocalContainer`, which can itself
+    /// throw trying to reopen a CloudKit-formatted file with a plain local
+    /// config and DESTROY it — deleting alarms that were created only
+    /// seconds earlier and likely hadn't finished uploading to iCloud yet,
+    /// so the resync-after-recovery retry found nothing to redownload.
+    ///
+    /// THIRD finding, 2026-08-24, same investigation: the recovery fallback
+    /// itself had a bug independent of timing. It called
+    /// `recoveringLocalContainer`, which opens the store's file with a
+    /// *plain, non-CloudKit* `ModelConfiguration`. But that on-disk file was
+    /// originally created WITH `cloudKitDatabase: .automatic` — CloudKit
+    /// mirroring bakes CloudKit-specific metadata into the store. Opening a
+    /// CloudKit-formatted file with a mismatched plain-local config is
+    /// itself liable to throw immediately, on a file that was never actually
+    /// corrupted — which `recoveringLocalContainer` would then interpret as
+    /// "corrupted," delete, and rebuild as a plain local file, permanently
+    /// losing whatever hadn't finished syncing to iCloud yet. So a failure
+    /// reason as ordinary as "iCloud not ready yet post-boot" could reach
+    /// the destructive path twice over: once by exhausting the retries
+    /// below, and again by the recovery step's own config mismatch making a
+    /// perfectly fine file look broken.
+    ///
+    /// Fix, this pass: retry the CloudKit attempt a few times with a short
+    /// delay (covers "not ready yet right after boot"), and if recovery is
+    /// still needed, ALWAYS recover using the same CloudKit-mirrored config
+    /// the file was actually created with — never the mismatched plain
+    /// config — so a rebuilt store can resync from iCloud instead of being
+    /// silently downgraded to local-only by a config that could never have
+    /// opened that file correctly in the first place. `recoveringLocalContainer`
+    /// (plain config) is now used only as the final, last-resort fallback if
+    /// even a freshly rebuilt CloudKit-formatted store won't open — e.g. no
+    /// CloudKit entitlement/account at all on this device.
+    ///
+    /// Also logs the actual thrown error at each step, alongside a
+    /// best-effort snapshot of `CKAccountStatus` (available / no account /
+    /// restricted / temporarily unavailable / could not determine) — a
+    /// direct, cheap way to see whether iCloud itself was reachable at the
+    /// moment of failure, without touching the SwiftData store at all.
+    /// Logs go to both OSLog (via CrashReporter, for Console.app) and the
+    /// in-app DebugLogger (Settings → Debug Log), so a repeat of this can be
+    /// diagnosed from real evidence rather than guessed at again.
     @MainActor
     static func openCloudKitContainerRecoveringIfNeeded(schema: Schema = schema) throws -> ModelContainer {
         let cloudConfig = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false, cloudKitDatabase: .automatic)
-        if let c = try? ModelContainer(for: schema, configurations: [cloudConfig]) {
-            return c
+
+        let maxAttempts = 4
+        for attempt in 1...maxAttempts {
+            do {
+                let c = try ModelContainer(for: schema, configurations: [cloudConfig])
+                if attempt > 1 {
+                    logBoth("ModelContainer: CloudKit store opened on attempt \(attempt)/\(maxAttempts) (earlier attempt(s) likely hit iCloud/network not ready yet post-launch)")
+                }
+                return c
+            } catch {
+                let status = currentAccountStatusSync()
+                logBoth("ModelContainer: CloudKit open attempt \(attempt)/\(maxAttempts) failed [iCloud account: \(describe(status))] — \(error.localizedDescription)")
+                if attempt < maxAttempts {
+                    Thread.sleep(forTimeInterval: 0.75)
+                }
+            }
         }
 
-        let recovered = try recoveringLocalContainer(schema: schema)
-
-        if let resynced = try? ModelContainer(for: schema, configurations: [cloudConfig]) {
-            CrashReporter.log("ModelContainer: recovered corrupted store and resynced via CloudKit")
-            return resynced
+        // Every attempt above used the SAME CloudKit-mirrored config the file
+        // was created with, so reaching here means it's genuinely not
+        // opening — not just "wrong config type," which was the old bug.
+        // Recovery still uses that same CloudKit config, not a plain one,
+        // so a rebuilt store can actually resync.
+        logBoth("ModelContainer: CloudKit store unavailable after \(maxAttempts) attempts — clearing and rebuilding with CloudKit config")
+        do {
+            destroyStore(at: cloudConfig.url)
+            let rebuilt = try ModelContainer(for: schema, configurations: [cloudConfig])
+            logBoth("ModelContainer: rebuilt store using CloudKit config — will resync from iCloud if data exists there")
+            return rebuilt
+        } catch {
+            logBoth("ModelContainer: rebuild with CloudKit config also failed — \(error.localizedDescription) — falling back to plain local store as last resort")
+            return try recoveringLocalContainer(schema: schema)
         }
-        CrashReporter.log("ModelContainer: recovered corrupted store as local-only — CloudKit retry unavailable (offline or no iCloud account)")
-        return recovered
+    }
+
+    /// Writes the same message to both OSLog (via CrashReporter — visible
+    /// in Console.app/Xcode even without a live debug session) and the
+    /// in-app DebugLogger (Settings → Debug Log) — this runs during
+    /// container init, before RootView.onAppear's beginSessionIfEnabled(),
+    /// but DebugLogger.log(_:category:) only needs the user's
+    /// "Enable Debug Log" setting to already be on (read directly from
+    /// UserDefaults), not an active session, so it still captures here.
+    private static func logBoth(_ message: String) {
+        CrashReporter.log(message)
+        DebugLogger.shared.log(message, category: "ModelContainer")
+    }
+
+    /// Best-effort, synchronous snapshot of the device's current iCloud
+    /// account status — bridges CKContainer's completion-handler API with a
+    /// short timeout so a hung/slow CloudKit daemon can never block launch
+    /// indefinitely. Diagnostic only: this does not gate whether a retry
+    /// happens above, since `.couldNotDetermine` right after boot is exactly
+    /// the ambiguous case retrying is meant to ride out anyway — it's here
+    /// so the logged failure reason says WHY a retry was needed instead of
+    /// just that one was.
+    private static func currentAccountStatusSync(timeout: TimeInterval = 1.0) -> CKAccountStatus {
+        let semaphore = DispatchSemaphore(value: 0)
+        var result: CKAccountStatus = .couldNotDetermine
+        CKContainer.default().accountStatus { status, _ in
+            result = status
+            semaphore.signal()
+        }
+        _ = semaphore.wait(timeout: .now() + timeout)
+        return result
+    }
+
+    private static func describe(_ status: CKAccountStatus) -> String {
+        switch status {
+        case .available: return "available"
+        case .noAccount: return "no account"
+        case .restricted: return "restricted"
+        case .temporarilyUnavailable: return "temporarily unavailable"
+        case .couldNotDetermine: fallthrough
+        @unknown default: return "could not determine"
+        }
     }
 }

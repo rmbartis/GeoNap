@@ -90,6 +90,10 @@
 "Enable Logging" = "Enable Logging";
 "Log Cleared" = "Log Cleared";
 "The debug log has been cleared. A new session header will be written on the next log entry." = "The debug log has been cleared. A new session header will be written on the next log entry.";
+"Clear Stale Notifications" = "Clear Stale Notifications";
+"Cleanup Complete" = "Cleanup Complete";
+"Cleared %d stale notification(s) that were no longer linked to an alarm in your list." = "Cleared %d stale notification(s) that were no longer linked to an alarm in your list.";
+"No stale notifications were found. Everything on your device matches your current alarm list." = "No stale notifications were found. Everything on your device matches your current alarm list.";
 
 /* GTFS Transit Feed Cache (Settings) */
 "Transit Feed Cache" = "Transit Feed Cache";

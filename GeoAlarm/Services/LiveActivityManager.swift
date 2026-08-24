@@ -179,6 +179,32 @@ final class LiveActivityManager {
         }
     }
 
+    /// Ends every running Activity whose alarm id has no match in
+    /// `knownAlarmIDs` — the Live Activity side of Settings' "Clean Up
+    /// Orphaned Alarms" tool (see GeoAlarmScheduler.cancelOrphaned's doc
+    /// comment for the underlying scenario: a SwiftData store wipe/rebuild
+    /// can leave the OS still tracking — and still showing Lock Screen UI
+    /// for — an alarm the app's own record of is gone). Checks
+    /// ActivityKit's ground truth directly rather than this instance's
+    /// `activities` dictionary, for the same reason `reconcileWithSystem()`
+    /// does: a fresh process's dictionary starts empty regardless of what's
+    /// actually still running. Returns the number ended.
+    @discardableResult
+    func endOrphaned(knownAlarmIDs: Set<UUID>) -> Int {
+        var count = 0
+        for activity in Activity<GeoAlarmActivityAttributes>.activities {
+            guard let alarmID = UUID(uuidString: activity.attributes.alarmID),
+                  !knownAlarmIDs.contains(alarmID) else { continue }
+            activities.removeValue(forKey: alarmID)
+            Task { await activity.end(nil, dismissalPolicy: .immediate) }
+            count += 1
+        }
+        if count > 0 {
+            DebugLogger.shared.log("Live Activity: ended \(count) orphaned activity(ies) with no matching NapAlarm record", category: "LiveActivity")
+        }
+        return count
+    }
+
     /// Reads the user's current distance-unit preference directly from
     /// UserDefaults.standard (this file runs in the main app process, so
     /// unlike the widget extension it has ordinary access to the same
