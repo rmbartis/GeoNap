@@ -45,6 +45,22 @@ final class AlarmManager: NSObject, ObservableObject {
     /// Injected via setModelContext() on app launch (from RootView.onAppear).
     private var modelContext: ModelContext?
 
+    #if DEBUG
+    /// Test-only seam for `load()`'s retry logic — see
+    /// AlarmManagerLoadRetryTests.swift. When set, `load()` calls this
+    /// instead of doing a real `context.fetch(...)`, so a test can force a
+    /// fetch that throws a fixed number of times before succeeding (or
+    /// always fails), and assert the retry count / DebugLogger output / final
+    /// `alarms` state. The real timing race this retry logic targets — a
+    /// CloudKit remote-import not settled yet immediately after a device
+    /// reboot — can't be reproduced deterministically in a unit test or the
+    /// Simulator (Bob, 2026-08-24: "Can this be tested in simulation" — no,
+    /// but the retry LOGIC itself can be, which is what this seam is for).
+    /// nil (the default) on every real launch; this property doesn't exist
+    /// at all in RELEASE builds, so it can't affect shipped behavior.
+    var fetchAlarmsOverride: ((ModelContext) throws -> [NapAlarm])?
+    #endif
+
     // MARK: - Init
     override init() { super.init() }
 
@@ -909,9 +925,13 @@ final class AlarmManager: NSObject, ObservableObject {
         let maxAttempts = 3
         for attempt in 1...maxAttempts {
             do {
+                #if DEBUG
+                let fetched = try (fetchAlarmsOverride ?? { try $0.fetch(FetchDescriptor<NapAlarm>(sortBy: [SortDescriptor(\.name)])) })(context)
+                #else
                 let fetched = try context.fetch(
                     FetchDescriptor<NapAlarm>(sortBy: [SortDescriptor(\.name)])
                 )
+                #endif
                 alarms = fetched
                 CrashReporter.setKey("alarmCount", value: alarms.count)
                 SpotlightManager.shared.reindexAll(alarms)

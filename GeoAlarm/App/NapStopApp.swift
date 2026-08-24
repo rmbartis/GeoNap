@@ -106,6 +106,21 @@ struct NapStopApp: App {
         }
         #endif
         CrashReporter.log("App launched")
+        // Unconditional, guaranteed-once-per-process marker in the IN-APP
+        // debug log too (CrashReporter above only reaches OSLog/Console).
+        // Added 2026-08-24 as direct evidence for a theory: RootView's
+        // .onAppear — where DebugLogger's session header AND
+        // AlarmManager.setModelContext()/PurchaseManager.shared.start()
+        // used to live — was suspected of not firing on every real launch,
+        // particularly ones triggered by iOS in the background (e.g. a
+        // location/region-monitoring wake right after a device reboot)
+        // rather than a user tapping the icon. init() has no such
+        // ambiguity: it runs exactly once, unconditionally, on every
+        // process launch, so this line is the ground truth for "how many
+        // times did the process actually start" when reading a debug log —
+        // see RootView.performLaunchSetupIfNeeded's doc comment for the
+        // fix this evidence led to.
+        DebugLogger.shared.log("NapStopApp.init() — process launched", category: "Launch")
         // Must happen before anything reads these UserDefaults keys directly
         // (e.g. CalendarScanBackgroundTask, which runs outside any View and
         // can't rely on @AppStorage's in-memory-only default). See
@@ -157,76 +172,27 @@ struct RootView: View {
     // Guards the launch-time location request below — see comment there.
     @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding = false
 
+    // Guards performLaunchSetupIfNeeded() so its real work only ever
+    // executes once per process, even though — as of 2026-08-24 — it's
+    // now triggered from THREE independent SwiftUI entry points instead of
+    // just one. See that method's doc comment for why.
+    @State private var hasCompletedLaunchSetup = false
+
     var body: some View {
         ContentView()
-            .onAppear {
-                // Stamp a fresh session header (with the current build) at launch so
-                // every run in the debug log is tied to the build it ran on.
-                DebugLogger.shared.beginSessionIfEnabled()
-                // Copy bundled WAV sounds into Library/Sounds so UNNotificationSound(named:)
-                // can find them. Must run before any alarm can fire.
-                NotificationSound.installBundledSoundsIfNeeded()
-                alarmManager.setModelContext(modelContext)
-                AutoNotifyDefaultsStore.configure(modelContext)
-                alarmManager.locationManager = locationManager
-                // Only fire this for users who've already completed onboarding.
-                // On a fresh install, ContentView's onAppear (this closure) runs
-                // at the same moment the onboarding fullScreenCover is presented
-                // — an unconditional call here raced ahead of onboarding's own
-                // "Continue" button and popped the system location prompt on top
-                // of the language picker (App Store Review Guideline 5.1.1(iv)
-                // rejection, found via device testing 2026-08-21, after the
-                // OnboardingView fix for the same guideline). For a returning
-                // user this is a harmless no-op if already authorized, or a
-                // legitimate re-prompt if they haven't decided yet.
-                if hasSeenOnboarding {
-                    locationManager.requestAlwaysAuthorization()
-                }
-                alarmManager.reregisterAllRegions()
-                // UI tests get an isolated in-memory SwiftData store (see
-                // `container` above), but AlarmKit alarms are OS-level state
-                // that lives entirely outside that store — a real alarm left
-                // over from a prior run (manual testing or an earlier CI
-                // pass) keeps showing its Live Activity across every
-                // subsequent launch, silently intercepting taps meant for
-                // the app's own toolbar underneath it. Clear the slate
-                // before any test-driven alarm scheduling can happen. (Bob —
-                // 2026-07-09 CI stability audit, after a failure screenshot
-                // showed a stale "Penn Station" Live Activity banner
-                // blocking addAlarmMenuButton / settingsButton.)
-                if ProcessInfo.processInfo.arguments.contains("--uitesting") {
-                    GeoAlarmScheduler.cancelAll()
-                }
-                // AlarmKit (iOS 26+): prompt for alarm permission so a geofence
-                // fire can present a system alarm. Lazily re-checked before each
-                // fire, but requesting at launch surfaces the prompt early.
-                // Same guard as the location request above and for the same
-                // reason — on a fresh install this raced ahead of onboarding's
-                // "Continue" button and popped the AlarmKit system dialog on
-                // top of the language picker (found via device testing
-                // 2026-08-21, same session as the location fix). First-time
-                // users now get this from OnboardingView's Continue button.
-                if hasSeenOnboarding {
-                    Task { await GeoAlarmScheduler.ensureAuthorized() }
-                }
-                // Phase 3, item 9: start StoreKit's transaction listener and
-                // run the first entitlement check. Called here (not
-                // NapStopApp.init()) because `App.init()` isn't reliably
-                // MainActor-isolated, and PurchaseManager is a `@MainActor`
-                // class — same reasoning as the other launch-time async
-                // kick-offs on this screen.
-                PurchaseManager.shared.start()
-                // Phase 3: (re-)submit the next Calendar Scanning background
-                // refresh request. No-ops internally unless scanning is
-                // enabled and Scan Mode is Automatic.
-                CalendarScanBackgroundTask.scheduleNextRefresh()
-            }
+            .onAppear { performLaunchSetupIfNeeded(trigger: "onAppear") }
+            .task { performLaunchSetupIfNeeded(trigger: "task") }
             // When the app returns to the foreground, clean up any windowed alarms
             // whose active window ended while the app was suspended/terminated
             // (the in-memory window-end timer can't run in that state).
             .onChange(of: scenePhase) { _, phase in
                 if phase == .active {
                     alarmManager.deactivateExpiredWindowAlarms()
+                    // Safety net, same 2026-08-24 fix as above: a
+                    // background/location-triggered launch reaching
+                    // .active is a third independent chance to catch setup
+                    // that .onAppear/.task may have missed.
+                    performLaunchSetupIfNeeded(trigger: "scenePhase")
                 }
             }
             // Handle Spotlight search result taps — route to the matching alarm.
@@ -237,6 +203,100 @@ struct RootView: View {
                 else { return }
                 alarmManager.spotlightAlarmID = uuid
             }
+    }
+
+    /// Found 2026-08-24, investigating alarms and Platinum tier both
+    /// appearing "reset" after a device restart: a debug log spanning
+    /// several real restart tests showed 4 separate "WCSession activated"
+    /// entries — a reliable once-per-process marker, since it's logged from
+    /// WatchConnectivityManager.shared's singleton `init()` — but only ONE
+    /// "Session started" header, which used to be written from THIS
+    /// closure when it was wired to `.onAppear` alone. Location delegate
+    /// callbacks kept logging normally on every one of those launches
+    /// (they don't depend on this setup running), which is exactly why
+    /// every debug log collected during this investigation looked "clean"
+    /// with no errors anywhere: `alarmManager.setModelContext(...)` and
+    /// `PurchaseManager.shared.start()` simply never ran on those launches,
+    /// so `alarms` stayed at its default empty array and `verifiedTier`
+    /// stayed at whatever UserDefaults last cached for that entire process
+    /// lifetime — not corruption, not a CloudKit/StoreKit timing race, just
+    /// this closure not reliably firing for a launch iOS triggers itself in
+    /// the background (e.g. region-monitoring resuming right after a
+    /// reboot) as opposed to the user tapping the icon.
+    ///
+    /// Fix: call this from `.onAppear`, `.task`, AND the first `.active`
+    /// scenePhase transition — three independent SwiftUI signals instead
+    /// of relying on one. `hasCompletedLaunchSetup` ensures the actual
+    /// setup — including things that are NOT safe to run twice, like
+    /// `observeRemoteChanges()`'s `NotificationCenter` observer registration
+    /// inside `setModelContext()` — still only executes once per process,
+    /// regardless of how many of the three triggers actually fire.
+    private func performLaunchSetupIfNeeded(trigger: String) {
+        guard !hasCompletedLaunchSetup else { return }
+        hasCompletedLaunchSetup = true
+
+        // Stamp a fresh session header (with the current build) at launch so
+        // every run in the debug log is tied to the build it ran on.
+        DebugLogger.shared.beginSessionIfEnabled()
+        DebugLogger.shared.log("RootView launch setup running (triggered by \(trigger))", category: "Launch")
+
+        // Copy bundled WAV sounds into Library/Sounds so UNNotificationSound(named:)
+        // can find them. Must run before any alarm can fire.
+        NotificationSound.installBundledSoundsIfNeeded()
+        alarmManager.setModelContext(modelContext)
+        AutoNotifyDefaultsStore.configure(modelContext)
+        alarmManager.locationManager = locationManager
+        // Only fire this for users who've already completed onboarding.
+        // On a fresh install, ContentView's onAppear (this closure) runs
+        // at the same moment the onboarding fullScreenCover is presented
+        // — an unconditional call here raced ahead of onboarding's own
+        // "Continue" button and popped the system location prompt on top
+        // of the language picker (App Store Review Guideline 5.1.1(iv)
+        // rejection, found via device testing 2026-08-21, after the
+        // OnboardingView fix for the same guideline). For a returning
+        // user this is a harmless no-op if already authorized, or a
+        // legitimate re-prompt if they haven't decided yet.
+        if hasSeenOnboarding {
+            locationManager.requestAlwaysAuthorization()
+        }
+        alarmManager.reregisterAllRegions()
+        // UI tests get an isolated in-memory SwiftData store (see
+        // `container` above), but AlarmKit alarms are OS-level state
+        // that lives entirely outside that store — a real alarm left
+        // over from a prior run (manual testing or an earlier CI
+        // pass) keeps showing its Live Activity across every
+        // subsequent launch, silently intercepting taps meant for
+        // the app's own toolbar underneath it. Clear the slate
+        // before any test-driven alarm scheduling can happen. (Bob —
+        // 2026-07-09 CI stability audit, after a failure screenshot
+        // showed a stale "Penn Station" Live Activity banner
+        // blocking addAlarmMenuButton / settingsButton.)
+        if ProcessInfo.processInfo.arguments.contains("--uitesting") {
+            GeoAlarmScheduler.cancelAll()
+        }
+        // AlarmKit (iOS 26+): prompt for alarm permission so a geofence
+        // fire can present a system alarm. Lazily re-checked before each
+        // fire, but requesting at launch surfaces the prompt early.
+        // Same guard as the location request above and for the same
+        // reason — on a fresh install this raced ahead of onboarding's
+        // "Continue" button and popped the AlarmKit system dialog on
+        // top of the language picker (found via device testing
+        // 2026-08-21, same session as the location fix). First-time
+        // users now get this from OnboardingView's Continue button.
+        if hasSeenOnboarding {
+            Task { await GeoAlarmScheduler.ensureAuthorized() }
+        }
+        // Phase 3, item 9: start StoreKit's transaction listener and
+        // run the first entitlement check. Called here (not
+        // NapStopApp.init()) because `App.init()` isn't reliably
+        // MainActor-isolated, and PurchaseManager is a `@MainActor`
+        // class — same reasoning as the other launch-time async
+        // kick-offs on this screen.
+        PurchaseManager.shared.start()
+        // Phase 3: (re-)submit the next Calendar Scanning background
+        // refresh request. No-ops internally unless scanning is
+        // enabled and Scan Mode is Automatic.
+        CalendarScanBackgroundTask.scheduleNextRefresh()
     }
 }
 
