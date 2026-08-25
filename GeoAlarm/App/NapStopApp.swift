@@ -279,6 +279,33 @@ struct RootView: View {
                     // .active is a third independent chance to catch setup
                     // that .onAppear/.task may have missed.
                     performLaunchSetupIfNeeded(trigger: "scenePhase")
+                    // UNCONDITIONAL — not gated by hasCompletedLaunchSetup.
+                    // Added 2026-08-25 after a real-device finding: a
+                    // Platinum tier wrongly resolved to Free on a hidden
+                    // post-restart relaunch (see EntitlementManager
+                    // .verifiedTier's doc comment for the seed-race root
+                    // cause), and — contrary to the assumption behind that
+                    // fix — did NOT self-correct even after minutes of the
+                    // SAME process running. Reason: PurchaseManager
+                    // .shared.start() only ever gets called ONCE per
+                    // process, from performLaunchSetupIfNeeded above. If
+                    // THAT one check also landed in the same bad window
+                    // (StoreKit not warmed up either — a separate subsystem
+                    // from the UserDefaults seed, but hit by the same class
+                    // of post-reboot timing issue) and resolved wrong,
+                    // nothing ever asked StoreKit again — there's no
+                    // periodic or foreground re-check. Backgrounding and
+                    // reopening the app "fixed" it in testing not because
+                    // waiting helps, but because that most likely triggered
+                    // an actual fresh process launch (iOS reclaiming the
+                    // backgrounded app), landing well past the bad window.
+                    // Re-verifying on every foreground — not just the
+                    // first — closes that gap without needing a real
+                    // relaunch: PurchaseManager.start() is idempotent (its
+                    // transaction listener only starts once; this just
+                    // kicks off another loadProducts()+updateEntitledTier()
+                    // pass), so calling it again here is cheap and safe.
+                    PurchaseManager.shared.start()
                 }
             }
             // Handle Spotlight search result taps — route to the matching alarm.
