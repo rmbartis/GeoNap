@@ -47,6 +47,26 @@ struct NapStopApp: App {
     /// in CI (Bob, 2026-07-05 — previously the UI test suite assumed a
     /// `--reset-alarms` flag that was never actually implemented anywhere).
     ///
+    /// `@State`, not `let`, since 2026-08-24 (non-blocking iCloud sync
+    /// architecture): launch ALWAYS starts on a temporary in-memory
+    /// placeholder — never touches CloudKit synchronously — and
+    /// `resolveCloudKitContainerIfNeeded()` below resolves the real
+    /// container in the background and swaps it in, mutating `container`
+    /// after init returns.
+    ///
+    /// REVISED 2026-08-25: the first version of this also tried ONE fast,
+    /// synchronous CloudKit attempt here in init() before falling back to
+    /// the placeholder (`ModelContainerFactory.quickCloudKitAttempt`).
+    /// Removed after a real-device restart test hung for 2+ minutes with NO
+    /// log evidence a launch even started — `ModelContainer(...
+    /// cloudKitDatabase: .automatic)` has no timeout, and `init()` runs
+    /// before the Scene/View hierarchy exists, so nothing (not even the
+    /// syncing banner) could render while it was blocked. init() now does
+    /// zero CloudKit/network work — see its own comment for the full
+    /// account. `resolveCloudKitContainerPatiently`'s first attempt still
+    /// resolves near-instantly on the common warm-CloudKit case, so this
+    /// costs nothing in practice.
+    ///
     /// Never force-crashes on a bad on-disk store (Bob, 2026-07-25, after a
     /// TestFlight crash: NapStopApp.init() -> swift_unexpectedError from a
     /// `try!` here). A device that loses power mid-write — e.g. the battery
@@ -56,33 +76,55 @@ struct NapStopApp: App {
     /// same on-disk file and would fail identically forever. See
     /// ModelContainerFactory.swift for the recovery (delete the corrupted
     /// store and rebuild) and the last-resort in-memory fallback below.
-    private let container: ModelContainer = {
-        let schema = ModelContainerFactory.schema
-
-        if ProcessInfo.processInfo.arguments.contains("--uitesting") {
-            return ModelContainerFactory.makeInMemory(schema: schema)
-        }
-
-        // See ModelContainerFactory.openCloudKitContainerRecoveringIfNeeded's
-        // doc comment: this recovers a corrupted local store (e.g. from a
-        // device reboot cutting power mid-write) AND retries CloudKit
-        // against the freshly recovered file, so an iCloud-synced user's
-        // alarms redownload automatically instead of the app silently
-        // settling for an empty local-only store.
-        if let c = try? ModelContainerFactory.openCloudKitContainerRecoveringIfNeeded(schema: schema) {
-            return c
-        }
-
-        // Absolute last resort — every disk-backed attempt above failed
-        // (e.g. genuinely out of disk space). Run in memory rather than
-        // crash: the app stays launchable for this session (no persisted
-        // alarms survive it) instead of repeating the fatal crash this
-        // replaces.
-        CrashReporter.log("ModelContainer: all disk-backed attempts failed at launch — running in-memory for this session")
-        return ModelContainerFactory.makeInMemory(schema: schema)
-    }()
+    @State private var container: ModelContainer
 
     init() {
+        // Unconditional, guaranteed-once-per-process marker — MUST be the
+        // very first thing init() does, before any container/CloudKit work
+        // below. Added 2026-08-24 as direct evidence for a theory: RootView's
+        // .onAppear — where DebugLogger's session header AND
+        // AlarmManager.setModelContext()/PurchaseManager.shared.start()
+        // used to live — was suspected of not firing on every real launch,
+        // particularly ones triggered by iOS in the background (e.g. a
+        // location/region-monitoring wake right after a device reboot)
+        // rather than a user tapping the icon. init() has no such
+        // ambiguity: it runs exactly once, unconditionally, on every
+        // process launch, so this line is the ground truth for "how many
+        // times did the process actually start" when reading a debug log —
+        // see RootView.performLaunchSetupIfNeeded's doc comment for the
+        // fix this evidence led to.
+        //
+        // MOVED HERE 2026-08-25: previously this ran after the container
+        // was selected below, which briefly included a synchronous, no-
+        // timeout `ModelContainer(...cloudKitDatabase:...)` attempt
+        // (`quickCloudKitAttempt`). A device test right after a real reboot
+        // showed the app stuck for 2+ minutes with NO log evidence of a
+        // new launch at all — consistent with that synchronous CloudKit
+        // call hanging before this marker (and everything else) ever ran.
+        // Keeping this line first means a repeat of that failure mode will
+        // still show up as "a launch started, then nothing" instead of
+        // vanishing from the log entirely — and see below for the actual
+        // fix (no more synchronous CloudKit calls in init() at all).
+        CrashReporter.log("App launched")
+        DebugLogger.shared.log("NapStopApp.init() — process launched", category: "Launch")
+
+        let schema = ModelContainerFactory.schema
+        // NEVER touch CloudKit synchronously here. `init()` runs before the
+        // Scene/View hierarchy exists — nothing can render, including the
+        // syncing banner, until it returns, and `ModelContainer(for:
+        // configurations: [cloudKitDatabase: .automatic])` has no timeout of
+        // its own. `openCloudKitContainerRecoveringIfNeeded`'s existing
+        // retry loop proves this call CAN throw slowly right after boot; it
+        // can plausibly also just hang rather than throw, blocking launch
+        // indefinitely with nothing on screen and nothing in the log. So
+        // launch ALWAYS starts on the local in-memory placeholder — instant,
+        // no network, no CloudKit — and the real container is resolved
+        // entirely off this path by resolveCloudKitContainerIfNeeded(),
+        // triggered from RootView's already-proven three-trigger hook. On
+        // the common case (CloudKit already warm) that resolves in well
+        // under a second and the user never sees a placeholder or banner.
+        _container = State(initialValue: ModelContainerFactory.makeLocalPlaceholder(schema: schema))
+
         // UI tests launch straight past onboarding — otherwise every run on a
         // fresh simulator (where "hasSeenOnboarding" has never been written)
         // would block on the onboarding fullScreenCover before reaching any
@@ -105,22 +147,6 @@ struct NapStopApp: App {
             EntitlementManager.testOverride = tier
         }
         #endif
-        CrashReporter.log("App launched")
-        // Unconditional, guaranteed-once-per-process marker in the IN-APP
-        // debug log too (CrashReporter above only reaches OSLog/Console).
-        // Added 2026-08-24 as direct evidence for a theory: RootView's
-        // .onAppear — where DebugLogger's session header AND
-        // AlarmManager.setModelContext()/PurchaseManager.shared.start()
-        // used to live — was suspected of not firing on every real launch,
-        // particularly ones triggered by iOS in the background (e.g. a
-        // location/region-monitoring wake right after a device reboot)
-        // rather than a user tapping the icon. init() has no such
-        // ambiguity: it runs exactly once, unconditionally, on every
-        // process launch, so this line is the ground truth for "how many
-        // times did the process actually start" when reading a debug log —
-        // see RootView.performLaunchSetupIfNeeded's doc comment for the
-        // fix this evidence led to.
-        DebugLogger.shared.log("NapStopApp.init() — process launched", category: "Launch")
         // Must happen before anything reads these UserDefaults keys directly
         // (e.g. CalendarScanBackgroundTask, which runs outside any View and
         // can't rely on @AppStorage's in-memory-only default). See
@@ -136,7 +162,7 @@ struct NapStopApp: App {
 
     var body: some Scene {
         WindowGroup {
-            RootView()
+            RootView(resolveCloudKitContainerIfNeeded: resolveCloudKitContainerIfNeeded)
                 .environmentObject(locationManager)
                 .environmentObject(alarmManager)
                 .environmentObject(languageManager)
@@ -160,6 +186,59 @@ struct NapStopApp: App {
             await CalendarScanBackgroundTask.run()
         }
     }
+
+    /// Resolves the real CloudKit-backed container in the background and
+    /// swaps it in for the launch-time placeholder — the ONLY place this
+    /// app ever attempts to open the CloudKit-backed store (see init()'s
+    /// comment for why that attempt was removed from the launch path
+    /// entirely on 2026-08-25). Triggered unconditionally from
+    /// RootView.performLaunchSetupIfNeeded: that's the same
+    /// three-independent-trigger hook already proven reliable for
+    /// background/post-reboot launches (see that method's doc comment) —
+    /// reusing it here instead of inventing a second, unvalidated entry
+    /// point for essentially the same "run once, reliably, after real
+    /// launch" requirement. No-op for `--uitesting` launches, which stay on
+    /// their isolated in-memory store deliberately (see `container`'s doc
+    /// comment) — never attempt or need CloudKit.
+    ///
+    /// `resolveCloudKitContainerPatiently` tries immediately on its first
+    /// attempt, so the common case (CloudKit already warm) resolves in a
+    /// fraction of a second. To avoid flashing the syncing banner on that
+    /// fast path, `alarmManager.isSyncingWithiCloud` is only flipped on if
+    /// resolution is STILL in progress after a short grace period — a
+    /// separate `Task` racing the resolve, cancelled the moment it finishes.
+    ///
+    /// Any alarm the user creates against the placeholder during this
+    /// window is carried over via `migratePlaceholderAlarms` before the
+    /// swap, so nothing typed in during the syncing banner is lost.
+    /// Re-points `alarmManager` at the resolved context and reloads +
+    /// re-registers regions so the visible alarm list and active geofences
+    /// reflect the merged result immediately, rather than waiting for the
+    /// next relaunch.
+    private func resolveCloudKitContainerIfNeeded() async {
+        guard !ProcessInfo.processInfo.arguments.contains("--uitesting") else { return }
+        let schema = ModelContainerFactory.schema
+        let placeholder = container
+
+        let bannerDelay: UInt64 = 400_000_000 // 0.4s — see doc comment above
+        let bannerTask = Task {
+            try? await Task.sleep(nanoseconds: bannerDelay)
+            guard !Task.isCancelled else { return }
+            alarmManager.isSyncingWithiCloud = true
+            DebugLogger.shared.log("iCloud sync: still resolving after 0.4s — showing syncing banner", category: "ModelContainer")
+        }
+
+        let resolved = await ModelContainerFactory.resolveCloudKitContainerPatiently(schema: schema)
+        bannerTask.cancel()
+
+        let migratedCount = ModelContainerFactory.migratePlaceholderAlarms(from: placeholder, into: resolved)
+        container = resolved
+        alarmManager.setModelContext(resolved.mainContext)
+        alarmManager.reregisterAllRegions()
+        alarmManager.isSyncingWithiCloud = false
+        let migrationNote = migratedCount > 0 ? " — migrated \(migratedCount) alarm(s) created while syncing" : ""
+        DebugLogger.shared.log("iCloud sync: resolved container installed\(migrationNote)", category: "ModelContainer")
+    }
 }
 
 /// Thin wrapper that passes the SwiftData ModelContext to AlarmManager
@@ -177,6 +256,13 @@ struct RootView: View {
     // now triggered from THREE independent SwiftUI entry points instead of
     // just one. See that method's doc comment for why.
     @State private var hasCompletedLaunchSetup = false
+
+    // Set by NapStopApp — resolves the real CloudKit-backed container in
+    // the background and swaps it in for the launch-time placeholder, if
+    // needed. Defaulted to a no-op so this View stays constructible without
+    // it (previews, tests). See NapStopApp.resolveCloudKitContainerIfNeeded's
+    // doc comment for why this lives there and is just invoked from here.
+    var resolveCloudKitContainerIfNeeded: () async -> Void = {}
 
     var body: some View {
         ContentView()
@@ -297,6 +383,16 @@ struct RootView: View {
         // refresh request. No-ops internally unless scanning is
         // enabled and Scan Mode is Automatic.
         CalendarScanBackgroundTask.scheduleNextRefresh()
+        // Non-blocking iCloud sync (2026-08-24): if launch's quick CloudKit
+        // attempt in NapStopApp.init() didn't succeed, this is what actually
+        // resolves the real container in the background and swaps it in —
+        // piggybacking on this already-validated three-trigger-reliable
+        // hook rather than a separate, unproven SwiftUI entry point. No-op
+        // (returns immediately) on the common path where launch's quick
+        // attempt already succeeded.
+        Task {
+            await resolveCloudKitContainerIfNeeded()
+        }
     }
 }
 

@@ -135,11 +135,27 @@ struct ContentView: View {
             // Banner sits below the nav bar, pushing list content down.
             // safeAreaInset keeps toolbar buttons fully accessible.
             .safeAreaInset(edge: .top, spacing: 0) {
+                // Permission denied/restricted is a hard blocker — nothing
+                // else matters until it's fixed, so it stays exclusive.
+                // Location-unavailable and syncing-with-iCloud are both
+                // transient and can genuinely co-occur (e.g. right after a
+                // restart, GPS and iCloud can both still be warming up) —
+                // 2026-08-25: these used to be an if/else-if chain, which
+                // meant a location hiccup could silently swallow the
+                // syncing banner entirely. Stacked instead so both show
+                // when both are true.
                 if locationManager.authorizationStatus == .denied ||
                    locationManager.authorizationStatus == .restricted {
                     LocationPermissionBanner()
-                } else if locationManager.isLocationUnavailable {
-                    LocationUnavailableBanner()
+                } else {
+                    VStack(spacing: 0) {
+                        if locationManager.isLocationUnavailable {
+                            LocationUnavailableBanner()
+                        }
+                        if alarmManager.isSyncingWithiCloud {
+                            SyncingWithiCloudBanner()
+                        }
+                    }
                 }
             }
         }
@@ -240,6 +256,41 @@ private struct LocationUnavailableBanner: View {
         }
         .padding(10)
         .background(Color.orange.opacity(0.92))
+        .cornerRadius(8)
+        .padding(.horizontal)
+        .padding(.top, 8)
+    }
+}
+
+// MARK: - Syncing with iCloud Banner (non-blocking container resolve in progress)
+
+/// Shown while NapStopApp is resolving the real CloudKit-backed store in
+/// the background after launching on a temporary placeholder — see
+/// ModelContainerFactory.resolveCloudKitContainerPatiently and
+/// NapStopApp.resolveCloudKitContainerIfNeeded (2026-08-24, non-blocking
+/// iCloud sync architecture). Styled to match LocationUnavailableBanner
+/// above (Bob: "like location banner"), one severity step down — informational
+/// blue rather than a warning color, since nothing is actually wrong here:
+/// the app is fully usable on the placeholder the whole time this shows.
+private struct SyncingWithiCloudBanner: View {
+    @Environment(\.languageBundle) private var bundle
+
+    var body: some View {
+        HStack(spacing: 8) {
+            Image(systemName: "icloud.and.arrow.down")
+                .foregroundColor(.white)
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Syncing with iCloud", bundle: bundle)
+                    .font(.caption.bold())
+                    .foregroundColor(.white)
+                Text("Your alarms will appear shortly.", bundle: bundle)
+                    .font(.caption2)
+                    .foregroundColor(.white.opacity(0.85))
+            }
+            Spacer()
+        }
+        .padding(10)
+        .background(Color.blue.opacity(0.9))
         .cornerRadius(8)
         .padding(.horizontal)
         .padding(.top, 8)

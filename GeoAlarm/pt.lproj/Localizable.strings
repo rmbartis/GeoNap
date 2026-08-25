@@ -18,6 +18,8 @@
 "Location access required. Enable in Settings." = "Acesso à localização necessário. Ative nas Configurações.";
 "Location signal lost" = "Sinal de localização perdido";
 "Alarms will resume when GPS is available." = "Os alarmes serão retomados quando o GPS estiver disponível.";
+"Syncing with iCloud" = "Sincronizando com o iCloud";
+"Your alarms will appear shortly." = "Seus alarmes aparecerão em breve.";
 
 "Alarm Details" = "Detalhes do alarme";
 "Name (e.g. Penn Station)" = "Nome (ex.: Estação da Luz)";
@@ -201,6 +203,7 @@
 "Support / Feedback / Suggestions" = "Suporte / Feedback / Sugestões";
 "Managing alarms" = "Gerenciar alarmes";
 "Always On location" = "Localização sempre ativa";
+"After a Phone Restart" = "Após reiniciar o telefone";
 "Notifications" = "Notificações";
 
 // MARK: - HelpView Body Text
@@ -267,6 +270,7 @@ O botão Salvar fica desativado até que um nome seja inserido e uma localizaç�
 "help.body.managingAlarms" = "Deslize para a direita em qualquer alarme da lista para ativá-lo ou desativá-lo rapidamente sem abrir a visualização de detalhes.\n\nDeslize para a esquerda para excluir um alarme. Alarmes excluídos são removidos imediatamente e o monitoramento da cerca geográfica é interrompido.\n\nPara editar um alarme, toque nele para abrir a visualização de detalhes e depois toque em Editar Alarme.\n\nPara compartilhar a localização de um alarme, abra a visualização de detalhes e toque em Compartilhar localização do alarme. Isso partilha um link fixo do Apple Maps com as coordenadas fixadas do alarme — útil para informar alguém sobre o seu destino antes de viajar. Pode partilhá-lo a qualquer momento, não apenas quando o alarme dispara.";
 
 "help.body.alwaysOnLocation" = "O GeoNap precisa de acesso à localização Sempre Ativo para monitorar regiões em segundo plano — mesmo quando sua tela estiver bloqueada ou o app estiver fechado.\n\nSe você escolheu Agora não durante a configuração, pode conceder o acesso mais tarde em Ajustes do iOS → Privacidade e Segurança → Serviços de Localização → GeoNap. Defina como Sempre.\n\nSem o acesso Sempre Ativo, os alarmes só dispararão enquanto o app estiver aberto.";
+"help.body.iCloudRestartSync" = "Seus alarmes são salvos no iCloud, mas logo após reiniciar o telefone, o iCloud pode levar um tempo para ficar disponível.\n\nSe isso acontecer, seus alarmes criados anteriormente podem não aparecer imediatamente ao abrir o GeoNap. Você pode ver um aviso \"Sincronizando com o iCloud\" durante esse período — isso é esperado, não um erro.\n\nO GeoNap continua tentando automaticamente em segundo plano. Assim que a sincronização com o iCloud ficar disponível, seus alarmes reaparecerão sozinhos — nada é excluído e nenhuma ação é necessária.";
 
 "help.body.notifications" = "Quando um alarme dispara, o iOS apresenta um alarme em tela cheia com Parar e Soneca — também na tela bloqueada — e atravessa o modo silencioso e os Focos.\n\n• Parar encerra o alarme. Alarmes repetidos rearmam automaticamente quando você sai da área.\n• Soneca adia o alarme por 10 minutos; toque em Soneca novamente a cada vez para continuar adiando.\n\nSe a Notificação automática estiver ativa, um rascunho do Mensagens endereçado aos seus contatos abre na próxima vez que você abrir o GeoNap, preenchido com seus dados — por exemplo: “[Chegada] Cheguei a [parada] às [hora].” Toque em Enviar, ou configure o envio sem usar as mãos (ver Notificação automática).\n\nCarPlay — o alarme aparece na tela, mas o som não é reproduzido pelo carro. Use o telefone (tela bloqueada ou o app) para parar ou adiar.";
 // MARK: - PrivacyView Section Titles

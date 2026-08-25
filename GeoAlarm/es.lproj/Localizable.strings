@@ -18,6 +18,8 @@
 "Location access required. Enable in Settings." = "Se requiere acceso a la ubicación. Actívalo en Ajustes.";
 "Location signal lost" = "Señal de ubicación perdida";
 "Alarms will resume when GPS is available." = "Las alarmas se reanudarán cuando el GPS esté disponible.";
+"Syncing with iCloud" = "Sincronizando con iCloud";
+"Your alarms will appear shortly." = "Tus alarmas aparecerán en breve.";
 
 "Alarm Details" = "Detalles de la alarma";
 "Name (e.g. Penn Station)" = "Nombre (p. ej. Estación Penn)";
@@ -201,6 +203,7 @@
 "Support / Feedback / Suggestions" = "Soporte / Comentarios / Sugerencias";
 "Managing alarms" = "Gestionar alarmas";
 "Always On location" = "Ubicación siempre activa";
+"After a Phone Restart" = "Después de reiniciar el teléfono";
 "Notifications" = "Notificaciones";
 
 /* HelpView body text */
@@ -255,6 +258,7 @@ El botón Guardar está desactivado hasta que hayas ingresado un nombre y fijado
 "help.body.alarmIcons" = "Cada fila de alarma muestra un punto de estado, insignias opcionales e iconos de estado a la derecha.\n\nPunto de estado (extremo izquierdo):\n• Verde — activa, monitoreando tu ubicación.\n• Rojo — la alarma ha sido disparada.\n• Naranja — pospuesta durante 10 minutos.\n• Gris — desactivada.\n\nInsignias centrales (solo se muestran cuando son relevantes):\n• Icono de tránsito verde azulado — alarma de tránsito. La forma indica el tipo: tren, metro, autobús, ferry, etc.\n• Flechas de repetición azules — la alarma se restablece automáticamente tras cada viaje.\n• Megáfono verde — Notificación automática activa; tus contactos recibirán un mensaje al dispararse.\n• Campana gris con barra — sonido configurado como Solo vibración.\n• Rango de tiempo morado — alarma limitada a un intervalo de tiempo específico.\n• Letras de días en naranja — alarma limitada a días seleccionados de la semana.\n\nIconos a la derecha:\n• Campana roja con insignia — la alarma se ha disparado y espera ser confirmada o pospuesta.\n• Luna naranja con Zs — la alarma está pospuesta actualmente.";
 "help.body.managingAlarms" = "Desliza a la derecha en cualquier alarma de la lista para activarla o desactivarla rápidamente.\n\nDesliza a la izquierda para eliminar una alarma. Las alarmas eliminadas se quitan inmediatamente y su geovalla deja de monitorearse.\n\nPara editar una alarma, tócala para abrir la vista de detalles, luego toca Editar alarma.\n\nPara compartir la ubicación de una alarma, abre la vista de detalles y toca Compartir ubicación de alarma. Esto comparte un enlace fijo de Apple Maps a las coordenadas fijadas de la alarma — útil para informar a alguien adónde te diriges antes de viajar. Puedes compartirlo en cualquier momento, no solo cuando la alarma se activa.";
 "help.body.alwaysOnLocation" = "GeoNap necesita acceso de ubicación Siempre activo para monitorear regiones en segundo plano — incluso cuando la pantalla está bloqueada o la app está cerrada.\n\nSi elegiste Ahora no durante la configuración, puedes otorgar acceso más tarde en Configuración de iOS → Privacidad y seguridad → Servicios de ubicación → GeoNap. Selecciona Siempre.\n\nSin el acceso Siempre activo, las alarmas solo se activarán mientras la app esté abierta.";
+"help.body.iCloudRestartSync" = "Tus alarmas se respaldan en iCloud, pero justo después de reiniciar tu teléfono, iCloud puede tardar un poco en estar disponible.\n\nSi eso ocurre, tus alarmas creadas anteriormente pueden no aparecer de inmediato al abrir GeoNap. Es posible que veas un aviso de \"Sincronizando con iCloud\" durante ese tiempo — esto es normal, no un error.\n\nGeoNap sigue intentándolo automáticamente en segundo plano. En cuanto la sincronización con iCloud esté disponible, tus alarmas reaparecerán por sí solas — no se elimina nada y no necesitas hacer nada.";
 "help.body.notifications" = "Cuando una alarma se activa, iOS muestra una alarma a pantalla completa con Detener y Posponer (también en la pantalla bloqueada), y atraviesa el modo silencio y los Modos de concentración.\n\n• Detener finaliza la alarma. Las alarmas repetidas se rearman automáticamente cuando sales de la zona.\n• Posponer aplaza la alarma 10 minutos; toca Posponer otra vez cada vez para seguir aplazándola.\n\nSi la Notificación automática está activada, se abre un borrador de Mensajes dirigido a tus contactos la próxima vez que abras GeoNap, con tus datos rellenados, por ejemplo: “[Llegada] He llegado a [parada] a las [hora].” Toca Enviar, o configura el envío sin manos (ver Notificación automática).\n\nCarPlay: la alarma aparece en pantalla, pero su sonido no se reproduce por el coche. Usa tu teléfono (pantalla bloqueada o la app) para detenerla o posponerla.";
 /* PrivacyView titles */
 "Privacy & Location" = "Privacidad y ubicación";

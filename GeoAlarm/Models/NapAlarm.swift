@@ -506,6 +506,56 @@ extension Array where Element == NotifyContact {
     }
 }
 
+// MARK: - Cross-context copy
+
+extension NapAlarm {
+    /// Builds a fresh, unattached `NapAlarm` carrying every field of `other`.
+    /// A `@Model` instance is tied to the `ModelContext`/`ModelContainer` it
+    /// was fetched or inserted from — it can't be handed directly to
+    /// `context.insert()` on a DIFFERENT container. This is the safe way to
+    /// move an alarm from one container to another, used by
+    /// `ModelContainerFactory.migratePlaceholderAlarms(from:into:)` to carry
+    /// over any alarm the user created in the temporary in-memory
+    /// placeholder store while the real CloudKit-backed container was still
+    /// resolving in the background (added 2026-08-24, non-blocking iCloud
+    /// sync architecture). Preserves `id`, so a later fetch/merge can still
+    /// de-duplicate against it by identity.
+    static func copy(of other: NapAlarm) -> NapAlarm {
+        NapAlarm(
+            id: other.id,
+            name: other.name,
+            latitude: other.latitude,
+            longitude: other.longitude,
+            radius: other.radius,
+            triggerMode: other.triggerMode,
+            leadTimeMinutes: other.leadTimeMinutes,
+            regionEvent: other.regionEvent,
+            state: other.state,
+            note: other.note,
+            lastTriggeredAt: other.lastTriggeredAt,
+            triggerCount: other.triggerCount,
+            isRepeating: other.isRepeating,
+            hasTimeWindow: other.hasTimeWindow,
+            windowStart: other.windowStart,
+            windowEnd: other.windowEnd,
+            activeDays: other.activeDays,
+            notifyContact: other.notifyContact,
+            contactName: other.contactName,
+            contactPhone: other.contactPhone,
+            notifyContactsJSON: other.notifyContactsJSON,
+            isTransitAlarm: other.isTransitAlarm,
+            transitAgencyName: other.transitAgencyName,
+            transitRouteName: other.transitRouteName,
+            transitStopName: other.transitStopName,
+            transitRouteType: other.transitRouteType,
+            notificationSound: other.notificationSound,
+            calendarEventID: other.calendarEventID,
+            deadReckoningEnabled: other.deadReckoningEnabled,
+            runShortcutName: other.runShortcutName
+        )
+    }
+}
+
 // MARK: - Sample data
 
 extension NapAlarm {

@@ -18,6 +18,8 @@
 "Location access required. Enable in Settings." = "需要位置访问权限，请在设置中开启。";
 "Location signal lost" = "位置信号丢失";
 "Alarms will resume when GPS is available." = "GPS 可用后闹钟将自动恢复。";
+"Syncing with iCloud" = "正在与 iCloud 同步";
+"Your alarms will appear shortly." = "您的闹钟即将显示。";
 
 "Alarm Details" = "闹钟详情";
 "Name (e.g. Penn Station)" = "名称（例如：北京站）";
@@ -201,6 +203,7 @@
 "Support / Feedback / Suggestions" = "支持 / 反馈 / 建议";
 "Managing alarms" = "管理闹钟";
 "Always On location" = "始终开启位置";
+"After a Phone Restart" = "手机重启后";
 "Notifications" = "通知";
 
 // MARK: - HelpView Body Text
@@ -267,6 +270,7 @@
 "help.body.managingAlarms" = "向右滑动列表中任意闹钟，无需打开详情页即可快速启用或禁用。\n\n向左滑动可删除闹钟。已删除的闹钟立即移除，其地理围栏监控也随之停止。\n\n编辑闹钟时，点击打开详情页，然后点击编辑闹钟。\n\n共享闹钟位置时，打开详情页并点击分享闹钟位置，这将分享一个指向闹钟固定坐标的 Apple 地图链接 — 适合在出行前告诉他人您的目的地。您可以随时分享，不必等到闹钟触发。";
 
 "help.body.alwaysOnLocation" = "GeoNap 需要始终开启位置权限才能在后台监控区域——即使屏幕已锁定或应用已关闭。\n\n如果设置时选择了暂不开启，可以在 iOS 设置 → 隐私与安全 → 位置服务 → GeoNap 中授权，将其设置为始终。\n\n没有始终开启权限，闹钟只会在应用打开时触发。";
+"help.body.iCloudRestartSync" = "您的闹钟会备份到 iCloud，但手机重启后，iCloud 可能需要一点时间才能恢复可用。\n\n如果发生这种情况，打开 GeoNap 时您之前创建的闹钟可能不会立即显示。此时您可能会看到\"正在与 iCloud 同步\"的提示条——这是正常现象，不是错误。\n\nGeoNap 会在后台自动持续重试。一旦 iCloud 同步恢复可用，您的闹钟会自动重新出现——不会有任何数据被删除，也无需您采取任何操作。";
 
 "help.body.notifications" = "闹钟响起时，iOS 会显示带“停止”和“稍后提醒”的全屏闹钟——锁屏时也会——并能穿透静音和专注模式。\n\n• “停止”结束闹钟。重复闹钟在你离开区域后会自动重新待命。\n• “稍后提醒”将闹钟推迟10分钟；每次再次点按“稍后提醒”即可继续推迟。\n\n若已开启自动通知，下次打开 GeoNap 时会弹出发往你联系人的“信息”草稿，并已填好内容——例如：“[到达] 我已于[时间]到达[车站]。”点按发送，或设置免动手发送（见自动通知）。\n\nCarPlay——闹钟会显示在屏幕上，但其声音不会通过车辆播放。请用手机（锁屏或 App）停止或稍后提醒。";
 // MARK: - PrivacyView Section Titles

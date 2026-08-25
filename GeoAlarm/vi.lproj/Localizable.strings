@@ -18,6 +18,8 @@
 "Location access required. Enable in Settings." = "Cần quyền truy cập vị trí. Bật trong Cài đặt.";
 "Location signal lost" = "Mất tín hiệu vị trí";
 "Alarms will resume when GPS is available." = "Báo thức sẽ hoạt động lại khi GPS khả dụng.";
+"Syncing with iCloud" = "Đang đồng bộ với iCloud";
+"Your alarms will appear shortly." = "Báo thức của bạn sẽ sớm xuất hiện.";
 
 "Alarm Details" = "Chi tiết báo thức";
 "Name (e.g. Penn Station)" = "Tên (vd: Ga Hà Nội)";
@@ -201,6 +203,7 @@
 "Support / Feedback / Suggestions" = "Hỗ trợ / Phản hồi / Đề xuất";
 "Managing alarms" = "Quản lý báo thức";
 "Always On location" = "Vị trí luôn bật";
+"After a Phone Restart" = "Sau khi khởi động lại điện thoại";
 "Notifications" = "Thông báo";
 
 // MARK: - HelpView Body Text
@@ -267,6 +270,7 @@ Nút Lưu bị tắt cho đến khi nhập tên và ghim vị trí. iOS cho phé
 "help.body.managingAlarms" = "Vuốt sang phải trên bất kỳ báo thức nào trong danh sách để nhanh chóng bật hoặc tắt mà không cần mở chế độ xem chi tiết.\n\nVuốt sang trái để xóa báo thức. Báo thức bị xóa ngay lập tức và việc giám sát vùng địa lý của chúng dừng lại.\n\nĐể chỉnh sửa báo thức, nhấn vào để mở chế độ xem chi tiết, sau đó nhấn Chỉnh sửa báo thức.\n\nĐể chia sẻ vị trí báo thức, mở chế độ xem chi tiết và nhấn Chia sẻ vị trí báo thức. Thao tác này chia sẻ liên kết Apple Maps cố định đến tọa độ đã ghim của báo thức — hữu ích để báo cho ai đó biết điểm đến của bạn trước khi đi. Bạn có thể chia sẻ bất cứ lúc nào, không chỉ khi báo thức kêu.";
 
 "help.body.alwaysOnLocation" = "GeoNap cần quyền truy cập vị trí Luôn bật để theo dõi các vùng trong nền — ngay cả khi màn hình của bạn bị khóa hoặc ứng dụng đã đóng.\n\nNếu bạn đã chọn Không phải bây giờ trong quá trình thiết lập, bạn có thể cấp quyền sau trong Cài đặt iOS → Quyền riêng tư & Bảo mật → Dịch vụ vị trí → GeoNap. Đặt thành Luôn luôn.\n\nKhông có quyền truy cập Luôn bật, báo thức sẽ chỉ kêu khi ứng dụng đang mở.";
+"help.body.iCloudRestartSync" = "Báo thức của bạn được sao lưu trên iCloud, nhưng ngay sau khi khởi động lại điện thoại, iCloud có thể mất một chút thời gian để khả dụng trở lại.\n\nNếu điều đó xảy ra, các báo thức bạn đã tạo trước đó có thể không xuất hiện ngay khi mở GeoNap. Bạn có thể thấy biểu ngữ \"Đang đồng bộ với iCloud\" trong thời gian này — đây là điều bình thường, không phải lỗi.\n\nGeoNap sẽ tự động tiếp tục thử lại trong nền. Ngay khi đồng bộ iCloud khả dụng, báo thức của bạn sẽ tự xuất hiện trở lại — không có gì bị xóa và bạn không cần làm gì thêm.";
 
 "help.body.notifications" = "Khi báo thức kêu, iOS hiển thị báo thức toàn màn hình với Dừng và Báo lại — cả trên Màn hình khóa — và xuyên qua chế độ im lặng và Tập trung.\n\n• Dừng kết thúc báo thức. Báo thức lặp lại tự đặt lại khi bạn rời khỏi khu vực.\n• Báo lại hoãn báo thức 10 phút; chạm Báo lại mỗi lần để tiếp tục hoãn.\n\nNếu Tự động báo đang bật, một bản nháp Tin nhắn gửi đến danh bạ của bạn sẽ mở vào lần tiếp theo bạn mở GeoNap, điền sẵn thông tin — ví dụ: “[Đến] Tôi đã đến [điểm dừng] lúc [giờ].” Chạm Gửi, hoặc thiết lập gửi rảnh tay (xem Tự động báo).\n\nCarPlay — báo thức hiện trên màn hình, nhưng âm thanh không phát qua xe. Dùng điện thoại (Màn hình khóa hoặc ứng dụng) để dừng hoặc báo lại.";
 // MARK: - PrivacyView Section Titles

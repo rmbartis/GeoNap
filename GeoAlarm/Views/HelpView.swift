@@ -31,6 +31,7 @@ struct HelpView: View {
         ("Alarm list icons",                    "help.body.alarmIcons"),
         ("Settings",                            "help.body.settings"),
         ("Always On location",                  "help.body.alwaysOnLocation"),
+        ("After a Phone Restart",               "help.body.iCloudRestartSync"),
         ("Minimum Requirements",                "help.body.minimumRequirements"),
         ("Feature Summary",                     "help.body.featureSummary"),
         ("Reporting a problem",                 "help.body.reportingProblem"),
@@ -95,6 +96,8 @@ struct HelpView: View {
                             titleKey: "Settings",             bodyKey: "help.body.settings")
                 helpSection(symbol: "location.fill", color: .orange,
                             titleKey: "Always On location",   bodyKey: "help.body.alwaysOnLocation")
+                helpSection(symbol: "icloud.and.arrow.down", color: .blue,
+                            titleKey: "After a Phone Restart", bodyKey: "help.body.iCloudRestartSync")
                 helpSection(symbol: "iphone.and.ipad", color: .gray,
                             titleKey: "Minimum Requirements", bodyKey: "help.body.minimumRequirements")
                 helpSection(symbol: "list.star",    color: .blue,

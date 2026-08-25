@@ -170,6 +170,25 @@ enum ModelContainerFactory {
         // Recovery still uses that same CloudKit config, not a plain one,
         // so a rebuilt store can actually resync.
         logBoth("ModelContainer: CloudKit store unavailable after \(maxAttempts) attempts — clearing and rebuilding with CloudKit config")
+        return try rebuildCloudKitStore(schema: schema)
+    }
+
+    /// Deletes the on-disk CloudKit-mirrored store and opens a fresh one with
+    /// the same CloudKit config — never a plain local one, so the rebuilt
+    /// file can still resync from iCloud instead of being silently
+    /// downgraded to local-only. Falls to `recoveringLocalContainer` (plain
+    /// config) only if even a freshly rebuilt CloudKit-formatted store won't
+    /// open at all (e.g. no CloudKit entitlement/account on this device).
+    ///
+    /// Extracted 2026-08-24 (non-blocking iCloud sync architecture) so both
+    /// the short synchronous retry above (used by NapStopApp's instant
+    /// fallback and IntentModelContainer, which can't await a long
+    /// background resolve) and the patient background retry below
+    /// (`resolveCloudKitContainerPatiently`) share this one destructive-
+    /// rebuild implementation instead of duplicating it.
+    @MainActor
+    private static func rebuildCloudKitStore(schema: Schema) throws -> ModelContainer {
+        let cloudConfig = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false, cloudKitDatabase: .automatic)
         do {
             destroyStore(at: cloudConfig.url)
             let rebuilt = try ModelContainer(for: schema, configurations: [cloudConfig])
@@ -179,6 +198,109 @@ enum ModelContainerFactory {
             logBoth("ModelContainer: rebuild with CloudKit config also failed — \(error.localizedDescription) — falling back to plain local store as last resort")
             return try recoveringLocalContainer(schema: schema)
         }
+    }
+
+    /// Single fast, synchronous attempt to open the CloudKit-backed store —
+    /// no retry, no sleep. Returns `nil` immediately on any failure instead
+    /// of throwing, so a caller can treat that as "not ready yet" and fall
+    /// back to a non-blocking strategy rather than a hard error.
+    ///
+    /// Used by NapStopApp at launch (2026-08-24, non-blocking iCloud sync
+    /// architecture) to try the common case — CloudKit already warm, store
+    /// opens instantly — without ever blocking the UI for the multi-second
+    /// retry loop in `openCloudKitContainerRecoveringIfNeeded`. If this
+    /// returns `nil`, the app opens immediately on `makeLocalPlaceholder`
+    /// instead, and `resolveCloudKitContainerPatiently` keeps trying in the
+    /// background.
+    @MainActor
+    static func quickCloudKitAttempt(schema: Schema = schema) -> ModelContainer? {
+        let cloudConfig = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false, cloudKitDatabase: .automatic)
+        return try? ModelContainer(for: schema, configurations: [cloudConfig])
+    }
+
+    /// An isolated in-memory container used as a temporary holding pen while
+    /// the real CloudKit-backed store is still resolving in the background.
+    /// Deliberately never touches the on-disk CloudKit file — stacking a
+    /// second local store at/near that same path is exactly the kind of
+    /// config-mismatch corruption risk `rebuildCloudKitStore` above exists
+    /// to avoid. Anything the user creates against this container (e.g. a
+    /// new alarm) is carried over to the resolved container by
+    /// `migratePlaceholderAlarms` once it's ready.
+    @MainActor
+    static func makeLocalPlaceholder(schema: Schema = schema) -> ModelContainer {
+        makeInMemory(schema: schema)
+    }
+
+    /// Resolves the CloudKit-backed container patiently, off the launch
+    /// path: up to 20 attempts, starting at a 1s delay and backing off to a
+    /// 3s cap between tries (~52s total budget) — long enough to ride out
+    /// `cloudd` genuinely not being warmed up yet in the first moments after
+    /// a device reboot, without ever blocking app launch (this `async`
+    /// function is only ever awaited from a background `Task`, never from
+    /// the `container` property itself). Uses `Task.sleep`, not
+    /// `Thread.sleep` — this must yield, not block, the actor.
+    ///
+    /// Falls through to the existing `openCloudKitContainerRecoveringIfNeeded`
+    /// only if every patient attempt above still fails — repurposed
+    /// (2026-08-24) as the final last-resort fallback rather than removed:
+    /// its own short retry + destructive-rebuild logic is still exactly
+    /// right for that "nothing else worked" case, and IntentModelContainer
+    /// / NapStopApp's instant-launch quick attempt still call it directly
+    /// for their own synchronous needs.
+    @MainActor
+    static func resolveCloudKitContainerPatiently(schema: Schema = schema) async -> ModelContainer {
+        let cloudConfig = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false, cloudKitDatabase: .automatic)
+        let maxAttempts = 20
+        var delay: TimeInterval = 1.0
+
+        for attempt in 1...maxAttempts {
+            if let c = try? ModelContainer(for: schema, configurations: [cloudConfig]) {
+                logBoth("ModelContainer: patient background resolve succeeded on attempt \(attempt)/\(maxAttempts)")
+                return c
+            }
+            if attempt < maxAttempts {
+                try? await Task.sleep(nanoseconds: UInt64(delay * 1_000_000_000))
+                delay = min(delay + 0.5, 3.0)
+            }
+        }
+
+        logBoth("ModelContainer: patient background resolve exhausted \(maxAttempts) attempts — falling back to short-retry/destructive-rebuild path")
+        if let recovered = try? openCloudKitContainerRecoveringIfNeeded(schema: schema) {
+            return recovered
+        }
+        // openCloudKitContainerRecoveringIfNeeded's own last-resort
+        // (recoveringLocalContainer) already covers disk-backed failure —
+        // reaching here means even that threw. Run in-memory for this
+        // session rather than leave the app without any container at all.
+        logBoth("ModelContainer: all disk-backed attempts failed during patient resolve — running in-memory for this session")
+        return makeInMemory(schema: schema)
+    }
+
+    /// Carries over any `NapAlarm` created in the temporary placeholder
+    /// container (see `makeLocalPlaceholder`) into the now-resolved target
+    /// container, skipping any whose `id` is already present there (e.g. an
+    /// alarm that finished syncing down from iCloud in the meantime).
+    /// Returns the number of alarms actually migrated, for logging/banner
+    /// purposes. No-ops (returns 0) if the placeholder never had any alarms
+    /// — the common case, since this window is normally a few seconds.
+    @MainActor
+    static func migratePlaceholderAlarms(from placeholder: ModelContainer, into target: ModelContainer) -> Int {
+        let sourceContext = placeholder.mainContext
+        let targetContext = target.mainContext
+        guard let sourceAlarms = try? sourceContext.fetch(FetchDescriptor<NapAlarm>()), !sourceAlarms.isEmpty else {
+            return 0
+        }
+        let existingIDs = Set((try? targetContext.fetch(FetchDescriptor<NapAlarm>()))?.map(\.id) ?? [])
+        var migrated = 0
+        for alarm in sourceAlarms where !existingIDs.contains(alarm.id) {
+            targetContext.insert(NapAlarm.copy(of: alarm))
+            migrated += 1
+        }
+        if migrated > 0 {
+            try? targetContext.save()
+            logBoth("ModelContainer: migrated \(migrated) alarm(s) created during iCloud sync into the resolved store")
+        }
+        return migrated
     }
 
     /// Writes the same message to both OSLog (via CrashReporter — visible

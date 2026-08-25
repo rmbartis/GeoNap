@@ -18,6 +18,8 @@
 "Location access required. Enable in Settings." = "Standortzugriff erforderlich. In Einstellungen aktivieren.";
 "Location signal lost" = "GPS-Signal verloren";
 "Alarms will resume when GPS is available." = "Alarme werden fortgesetzt, wenn GPS verfügbar ist.";
+"Syncing with iCloud" = "Synchronisierung mit iCloud";
+"Your alarms will appear shortly." = "Deine Alarme werden in Kürze angezeigt.";
 
 "Alarm Details" = "Alarm-Details";
 "Name (e.g. Penn Station)" = "Name (z. B. Hauptbahnhof)";
@@ -201,6 +203,7 @@
 "Support / Feedback / Suggestions" = "Support / Feedback / Vorschläge";
 "Managing alarms" = "Alarme verwalten";
 "Always On location" = "Standort immer aktiv";
+"After a Phone Restart" = "Nach einem Neustart des Telefons";
 "Notifications" = "Benachrichtigungen";
 
 /* HelpView body text */
@@ -255,6 +258,7 @@ Die Schaltfläche Speichern ist deaktiviert, bis ein Name und ein Standort festg
 "help.body.alarmIcons" = "Jede Alarmzeile zeigt einen Statuspunkt, optionale Abzeichen und Statussymbole auf der rechten Seite.\n\nStatuspunkt (ganz links):\n• Grün — aktiv, überwacht Ihren Standort.\n• Rot — Alarm wurde ausgelöst.\n• Orange — für 10 Minuten schlummert.\n• Grau — deaktiviert.\n\nMittlere Abzeichen (nur angezeigt, wenn relevant):\n• Türkises Transit-Symbol — ein Transit-Alarm. Die Form zeigt den Streckentyp: Zug, U-Bahn, Bus, Fähre usw.\n• Blaue Wiederholungspfeile — Alarm wird nach jeder Fahrt automatisch zurückgesetzt.\n• Grünes Megafon — Auto-Benachrichtigung aktiv; Kontakte werden beim Auslösen benachrichtigt.\n• Graue Glocke mit Schrägstrich — Ton auf \"Nur Vibration\" gesetzt.\n• Lila Zeitbereich — Alarm ist auf ein bestimmtes Zeitfenster beschränkt.\n• Orange Tageskürzel — Alarm ist auf ausgewählte Wochentage beschränkt.\n\nSymbole auf der rechten Seite:\n• Rote Glocke mit Abzeichen — Alarm wurde ausgelöst und wartet auf Bestätigung oder Schlummern.\n• Orangefarbener Mond mit Zs — Alarm schlummert gerade.";
 "help.body.managingAlarms" = "Wischen Sie rechts auf einem Alarm, um ihn schnell zu aktivieren oder zu deaktivieren.\n\nWischen Sie links, um einen Alarm zu löschen. Gelöschte Alarme werden sofort entfernt.\n\nUm einen Alarm zu bearbeiten, tippen Sie darauf und dann auf Alarm bearbeiten.\n\nUm den Alarmstandort zu teilen, öffnen Sie die Detailansicht und tippen Sie auf Alarmstandort teilen. Dies sendet einen festen Apple Maps-Link zu den hinterlegten Koordinaten des Alarms — ideal, um jemandem Ihr Reiseziel vor der Fahrt mitzuteilen. Den Link können Sie jederzeit teilen, nicht nur wenn der Alarm auslöst.";
 "help.body.alwaysOnLocation" = "GeoNap benötigt Standortzugriff Immer, um Bereiche im Hintergrund zu überwachen — auch wenn Ihr Bildschirm gesperrt oder die App geschlossen ist.\n\nWenn Sie bei der Einrichtung Nicht jetzt gewählt haben, können Sie später in iOS-Einstellungen → Datenschutz & Sicherheit → Ortungsdienste → GeoNap den Zugriff gewähren. Wählen Sie Immer.\n\nOhne Immer-Zugriff lösen Alarme nur aus, wenn die App geöffnet ist.";
+"help.body.iCloudRestartSync" = "Ihre Alarme werden in iCloud gesichert, aber direkt nach einem Neustart Ihres Telefons kann es einen Moment dauern, bis iCloud verfügbar ist.\n\nIn diesem Fall erscheinen Ihre zuvor erstellten Alarme beim Öffnen von GeoNap möglicherweise nicht sofort. Sie sehen währenddessen eventuell den Hinweis \"Synchronisierung mit iCloud\" — das ist normal, kein Fehler.\n\nGeoNap versucht es automatisch im Hintergrund weiter. Sobald die iCloud-Synchronisierung verfügbar ist, erscheinen Ihre Alarme von selbst wieder — nichts wird gelöscht, und Sie müssen nichts weiter tun.";
 "help.body.notifications" = "Wenn ein Alarm auslöst, zeigt iOS einen Vollbild-Alarm mit Stopp und Schlummern – auch auf dem Sperrbildschirm – und er durchbricht Lautlos und Fokus.\n\n• Stopp beendet den Alarm. Wiederholende Alarme werden automatisch wieder scharf, sobald du die Zone verlässt.\n• Schlummern verschiebt den Alarm um 10 Minuten; tippe jedes Mal erneut auf Schlummern, um weiter zu verschieben.\n\nIst die Auto-Benachrichtigung aktiv, öffnet sich beim nächsten Öffnen von GeoNap ein Nachrichten-Entwurf an deine Kontakte, vorausgefüllt mit deinen Angaben – z. B.: „[Ankunft] Ich bin um [Zeit] an [Haltestelle] angekommen.“ Tippe auf Senden oder richte den freihändigen Versand ein (siehe Auto-Benachrichtigung).\n\nCarPlay – der Alarm erscheint am Bildschirm, sein Ton wird aber nicht über das Auto wiedergegeben. Nutze dein Telefon (Sperrbildschirm oder App) zum Stoppen oder Schlummern.";
 /* PrivacyView titles */
 "Privacy & Location" = "Datenschutz und Standort";

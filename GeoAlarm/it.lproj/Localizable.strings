@@ -18,6 +18,8 @@
 "Location access required. Enable in Settings." = "Accesso alla posizione richiesto. Abilitalo in Impostazioni.";
 "Location signal lost" = "Segnale di posizione perso";
 "Alarms will resume when GPS is available." = "Gli allarmi riprenderanno quando il GPS sarà disponibile.";
+"Syncing with iCloud" = "Sincronizzazione con iCloud";
+"Your alarms will appear shortly." = "I tuoi allarmi appariranno a breve.";
 
 "Alarm Details" = "Dettagli allarme";
 "Name (e.g. Penn Station)" = "Nome (es. Stazione Centrale)";
@@ -201,6 +203,7 @@
 "Support / Feedback / Suggestions" = "Supporto / Feedback / Suggerimenti";
 "Managing alarms" = "Gestire gli allarmi";
 "Always On location" = "Posizione sempre attiva";
+"After a Phone Restart" = "Dopo un riavvio del telefono";
 "Notifications" = "Notifiche";
 
 /* HelpView body text */
@@ -255,6 +258,7 @@ Il pulsante Salva è disabilitato finché non hai inserito un nome e fissato una
 "help.body.alarmIcons" = "Ogni riga di allarme mostra un punto di stato, badge opzionali e icone di stato a destra.\n\nPunto di stato (estrema sinistra):\n• Verde — attivo, monitoraggio della posizione in corso.\n• Rosso — l'allarme è scattato.\n• Arancione — in posticipo per 10 minuti.\n• Grigio — disattivato.\n\nBadge centrali (mostrati solo quando rilevanti):\n• Icona transit teal — allarme transit. La forma indica il tipo: treno, metro, bus, traghetto, ecc.\n• Frecce di ripetizione blu — l'allarme si reimposta automaticamente dopo ogni viaggio.\n• Megafono verde — Notifica automatica attiva; i tuoi contatti riceveranno un messaggio all'attivazione.\n• Campanella grigia barrata — suono impostato su Solo vibrazione.\n• Intervallo di tempo viola — allarme limitato a una finestra temporale specifica.\n• Lettere dei giorni arancioni — allarme limitato a giorni selezionati della settimana.\n\nIcone a destra:\n• Campanella rossa con badge — l'allarme è scattato e attende conferma o posticipo.\n• Luna arancione con Z — allarme attualmente in posticipo.";
 "help.body.managingAlarms" = "Scorri a destra su qualsiasi allarme per abilitarlo o disabilitarlo rapidamente.\n\nScorri a sinistra per eliminare un allarme. Gli allarmi eliminati vengono rimossi immediatamente.\n\nPer modificare un allarme, toccalo per aprire la vista dettaglio, poi tocca Modifica allarme.\n\nPer condividere la posizione di un allarme, apri la vista dettaglio e tocca Condividi posizione allarme. Questo condivide un link fisso di Apple Maps alle coordinate salvate dell'allarme — utile per far sapere a qualcuno dove sei diretto prima di viaggiare. Puoi condividerlo in qualsiasi momento, non solo quando l'allarme scatta.";
 "help.body.alwaysOnLocation" = "GeoNap necessita dell'accesso alla posizione Sempre per monitorare le regioni in background — anche quando il tuo schermo è bloccato o l'app è chiusa.\n\nSe hai scelto Non ora durante la configurazione, puoi concedere l'accesso in Impostazioni iOS → Privacy e sicurezza → Servizi di localizzazione → GeoNap. Seleziona Sempre.\n\nSenza accesso Sempre, gli allarmi si attiveranno solo quando l'app è aperta.";
+"help.body.iCloudRestartSync" = "I tuoi allarmi vengono salvati su iCloud, ma subito dopo il riavvio del telefono, iCloud potrebbe richiedere un po' di tempo per diventare disponibile.\n\nIn tal caso, gli allarmi creati in precedenza potrebbero non comparire subito all'apertura di GeoNap. Potresti vedere un banner \"Sincronizzazione con iCloud\" durante questo periodo — è normale, non un errore.\n\nGeoNap continua a riprovare automaticamente in background. Non appena la sincronizzazione con iCloud diventa disponibile, i tuoi allarmi ricompaiono da soli — nulla viene eliminato e non è richiesta alcuna azione da parte tua.";
 "help.body.notifications" = "Quando una sveglia scatta, iOS mostra una sveglia a schermo intero con Stop e Posponi — anche sulla schermata di blocco — e supera la modalità silenziosa e i Full Immersion.\n\n• Stop termina la sveglia. Le sveglie ripetute si riarmano automaticamente quando esci dalla zona.\n• Posponi rinvia la sveglia di 10 minuti; tocca di nuovo Posponi ogni volta per continuare a rinviarla.\n\nSe la Notifica automatica è attiva, alla successiva apertura di GeoNap si apre una bozza di Messaggi indirizzata ai tuoi contatti, precompilata con i tuoi dati — ad esempio: “[Arrivo] Sono arrivato a [fermata] alle [ora].” Tocca Invia, oppure configura l’invio a mani libere (vedi Notifica automatica).\n\nCarPlay — la sveglia appare sullo schermo, ma il suo suono non viene riprodotto dall’auto. Usa il telefono (schermata di blocco o app) per fermarla o posporla.";
 /* PrivacyView titles */
 "Privacy & Location" = "Privacy e posizione";

@@ -18,6 +18,8 @@
 "Location access required. Enable in Settings." = "Accès à la localisation requis. Activez-le dans Réglages.";
 "Location signal lost" = "Signal de localisation perdu";
 "Alarms will resume when GPS is available." = "Les alarmes reprendront quand le GPS sera disponible.";
+"Syncing with iCloud" = "Synchronisation avec iCloud";
+"Your alarms will appear shortly." = "Vos alarmes apparaîtront sous peu.";
 
 "Alarm Details" = "Détails de l'alarme";
 "Name (e.g. Penn Station)" = "Nom (ex. : Gare du Nord)";
@@ -201,6 +203,7 @@
 "Support / Feedback / Suggestions" = "Support / Retours / Suggestions";
 "Managing alarms" = "Gérer les alarmes";
 "Always On location" = "Localisation toujours active";
+"After a Phone Restart" = "Après un redémarrage du téléphone";
 "Notifications" = "Notifications";
 
 /* HelpView body text */
@@ -255,6 +258,7 @@ Le bouton Enregistrer est désactivé jusqu'à ce qu'un nom soit saisi et qu'un 
 "help.body.alarmIcons" = "Chaque ligne d'alarme affiche un point de statut, des badges optionnels et des icônes d'état à droite.\n\nPoint de statut (extrême gauche) :\n• Vert — active, surveillance de votre position en cours.\n• Rouge — l'alarme a été déclenchée.\n• Orange — en veille pendant 10 minutes.\n• Gris — désactivée.\n\nBadges centraux (affichés uniquement si pertinent) :\n• Icône de transport en commun (sarcelle) — alarme de transport. La forme indique le type : train, métro, bus, ferry, etc.\n• Flèches de répétition bleues — l'alarme se réarme automatiquement après chaque trajet.\n• Mégaphone vert — Notification automatique activée ; vos contacts recevront un message à chaque déclenchement.\n• Cloche grise barrée — son réglé sur Vibration uniquement.\n• Plage horaire violette — alarme limitée à une fenêtre horaire spécifique.\n• Lettres de jour orange — alarme limitée à certains jours de la semaine.\n\nIcônes à droite :\n• Cloche rouge avec badge — l'alarme a sonné et attend d'être acquittée ou mise en veille.\n• Lune orange avec des Z — alarme actuellement en veille.";
 "help.body.managingAlarms" = "Balayez à droite sur n'importe quelle alarme pour l'activer ou la désactiver rapidement.\n\nBalayez à gauche pour supprimer une alarme. Les alarmes supprimées sont retirées immédiatement et leur géo-clôture cesse d'être surveillée.\n\nPour modifier une alarme, appuyez dessus pour ouvrir la vue de détail, puis appuyez sur Modifier l'alarme.\n\nPour partager la localisation d'une alarme, ouvrez la vue de détail et appuyez sur Partager l'emplacement de l'alarme. Cela partage un lien Apple Maps fixe vers les coordonnées épinglées de l'alarme — utile pour indiquer votre destination à quelqu'un avant de voyager. Vous pouvez le partager à tout moment, pas seulement quand l'alarme se déclenche.";
 "help.body.alwaysOnLocation" = "GeoNap a besoin d'un accès de localisation Toujours pour surveiller les régions en arrière-plan — même quand votre écran est verrouillé ou que l'app est fermée.\n\nSi vous avez choisi Pas maintenant lors de la configuration, vous pouvez accorder l'accès plus tard dans Réglages iOS → Confidentialité et sécurité → Service de localisation → GeoNap. Sélectionnez Toujours.\n\nSans accès Toujours, les alarmes ne se déclencheront que lorsque l'app est ouverte.";
+"help.body.iCloudRestartSync" = "Vos alarmes sont sauvegardées sur iCloud, mais juste après le redémarrage de votre téléphone, iCloud peut mettre un peu de temps à devenir disponible.\n\nSi cela se produit, vos alarmes créées précédemment peuvent ne pas apparaître immédiatement à l'ouverture de GeoNap. Vous pourriez voir une bannière \"Synchronisation avec iCloud\" pendant ce temps — c'est normal, pas une erreur.\n\nGeoNap continue de réessayer automatiquement en arrière-plan. Dès que la synchronisation iCloud devient disponible, vos alarmes réapparaissent d'elles-mêmes — rien n'est supprimé et aucune action n'est nécessaire de votre part.";
 "help.body.notifications" = "Quand une alarme se déclenche, iOS affiche une alarme plein écran avec Arrêter et Répéter — sur l’écran verrouillé aussi — et elle passe outre le mode silencieux et les modes de concentration.\n\n• Arrêter met fin à l’alarme. Les alarmes répétées se réarment automatiquement une fois que vous quittez la zone.\n• Répéter reporte l’alarme de 10 minutes ; appuyez à nouveau sur Répéter à chaque fois pour continuer.\n\nSi la Notification automatique est activée, un brouillon Messages adressé à vos contacts s’ouvre à la prochaine ouverture de GeoNap, pré-rempli avec vos informations — par exemple : « [Arrivée] Je suis arrivé(e) à [arrêt] à [heure]. » Appuyez sur Envoyer, ou configurez l’envoi sans les mains (voir Notification automatique).\n\nCarPlay — l’alarme s’affiche à l’écran, mais son son n’est pas diffusé dans la voiture. Utilisez votre téléphone (écran verrouillé ou l’app) pour l’arrêter ou la répéter.";
 /* PrivacyView titles */
 "Privacy & Location" = "Confidentialité et localisation";

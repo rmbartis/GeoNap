@@ -35,6 +35,15 @@ final class AlarmManager: NSObject, ObservableObject {
     /// ContentView observes this and navigates to the matching AlarmDetailView.
     @Published var spotlightAlarmID: UUID? = nil
 
+    /// True while NapStopApp is still resolving the real CloudKit-backed
+    /// store in the background after launching on a temporary in-memory
+    /// placeholder (see ModelContainerFactory.resolveCloudKitContainerPatiently
+    /// and NapStopApp.resolveCloudKitContainerIfNeeded, 2026-08-24). ContentView
+    /// shows SyncingWithiCloudBanner while this is true. False on the common
+    /// path where CloudKit was already warm at launch — most launches never
+    /// set this at all.
+    @Published var isSyncingWithiCloud: Bool = false
+
     // MARK: - Dependencies
 
     /// Set by LocationManager after both @StateObjects are created.
@@ -72,9 +81,22 @@ final class AlarmManager: NSObject, ObservableObject {
         observeRemoteChanges()
     }
 
+    /// Guards `observeRemoteChanges()` against registering a second
+    /// NotificationCenter observer. Needed since 2026-08-24 (non-blocking
+    /// iCloud sync architecture): `setModelContext()` is now called TWICE in
+    /// the ordinary case where launch didn't have CloudKit ready yet — once
+    /// for the temporary placeholder container, and again once
+    /// `resolveCloudKitContainerPatiently` swaps in the real one. Without
+    /// this, the second call would leave two observers registered for the
+    /// rest of the process's life, double-firing `load()` +
+    /// `reregisterAllRegions()` on every subsequent remote change.
+    private var isObservingRemoteChanges = false
+
     /// Listens for CloudKit remote-change notifications so alarms stay in sync
     /// when another device adds, edits, or deletes an alarm via iCloud.
     private func observeRemoteChanges() {
+        guard !isObservingRemoteChanges else { return }
+        isObservingRemoteChanges = true
         NotificationCenter.default.addObserver(
             forName: NSNotification.Name.NSPersistentStoreRemoteChange,
             object: nil,
