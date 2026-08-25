@@ -225,7 +225,42 @@ enum EntitlementManager {
     /// so the property itself can't be actor-isolated.
     nonisolated(unsafe) static var verifiedTier: AppTier = {
         let raw = UserDefaults.standard.integer(forKey: AppStorageKey.verifiedTierRawValue)
-        return AppTier(rawValue: raw) ?? .free
+        if raw != 0 {
+            return AppTier(rawValue: raw) ?? .free
+        }
+        // raw == 0 is ambiguous: genuinely free/never-purchased, OR
+        // UserDefaults/cfprefsd hasn't finished warming up yet for this
+        // specific launch — added 2026-08-25 after two consecutive
+        // real-device restarts both reverted a confirmed Platinum purchase
+        // to Free with NO retry-log evidence from PurchaseManager's own
+        // cold-launch guard (updateEntitledTier(), above in PurchaseManager
+        // .swift). That guard only fires when the fresh StoreKit result
+        // reads BELOW this seed — if the seed itself already misreads as
+        // Free, there's no discrepancy left for it to catch. Corroborating
+        // evidence from the same test: DebugLogger's own "RootView launch
+        // setup running" line and session header were ALSO silently
+        // missing on the same hidden relaunches (proven via a duplicate
+        // "WCSession activated" marker with no matching new session header)
+        // even though the code that logs them provably ran — DebugLogger
+        // .log() itself no-ops whenever its `isEnabled` check (also a
+        // UserDefaults read) comes back wrong, which is the same class of
+        // failure as this one, just for a different key.
+        //
+        // Mitigation: a short, bounded, SYNCHRONOUS re-read (this closure
+        // can't suspend, so no async retry) — rides out a brief cfprefsd
+        // hiccup without meaningfully delaying launch for anyone; if it's
+        // still 0 after that, treat it as genuinely free, same as before.
+        // Logged via CrashReporter (OSLog), NOT DebugLogger — this runs in
+        // the exact narrow window where DebugLogger.isEnabled's own
+        // UserDefaults read can silently no-op, so this is the one place
+        // in the app a diagnostic has to bypass DebugLogger to be
+        // trustworthy evidence either way.
+        Thread.sleep(forTimeInterval: 0.15)
+        let retryRaw = UserDefaults.standard.integer(forKey: AppStorageKey.verifiedTierRawValue)
+        if retryRaw != raw {
+            CrashReporter.log("EntitlementManager: verifiedTier seed changed on retry (\(raw) -> \(retryRaw)) — first UserDefaults read was premature, not a genuine Free tier")
+        }
+        return AppTier(rawValue: retryRaw) ?? .free
     }() {
         didSet {
             UserDefaults.standard.set(verifiedTier.rawValue, forKey: AppStorageKey.verifiedTierRawValue)
