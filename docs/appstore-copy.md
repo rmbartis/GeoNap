@@ -87,6 +87,11 @@ Please test: setting alarms in different location formats (DD/DMS/DDM), switchin
 
 ## App Review Notes (for the production submission reviewer — distinct from the Beta Review Notes below, which are for TestFlight)
 
+**Resubmission note (build 73):** This build addresses the August 25, 2026 rejection of build 64 and adds reliability fixes found during our own testing since:
+- **Guideline 3.1.2(c) (subscription metadata):** The App Description's Terms of Use line had been edited down to a text reference ("See Terms of Use and Privacy Policy for full details") that dropped the actual URLs. It now includes functional links to Apple's Standard EULA and to the Privacy Policy directly in the text.
+- **Reliability:** Alarms could fail to reappear immediately after a device restart until iCloud finished re-syncing in the background — the app now shows a brief "Syncing with iCloud" status while this completes automatically, with no user action needed. A purchased tier (Silver/Gold/Platinum) could also briefly read back as "Free" right after a restart before the stored purchase record finished re-verifying — this is now re-checked automatically as well. Both were verified fixed across five restart cycles, including an app removal and reinstall.
+- No changes to permissions, in-app purchase products, or pricing since the last review.
+
 **Resubmission note (build 64):** This build addresses the three issues from the August 21, 2026 rejection of build 63:
 - **Guideline 4 (Watch icon):** The Apple Watch app icon's background was changed from a dark navy to a lighter blue so it renders as a proper circle on Apple Watch.
 - **Guideline 3.1.2(c) (subscription metadata):** The App Description now includes a functional link to Apple's Standard EULA, and the App Store Connect License Agreement and Privacy Policy URL fields have been confirmed correct. The in-app paywall already displayed subscription title, length, price, and Privacy Policy/Terms of Use links — that was unchanged.

@@ -234,6 +234,23 @@ struct NapStopApp: App {
         let migratedCount = ModelContainerFactory.migratePlaceholderAlarms(from: placeholder, into: resolved)
         container = resolved
         alarmManager.setModelContext(resolved.mainContext)
+        // AutoNotifyDefaultsStore is a separate static store (not owned by
+        // alarmManager) that was ALSO configured once at launch against the
+        // placeholder container in performLaunchSetupIfNeeded() — same shape
+        // as alarmManager's context binding above, and needs the same
+        // re-bind here. Missing this line was the actual bug behind a
+        // 2026-09-11 crash report: once `container` is reassigned above,
+        // nothing else retains the placeholder ModelContainer, so it's free
+        // to deallocate — and AutoNotifyDefaultsStore's still-held context
+        // from that container then crashes the NEXT time load()/save() call
+        // context.fetch()/context.save() (ModelContext.container.getter
+        // force-unwraps its now-deallocated container — not a catchable
+        // Swift error, so the `try?` inside fetchRecord(in:) doesn't help).
+        // Reproduced via language change because RootView's `.id(languageManager
+        // .currentLanguage)` forces a full view-identity reset, re-presenting
+        // SettingsView and re-firing its `.onAppear { loadGlobalDefaults() }`
+        // — but any Settings appearance after this swap would have hit it.
+        AutoNotifyDefaultsStore.configure(resolved.mainContext)
         alarmManager.reregisterAllRegions()
         alarmManager.isSyncingWithiCloud = false
         let migrationNote = migratedCount > 0 ? " — migrated \(migratedCount) alarm(s) created while syncing" : ""
