@@ -12,6 +12,7 @@ struct HelpView: View {
     // All sections in order — used to build the full text for copying.
     private var sections: [(titleKey: String, bodyKey: String)] { [
         ("What is GeoNap?",                     "help.body.whatIsNapAlarm"),
+        ("Known Issues",                        "help.body.knownIssues"),
         ("Typical use cases",                   "help.body.useCases"),
         ("Creating an alarm",                   "help.body.creatingAlarm"),
         ("Trigger: distance or time",           "help.body.timeBased"),
@@ -58,6 +59,8 @@ struct HelpView: View {
 
                 helpSection(symbol: "lightbulb",   color: .yellow,
                             titleKey: "What is GeoNap?",     bodyKey: "help.body.whatIsNapAlarm")
+                helpSection(symbol: "list.bullet.clipboard", color: .orange,
+                            titleKey: "Known Issues",         bodyKey: "help.body.knownIssues")
                 helpSection(symbol: "tram",         color: .blue,
                             titleKey: "Typical use cases",    bodyKey: "help.body.useCases")
                 helpSection(symbol: "plus.circle",  color: .green,
