@@ -105,7 +105,17 @@ final class LiveActivityManager {
             lastUpdated: Date(),
             distanceUnitRaw: currentDistanceUnitRaw()
         )
-        Task {
+        // Explicit @MainActor closure (not just relying on Task{} inheriting
+        // this @MainActor class's context): GeoAlarmActivityAttributes'
+        // ActivityAttributes conformance is main-actor-isolated (this
+        // project's default-actor-isolation build setting — see
+        // EntitlementManager.swift's file-header note for the same pattern
+        // elsewhere), and Swift 6 doesn't treat a bare `Task { }` closure as
+        // provably running on that actor for conformance-witness purposes,
+        // even when created from MainActor code. Fixed 2026-09-23 after
+        // Xcode flagged all five Task{}-wrapped Activity calls in this file
+        // as Swift 6 language-mode errors.
+        Task { @MainActor in
             await activity.update(.init(state: state, staleDate: nil))
         }
     }
@@ -115,7 +125,9 @@ final class LiveActivityManager {
     /// stopMonitoring.
     func end(alarmID: UUID) {
         guard let activity = activities.removeValue(forKey: alarmID) else { return }
-        Task {
+        // See update(alarmID:...)'s comment above for why @MainActor is
+        // explicit here rather than relying on Task{}'s inherited isolation.
+        Task { @MainActor in
             await activity.end(nil, dismissalPolicy: .immediate)
         }
     }
@@ -129,7 +141,8 @@ final class LiveActivityManager {
     /// no such event yet (see EntitlementManager's TODO(StoreKit)).
     func endAll() {
         for (_, activity) in activities {
-            Task { await activity.end(nil, dismissalPolicy: .immediate) }
+            // See update(alarmID:...)'s comment for why @MainActor is explicit.
+            Task { @MainActor in await activity.end(nil, dismissalPolicy: .immediate) }
         }
         activities.removeAll()
     }
@@ -173,7 +186,8 @@ final class LiveActivityManager {
             if sorted.count > 1 {
                 DebugLogger.shared.log("Live Activity: found \(sorted.count) duplicates for alarm \(alarmID) on relaunch — ending \(sorted.count - 1)", category: "LiveActivity")
                 for stale in sorted.dropFirst() {
-                    Task { await stale.end(nil, dismissalPolicy: .immediate) }
+                    // See update(alarmID:...)'s comment for why @MainActor is explicit.
+                    Task { @MainActor in await stale.end(nil, dismissalPolicy: .immediate) }
                 }
             }
         }
@@ -196,7 +210,8 @@ final class LiveActivityManager {
             guard let alarmID = UUID(uuidString: activity.attributes.alarmID),
                   !knownAlarmIDs.contains(alarmID) else { continue }
             activities.removeValue(forKey: alarmID)
-            Task { await activity.end(nil, dismissalPolicy: .immediate) }
+            // See update(alarmID:...)'s comment for why @MainActor is explicit.
+            Task { @MainActor in await activity.end(nil, dismissalPolicy: .immediate) }
             count += 1
         }
         if count > 0 {

@@ -32,7 +32,21 @@
 import Foundation
 import ActivityKit
 
-struct GeoAlarmActivityAttributes: ActivityAttributes {
+// nonisolated (2026-09-23, fixing a Swift 6 build error): this project's
+// default-actor-isolation build setting infers @MainActor onto ordinary
+// declarations project-wide unless told otherwise — same root cause
+// documented in EntitlementManager.swift's file header — and that inference
+// also reaches this struct's ActivityAttributes conformance. Wrapping every
+// LiveActivityManager call site in `Task { @MainActor in ... }` did NOT fix
+// it: ActivityKit's Activity<T>.update(_:)/.end(...) are themselves
+// nonisolated async APIs, so calling them requires T's conformance to be
+// usable from a nonisolated/concurrent context regardless of which actor
+// scheduled the call — a MainActor-isolated conformance can never satisfy
+// that, no matter how the call site is annotated. The correct fix is here,
+// at the conformance's source: this struct is a plain Codable/Sendable data
+// type with no actor-isolated state of its own, so it doesn't need (and
+// shouldn't inherit) MainActor isolation at all.
+nonisolated struct GeoAlarmActivityAttributes: ActivityAttributes {
 
     public struct ContentState: Codable, Hashable {
         /// Meters remaining to the alarm's coordinate, when known. Populated

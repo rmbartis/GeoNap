@@ -27,7 +27,11 @@
 import Foundation
 import ActivityKit
 
-struct GeoAlarmActivityAttributes: ActivityAttributes {
+// nonisolated (2026-09-23): mirrors the identical fix in
+// GeoAlarm/Models/GeoAlarmActivityAttributes.swift — see that file's header
+// comment for the full Swift 6 explanation. Kept in sync per this file's own
+// "byte-identical" invariant above.
+nonisolated struct GeoAlarmActivityAttributes: ActivityAttributes {
 
     public struct ContentState: Codable, Hashable {
         /// Meters remaining to the alarm's coordinate, when known. Populated
