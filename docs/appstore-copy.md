@@ -87,6 +87,12 @@ Please test: setting alarms in different location formats (DD/DMS/DDM), switchin
 
 ## App Review Notes (for the production submission reviewer — distinct from the Beta Review Notes below, which are for TestFlight)
 
+**Update note (build 74, version 1.0.1):** This is a stability-only update. It fixes two crashes found via TestFlight crash reports since the 1.0 release:
+- The app could close unexpectedly after changing the in-app language in Settings.
+- The app could be closed by iOS in the background during a scheduled automatic calendar scan (Settings → Calendar Scanning, Scan Mode = Automatic).
+
+No changes to permissions, in-app purchase products, pricing, or subscription behavior since the previous build. A new "Known Issues" section was also added to in-app Help, linking to https://mba-labs.com/products/geonap/known-issues/.
+
 **Resubmission note (build 73):** This build addresses the August 25, 2026 rejection of build 64 and adds reliability fixes found during our own testing since:
 - **Guideline 3.1.2(c) (subscription metadata):** The App Description's Terms of Use line had been edited down to a text reference ("See Terms of Use and Privacy Policy for full details") that dropped the actual URLs. It now includes functional links to Apple's Standard EULA and to the Privacy Policy directly in the text.
 - **Reliability:** Alarms could fail to reappear immediately after a device restart until iCloud finished re-syncing in the background — the app now shows a brief "Syncing with iCloud" status while this completes automatically, with no user action needed. A purchased tier (Silver/Gold/Platinum) could also briefly read back as "Free" right after a restart before the stored purchase record finished re-verifying — this is now re-checked automatically as well. Both were verified fixed across five restart cycles, including an app removal and reinstall.

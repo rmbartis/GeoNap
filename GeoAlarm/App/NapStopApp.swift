@@ -8,6 +8,7 @@ import SwiftData
 import CoreSpotlight
 import BackgroundTasks
 import UserNotifications
+import UIKit
 
 @main
 struct NapStopApp: App {
@@ -369,6 +370,18 @@ struct RootView: View {
         // every run in the debug log is tied to the build it ran on.
         DebugLogger.shared.beginSessionIfEnabled()
         DebugLogger.shared.log("RootView launch setup running (triggered by \(trigger))", category: "Launch")
+        // Added 2026-09-23 after a week-long dead zone in Calendar Scanning's
+        // background refresh (zero CalendarScanBackgroundTask.run() invocations
+        // for 6+ days despite Automatic mode, a 1h interval, and no code-level
+        // early-return evidence in the log — see monetization/calendar-scan
+        // investigation history). Without this, a background-refresh outage
+        // can't be told apart from "the system-level Background App Refresh
+        // switch (Settings → General, either the global toggle or GeoNap's
+        // own) was off the whole time" — that setting isn't visible to the
+        // app any other way, and toggling it leaves no log trail of its own.
+        // Logging it at every launch means the next time this happens, the
+        // log settles the question directly instead of it being inferred.
+        DebugLogger.shared.log("Background App Refresh status: \(UIApplication.shared.backgroundRefreshStatus.debugDescription)", category: "Launch")
 
         // Copy bundled WAV sounds into Library/Sounds so UNNotificationSound(named:)
         // can find them. Must run before any alarm can fire.
@@ -436,6 +449,23 @@ struct RootView: View {
         // attempt already succeeded.
         Task {
             await resolveCloudKitContainerIfNeeded()
+        }
+    }
+}
+
+// MARK: - Debug description helpers
+
+// Mirrors LocationManager.swift's CLAuthorizationStatus/CLAccuracyAuthorization
+// extensions — UIBackgroundRefreshStatus doesn't conform to
+// CustomDebugStringConvertible either, so string-interpolating it directly
+// would fail to compile.
+private extension UIBackgroundRefreshStatus {
+    var debugDescription: String {
+        switch self {
+        case .available: return "available"
+        case .denied:    return "denied"
+        case .restricted: return "restricted"
+        @unknown default: return "unknown(\(rawValue))"
         }
     }
 }
