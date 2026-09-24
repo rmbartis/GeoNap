@@ -56,3 +56,4 @@ debug2/
 *.p12
 *.mobileprovision
 AuthKey_*.p8
+GeoAlarm/BuildTimestamp.swift
