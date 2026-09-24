@@ -141,20 +141,30 @@ final class AlarmManager: NSObject, ObservableObject {
             object: nil,
             queue: .main
         ) { [weak self] _ in
-            guard let self else { return }
-            // Cancel any already-pending debounce and start a fresh one —
-            // only the LAST notification in a burst actually triggers a
-            // reload; every earlier one in the same burst is superseded.
-            self.remoteChangeDebounceTask?.cancel()
-            self.remoteChangeDebounceTask = Task { @MainActor [weak self] in
-                try? await Task.sleep(for: AlarmManager.remoteChangeDebounceInterval)
-                guard !Task.isCancelled, let self else { return }
-                self.load()
-                self.reregisterAllRegions()
-                #if DEBUG
-                self.remoteChangeReloadCount += 1
-                #endif
-                print("☁️ iCloud sync received — alarms reloaded (debounced)")
+            // NotificationCenter's `using:` closure is typed as a plain
+            // Sendable closure, not MainActor-isolated — even though
+            // `queue: .main` guarantees it actually runs on the main thread,
+            // the compiler can't see that, so it rejects touching a
+            // MainActor-isolated property (remoteChangeDebounceTask)
+            // directly here. Hopping into an explicit @MainActor Task
+            // satisfies the isolation check; the extra hop is effectively
+            // free since we're already on the main thread at this point.
+            Task { @MainActor [weak self] in
+                guard let self else { return }
+                // Cancel any already-pending debounce and start a fresh one —
+                // only the LAST notification in a burst actually triggers a
+                // reload; every earlier one in the same burst is superseded.
+                self.remoteChangeDebounceTask?.cancel()
+                self.remoteChangeDebounceTask = Task { @MainActor [weak self] in
+                    try? await Task.sleep(for: AlarmManager.remoteChangeDebounceInterval)
+                    guard !Task.isCancelled, let self else { return }
+                    self.load()
+                    self.reregisterAllRegions()
+                    #if DEBUG
+                    self.remoteChangeReloadCount += 1
+                    #endif
+                    print("☁️ iCloud sync received — alarms reloaded (debounced)")
+                }
             }
         }
     }
