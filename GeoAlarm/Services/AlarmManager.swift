@@ -92,6 +92,45 @@ final class AlarmManager: NSObject, ObservableObject {
     /// `reregisterAllRegions()` on every subsequent remote change.
     private var isObservingRemoteChanges = false
 
+    /// Coalesces a burst of CloudKit remote-change notifications into a
+    /// single reload + re-registration cycle, instead of running a full
+    /// `load()` + `reregisterAllRegions()` (which stops and restarts EVERY
+    /// monitored region, even when there are zero) on every individual
+    /// notification. `NSPersistentStoreRemoteChange` fires once per
+    /// incremental CloudKit sync transaction, not batched — a real sync
+    /// catch-up (coming back from background, another device's edits
+    /// landing) can deliver a dozen-plus of these within a second or two.
+    /// Found 2026-09-24 from debug-log evidence of exactly that: repeated
+    /// "Stopped monitoring all 0 region(s)" lines firing back-to-back with
+    /// no alarms even active, while investigating whether background churn
+    /// unrelated to any alarm could be competing with Calendar Scanning's
+    /// BGAppRefreshTask for iOS's background execution budget.
+    private var remoteChangeDebounceTask: Task<Void, Never>?
+
+    /// How long to wait after the MOST RECENT notification in a burst
+    /// before actually reloading — short enough that a genuine single
+    /// remote change (the common case: editing one alarm on another
+    /// device) still feels immediate, long enough to collapse a
+    /// multi-notification sync burst into exactly one reload.
+    #if DEBUG
+    /// Overridable in DEBUG so tests can exercise the coalescing behavior
+    /// without a real multi-second wait — see
+    /// AlarmManagerRemoteChangeDebounceTests.swift. nil (the default) uses
+    /// the real 2-second interval; a test sets a near-zero `Duration`
+    /// instead. Doesn't exist in RELEASE, so it can't affect shipped timing.
+    nonisolated(unsafe) static var remoteChangeDebounceIntervalOverride: Duration?
+    private static var remoteChangeDebounceInterval: Duration {
+        remoteChangeDebounceIntervalOverride ?? .seconds(2)
+    }
+
+    /// Counts how many times the debounced reload actually ran — the thing
+    /// a test needs to assert on to prove a burst of notifications
+    /// collapsed into one reload rather than N. Doesn't exist in RELEASE.
+    private(set) var remoteChangeReloadCount = 0
+    #else
+    private static let remoteChangeDebounceInterval: Duration = .seconds(2)
+    #endif
+
     /// Listens for CloudKit remote-change notifications so alarms stay in sync
     /// when another device adds, edits, or deletes an alarm via iCloud.
     private func observeRemoteChanges() {
@@ -103,10 +142,19 @@ final class AlarmManager: NSObject, ObservableObject {
             queue: .main
         ) { [weak self] _ in
             guard let self else { return }
-            Task { @MainActor in
+            // Cancel any already-pending debounce and start a fresh one —
+            // only the LAST notification in a burst actually triggers a
+            // reload; every earlier one in the same burst is superseded.
+            self.remoteChangeDebounceTask?.cancel()
+            self.remoteChangeDebounceTask = Task { @MainActor [weak self] in
+                try? await Task.sleep(for: AlarmManager.remoteChangeDebounceInterval)
+                guard !Task.isCancelled, let self else { return }
                 self.load()
                 self.reregisterAllRegions()
-                print("☁️ iCloud sync received — alarms reloaded")
+                #if DEBUG
+                self.remoteChangeReloadCount += 1
+                #endif
+                print("☁️ iCloud sync received — alarms reloaded (debounced)")
             }
         }
     }
