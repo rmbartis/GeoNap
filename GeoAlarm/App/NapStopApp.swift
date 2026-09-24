@@ -234,6 +234,12 @@ struct NapStopApp: App {
 
         let migratedCount = ModelContainerFactory.migratePlaceholderAlarms(from: placeholder, into: resolved)
         container = resolved
+        // Publish for CalendarScanBackgroundTask to reuse — see
+        // ModelContainerFactory.sharedResolvedContainer's doc comment for
+        // why this matters (avoids a second, colliding CloudKit
+        // registration when a real background task fires while this app
+        // is merely suspended, not terminated).
+        ModelContainerFactory.sharedResolvedContainer = resolved
         alarmManager.setModelContext(resolved.mainContext)
         // AutoNotifyDefaultsStore is a separate static store (not owned by
         // alarmManager) that was ALSO configured once at launch against the

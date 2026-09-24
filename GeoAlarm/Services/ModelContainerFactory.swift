@@ -29,6 +29,44 @@ import CloudKit
 
 enum ModelContainerFactory {
 
+    /// The main app's already-open, live CloudKit-mirrored container, if
+    /// this process has one — nil until NapStopApp finishes resolving its
+    /// real container (see NapStopApp.resolveCloudKitContainerIfNeeded),
+    /// and for the whole lifetime of a process that never runs the app
+    /// scene at all (an out-of-process App Intent, or — the important
+    /// case — a BGAppRefreshTask that happens to get a fresh process).
+    ///
+    /// Added 2026-09-24 after tracing the long-standing "Calendar Scanning
+    /// background refresh never seems to fire" report to a real collision:
+    /// CalendarScanBackgroundTask used to unconditionally call
+    /// IntentModelContainer.make(), which opens its OWN independent
+    /// CloudKit-mirrored ModelContainer against the same on-disk store the
+    /// main app's container already has open. CloudKit refuses a second
+    /// live mirroring registration for the same store in one process —
+    /// confirmed via a debug-cable LLDB `_simulateLaunchForTaskWithIdentifier`
+    /// test, which surfaced "BUG IN CLIENT OF CLOUDKIT: Registering a
+    /// handler for a CKScheduler activity identifier that has already been
+    /// registered... There is another instance of this persistent store
+    /// actively syncing with CloudKit in this process." The collision is
+    /// recoverable given enough time (ModelContainerFactory's own retry
+    /// loop eventually succeeds), which is exactly why manual "Scan Now"
+    /// and that LLDB test both always appeared to work fine — neither runs
+    /// under a real BGAppRefreshTask's strict OS execution-time budget. A
+    /// genuine overnight background launch does, and was almost certainly
+    /// being silently killed mid-retry, before CalendarScanBackgroundTask
+    /// ever reached its own DebugLogger.log() call — which is why the
+    /// overnight logs showed zero trace of it, not an error.
+    ///
+    /// This process-wide reference lets CalendarScanBackgroundTask reuse
+    /// the one CloudKit registration already active in-process instead of
+    /// opening a second one, in the normal case where the app is merely
+    /// suspended in the background (not fully terminated) when the OS
+    /// decides to run the task. Only falls back to IntentModelContainer's
+    /// own container open in the genuine edge case where no app scene has
+    /// resolved a container in this process yet.
+    @MainActor
+    static var sharedResolvedContainer: ModelContainer?
+
     /// The schema used by the main app's store.
     ///
     /// Marked `nonisolated`: it's referenced from the default parameter

@@ -190,13 +190,40 @@ enum CalendarScanBackgroundTask {
     }
 
     /// The set of `calendarEventID` values currently in use by any saved
-    /// alarm. Opens its own ModelContainer against the same CloudKit-backed
-    /// store NapStopApp uses (via IntentModelContainer, the same helper
-    /// AppIntents/Siri Shortcuts use for the same "running outside the main
-    /// scene" reason) rather than reaching for a live AlarmManager, which
-    /// doesn't exist in a BGAppRefreshTask context.
+    /// alarm. Prefers reusing the main app's own already-open ModelContainer
+    /// (ModelContainerFactory.sharedResolvedContainer) — the normal case,
+    /// since a real BGAppRefreshTask fires while this app is merely
+    /// suspended in the background, not terminated, so that container is
+    /// still live in this same process. Only falls back to opening a
+    /// separate container via IntentModelContainer (same helper
+    /// AppIntents/Siri Shortcuts use) when this process genuinely has no
+    /// app-scene container yet — e.g. a fresh process the OS spun up
+    /// specifically to run this background task with no app UI ever
+    /// instantiated.
+    ///
+    /// 2026-09-24: this used to ALWAYS open a second container via
+    /// IntentModelContainer.make(), unconditionally — even when the main
+    /// app's container was already live. CloudKit refuses a second live
+    /// mirroring registration for the same on-disk store in one process
+    /// ("BUG IN CLIENT OF CLOUDKIT: ... already been registered"), which is
+    /// recoverable given enough time but was almost certainly eating into
+    /// (and likely exceeding) a real BGAppRefreshTask's strict OS execution
+    /// budget — see ModelContainerFactory.sharedResolvedContainer's doc
+    /// comment for the full investigation. Reusing the already-live
+    /// container when one exists avoids ever triggering that collision in
+    /// the normal case.
     @MainActor
     private static func existingCalendarEventIDs() -> Set<String> {
+        if let shared = ModelContainerFactory.sharedResolvedContainer {
+            do {
+                let context = ModelContext(shared)
+                let alarms = try context.fetch(FetchDescriptor<NapAlarm>())
+                return Set(alarms.compactMap(\.calendarEventID))
+            } catch {
+                DebugLogger.shared.log("Background calendar scan: failed to fetch existing alarms from shared container: \(error.localizedDescription)", category: "CalendarScan")
+                return []
+            }
+        }
         do {
             let container = try IntentModelContainer.make()
             let context = ModelContext(container)
