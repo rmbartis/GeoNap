@@ -22,6 +22,7 @@
 
 import XCTest
 import SwiftData
+import CoreData
 @testable import GeoNap
 
 @MainActor
