@@ -22,7 +22,7 @@ enum IntentModelContainer {
     /// surface a clear error to Shortcuts/the widget rather than silently
     /// operating on an empty in-memory store.
     @MainActor
-    static func make() throws -> ModelContainer {
+    static func make() async throws -> ModelContainer {
         // MUST be ModelContainerFactory.schema (not a hand-rolled Schema([...])
         // here) — this was the actual cause of a 2026-09-11 background crash
         // (0xdead10cc / RUNNINGBOARD SIGKILL while the app was suspended
@@ -44,6 +44,6 @@ enum IntentModelContainer {
         // CloudKit against the freshly recovered file, rather than
         // silently settling for local-only when the original failure was
         // file corruption, not an iCloud/CloudKit problem.
-        return try ModelContainerFactory.openCloudKitContainerRecoveringIfNeeded(schema: ModelContainerFactory.schema)
+        return try await ModelContainerFactory.openCloudKitContainerRecoveringIfNeeded(schema: ModelContainerFactory.schema)
     }
 }

@@ -49,7 +49,7 @@ struct DisableAlarmIntent: AppIntent {
 // MARK: - Shared helper
 
 private func setAlarmState(id: UUID, active: Bool) async throws {
-    let container = try await MainActor.run { try IntentModelContainer.make() }
+    let container = try await IntentModelContainer.make()
     let context   = ModelContext(container)
     let alarms    = try context.fetch(FetchDescriptor<NapAlarm>())
 

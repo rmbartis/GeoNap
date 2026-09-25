@@ -175,7 +175,7 @@ enum CalendarScanBackgroundTask {
         // alarm was since deleted so that event can be re-offered. This runs
         // outside the main app scene, with no AlarmManager instance to ask,
         // so it fetches alarms via its own ModelContainer (Bob, 2026-07-03).
-        let existingAlarmEventIDs = existingCalendarEventIDs()
+        let existingAlarmEventIDs = await existingCalendarEventIDs()
         let handled = CalendarScanCandidateMerger.reconcileHandled(rawHandled, existingAlarmEventIDs: existingAlarmEventIDs)
         let result = CalendarScanCandidateMerger.mergeScanResults(found: found, existingPending: existingPending, handled: handled)
 
@@ -213,7 +213,7 @@ enum CalendarScanBackgroundTask {
     /// container when one exists avoids ever triggering that collision in
     /// the normal case.
     @MainActor
-    private static func existingCalendarEventIDs() -> Set<String> {
+    private static func existingCalendarEventIDs() async -> Set<String> {
         if let shared = ModelContainerFactory.sharedResolvedContainer {
             do {
                 let context = ModelContext(shared)
@@ -225,7 +225,7 @@ enum CalendarScanBackgroundTask {
             }
         }
         do {
-            let container = try IntentModelContainer.make()
+            let container = try await IntentModelContainer.make()
             let context = ModelContext(container)
             let alarms = try context.fetch(FetchDescriptor<NapAlarm>())
             return Set(alarms.compactMap(\.calendarEventID))

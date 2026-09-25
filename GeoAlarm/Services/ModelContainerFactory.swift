@@ -181,12 +181,38 @@ enum ModelContainerFactory {
     /// Logs go to both OSLog (via CrashReporter, for Console.app) and the
     /// in-app DebugLogger (Settings → Debug Log), so a repeat of this can be
     /// diagnosed from real evidence rather than guessed at again.
+    /// Marked `async` — and uses `Task.sleep`, never `Thread.sleep` — so a
+    /// caller running inside a real `BGAppRefreshTask` (via
+    /// CalendarScanBackgroundTask -> IntentModelContainer.make(), the
+    /// fallback path when no shared container is already live) cooperates
+    /// properly with the system's expiration/cancellation signal instead of
+    /// blocking the thread through it.
+    ///
+    /// 2026-09-25: this used to call `Thread.sleep(forTimeInterval:)`
+    /// between retry attempts — a synchronous, blocking sleep that ignores
+    /// `Task.isCancelled` entirely. If the OS tried to expire an overrunning
+    /// background task while this loop was mid-retry, the wrapping `Task`
+    /// would be cancelled, but code blocked in `Thread.sleep` can't respond
+    /// to that; it just keeps blocking the thread until the sleep's full
+    /// duration elapses regardless. That's a real violation of Apple's
+    /// "handle expiration properly" guidance for BGAppRefreshTask, and a
+    /// plausible contributor to the app not responding cleanly when the
+    /// system tried to reclaim time from it. `resolveCloudKitContainerPatiently`
+    /// right above already got this right with `Task.sleep` — this brings
+    /// the fallback path in line with the same principle, and adds an
+    /// explicit `Task.isCancelled` bailout between attempts so a genuinely
+    /// expired/cancelled task stops retrying immediately instead of
+    /// finishing out its remaining attempts pointlessly.
     @MainActor
-    static func openCloudKitContainerRecoveringIfNeeded(schema: Schema = schema) throws -> ModelContainer {
+    static func openCloudKitContainerRecoveringIfNeeded(schema: Schema = schema) async throws -> ModelContainer {
         let cloudConfig = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false, cloudKitDatabase: .automatic)
 
         let maxAttempts = 4
         for attempt in 1...maxAttempts {
+            if Task.isCancelled {
+                logBoth("ModelContainer: CloudKit open retry loop cancelled (attempt \(attempt)/\(maxAttempts)) — bailing out instead of continuing to retry.")
+                throw CancellationError()
+            }
             do {
                 let c = try ModelContainer(for: schema, configurations: [cloudConfig])
                 if attempt > 1 {
@@ -197,7 +223,7 @@ enum ModelContainerFactory {
                 let status = currentAccountStatusSync()
                 logBoth("ModelContainer: CloudKit open attempt \(attempt)/\(maxAttempts) failed [iCloud account: \(describe(status))] — \(error.localizedDescription)")
                 if attempt < maxAttempts {
-                    Thread.sleep(forTimeInterval: 0.75)
+                    try? await Task.sleep(nanoseconds: UInt64(0.75 * 1_000_000_000))
                 }
             }
         }
@@ -303,7 +329,7 @@ enum ModelContainerFactory {
         }
 
         logBoth("ModelContainer: patient background resolve exhausted \(maxAttempts) attempts — falling back to short-retry/destructive-rebuild path")
-        if let recovered = try? openCloudKitContainerRecoveringIfNeeded(schema: schema) {
+        if let recovered = try? await openCloudKitContainerRecoveringIfNeeded(schema: schema) {
             return recovered
         }
         // openCloudKitContainerRecoveringIfNeeded's own last-resort

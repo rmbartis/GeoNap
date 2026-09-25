@@ -30,7 +30,7 @@ struct NapAlarmQuery: EntityQuery {
 
     /// Called when a Shortcut resolves an alarm by its saved UUID.
     func entities(for identifiers: [UUID]) async throws -> [NapAlarmEntity] {
-        let container = try await MainActor.run { try IntentModelContainer.make() }
+        let container = try await IntentModelContainer.make()
         let context   = ModelContext(container)
         let alarms    = try context.fetch(FetchDescriptor<NapAlarm>())
         return alarms
@@ -40,7 +40,7 @@ struct NapAlarmQuery: EntityQuery {
 
     /// Populates the picker when the user configures a Shortcut in the Shortcuts app.
     func suggestedEntities() async throws -> [NapAlarmEntity] {
-        let container = try await MainActor.run { try IntentModelContainer.make() }
+        let container = try await IntentModelContainer.make()
         let context   = ModelContext(container)
         let alarms    = try context.fetch(
             FetchDescriptor<NapAlarm>(sortBy: [SortDescriptor(\.name)])

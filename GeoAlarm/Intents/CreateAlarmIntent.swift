@@ -55,7 +55,7 @@ struct CreateAlarmIntent: AppIntent {
         }
 
         // 2. Save to SwiftData (ModelContainer.init is @MainActor)
-        let container = try await MainActor.run { try IntentModelContainer.make() }
+        let container = try await IntentModelContainer.make()
         let context   = ModelContext(container)
 
         let alarm = NapAlarm(
