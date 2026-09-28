@@ -446,6 +446,12 @@ struct RootView: View {
         // refresh request. No-ops internally unless scanning is
         // enabled and Scan Mode is Automatic.
         CalendarScanBackgroundTask.scheduleNextRefresh()
+        // Diagnostic-only (2026-09-27): confirms with iOS directly, on
+        // every launch/foreground, whether our request is actually still
+        // sitting in BGTaskScheduler's queue — see
+        // logPendingRequestsForDiagnostics's doc comment for why this is
+        // needed on top of our own scheduling log line.
+        CalendarScanBackgroundTask.logPendingRequestsForDiagnostics(context: "launch")
         // Non-blocking iCloud sync (2026-08-24): if launch's quick CloudKit
         // attempt in NapStopApp.init() didn't succeed, this is what actually
         // resolves the real container in the background and swaps it in —

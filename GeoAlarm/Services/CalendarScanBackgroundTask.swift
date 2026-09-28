@@ -137,6 +137,37 @@ enum CalendarScanBackgroundTask {
         UserDefaults.standard.removeObject(forKey: AppStorageKey.calendarScanNextRefreshEarliestDate)
     }
 
+    // MARK: - Diagnostics
+
+    /// Asks iOS directly what BGTaskScheduler currently has queued for this
+    /// app, rather than inferring from the absence of our own log lines.
+    ///
+    /// Added 2026-09-27 after repeated overnight tests where a request we'd
+    /// successfully submitted (per our own "Scheduled next calendar scan
+    /// background refresh" log line) appeared to just never fire for many
+    /// hours — with zero errors, zero crashes, nothing abnormal anywhere in
+    /// our own log. That leaves a real, unanswered question our own logging
+    /// can't settle: is the request still genuinely sitting in the system's
+    /// queue the whole time (i.e. iOS is holding it but simply not acting
+    /// on it), or did it silently get dropped/expired at some point without
+    /// ever running (i.e. it stopped existing well before the silence we
+    /// observed)? Those are different problems. `getPendingTaskRequests` is
+    /// a public, documented BGTaskScheduler API that answers this directly.
+    ///
+    /// Its completion handler is NOT guaranteed to run on the main thread —
+    /// hop to `@MainActor` before touching `DebugLogger`.
+    static func logPendingRequestsForDiagnostics(context: String) {
+        BGTaskScheduler.shared.getPendingTaskRequests { requests in
+            Task { @MainActor in
+                if let ours = requests.first(where: { $0.identifier == identifier }) as? BGAppRefreshTaskRequest {
+                    DebugLogger.shared.log("BGTaskScheduler pending requests (\(context)): \(requests.count) total; ours IS present, earliestBeginDate=\(String(describing: ours.earliestBeginDate)).", category: "CalendarScan")
+                } else {
+                    DebugLogger.shared.log("BGTaskScheduler pending requests (\(context)): \(requests.count) total; ours (\(identifier)) is NOT present — either never successfully submitted, or was silently dropped/expired by the system before now.", category: "CalendarScan")
+                }
+            }
+        }
+    }
+
     // MARK: - Execution
 
     /// Runs one scan pass: fetches events for the enabled calendars, merges
@@ -152,7 +183,13 @@ enum CalendarScanBackgroundTask {
     /// consumed by the OS — there's genuinely nothing else pending now.
     @MainActor
     static func run() async {
-        defer { scheduleNextRefresh(force: true) }
+        defer {
+            scheduleNextRefresh(force: true)
+            // Diagnostic-only (2026-09-27): confirms the resubmission right
+            // above actually stuck, from a real background execution — see
+            // logPendingRequestsForDiagnostics's doc comment.
+            logPendingRequestsForDiagnostics(context: "post-run")
+        }
 
         guard UserDefaults.standard.bool(forKey: AppStorageKey.calendarScanEnabled) else { return }
         let enabledIDs = CalendarScanStorage.decodeStringSet(

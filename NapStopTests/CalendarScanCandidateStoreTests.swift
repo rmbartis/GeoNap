@@ -122,6 +122,21 @@ final class CalendarScanCandidateMergerTests: XCTestCase {
         XCTAssertTrue(result.newlyPendingIDs.isEmpty, "Already-pending candidates shouldn't be re-flagged as new")
     }
 
+    /// Regression guard for the "edit to an undecided candidate produces no
+    /// notification" gap Bob found 2026-09-28: a still-pending (never
+    /// added/declined) candidate whose location changes must be re-flagged
+    /// as newly-pending too, same as the existing handled-candidate
+    /// re-offer-on-change behavior below — not just silently updated in
+    /// place with no signal.
+    func test_pendingCandidateWithChangedLocation_isReFlaggedAsNew() {
+        let original = makeCandidate(id: "evt-1", locationTitle: "Old Address", latitude: 1, longitude: 1)
+        let moved = makeCandidate(id: "evt-1", locationTitle: "New Address", latitude: 2, longitude: 2)
+        let result = CalendarScanCandidateMerger.mergeScanResults(found: [moved], existingPending: [original], handled: [:])
+        XCTAssertEqual(result.pending.map(\.id), ["evt-1"])
+        XCTAssertEqual(result.pending.first?.locationTitle, "New Address")
+        XCTAssertEqual(result.newlyPendingIDs, ["evt-1"], "A pending candidate's location change should re-flag it as new for notification purposes")
+    }
+
     func test_handledCandidateWithUnchangedLocation_isSkippedEntirely() {
         let candidate = makeCandidate(id: "evt-1", locationTitle: "Union Station", latitude: 43.6452, longitude: -79.3806)
         let handled: [String: CalendarScanHandledRecord] = [

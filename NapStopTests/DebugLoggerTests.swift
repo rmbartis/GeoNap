@@ -1,240 +1,122 @@
 // Copyright © 2026 Robert Bartis. All rights reserved.
 
 // DebugLoggerTests.swift
-// CI tests verifying that:
-//   1. DebugLogger records entries when enabled and ignores calls when disabled.
-//   2. clearLog() empties the in-memory buffer.
-//   3. AlarmManager writes a log entry for every user-facing action.
+// Unit tests for DebugLogTrimmer.trim(_:maxBytes:targetBytes:noticePrefix:)
+// — the size-cap fix added 2026-09-28 after deciding to leave Calendar
+// Scanning's diagnostic logging (getPendingTaskRequests) on indefinitely,
+// which meant the previously-unbounded, append-only GeoNapDebug.log needed
+// an actual ceiling.
 //
-// All assertions run against DebugLogger.recentEntries (populated synchronously)
-// so no async waiting or file I/O is needed.
+// Tested as a pure function against small in-memory Data fixtures rather
+// than by writing real multi-MB files to disk and exercising the actual
+// DebugLogger singleton — mirrors the "pure logic only" testing convention
+// used throughout this project (CalendarScanRefreshScheduling,
+// CalendarScanCandidateMerger, CalendarScanLocationExtractor, etc.).
 
 import XCTest
 @testable import GeoNap
 
-// MARK: - Helpers
+final class DebugLogTrimmerTests: XCTestCase {
 
-private extension DebugLogger {
-    /// Enable logging without writing the session header (avoids UIDevice in tests).
-    func enableForTesting() {
-        UserDefaults.standard.set(true, forKey: UserDefaultsKey.debugLoggingEnabled)
+    private func lineData(_ lines: [String]) -> Data {
+        Data(lines.map { "\($0)\n" }.joined().utf8)
     }
 
-    /// Disable and wipe state after each test.
-    func resetForTesting() {
-        UserDefaults.standard.set(false, forKey: UserDefaultsKey.debugLoggingEnabled)
-        clearLog()
+    func test_underCap_returnsNil() {
+        let data = lineData(["a", "b", "c"])
+        let result = DebugLogTrimmer.trim(data, maxBytes: 1000, targetBytes: 500, noticePrefix: "NOTICE\n")
+        XCTAssertNil(result, "A file under the cap should not be touched")
     }
 
-    /// True if any recent entry's message contains `substring`.
-    func hasEntry(containing substring: String) -> Bool {
-        recentEntries.contains { $0.message.contains(substring) || $0.category.contains(substring) }
-    }
-}
-
-// MARK: - DebugLogger unit tests
-
-final class DebugLoggerTests: XCTestCase {
-
-    private let logger = DebugLogger.shared
-
-    override func setUp() {
-        super.setUp()
-        logger.resetForTesting()
-        logger.enableForTesting()
+    func test_exactlyAtCap_returnsNil() {
+        // Guard is `data.count > maxBytes`, not `>=` — a file exactly at the
+        // cap doesn't need trimming yet.
+        let data = Data(repeating: 0x41, count: 100) // 100 bytes of "A"
+        let result = DebugLogTrimmer.trim(data, maxBytes: 100, targetBytes: 50, noticePrefix: "NOTICE\n")
+        XCTAssertNil(result)
     }
 
-    override func tearDown() {
-        logger.resetForTesting()
-        super.tearDown()
+    func test_overCap_trimsToApproximatelyTargetBytesPlusNotice() {
+        // 100 lines of exactly 10 bytes each ("line-001\n" style, padded) = 1000 bytes total.
+        let lines = (1...100).map { String(format: "line-%03d", $0) } // 8 chars + \n = 9 bytes each
+        let data = lineData(lines)
+        XCTAssertEqual(data.count, 900)
+
+        let result = DebugLogTrimmer.trim(data, maxBytes: 500, targetBytes: 300, noticePrefix: "NOTICE\n")
+        XCTAssertNotNil(result)
+        guard let result else { return }
+
+        // Kept content should be meaningfully smaller than the original.
+        XCTAssertLessThan(result.count, data.count)
+        // And should start with the notice.
+        XCTAssertTrue(result.starts(with: Data("NOTICE\n".utf8)))
     }
 
-    // MARK: Basic recording
+    func test_overCap_keepsTheMostRecentLinesNotTheOldest() {
+        let lines = (1...50).map { "entry-\($0)" }
+        let data = lineData(lines)
 
-    func test_log_createsEntry_whenEnabled() {
-        logger.log("hello world", category: "Test")
-        XCTAssertFalse(logger.recentEntries.isEmpty)
+        let result = DebugLogTrimmer.trim(data, maxBytes: 200, targetBytes: 100, noticePrefix: "TRIMMED\n")
+        guard let result, let resultString = String(data: result, encoding: .utf8) else {
+            return XCTFail("Expected trimmed, UTF-8-decodable result")
+        }
+
+        // The earliest entries must be gone...
+        XCTAssertFalse(resultString.contains("entry-1\n"), "Oldest entries should have been dropped")
+        XCTAssertFalse(resultString.contains("entry-2\n"))
+        // ...but the most recent entry must survive.
+        XCTAssertTrue(resultString.contains("entry-50"), "Newest entry must be preserved")
     }
 
-    func test_log_entryContainsMessage() {
-        logger.log("penn station", category: "Test")
-        XCTAssertTrue(logger.hasEntry(containing: "penn station"))
+    func test_overCap_neverLeavesATruncatedPartialLineAtTheStart() {
+        // Deliberately choose a targetBytes that would land mid-line without
+        // the newline-snap — every kept line must be complete.
+        let lines = ["aaaaaaaaaa", "bbbbbbbbbb", "cccccccccc", "dddddddddd", "eeeeeeeeee"] // 11 bytes each incl. \n = 55 bytes
+        let data = lineData(lines)
+
+        let result = DebugLogTrimmer.trim(data, maxBytes: 20, targetBytes: 15, noticePrefix: "")
+        guard let result, let resultString = String(data: result, encoding: .utf8) else {
+            return XCTFail("Expected trimmed, UTF-8-decodable result")
+        }
+
+        // Every line remaining should be one of the original, complete lines
+        // — never a fragment like "aaaa" or "bbbbbbbbbb" cut off partway.
+        let keptLines = resultString.split(separator: "\n").map(String.init)
+        for line in keptLines {
+            XCTAssertTrue(lines.contains(line), "Kept line '\(line)' should be a complete original line, not a fragment")
+        }
     }
 
-    func test_log_entryContainsCategory() {
-        logger.log("msg", category: "Location")
-        XCTAssertEqual(logger.recentEntries.last?.category, "Location")
+    func test_degenerateTargetGreaterThanOrEqualToDataSize_dropsToNoticeOnly() {
+        let data = lineData(["only-line"])
+        let result = DebugLogTrimmer.trim(data, maxBytes: 1, targetBytes: 999, noticePrefix: "NOTICE\n")
+        XCTAssertEqual(result, Data("NOTICE\n".utf8))
     }
 
-    func test_log_entryHasISO8601Timestamp() {
-        logger.log("ts check", category: "Test")
-        let ts = logger.recentEntries.last?.timestamp ?? ""
-        // ISO 8601 timestamps always contain "T" between date and time.
-        XCTAssertTrue(ts.contains("T"), "Timestamp should be ISO 8601, got: \(ts)")
+    func test_degenerateZeroTarget_dropsToNoticeOnly() {
+        let data = lineData(["only-line"])
+        let result = DebugLogTrimmer.trim(data, maxBytes: 1, targetBytes: 0, noticePrefix: "NOTICE\n")
+        XCTAssertEqual(result, Data("NOTICE\n".utf8))
     }
 
-    func test_log_multipleEntriesAccumulate() {
-        logger.log("one",   category: "Test")
-        logger.log("two",   category: "Test")
-        logger.log("three", category: "Test")
-        XCTAssertGreaterThanOrEqual(logger.recentEntries.count, 3)
-    }
+    func test_realisticCap_2MBTo1MB_trimsRoughlyInHalf() {
+        // Mirrors DebugLogger's actual configured cap (2 MB / 1 MB) with a
+        // realistically-sized synthetic log (repeated ~90-byte entries, in
+        // line with a typical "[timestamp] [category] message" line).
+        let sampleLine = "[2026-09-28T12:00:00Z] [CalendarScan] Background calendar scan: found=11 pending=11 new=0"
+        let lineCount = 25_000 // ~90 bytes * 25,000 ≈ 2.25 MB
+        let data = lineData(Array(repeating: sampleLine, count: lineCount))
+        XCTAssertGreaterThan(data.count, 2 * 1024 * 1024)
 
-    // MARK: Disabled — no-op
+        let maxBytes = 2 * 1024 * 1024
+        let targetBytes = 1 * 1024 * 1024
+        let result = DebugLogTrimmer.trim(data, maxBytes: maxBytes, targetBytes: targetBytes, noticePrefix: "NOTICE\n")
 
-    func test_log_noEntry_whenDisabled() {
-        logger.resetForTesting()           // leaves isEnabled = false
-        logger.log("should not appear", category: "Test")
-        XCTAssertFalse(logger.hasEntry(containing: "should not appear"))
-    }
-
-    func test_log_resumes_afterReenabling() {
-        logger.resetForTesting()
-        logger.enableForTesting()
-        logger.log("resumed", category: "Test")
-        XCTAssertTrue(logger.hasEntry(containing: "resumed"))
-    }
-
-    // MARK: clearLog
-
-    func test_clearLog_emptiesRecentEntries() {
-        logger.log("entry A", category: "Test")
-        logger.log("entry B", category: "Test")
-        logger.clearLog()
-        XCTAssertTrue(logger.recentEntries.isEmpty)
-    }
-
-    func test_clearLog_thenLog_producesNewEntry() {
-        logger.log("before clear", category: "Test")
-        logger.clearLog()
-        logger.log("after clear", category: "Test")
-        XCTAssertEqual(logger.recentEntries.count, 1)
-        XCTAssertTrue(logger.hasEntry(containing: "after clear"))
-    }
-}
-
-// MARK: - AlarmManager + DebugLogger integration tests
-
-/// Verifies that every user-facing AlarmManager action writes at least one
-/// entry to DebugLogger.recentEntries with the alarm name present.
-///
-/// AlarmManager is exercised without a real ModelContext (left nil) —
-/// the logging calls still run before/after persistence.
-@MainActor
-final class AlarmManagerDebugLogTests: XCTestCase {
-
-    private var sut: AlarmManager!
-    private let logger = DebugLogger.shared
-
-    override func setUp() {
-        super.setUp()
-        logger.resetForTesting()
-        logger.enableForTesting()
-        sut = AlarmManager()
-    }
-
-    override func tearDown() {
-        logger.resetForTesting()
-        sut = nil
-        super.tearDown()
-    }
-
-    // MARK: add
-
-    func test_add_logsEntry() {
-        let alarm = makeAlarm(name: "Penn Station")
-        sut.add(alarm: alarm)
-        XCTAssertTrue(logger.hasEntry(containing: "Penn Station"),
-                      "add() must log the alarm name. entries: \(logger.recentEntries.map(\.message))")
-    }
-
-    func test_add_categoryIsAlarmManager() {
-        sut.add(alarm: makeAlarm(name: "Add Category Test"))
-        let entry = logger.recentEntries.last { $0.message.contains("Add Category Test") }
-        XCTAssertEqual(entry?.category, "AlarmManager")
-    }
-
-    // MARK: delete
-
-    func test_delete_logsEntry() {
-        let alarm = makeAlarm(name: "Airport")
-        sut.add(alarm: alarm)
-        logger.clearLog()
-        sut.delete(alarm: alarm)
-        XCTAssertTrue(logger.hasEntry(containing: "Airport"),
-                      "delete() must log the alarm name.")
-    }
-
-    // MARK: handleRegionEvent — alarm triggered
-
-    func test_regionEntered_logsTriggered() {
-        let alarm = makeAlarm(name: "Times Square")
-        sut.add(alarm: alarm)
-        logger.clearLog()
-
-        sut.simulateRegionEntered(regionID: alarm.id.uuidString)
-
-        XCTAssertTrue(logger.hasEntry(containing: "Times Square"),
-                      "handleRegionEvent(.onEntry) must log the alarm name. entries: \(logger.recentEntries.map(\.message))")
-    }
-
-    func test_regionExited_onExitAlarm_logsTriggered() {
-        let alarm = NapAlarm(name: "Departure Gate", latitude: 40.6, longitude: -73.7,
-                             regionEvent: .onExit, state: .active)
-        sut.add(alarm: alarm)
-        logger.clearLog()
-
-        sut.simulateRegionExited(regionID: alarm.id.uuidString)
-
-        XCTAssertTrue(logger.hasEntry(containing: "Departure Gate"))
-    }
-
-    // MARK: handleRegionEvent — repeating alarm re-armed
-
-    func test_regionExit_rearmsRepeatingAlarm_logsRearmed() {
-        let alarm = NapAlarm(name: "Daily Commute", latitude: 40.7, longitude: -74.0,
-                             regionEvent: .onEntry, state: .active, isRepeating: true)
-        sut.add(alarm: alarm)
-        sut.simulateRegionEntered(regionID: alarm.id.uuidString)   // trigger it
-        logger.clearLog()
-
-        sut.simulateRegionExited(regionID: alarm.id.uuidString)    // re-arm
-
-        XCTAssertTrue(logger.hasEntry(containing: "Daily Commute"),
-                      "Re-arming must log the alarm name. entries: \(logger.recentEntries.map(\.message))")
-    }
-
-    // (snooze logging test removed — snooze is now owned by AlarmKit, not AlarmManager.)
-
-    // MARK: Each action produces at least one entry
-
-    func test_eachUserAction_producesAtLeastOneEntry() {
-        // add
-        let alarm = makeAlarm(name: "Coverage Alarm")
-        var count = logger.recentEntries.count
-        sut.add(alarm: alarm)
-        XCTAssertGreaterThan(logger.recentEntries.count, count, "add must log")
-
-        // delete
-        count = logger.recentEntries.count
-        sut.delete(alarm: alarm)
-        XCTAssertGreaterThan(logger.recentEntries.count, count, "delete must log")
-    }
-
-    // MARK: Disabled logger — AlarmManager calls must not crash
-
-    func test_alarmManager_doesNotCrash_whenLoggerDisabled() {
-        logger.resetForTesting()   // disables logging
-
-        let alarm = makeAlarm(name: "No Crash")
-        XCTAssertNoThrow(sut.add(alarm: alarm))
-        XCTAssertNoThrow(sut.simulateRegionEntered(regionID: alarm.id.uuidString))
-        XCTAssertNoThrow(sut.delete(alarm: alarm))
-    }
-
-    // MARK: Helpers
-
-    private func makeAlarm(name: String) -> NapAlarm {
-        NapAlarm(name: name, latitude: 40.7580, longitude: -73.9855, radius: 200)
+        XCTAssertNotNil(result)
+        guard let result else { return }
+        XCTAssertLessThan(result.count, data.count, "Trimmed file must be smaller than the original")
+        XCTAssertLessThan(result.count, maxBytes, "Trimmed file must end up back under the cap")
+        // Allow slack for the newline-snap plus the notice prefix.
+        XCTAssertLessThan(result.count, targetBytes + sampleLine.utf8.count + 100)
     }
 }

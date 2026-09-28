@@ -65,10 +65,13 @@ nonisolated enum CalendarScanCandidateMerger {
     struct Result: Equatable {
         let pending: [CalendarTripCandidate]
         let handled: [String: CalendarScanHandledRecord]
-        /// Candidate ids present in `pending` that were NOT in `existingPending`
-        /// before this merge — i.e. genuinely new-to-the-user this run. Used to
-        /// decide whether a background scan should post a notification, and
-        /// what count to show in it.
+        /// Candidate ids present in `pending` that either weren't in
+        /// `existingPending` before this merge (genuinely new-to-the-user this
+        /// run), or WERE already pending but had their location change since
+        /// the last scan (re-surfaced for the same reason a handled candidate
+        /// gets re-offered on change — see the loop below, 2026-09-28). Used
+        /// to decide whether a background scan should post a notification,
+        /// and what count to show in it.
         let newlyPendingIDs: Set<String>
     }
 
@@ -85,6 +88,16 @@ nonisolated enum CalendarScanCandidateMerger {
         var pendingByID = Dictionary(uniqueKeysWithValues: existingPending.map { ($0.id, $0) })
         let existingPendingIDs = Set(pendingByID.keys)
 
+        // Candidate ids that were already pending (undecided) but whose
+        // location changed since the last scan — re-flagged as "new" below
+        // so they're re-surfaced/notified rather than silently updated in
+        // place. Before this (2026-09-28), only handled (added/declined)
+        // candidates got re-offered on a location change; a still-pending
+        // one just had its location quietly overwritten with no signal to
+        // the user that anything changed (Bob noticed this testing an edit
+        // to an event he hadn't yet accepted or declined).
+        var changedWhilePendingIDs: Set<String> = []
+
         for candidate in found {
             let snapshot = CalendarCandidateLocationSnapshot(candidate: candidate)
             if let record = handled[candidate.id] {
@@ -95,6 +108,9 @@ nonisolated enum CalendarScanCandidateMerger {
                 // Location changed since it was added/declined — clear the old
                 // record so it can be re-offered as a fresh candidate.
                 updatedHandled.removeValue(forKey: candidate.id)
+            } else if let existingCandidate = pendingByID[candidate.id],
+                      CalendarCandidateLocationSnapshot(candidate: existingCandidate) != snapshot {
+                changedWhilePendingIDs.insert(candidate.id)
             }
             pendingByID[candidate.id] = candidate
         }
@@ -106,7 +122,7 @@ nonisolated enum CalendarScanCandidateMerger {
         pendingByID = pendingByID.filter { foundIDs.contains($0.key) }
 
         let pending = pendingByID.values.sorted { $0.startDate < $1.startDate }
-        let newlyPendingIDs = Set(pendingByID.keys).subtracting(existingPendingIDs)
+        let newlyPendingIDs = Set(pendingByID.keys).subtracting(existingPendingIDs).union(changedWhilePendingIDs)
 
         return Result(pending: pending, handled: updatedHandled, newlyPendingIDs: newlyPendingIDs)
     }
