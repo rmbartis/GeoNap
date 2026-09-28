@@ -80,10 +80,37 @@ enum ModelContainerFactory {
 
     /// An isolated in-memory container — used for `--uitesting` launches so
     /// every run starts with zero alarms, deterministically, with no
-    /// dependency on CloudKit/disk state.
+    /// dependency on CloudKit/disk state. Also the backbone of most
+    /// SwiftData-touching unit tests (AutoNotifyDefaultsStoreRebindTests,
+    /// etc.), which is what surfaced the bug this fixes.
+    ///
+    /// `cloudKitDatabase: .none` is the real fix (2026-09-28, corrected —
+    /// an initial attempt here just gave each config a unique `name`, which
+    /// did NOT fix it): `ModelConfiguration.cloudKitDatabase` defaults to
+    /// `.automatic` even when `isStoredInMemoryOnly: true`, so an in-memory
+    /// container STILL adopts the app's real CloudKit entitlement and tries
+    /// to stand up genuine CloudKit mirroring for it. On a Simulator/CI
+    /// machine with no iCloud account signed in, that setup fails
+    /// (CKAccountStatusNoAccount, error 134400) and CloudKit's own recovery
+    /// path tears down the store's underlying SQLite connection on a
+    /// background thread — confirmed directly in a real crash log, where
+    /// "Failed to set up CloudKit integration... Unable to initialize
+    /// without an iCloud account... Failed to recover" is printed
+    /// immediately before the crash every single time. The NEXT
+    /// fetch/save against that context then hits no valid connection at
+    /// all and crashes with an uncaught "No eligible connection available"
+    /// (NSInternalInconsistencyException) — not on the operation that
+    /// "caused" it, just whichever happens to run next, which is why this
+    /// looked unrelated to CloudKit at first (e.g.
+    /// AutoNotifyDefaultsStoreRebindTests / AutoNotifyDefaultsStoreTests
+    /// crashing on an ordinary fetchRecord() call). `.none` stops the
+    /// in-memory store from ever touching CloudKit at all — the only thing
+    /// that actually avoids the failure, not just a symptom of it. The
+    /// unique `name` is kept anyway (harmless, and still good practice for
+    /// giving each in-memory store its own identity in logs/debugging).
     @MainActor
     static func makeInMemory(schema: Schema = schema) -> ModelContainer {
-        let config = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
+        let config = ModelConfiguration(UUID().uuidString, schema: schema, isStoredInMemoryOnly: true, cloudKitDatabase: .none)
         return try! ModelContainer(for: schema, configurations: [config])
     }
 

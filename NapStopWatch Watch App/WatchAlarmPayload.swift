@@ -15,7 +15,9 @@
 
 import Foundation
 
-struct WatchAlarmPayload: Codable, Identifiable {
+// `nonisolated` (2026-09-28) — see the iOS copy's comment for why. Kept in
+// lockstep across all three duplicate copies of this struct.
+nonisolated struct WatchAlarmPayload: Codable, Identifiable {
     let id: String          // UUID string
     let name: String
     let regionEvent: String // RegionEvent.rawValue

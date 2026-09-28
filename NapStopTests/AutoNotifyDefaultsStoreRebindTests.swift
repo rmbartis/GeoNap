@@ -87,8 +87,25 @@ final class AutoNotifyDefaultsStoreRebindTests: XCTestCase {
 
         // contextA must be untouched by the post-swap save — confirms the
         // two contexts were never conflated.
-        let stillInOldContext = try? contextA.fetch(FetchDescriptor<AutoNotifyDefaultsRecord>())
-        XCTAssertEqual(stillInOldContext?.first?.contactsJSON, oldContacts.toJSON())
+        //
+        // Compares DECODED contacts, not raw JSON strings (2026-09-28 fix):
+        // `contactsJSON` was persisted by one `toJSON()` call (inside
+        // save()) and `oldContacts.toJSON()` here is a second, independent
+        // encode of equal but freshly-constructed data — JSONEncoder (no
+        // `.sortedKeys`) doesn't guarantee identical key ordering between
+        // separate encode calls, so a raw-string comparison could fail on
+        // key order alone even when the underlying data is identical,
+        // exactly as observed in a real run ("value,id,name" vs
+        // "id,name,value" for the same contact). Decoding both sides before
+        // comparing (as every other assertion in this file already does)
+        // checks what actually matters — the data — without being sensitive
+        // to encoder key ordering.
+        guard let stillInOldContext = try? contextA.fetch(FetchDescriptor<AutoNotifyDefaultsRecord>()),
+              let record = stillInOldContext.first else {
+            XCTFail("Expected contextA to still have exactly one AutoNotifyDefaultsRecord")
+            return
+        }
+        XCTAssertEqual([NotifyContact].fromJSON(record.contactsJSON), oldContacts)
     }
 
     // MARK: - Repeated re-configure (e.g. multiple language-change view rebuilds)

@@ -20,7 +20,18 @@
 
 import Foundation
 
-struct WatchAlarmPayload: Codable, Identifiable {
+// `nonisolated` (2026-09-28): without it, this project's default-
+// MainActor-isolation build setting makes the struct — and therefore its
+// synthesized Codable conformance — implicitly @MainActor-isolated, which
+// breaks calling JSONEncoder/JSONDecoder against it from a plain
+// synchronous (nonisolated) context, e.g. WatchAlarmPayloadCodableTests'
+// non-async test functions: "Main actor-isolated conformance of
+// 'WatchAlarmPayload' to 'Encodable'/'Decodable' cannot be used in
+// nonisolated context." Same root cause and fix as MapKitGeocoder and
+// CalendarScanGeocoding elsewhere in this project. Must be applied to all
+// three duplicate copies of this struct — see the file-header comment
+// above for why there are three.
+nonisolated struct WatchAlarmPayload: Codable, Identifiable {
     let id: String          // UUID string
     let name: String
     let regionEvent: String // RegionEvent.rawValue

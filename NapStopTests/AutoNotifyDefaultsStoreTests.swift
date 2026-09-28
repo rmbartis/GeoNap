@@ -23,7 +23,15 @@ final class AutoNotifyDefaultsStoreTests: XCTestCase {
     override func setUp() {
         super.setUp()
         let schema = Schema([AutoNotifyDefaultsRecord.self])
-        let config = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
+        // `cloudKitDatabase: .none` (2026-09-28) — see
+        // ModelContainerFactory.makeInMemory's doc comment for the full
+        // story: without it, `isStoredInMemoryOnly: true` alone still tries
+        // to stand up real CloudKit mirroring, which fails on a Simulator
+        // with no iCloud account and crashes the NEXT fetch/save with "No
+        // eligible connection available." This file constructs its own
+        // container directly rather than going through makeInMemory(), so
+        // it needed the same fix applied separately.
+        let config = ModelConfiguration(UUID().uuidString, schema: schema, isStoredInMemoryOnly: true, cloudKitDatabase: .none)
         let container = try! ModelContainer(for: schema, configurations: [config])
         context = ModelContext(container)
         // No legacy UserDefaults data in the common case — migration tests
@@ -83,7 +91,10 @@ final class AutoNotifyDefaultsStoreTests: XCTestCase {
         // Fresh container/context, as if the app just launched on this device
         // for the first time after the update.
         let schema = Schema([AutoNotifyDefaultsRecord.self])
-        let config = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
+        // `cloudKitDatabase: .none` — see setUp()'s comment above; this test
+        // builds its own "fresh container" inline rather than using the one
+        // from setUp(), so it needed the same fix applied separately too.
+        let config = ModelConfiguration(UUID().uuidString, schema: schema, isStoredInMemoryOnly: true, cloudKitDatabase: .none)
         let freshContainer = try ModelContainer(for: schema, configurations: [config])
         let freshContext = ModelContext(freshContainer)
 
@@ -115,7 +126,9 @@ final class AutoNotifyDefaultsStoreTests: XCTestCase {
         UserDefaults.standard.set("[]", forKey: AppStorageKey.defaultNotifyContacts)
 
         let schema = Schema([AutoNotifyDefaultsRecord.self])
-        let config = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
+        // `cloudKitDatabase: .none` — see setUp()'s comment above; same
+        // separate inline construction as test_migration_moves...IntoStore.
+        let config = ModelConfiguration(UUID().uuidString, schema: schema, isStoredInMemoryOnly: true, cloudKitDatabase: .none)
         let freshContainer = try ModelContainer(for: schema, configurations: [config])
         let freshContext = ModelContext(freshContainer)
 

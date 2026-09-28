@@ -522,6 +522,13 @@ private actor FakeGeocoder: CalendarScanGeocoding {
     private(set) var callCount = 0
     let coordinateOnSuccess: CLLocationCoordinate2D
 
+    // No explicit `nonisolated` here (2026-09-28): a plain, synchronous
+    // actor initializer is already nonisolated by default in Swift — with
+    // CalendarScanGeocoding now correctly marked `nonisolated protocol`,
+    // that default is no longer being overridden, so this init just needs
+    // to be left alone. (Explicitly writing `nonisolated init` on a
+    // synchronous actor init is itself invalid in the Swift 6 language
+    // mode — that was tried first and reverted.)
     init(failuresBeforeSuccess: Int, coordinateOnSuccess: CLLocationCoordinate2D = CLLocationCoordinate2D(latitude: 1, longitude: 1)) {
         self.failuresRemaining = failuresBeforeSuccess
         self.coordinateOnSuccess = coordinateOnSuccess
@@ -541,6 +548,7 @@ private actor FakeGeocoder: CalendarScanGeocoding {
 /// address) as opposed to a transient hiccup.
 private actor AlwaysFailingGeocoder: CalendarScanGeocoding {
     private(set) var callCount = 0
+    // No explicit `nonisolated` — see FakeGeocoder's init comment above.
     func geocode(addressString: String) async -> CLLocationCoordinate2D? {
         callCount += 1
         return nil

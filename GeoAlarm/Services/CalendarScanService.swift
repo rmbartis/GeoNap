@@ -148,7 +148,25 @@ nonisolated enum CalendarScanLocationExtractor {
 /// that fails on command, without touching MapKit, the network, or any
 /// actual geocoding service (mirrors the EventKit-free testing convention
 /// used by CalendarScanLocationExtractor).
-protocol CalendarScanGeocoding {
+///
+/// The protocol itself is `nonisolated` (2026-09-28) — without it, the
+/// project's default-MainActor-isolation build setting implicitly makes
+/// this protocol @MainActor-isolated as a whole, which `nonisolated struct
+/// MapKitGeocoder` alone doesn't fully fix, and which marking only the
+/// individual `geocode` requirement `nonisolated` did NOT fix either — the
+/// default-isolation attribute is inferred on the protocol declaration
+/// itself, and conformance-checking cares about that, not just each
+/// requirement's own annotation. A genuine `actor` conformer (e.g.
+/// CalendarScanServiceTests' FakeGeocoder/AlwaysFailingGeocoder, used to
+/// make geocode() call counts thread-safe to assert on) can never satisfy a
+/// MainActor-isolated protocol at all, since its isolation is to itself,
+/// not MainActor — "Actor 'FakeGeocoder' cannot conform to
+/// global-actor-isolated protocol 'CalendarScanGeocoding'", plus knock-on
+/// "Main actor-isolated initializer ... cannot be called from outside of
+/// the actor" errors on FakeGeocoder/AlwaysFailingGeocoder's own inits.
+/// Marking the protocol declaration itself nonisolated fixes this at the
+/// true root, for any conformer (struct or actor).
+nonisolated protocol CalendarScanGeocoding {
     func geocode(addressString: String) async -> CLLocationCoordinate2D?
 }
 
