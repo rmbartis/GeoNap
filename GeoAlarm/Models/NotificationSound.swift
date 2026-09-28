@@ -3,7 +3,18 @@
 // NotificationSound.swift
 import UserNotifications
 
-struct NotificationSound: Identifiable, Hashable, Codable {
+// `nonisolated` (2026-09-28) — this project builds with
+// SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor, which implicitly makes any
+// unmarked type MainActor-isolated, including its Equatable/Hashable/Codable
+// conformances. That's invisible from the main app target (everything there
+// already runs on the main actor), but breaks the moment a plain, synchronous
+// XCTestCase (nonisolated by default) tries to use ==, .hashValue, encode(),
+// or decode() on it — exactly what NotificationSoundTests.swift does. Marking
+// the whole struct declaration `nonisolated` (not just individual members) is
+// the fix, per SE-0449/SE-0466 — same root cause and same fix already applied
+// to CalendarScanGeocoding (CalendarScanService.swift) and WatchAlarmPayload
+// (all three duplicate copies).
+nonisolated struct NotificationSound: Identifiable, Hashable, Codable {
 
     let id: String
 
@@ -165,6 +176,16 @@ struct NotificationSound: Identifiable, Hashable, Codable {
     /// Promoting them to Library/Sounds once at startup fixes this permanently.
     ///
     /// Safe to call on every launch — files that already exist are skipped.
+    ///
+    /// `@MainActor` (2026-09-28) — the struct itself is `nonisolated` so its
+    /// Equatable/Hashable/Codable conformances are usable from a plain
+    /// XCTestCase (see the type's doc comment), but this one function still
+    /// calls `DebugLogger.shared.log(...)`, which is MainActor-isolated.
+    /// Re-isolating just this member (rather than the whole type) satisfies
+    /// that call without dragging MainActor isolation back onto everything
+    /// else — it's never called from a test, only from app startup, which is
+    /// already on the main actor.
+    @MainActor
     static func installBundledSoundsIfNeeded() {
         let fm = FileManager.default
         guard let libraryURL = fm.urls(for: .libraryDirectory, in: .userDomainMask).first else { return }
