@@ -406,7 +406,7 @@ jobs:
   watch-unit-tests:
     name: Watch Unit Tests
     runs-on: xcode-27
-    timeout-minutes: 15
+    timeout-minutes: 40   # may download the watchOS simulator runtime first
 
     steps:
       - name: Checkout
@@ -433,12 +433,37 @@ jobs:
             -project GeoAlarm.xcodeproj \
             -scheme "NapStopWatch Watch App"
 
+      # The xcode-27 runner image may not ship a watchOS 27.x simulator runtime
+      # (run #153: no Apple Watch destinations at all → exit 70). Download it
+      # if missing, then pick any available Apple Watch simulator by UDID
+      # instead of hard-coding a model name that may not exist on the image.
+      - name: Ensure an Apple Watch simulator
+        run: |
+          pick() {
+            xcrun simctl list devices available -j | python3 -c '
+          import json, sys
+          d = json.load(sys.stdin)["devices"]
+          ids = [x["udid"] for rt, devs in sorted(d.items()) if "watchOS" in rt for x in devs if "Apple Watch" in x["name"]]
+          print(ids[-1] if ids else "")'
+          }
+          WATCH_SIM_ID=$(pick)
+          if [ -z "$WATCH_SIM_ID" ]; then
+            echo "No Apple Watch simulator found; downloading the watchOS platform…"
+            xcodebuild -downloadPlatform watchOS
+            WATCH_SIM_ID=$(pick)
+          fi
+          if [ -z "$WATCH_SIM_ID" ]; then
+            echo "::error::Still no Apple Watch simulator after download"; xcrun simctl list runtimes; exit 1
+          fi
+          xcrun simctl list devices available | grep "$WATCH_SIM_ID"
+          echo "WATCH_SIM_ID=$WATCH_SIM_ID" >> "$GITHUB_ENV"
+
       - name: Run watch unit tests
         run: |
           xcodebuild test \
             -project GeoAlarm.xcodeproj \
             -scheme "NapStopWatch Watch App" \
-            -destination 'platform=watchOS Simulator,name=Apple Watch Series 11 (46mm)' \
+            -destination "platform=watchOS Simulator,id=$WATCH_SIM_ID" \
             -only-testing:"NapStopWatch Watch AppTests" \
             CODE_SIGN_IDENTITY="" \
             CODE_SIGNING_REQUIRED=NO \
@@ -460,7 +485,7 @@ jobs:
   watch-ui-tests:
     name: Watch UI Tests
     runs-on: xcode-27
-    timeout-minutes: 15
+    timeout-minutes: 40   # may download the watchOS simulator runtime first
 
     steps:
       - name: Checkout
@@ -487,12 +512,37 @@ jobs:
             -project GeoAlarm.xcodeproj \
             -scheme "NapStopWatch Watch App"
 
+      # The xcode-27 runner image may not ship a watchOS 27.x simulator runtime
+      # (run #153: no Apple Watch destinations at all → exit 70). Download it
+      # if missing, then pick any available Apple Watch simulator by UDID
+      # instead of hard-coding a model name that may not exist on the image.
+      - name: Ensure an Apple Watch simulator
+        run: |
+          pick() {
+            xcrun simctl list devices available -j | python3 -c '
+          import json, sys
+          d = json.load(sys.stdin)["devices"]
+          ids = [x["udid"] for rt, devs in sorted(d.items()) if "watchOS" in rt for x in devs if "Apple Watch" in x["name"]]
+          print(ids[-1] if ids else "")'
+          }
+          WATCH_SIM_ID=$(pick)
+          if [ -z "$WATCH_SIM_ID" ]; then
+            echo "No Apple Watch simulator found; downloading the watchOS platform…"
+            xcodebuild -downloadPlatform watchOS
+            WATCH_SIM_ID=$(pick)
+          fi
+          if [ -z "$WATCH_SIM_ID" ]; then
+            echo "::error::Still no Apple Watch simulator after download"; xcrun simctl list runtimes; exit 1
+          fi
+          xcrun simctl list devices available | grep "$WATCH_SIM_ID"
+          echo "WATCH_SIM_ID=$WATCH_SIM_ID" >> "$GITHUB_ENV"
+
       - name: Run watch UI tests
         run: |
           xcodebuild test \
             -project GeoAlarm.xcodeproj \
             -scheme "NapStopWatch Watch App" \
-            -destination 'platform=watchOS Simulator,name=Apple Watch Series 11 (46mm)' \
+            -destination "platform=watchOS Simulator,id=$WATCH_SIM_ID" \
             -only-testing:"NapStopWatch Watch AppUITests" \
             CODE_SIGN_IDENTITY="" \
             CODE_SIGNING_REQUIRED=NO \
