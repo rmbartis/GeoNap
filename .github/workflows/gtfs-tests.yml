@@ -132,6 +132,17 @@ concurrency:
   group: gtfs-${{ github.ref }}
   cancel-in-progress: true
 
+# Every `run:` step pipes xcodebuild into xcpretty. GitHub's DEFAULT shell
+# (no `shell:` given) is `bash -e {0}` — WITHOUT pipefail — so a failing
+# xcodebuild was masked by xcpretty's exit 0 and the job still went green.
+# Naming the shell explicitly switches GitHub to
+# `bash --noprofile --norc -eo pipefail {0}`, so any xcodebuild failure now
+# fails the job (added 2026-11-19 after run #151's UI Tests job finished in
+# 2m34s — far too fast for the full 44-test suite).
+defaults:
+  run:
+    shell: bash
+
 jobs:
   # ──────────────────────────────────────────────────────────────────────────
   # Job 1 — Core unit tests (every commit, no network required)
@@ -290,7 +301,7 @@ jobs:
   ui-tests:
     name: UI Tests
     runs-on: xcode-27
-    timeout-minutes: 15
+    timeout-minutes: 45   # full 44-test suite takes ~20 min locally; CI runners are slower
 
     steps:
       - name: Checkout
