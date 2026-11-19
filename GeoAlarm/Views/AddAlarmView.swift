@@ -13,7 +13,7 @@ struct AddAlarmView: View {
     @Environment(\.languageBundle) private var bundle
     @EnvironmentObject var alarmManager: AlarmManager
     @EnvironmentObject private var locationManager: LocationManager
-    @StateObject private var viewModel = AlarmViewModel()
+    @StateObject private var viewModel: AlarmViewModel
     @StateObject private var searchService = LocationSearchService()
 
     #if DEBUG
@@ -70,6 +70,16 @@ struct AddAlarmView: View {
 
     var existingAlarm: NapAlarm?
     private var isEditing: Bool { existingAlarm != nil }
+
+    /// - Parameters:
+    ///   - existingAlarm: the alarm to edit, or nil to create a new one.
+    ///   - draft: Phase 3 (iPhone Duo) — a new-alarm draft owned by the
+    ///     presenter (ContentView), so the form survives this view being
+    ///     rebuilt when a fold/unfold switches layouts. nil = own a fresh one.
+    init(existingAlarm: NapAlarm? = nil, draft: AlarmViewModel? = nil) {
+        self.existingAlarm = existingAlarm
+        _viewModel = StateObject(wrappedValue: draft ?? AlarmViewModel())
+    }
 
     /// True when editing an alarm that was created from a GTFS transit stop.
     /// Transit alarms provide the same options as location alarms (per Bob:
@@ -229,7 +239,7 @@ struct AddAlarmView: View {
                     radius: $viewModel.radius,
                     interactive: !isTransitAlarmBeingEdited
                 )
-                .frame(height: 220)
+                .adaptiveMapHeight()
                 .clipShape(RoundedRectangle(cornerRadius: 10))
                 .listRowInsets(EdgeInsets(top: 8, leading: 8, bottom: 8, trailing: 8))
                 // Backstop so the "Waiting for GPS lock…" indicator can't spin
@@ -792,12 +802,24 @@ struct AddAlarmView: View {
                 // otherwise editing this alarm without renaming it would flag
                 // itself as a duplicate of... itself.
                 viewModel.refreshOtherAlarmNames(from: alarmManager.alarms)
+            } else if viewModel.draftInitialized {
+                // Rebuilt mid-edit with a draft ContentView kept for us (e.g.
+                // folding/unfolding iPhone Duo swapped layouts): keep every
+                // field as typed; just refill the coordinate text fields,
+                // which are view-local @State and were lost with the old view.
+                didInitNewAlarm = true
+                if viewModel.hasLocation && coordLatEntry.isEmpty {
+                    coordLatEntry = CoordinateParser.format(latitude:  viewModel.latitude,  format: coordFormat)
+                    coordLonEntry = CoordinateParser.format(longitude: viewModel.longitude, format: coordFormat)
+                }
+                viewModel.refreshOtherAlarmNames(from: alarmManager.alarms)
             } else if !didInitNewAlarm {
                 // New alarm: start clean and default the centre to the user's
                 // CURRENT location so "set an alarm here, then leave" works as
                 // expected. Runs once so returning from a sub-sheet won't wipe input.
                 didInitNewAlarm = true
                 viewModel.reset()
+                viewModel.draftInitialized = true
                 // Snapshot of every other alarm's name, so isDuplicateName can
                 // warn in real time as the user types and disable Save until
                 // the name is unique — see AlarmViewModel.refreshOtherAlarmNames.

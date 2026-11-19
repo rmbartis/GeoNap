@@ -179,7 +179,7 @@ struct TransitAlarmView: View {
                     }
                 }
                 if step != .agency {
-                    ToolbarItem(placement: .navigationBarLeading) {
+                    ToolbarItem(placement: .topBarLeading) {
                         Button { goBack() } label: {
                             Label {
                                 Text("Back", bundle: bundle)
@@ -461,7 +461,7 @@ struct TransitAlarmView: View {
                         radius: $radius,
                         interactive: false
                     )
-                    .frame(height: 220)
+                    .adaptiveMapHeight()
                     .clipShape(RoundedRectangle(cornerRadius: 10))
                     .listRowInsets(EdgeInsets(top: 8, leading: 8, bottom: 8, trailing: 8))
                 } header: {
@@ -792,6 +792,8 @@ struct TransitAlarmView: View {
     private var downloadOverlay: some View {
         ZStack {
             Color.black.opacity(0.35).ignoresSafeArea()
+            // Phase 3: keep the card off the iPhone Duo fold when partially folded.
+            FoldAvoiding {
             VStack(spacing: 16) {
                 ProgressView(value: service.downloadProgress)
                     .progressViewStyle(.linear)
@@ -814,6 +816,7 @@ struct TransitAlarmView: View {
             }
             .padding(24)
             .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 16))
+            }
         }
     }
 

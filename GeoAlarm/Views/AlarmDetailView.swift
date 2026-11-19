@@ -51,7 +51,7 @@ struct AlarmDetailView: View {
                 }
                 .mapStyle(.standard(elevation: .flat))
                 .mapControls { }
-                .frame(height: 220)
+                .adaptiveMapHeight()
                 .clipShape(RoundedRectangle(cornerRadius: 10))
                 .listRowInsets(EdgeInsets(top: 8, leading: 8, bottom: 8, trailing: 8))
             }

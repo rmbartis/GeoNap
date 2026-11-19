@@ -48,6 +48,9 @@ struct OnboardingView: View {
     private var isLastPage: Bool { page == totalPages - 1 }
 
     var body: some View {
+        // Phase 3: on a partially folded iPhone Duo, keep onboarding on one
+        // side of the fold instead of centered across it.
+        FoldAvoiding {
         VStack(spacing: 0) {
 
             TabView(selection: $page) {
@@ -110,6 +113,7 @@ struct OnboardingView: View {
             .padding(.horizontal, 32)
             .padding(.bottom, 48)
             .padding(.top, 16)
+        }
         }
     }
 

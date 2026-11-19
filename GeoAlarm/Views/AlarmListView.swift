@@ -10,12 +10,18 @@ struct AlarmListView: View {
     @EnvironmentObject var locationManager: LocationManager
     @Environment(\.languageBundle) private var bundle
 
+    /// Phase 3 (iPhone Duo / iPad): when non-nil, the list is the sidebar of a
+    /// NavigationSplitView — rows select into the detail column instead of
+    /// pushing. nil (the default) keeps the original iPhone push navigation,
+    /// so compact layouts and the existing UI tests behave exactly as before.
+    var selection: Binding<UUID?>? = nil
+
     var body: some View {
         Group {
             if alarmManager.alarms.isEmpty {
                 emptyState
             } else {
-                List {
+                List(selection: selection) {
                     // MARK: Region limit warning
                     if alarmManager.isAtRegionLimit {
                         RegionLimitBanner(isFull: true)
@@ -28,9 +34,7 @@ struct AlarmListView: View {
                     }
 
                     ForEach(alarmManager.alarms) { alarm in
-                        NavigationLink(destination: AlarmDetailView(alarm: alarm)) {
-                            AlarmRowView(alarm: alarm)
-                        }
+                        rowLink(for: alarm)
                         // Leading edge: enable / disable
                         .swipeActions(edge: .leading) {
                             Button {
@@ -58,6 +62,21 @@ struct AlarmListView: View {
                         }
                     }
                 }
+            }
+        }
+    }
+
+    /// Split view: a value link that drives `selection`. Phone: the original
+    /// destination link that pushes AlarmDetailView.
+    @ViewBuilder
+    private func rowLink(for alarm: NapAlarm) -> some View {
+        if selection != nil {
+            NavigationLink(value: alarm.id) {
+                AlarmRowView(alarm: alarm)
+            }
+        } else {
+            NavigationLink(destination: AlarmDetailView(alarm: alarm)) {
+                AlarmRowView(alarm: alarm)
             }
         }
     }

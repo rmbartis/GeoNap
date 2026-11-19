@@ -9,6 +9,14 @@ import Combine
 
 final class AlarmViewModel: ObservableObject {
 
+    /// Phase 3 (iPhone Duo): true once AddAlarmView has set this NEW-alarm
+    /// draft up (reset + defaults + current-location autofill). The draft can
+    /// outlive the view — ContentView keeps it so typed input survives the
+    /// view being rebuilt when folding/unfolding switches between the stack
+    /// and split-view layouts — and a rebuilt view must not set it up again.
+    /// Deliberately not @Published and not cleared by reset().
+    var draftInitialized = false
+
     // MARK: - Form fields
     @Published var name: String = ""
     @Published var note: String = ""

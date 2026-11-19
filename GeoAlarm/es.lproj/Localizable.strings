@@ -484,3 +484,6 @@ El botón Guardar está desactivado hasta que hayas ingresado un nombre y fijado
 
 /* Missing-key fix, 2026-08-09: section header used by SettingsView but never added to any language file */
 "Alarm Trigger" = "Disparador de la alarma";
+
+/* 2026-11-19 (Phase 3): placeholder in the detail column of the split view (iPhone Duo open / iPad) when no alarm is selected */
+"split.detail.placeholder" = "Selecciona una alarma para ver sus detalles.";

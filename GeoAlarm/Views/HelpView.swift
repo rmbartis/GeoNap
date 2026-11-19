@@ -117,7 +117,7 @@ struct HelpView: View {
         .navigationTitle(Text("Help", bundle: bundle))
         .navigationBarTitleDisplayMode(.large)
         .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
+            ToolbarItem(placement: .topBarTrailing) {
                 Button {
                     UIPasteboard.general.string = fullHelpText
                     copied = true
