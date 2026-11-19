@@ -88,9 +88,17 @@ final class RunAlarmShortcutQueueingTests: XCTestCase {
 
     var sut: AlarmManager!
 
+    /// URLs the Run Shortcut immediate path tried to open (see openURLOverride).
+    var openedURLs: [URL] = []
+
     override func setUp() {
         super.setUp()
         sut = AlarmManager()
+        // Never let the real shortcuts:// URL open during unit tests — the
+        // host app is foregrounded, so it would launch the Shortcuts app on
+        // the simulator and push GeoNap to the background mid-run.
+        openedURLs = []
+        sut.openURLOverride = { [unowned self] url in self.openedURLs.append(url) }
         UserDefaults.standard.removeObject(forKey: RunShortcutDefaultsKey.pendingShortcutName)
         UserDefaults.standard.removeObject(forKey: RunShortcutDefaultsKey.pendingShortcutFiredAt)
     }

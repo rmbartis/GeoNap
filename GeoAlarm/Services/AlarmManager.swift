@@ -68,6 +68,14 @@ final class AlarmManager: NSObject, ObservableObject {
     /// nil (the default) on every real launch; this property doesn't exist
     /// at all in RELEASE builds, so it can't affect shipped behavior.
     var fetchAlarmsOverride: ((ModelContext) throws -> [NapAlarm])?
+
+    /// Test seam for the Run Shortcut "immediate path" (runShortcutIfConfigured).
+    /// Unit tests run inside the foregrounded GeoNap host app, so without this
+    /// the real `UIApplication.shared.open(shortcuts://run-shortcut?...)` fires
+    /// and the simulator jumps to the Shortcuts app ("The file doesn't exist /
+    /// Could not find the shortcut 'Welcome Home'"), backgrounding the test
+    /// host mid-run. Tests set this to record the URL instead. nil = real open.
+    var openURLOverride: ((URL) -> Void)?
     #endif
 
     // MARK: - Init
@@ -871,7 +879,11 @@ final class AlarmManager: NSObject, ObservableObject {
         guard UIApplication.shared.applicationState == .active,
               let encoded = name.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
               let url = URL(string: "shortcuts://run-shortcut?name=\(encoded)") else { return }
+        #if DEBUG
+        if let openURLOverride { openURLOverride(url) } else { UIApplication.shared.open(url) }
+        #else
         UIApplication.shared.open(url)
+        #endif
         DebugLogger.shared.log("Run Shortcut: '\(name)' opened immediately (app was foregrounded)", category: "AlarmManager")
     }
 

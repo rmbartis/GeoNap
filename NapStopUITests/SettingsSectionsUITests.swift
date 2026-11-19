@@ -73,6 +73,17 @@ final class SettingsSectionsUITests: XCTestCase {
         return false
     }
 
+    /// Counterpart to scrollIntoView that scrolls toward the TOP of the
+    /// Form (swipe down) until `element` exists.
+    private func scrollBackUpIntoView(_ element: XCUIElement, maxScrollAttempts: Int = 20) -> Bool {
+        if element.waitForExistence(timeout: 1) { return true }
+        for _ in 0..<maxScrollAttempts {
+            app.swipeDown()
+            if element.waitForExistence(timeout: 1) { return true }
+        }
+        return false
+    }
+
     private func openSettings() {
         let settingsButton = app.buttons["settingsButton"]
         XCTAssertTrue(settingsButton.waitForExistence(timeout: 3))
@@ -165,19 +176,21 @@ final class SettingsSectionsUITests: XCTestCase {
 
         // Preview is the LAST section in the Form (Units, which contains
         // "Distance", is near the top) — scrollIntoView only ever scrolls
-        // forward/down, so once we've scrolled all the way down to Preview
-        // to check this, there is no way to scroll back up to reach
-        // "Distance" again. Close and reopen Settings between the two
-        // checks to reset the Form's scroll position to the top, rather
-        // than trying to scroll backward.
+        // forward/down, so scrollBackUpIntoView (below) is used afterwards
+        // to return to "Distance" for the second check.
         XCTAssertTrue(scrollIntoView(app.staticTexts["Sample radius"]))
         XCTAssertTrue(app.staticTexts["1640 ft"].waitForExistence(timeout: 2),
                       "After explicitly selecting Imperial, sample radius must read \"1640 ft\".")
 
-        let doneButton = app.navigationBars["Settings"].buttons["Done"]
-        XCTAssertTrue(doneButton.waitForExistence(timeout: 2))
-        doneButton.tap()
-        openSettings()
+        // Scroll back UP to "Distance" instead of closing and reopening
+        // Settings with Done (changed 2026-11-19). On the iPhone Duo
+        // simulator (iOS 27.2) the Settings navigation bar is visible but
+        // its contents — title AND Done — are absent from the accessibility
+        // tree once the Form has been scrolled, so Done can't be found by
+        // label, identifier or element type. Scrolling back up avoids the
+        // nav bar entirely and works the same on every device.
+        XCTAssertTrue(scrollBackUpIntoView(app.staticTexts["Distance"]),
+                      "Couldn't scroll back up to the Distance row.")
 
         // Use tapWhenReady (coordinate tap), not a plain .tap() — see that
         // helper's doc comment.

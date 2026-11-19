@@ -108,10 +108,13 @@ final class WatchConnectivityManagerTests: XCTestCase {
         let deadline = Date().addingTimeInterval(5)
         var logContents = ""
         while Date() < deadline {
-            if let contents = try? String(contentsOf: logger.logFileURL, encoding: .utf8),
-               !contents.isEmpty {
+            // Wait for the header line itself, not merely a non-empty file:
+            // clearLog()'s file delete and the header write both run later on
+            // DebugLogger's background queue, so the file can still hold an
+            // earlier test's entries at first (fixed 2026-11-19).
+            if let contents = try? String(contentsOf: logger.logFileURL, encoding: .utf8) {
                 logContents = contents
-                break
+                if contents.contains("Watch:") { break }
             }
             Thread.sleep(forTimeInterval: 0.05)
         }

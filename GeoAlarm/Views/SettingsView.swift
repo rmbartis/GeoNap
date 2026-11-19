@@ -437,6 +437,10 @@ struct SettingsView: View {
                     } label: {
                         Text("Done", bundle: bundle)
                     }
+                    // UI-test hook: locale-independent, and doesn't depend on
+                    // the button living inside the navigation bar (on iPhone
+                    // Duo, iOS 27 can place toolbars along the side).
+                    .accessibilityIdentifier("settingsDoneButton")
                 }
             }
             // Confirmation dialog shown before enabling logging

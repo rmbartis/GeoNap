@@ -259,7 +259,11 @@ enum CuratedFeeds {
             // Transport Victoria Open Data — no API key required. CC BY 4.0.
             // Covers trains, trams, and buses statewide. ~200 MB download.
             // Source: https://opendata.transport.vic.gov.au/dataset/gtfs-schedule
-            feedURL: "https://opendata.transport.vic.gov.au/dataset/3f4e292e-7f8a-4ffe-831f-1953be0fe448/resource/fb152201-859f-4882-9206-b768060b50ad/download/gtfs.zip",
+            // ⚠️ The resource id in this URL changes when Transport Victoria
+            // republishes the weekly file (old id fb152201… went 404 by
+            // 2026-11-19). Updated from the dataset page above; a durable fix
+            // is to look up the current resource at download time.
+            feedURL: "https://opendata.transport.vic.gov.au/dataset/3f4e292e-7f8a-4ffe-831f-1953be0fe448/resource/8af7737c-5c9e-4022-aa98-911aa04370a7/download/gtfs.zip",
             routeTypes: "Rail · Tram · Bus"
         ),
         CuratedFeed(

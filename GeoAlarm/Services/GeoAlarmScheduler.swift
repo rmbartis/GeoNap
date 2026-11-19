@@ -113,11 +113,10 @@ enum GeoAlarmScheduler {
             return
         }
 
-        let stopButton = AlarmButton(
-            text: "Stop",
-            textColor: .white,
-            systemImageName: "stop.fill"
-        )
+        // No custom Stop button: since iOS 26.1 AlarmKit supplies its own
+        // system Stop control ("Slide to stop" by default, or a button if the
+        // user changed it in Settings), and the `stopButton:` initializer is
+        // deprecated. Deployment target is 26.5, so no availability check.
         let snoozeButton = AlarmButton(
             text: "Snooze",
             textColor: .white,
@@ -126,7 +125,6 @@ enum GeoAlarmScheduler {
 
         let alert = AlarmPresentation.Alert(
             title: LocalizedStringResource(stringLiteral: title),
-            stopButton: stopButton,
             secondaryButton: snoozeButton,
             secondaryButtonBehavior: .countdown   // re-arms the alarm after postAlert (snooze)
         )

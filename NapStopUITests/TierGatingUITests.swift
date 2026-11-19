@@ -598,7 +598,10 @@ final class TierGatingUITests: XCTestCase {
         let addFromContacts = app.buttons["addFromContactsButton"]
         let addManually = app.buttons["addManuallyButton"]
         XCTAssertTrue(scrollIntoView(addFromContacts), "Add from Contacts must still be visible on Free tier.")
-        XCTAssertTrue(addManually.waitForExistence(timeout: 2))
+        // scrollIntoView, not waitForExistence: on shorter screens (e.g. the
+        // iPhone Duo outer display) Add Manually sits just below Add from
+        // Contacts and is still off-screen, so the Form hasn't created it yet.
+        XCTAssertTrue(scrollIntoView(addManually))
 
         XCTAssertFalse(addFromContacts.isEnabled, "Add from Contacts requires Silver+ — contact notify starts at Silver.")
         XCTAssertFalse(addManually.isEnabled, "Add Manually requires Silver+.")
@@ -614,7 +617,10 @@ final class TierGatingUITests: XCTestCase {
         let addFromContacts = app.buttons["addFromContactsButton"]
         let addManually = app.buttons["addManuallyButton"]
         XCTAssertTrue(scrollIntoView(addFromContacts))
-        XCTAssertTrue(addManually.waitForExistence(timeout: 2))
+        // scrollIntoView, not waitForExistence: on shorter screens (e.g. the
+        // iPhone Duo outer display) Add Manually sits just below Add from
+        // Contacts and is still off-screen, so the Form hasn't created it yet.
+        XCTAssertTrue(scrollIntoView(addManually))
 
         XCTAssertTrue(addFromContacts.isEnabled, "Add from Contacts must be usable at Silver+.")
         XCTAssertTrue(addManually.isEnabled, "Add Manually must be usable at Silver+.")

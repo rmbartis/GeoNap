@@ -99,18 +99,21 @@ final class AlarmManagerLoadRetryTests: XCTestCase {
 
         XCTAssertEqual(callCount, 3, "should have retried twice before succeeding on the 3rd attempt")
         XCTAssertEqual(sut.alarms.map(\.id), expected.map(\.id))
-        XCTAssertEqual(DebugLogger.shared.entryCount(containing: "fetch attempt"), 2, "exactly the 2 failed attempts should be logged")
+        XCTAssertEqual(DebugLogger.shared.entryCount(containing: "load(): fetch attempt "), 2, "exactly the 2 failed attempts should be logged")
         XCTAssertTrue(DebugLogger.shared.hasEntry(containing: "succeeded on attempt 3/3"))
     }
 
     // MARK: - Every attempt fails: gives up gracefully, logs it, never crashes
 
     func test_load_allAttemptsFail_endsEmptyAndLogsGivingUp() {
+        // Counts "load(): fetch attempt " (per-attempt lines only). A bare
+        // "fetch attempt" also matched the give-up line "all 3 fetch
+        // attempts failed", giving 4 instead of 3 (fixed 2026-11-19).
         sut.fetchAlarmsOverride = { _ in throw FakeFetchError.simulatedFailure }
         sut.setModelContext(context)
 
         XCTAssertTrue(sut.alarms.isEmpty)
-        XCTAssertEqual(DebugLogger.shared.entryCount(containing: "fetch attempt"), 3, "all 3 attempts should be logged")
+        XCTAssertEqual(DebugLogger.shared.entryCount(containing: "load(): fetch attempt "), 3, "all 3 attempts should be logged")
         XCTAssertTrue(DebugLogger.shared.hasEntry(containing: "all 3"))
         XCTAssertTrue(
             DebugLogger.shared.hasEntry(containing: "was NOT deleted"),
