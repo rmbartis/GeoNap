@@ -114,10 +114,14 @@
 name: GeoAlarm CI
 
 on:
+  # Commits that only touch docs (marketing decks, PDFs, Markdown) don't run CI
+  # — the full UI suite alone takes ~45+ min of macOS runner time.
   push:
     branches: ["**"]
+    paths-ignore: ["docs/**", "**/*.md"]
   pull_request:
     branches: ["**"]
+    paths-ignore: ["docs/**", "**/*.md"]
   workflow_dispatch:
     inputs:
       run_parse_tests:
@@ -385,7 +389,7 @@ jobs:
   ui-tests:
     name: UI Tests
     runs-on: xcode-27
-    timeout-minutes: 45   # full 44-test suite takes ~20 min locally; CI runners are slower
+    timeout-minutes: 90   # 44 UI tests at ~15–30 s each on CI + boot/build; run #155 hit 45 min mid-suite
 
     steps:
       - name: Checkout
