@@ -57,3 +57,6 @@ debug2/
 *.mobileprovision
 AuthKey_*.p8
 GeoAlarm/BuildTimestamp.swift
+
+# Office lock/owner files (created while a Word/PowerPoint/Excel doc is open)
+~$*
