@@ -153,7 +153,7 @@ jobs:
   unit-tests:
     name: Unit Tests
     runs-on: xcode-27
-    timeout-minutes: 15
+    timeout-minutes: 30   # includes simulator boot + build
 
     steps:
       - name: Checkout
@@ -180,12 +180,28 @@ jobs:
             -project GeoAlarm.xcodeproj \
             -scheme GeoNap
 
+      # Boot the simulator and wait until it is fully up BEFORE xcodebuild.
+      # Run #154: xcodebuild twice waited 120 s for a still-booting iPhone 17
+      # ("unable to connect to com.apple.instruments.deviceservice.lockdown")
+      # and GTFS URL Reachability hit its timeout before a test could run.
+      - name: Boot iPhone 17 simulator
+        run: |
+          IOS_SIM_ID=$(xcrun simctl list devices available -j | python3 -c '
+          import json, sys
+          d = json.load(sys.stdin)["devices"]
+          ids = [x["udid"] for rt, devs in sorted(d.items()) if "iOS" in rt for x in devs if x["name"] == "iPhone 17"]
+          print(ids[-1] if ids else "")')
+          if [ -z "$IOS_SIM_ID" ]; then echo "::error::No iPhone 17 simulator on this runner"; xcrun simctl list devices available; exit 1; fi
+          xcrun simctl boot "$IOS_SIM_ID" || true
+          xcrun simctl bootstatus "$IOS_SIM_ID" -b
+          echo "IOS_SIM_ID=$IOS_SIM_ID" >> "$GITHUB_ENV"
+
       - name: Run unit tests
         run: |
           xcodebuild test \
             -project GeoAlarm.xcodeproj \
             -scheme GeoNap \
-            -destination 'platform=iOS Simulator,name=iPhone 17' \
+            -destination "platform=iOS Simulator,id=$IOS_SIM_ID" \
             -only-testing:GeoNapTests \
             -skip-testing:GeoNapTests/GTFSFeedURLTests \
             -skip-testing:GeoNapTests/GTFSParserTests \
@@ -228,7 +244,7 @@ jobs:
   url-checks:
     name: GTFS URL Reachability
     runs-on: xcode-27
-    timeout-minutes: 10
+    timeout-minutes: 25   # includes simulator boot + build
 
     steps:
       - name: Checkout
@@ -255,12 +271,28 @@ jobs:
             -project GeoAlarm.xcodeproj \
             -scheme GeoNap
 
+      # Boot the simulator and wait until it is fully up BEFORE xcodebuild.
+      # Run #154: xcodebuild twice waited 120 s for a still-booting iPhone 17
+      # ("unable to connect to com.apple.instruments.deviceservice.lockdown")
+      # and GTFS URL Reachability hit its timeout before a test could run.
+      - name: Boot iPhone 17 simulator
+        run: |
+          IOS_SIM_ID=$(xcrun simctl list devices available -j | python3 -c '
+          import json, sys
+          d = json.load(sys.stdin)["devices"]
+          ids = [x["udid"] for rt, devs in sorted(d.items()) if "iOS" in rt for x in devs if x["name"] == "iPhone 17"]
+          print(ids[-1] if ids else "")')
+          if [ -z "$IOS_SIM_ID" ]; then echo "::error::No iPhone 17 simulator on this runner"; xcrun simctl list devices available; exit 1; fi
+          xcrun simctl boot "$IOS_SIM_ID" || true
+          xcrun simctl bootstatus "$IOS_SIM_ID" -b
+          echo "IOS_SIM_ID=$IOS_SIM_ID" >> "$GITHUB_ENV"
+
       - name: Run URL reachability tests
         run: |
           xcodebuild test \
             -project GeoAlarm.xcodeproj \
             -scheme GeoNap \
-            -destination 'platform=iOS Simulator,name=iPhone 17' \
+            -destination "platform=iOS Simulator,id=$IOS_SIM_ID" \
             -only-testing:GeoNapTests/GTFSFeedURLTests \
             CODE_SIGN_IDENTITY="" \
             CODE_SIGNING_REQUIRED=NO \
@@ -311,12 +343,28 @@ jobs:
             -project GeoAlarm.xcodeproj \
             -scheme GeoNap
 
+      # Boot the simulator and wait until it is fully up BEFORE xcodebuild.
+      # Run #154: xcodebuild twice waited 120 s for a still-booting iPhone 17
+      # ("unable to connect to com.apple.instruments.deviceservice.lockdown")
+      # and GTFS URL Reachability hit its timeout before a test could run.
+      - name: Boot iPhone 17 simulator
+        run: |
+          IOS_SIM_ID=$(xcrun simctl list devices available -j | python3 -c '
+          import json, sys
+          d = json.load(sys.stdin)["devices"]
+          ids = [x["udid"] for rt, devs in sorted(d.items()) if "iOS" in rt for x in devs if x["name"] == "iPhone 17"]
+          print(ids[-1] if ids else "")')
+          if [ -z "$IOS_SIM_ID" ]; then echo "::error::No iPhone 17 simulator on this runner"; xcrun simctl list devices available; exit 1; fi
+          xcrun simctl boot "$IOS_SIM_ID" || true
+          xcrun simctl bootstatus "$IOS_SIM_ID" -b
+          echo "IOS_SIM_ID=$IOS_SIM_ID" >> "$GITHUB_ENV"
+
       - name: Run full-parse tests
         run: |
           xcodebuild test \
             -project GeoAlarm.xcodeproj \
             -scheme GeoNap \
-            -destination 'platform=iOS Simulator,name=iPhone 17' \
+            -destination "platform=iOS Simulator,id=$IOS_SIM_ID" \
             -only-testing:GeoNapTests/GTFSParserTests \
             CODE_SIGN_IDENTITY="" \
             CODE_SIGNING_REQUIRED=NO \
@@ -364,12 +412,28 @@ jobs:
             -project GeoAlarm.xcodeproj \
             -scheme GeoNap
 
+      # Boot the simulator and wait until it is fully up BEFORE xcodebuild.
+      # Run #154: xcodebuild twice waited 120 s for a still-booting iPhone 17
+      # ("unable to connect to com.apple.instruments.deviceservice.lockdown")
+      # and GTFS URL Reachability hit its timeout before a test could run.
+      - name: Boot iPhone 17 simulator
+        run: |
+          IOS_SIM_ID=$(xcrun simctl list devices available -j | python3 -c '
+          import json, sys
+          d = json.load(sys.stdin)["devices"]
+          ids = [x["udid"] for rt, devs in sorted(d.items()) if "iOS" in rt for x in devs if x["name"] == "iPhone 17"]
+          print(ids[-1] if ids else "")')
+          if [ -z "$IOS_SIM_ID" ]; then echo "::error::No iPhone 17 simulator on this runner"; xcrun simctl list devices available; exit 1; fi
+          xcrun simctl boot "$IOS_SIM_ID" || true
+          xcrun simctl bootstatus "$IOS_SIM_ID" -b
+          echo "IOS_SIM_ID=$IOS_SIM_ID" >> "$GITHUB_ENV"
+
       - name: Run UI tests
         run: |
           xcodebuild test \
             -project GeoAlarm.xcodeproj \
             -scheme GeoNap \
-            -destination 'platform=iOS Simulator,name=iPhone 17' \
+            -destination "platform=iOS Simulator,id=$IOS_SIM_ID" \
             -only-testing:GeoNapUITests \
             CODE_SIGN_IDENTITY="" \
             CODE_SIGNING_REQUIRED=NO \
