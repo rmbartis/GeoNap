@@ -1,0 +1,1 @@
+alarme,réveil,localisation,gps,arrêt,train,bus,métro,rer,trajet,arrivée,voyage,sieste,sommeil,gare

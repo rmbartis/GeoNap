@@ -1,0 +1,5 @@
+• Projetado para iPhone Duo e iPad: veja a lista de alarmes e os detalhes lado a lado, com mapas maiores e layouts que se adaptam ao dobrar, desdobrar ou girar.
+• Feito para o iOS 27, com o alarme do sistema "Deslize para parar" e Adiar.
+• Correções e melhorias.
+
+Requer iOS 26.5 ou posterior.

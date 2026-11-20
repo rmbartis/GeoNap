@@ -1,0 +1,1 @@
+wecker,standort,gps,aufwachen,haltestelle,zug,bahn,bus,ubahn,sbahn,pendeln,ankunft,reise,schlaf

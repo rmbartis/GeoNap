@@ -118,10 +118,10 @@ on:
   # — the full UI suite alone takes ~45+ min of macOS runner time.
   push:
     branches: ["**"]
-    paths-ignore: ["docs/**", "**/*.md"]
+    paths-ignore: ["docs/**", "appstore/**", "**/*.md"]
   pull_request:
     branches: ["**"]
-    paths-ignore: ["docs/**", "**/*.md"]
+    paths-ignore: ["docs/**", "appstore/**", "**/*.md"]
   workflow_dispatch:
     inputs:
       run_parse_tests:
@@ -524,6 +524,10 @@ jobs:
             echo "::error::Still no Apple Watch simulator after download"; xcrun simctl list runtimes; exit 1
           fi
           xcrun simctl list devices available | grep "$WATCH_SIM_ID"
+          # Boot and wait until fully up before xcodebuild (run #158: watch app
+          # launch denied — "Busy (Application has termination assertions)").
+          xcrun simctl boot "$WATCH_SIM_ID" || true
+          xcrun simctl bootstatus "$WATCH_SIM_ID" -b
           echo "WATCH_SIM_ID=$WATCH_SIM_ID" >> "$GITHUB_ENV"
 
       - name: Run watch unit tests
@@ -603,6 +607,10 @@ jobs:
             echo "::error::Still no Apple Watch simulator after download"; xcrun simctl list runtimes; exit 1
           fi
           xcrun simctl list devices available | grep "$WATCH_SIM_ID"
+          # Boot and wait until fully up before xcodebuild (run #158: watch app
+          # launch denied — "Busy (Application has termination assertions)").
+          xcrun simctl boot "$WATCH_SIM_ID" || true
+          xcrun simctl bootstatus "$WATCH_SIM_ID" -b
           echo "WATCH_SIM_ID=$WATCH_SIM_ID" >> "$GITHUB_ENV"
 
       - name: Run watch UI tests

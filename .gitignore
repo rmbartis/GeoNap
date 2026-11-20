@@ -60,3 +60,7 @@ GeoAlarm/BuildTimestamp.swift
 
 # Office lock/owner files (created while a Word/PowerPoint/Excel doc is open)
 ~$*
+
+# Python bytecode (appstore/ tooling)
+__pycache__/
+*.pyc

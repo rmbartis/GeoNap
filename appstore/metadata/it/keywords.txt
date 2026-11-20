@@ -1,0 +1,1 @@
+sveglia,allarme,posizione,gps,fermata,treno,autobus,metro,pendolare,arrivo,viaggio,sonno,pisolino

@@ -1,0 +1,1 @@
+alarma,ubicación,gps,despertar,parada,tren,autobús,camión,metro,trayecto,llegada,viaje,siesta,dormir

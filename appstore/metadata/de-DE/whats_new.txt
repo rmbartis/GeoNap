@@ -1,0 +1,5 @@
+• Für iPhone Duo und iPad gestaltet: Alarmliste und Details nebeneinander, mit größeren Karten und Layouts, die sich beim Auf- und Zuklappen oder Drehen anpassen.
+• Für iOS 27 entwickelt, mit dem System-Alarm „Zum Beenden streichen“ und Schlummern.
+• Fehlerbehebungen und Verbesserungen.
+
+Erfordert iOS 26.5 oder neuer.

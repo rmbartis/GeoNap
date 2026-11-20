@@ -1,0 +1,5 @@
+• Thiết kế cho iPhone Duo và iPad: xem danh sách báo thức và chi tiết cạnh nhau, với bản đồ lớn hơn và bố cục tự điều chỉnh khi gập, mở hoặc xoay máy.
+• Dành cho iOS 27, với báo thức hệ thống "Trượt để dừng" và Báo lại.
+• Sửa lỗi và cải tiến.
+
+Yêu cầu iOS 26.5 trở lên.

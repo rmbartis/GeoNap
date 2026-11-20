@@ -1,0 +1,1 @@
+alarme,despertador,localização,gps,parada,trem,ônibus,metrô,trajeto,chegada,viagem,cochilo,dormir
