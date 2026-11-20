@@ -1,0 +1,45 @@
+Không bao giờ lỡ trạm nữa.
+
+GeoNap cho phép bạn đặt báo thức theo vị trí, không phải theo giờ. Dù bạn chợp mắt trên tàu, ngủ gật trên xe buýt hay chỉ cần được nhắc khi đến nơi, GeoNap theo dõi vị trí của bạn trong nền và đánh thức bạn khi sắp đến, hoặc khi bạn rời khỏi một địa điểm.
+
+Cách hoạt động
+Thả ghim trên bản đồ, tìm địa chỉ hoặc nhập tọa độ. Chọn bán kính báo thức, từ vài trăm mét đến vài kilômét, và GeoNap sẽ báo khi bạn đi vào (hoặc rời khỏi) khu vực đó, kể cả khi điện thoại đang khóa hay ứng dụng đã đóng. Báo thức vẫn reo khi ở chế độ Im lặng và Tập trung, với "Trượt để dừng" toàn màn hình và Báo lại, giống như ứng dụng Đồng hồ.
+
+Dành cho người đi đường
+- Dùng được trên tàu hỏa, xe buýt, tàu điện ngầm, phà và các chuyến đi đường bộ
+- Theo dõi vị trí trong nền vẫn hoạt động khi bạn ngủ
+- Không cần nhìn bản đồ hay thức đến tận trạm
+- Ứng dụng đi kèm cho Apple Watch và hỗ trợ Siri
+
+Mới trong 1.1: thiết kế cho iPhone Duo và iPad
+Xem danh sách báo thức và chi tiết cạnh nhau, với bản đồ lớn hơn và bố cục tự điều chỉnh khi bạn gập, mở hoặc xoay thiết bị.
+
+Tích hợp lịch trình giao thông công cộng
+Duyệt các nguồn GTFS chọn lọc của những mạng lưới tàu và xe buýt lớn trên thế giới, hoặc nhập URL của bất kỳ nguồn GTFS công khai nào. Nhập vị trí trạm trực tiếp từ lịch trình chính thức để đặt báo thức chính xác.
+
+Gói và giá
+GeoNap miễn phí tải về và sử dụng, với các gói trả phí tùy chọn để mở thêm tính năng:
+
+Miễn phí — 1 báo thức đang bật, kích hoạt theo khoảng cách và âm thanh cảnh báo của hệ thống.
+Silver (2,99 USD/năm) — Báo thức không giới hạn, tự động nhắn tin cho danh bạ khi bạn đến nơi, thư viện âm báo đầy đủ và lên lịch trong khung giờ hoạt động.
+Gold (6,99 USD/năm) — Mọi thứ của Silver, cùng Báo thức giao thông với lịch trình chính thức theo nhà vận hành/tuyến/trạm, chế độ "thời gian trước khi đến", báo thức lặp lại tự bật lại cho quãng đi làm hằng ngày và tự động gửi SMS rảnh tay.
+Platinum (12,99 USD, mua một lần) — Mọi thứ của Gold, cùng chạy một lệnh Phím tắt khi báo thức reo, Hoạt động trực tiếp / Dynamic Island, quét Lịch để gợi ý báo thức cho các chuyến đi sắp tới và Dẫn đường ước tính giúp báo thức theo thời gian luôn chính xác khi mất GPS trong chốc lát.
+
+Silver và Gold là gói đăng ký hằng năm tự động gia hạn, tính phí vào Apple ID của bạn; quản lý hoặc hủy bất cứ lúc nào trong cài đặt Đăng ký của thiết bị. Platinum là gói mua một lần, có hỗ trợ Chia sẻ trong gia đình. Giá hiển thị bằng USD và có thể khác nhau theo khu vực.
+Điều khoản sử dụng (EULA): https://www.apple.com/legal/internet-services/itunes/dev/stdeula/
+Chính sách quyền riêng tư: https://mba-labs.com/products/geonap/#pv-sec-privacy
+Xem Điều khoản sử dụng và Chính sách quyền riêng tư để biết đầy đủ chi tiết.
+
+Bản địa hóa hoàn toàn
+GeoNap có 13 ngôn ngữ: tiếng Anh, Tây Ban Nha, Pháp, Đức, Ý, Bồ Đào Nha, Ả Rập, Hindi, Nhật, Trung giản thể, Nga, Thái và Việt, với bộ chọn ngôn ngữ ngay trong ứng dụng, độc lập với cài đặt hệ thống.
+
+Tùy chỉnh
+- Đơn vị khoảng cách hệ mét hoặc hệ Anh
+- Hiển thị tọa độ dạng độ thập phân (DD), độ phút giây (DMS) hoặc độ phút thập phân (DDM)
+- Nhiều âm báo thức như còi tàu, chuông sân bay, còi tàu thủy và nhiều hơn nữa
+- Đồng hồ 12 giờ hoặc 24 giờ
+
+Quyền riêng tư là trên hết
+GeoNap không có máy chủ riêng, không cần tài khoản và không có quảng cáo. Việc theo dõi vị trí diễn ra trên thiết bị của bạn; báo thức chỉ được đồng bộ qua tài khoản iCloud riêng của bạn, và GeoNap không bao giờ bán hay chia sẻ dữ liệu của bạn.
+
+Yêu cầu iOS 26.5 trở lên.

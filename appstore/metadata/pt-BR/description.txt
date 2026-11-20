@@ -1,0 +1,45 @@
+Nunca mais perca sua parada.
+
+O GeoNap permite criar alarmes por localização, não por horário. Seja cochilando no trem, no ônibus ou só precisando de um aviso ao chegar ao destino, o GeoNap acompanha sua posição em segundo plano e acorda você quando estiver chegando, ou quando sair de um lugar.
+
+Como funciona
+Marque um ponto no mapa, busque um endereço ou digite coordenadas. Escolha um raio de alarme, de algumas centenas de metros a vários quilômetros, e o GeoNap avisa quando você entrar (ou sair) dessa área, mesmo com o iPhone bloqueado ou o app fechado. Os alarmes tocam mesmo no modo Silencioso e em Foco, com "Deslize para parar" em tela cheia e Soneca, como no app Relógio.
+
+Feito para quem viaja
+- Funciona em trens, ônibus, metrôs, balsas e viagens de carro
+- O monitoramento de localização em segundo plano continua enquanto você dorme
+- Sem precisar olhar o mapa ou ficar acordado até a sua parada
+- App complementar para Apple Watch e suporte à Siri
+
+Novo na 1.1: feito para iPhone Duo e iPad
+Veja a lista de alarmes e os detalhes lado a lado, com mapas maiores e layouts que se adaptam quando você dobra, desdobra ou gira o aparelho.
+
+Integração com horários de transporte
+Navegue por uma seleção de feeds GTFS das principais redes de trem e ônibus do mundo, ou informe a URL de qualquer feed GTFS público. Importe paradas direto dos horários oficiais para criar alarmes com precisão.
+
+Planos e preços
+O GeoNap é gratuito para baixar e usar, com níveis pagos opcionais:
+
+Grátis: 1 alarme ativo, disparo por distância e sons de alerta do sistema.
+Silver (US$ 2,99/ano): alarmes ativos ilimitados, aviso automático a contatos por mensagem ao chegar, uma biblioteca completa de sons de alarme e agendamento dentro de uma janela de horário ativa.
+Gold (US$ 6,99/ano): tudo do Silver, mais Alarmes de transporte com horários oficiais de operadoras, linhas e paradas, modo "tempo antes da chegada", alarmes repetidos que se reativam sozinhos para o trajeto diário e automação de SMS sem usar as mãos.
+Platinum (US$ 12,99, compra única): tudo do Gold, mais executar uma automação do Atalhos quando um alarme toca, Atividade ao Vivo / Dynamic Island, Leitura do calendário para sugerir alarmes para as próximas viagens e Navegação estimada para manter precisos os alarmes por tempo durante breves falhas de GPS.
+
+Silver e Gold são assinaturas anuais com renovação automática cobradas no seu ID Apple; gerencie ou cancele quando quiser nos ajustes de Assinaturas do aparelho. Platinum é uma compra única com Compartilhamento Familiar. Preços em USD, podem variar por região.
+Termos de Uso (EULA): https://www.apple.com/legal/internet-services/itunes/dev/stdeula/
+Política de Privacidade: https://mba-labs.com/products/geonap/#pv-sec-privacy
+Consulte os Termos de Uso e a Política de Privacidade para mais detalhes.
+
+Totalmente traduzido
+O GeoNap está disponível em 13 idiomas: inglês, espanhol, francês, alemão, italiano, português, árabe, hindi, japonês, chinês simplificado, russo, tailandês e vietnamita, com seletor de idioma no próprio app, independente dos ajustes do sistema.
+
+Personalizável
+- Unidades métricas ou imperiais
+- Coordenadas em graus decimais (DD), graus minutos segundos (DMS) ou graus minutos decimais (DDM)
+- Vários sons de alarme, como buzina de trem, aviso de aeroporto, apito de navio e outros
+- Relógio de 12 ou 24 horas
+
+Privacidade em primeiro lugar
+O GeoNap não tem servidores próprios, nem conta, nem anúncios. O monitoramento de localização acontece no seu aparelho; seus alarmes são sincronizados apenas pela sua própria conta privada do iCloud, e o GeoNap nunca vende nem compartilha seus dados.
+
+Requer iOS 26.5 ou posterior.

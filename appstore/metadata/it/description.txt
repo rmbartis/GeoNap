@@ -1,0 +1,45 @@
+Non perdere mai più la tua fermata.
+
+GeoNap ti permette di impostare sveglie in base al luogo, non all'ora. Che tu stia facendo un pisolino in treno, sonnecchiando in autobus o abbia solo bisogno di un avviso all'arrivo, GeoNap segue la tua posizione in background e ti sveglia quando ti avvicini alla meta, o quando lasci un luogo.
+
+Come funziona
+Inserisci un segnaposto sulla mappa, cerca un indirizzo o inserisci le coordinate. Scegli un raggio, da poche centinaia di metri a diversi chilometri, e GeoNap ti avvisa quando entri (o esci) da quella zona, anche con il telefono bloccato o l'app chiusa. Le sveglie superano la modalità Silenzioso e le modalità Full immersion, con "Scorri per interrompere" a schermo intero e Posticipa, proprio come nell'app Orologio.
+
+Pensata per chi viaggia
+- Treni, autobus, metropolitane, traghetti e viaggi in auto
+- Il monitoraggio della posizione in background continua mentre dormi
+- Niente mappa da controllare, niente bisogno di restare sveglio fino alla fermata
+- App per Apple Watch e supporto a Siri
+
+Novità della 1.1: progettata per iPhone Duo e iPad
+Elenco delle sveglie e dettagli affiancati, mappe più grandi e layout che si adattano quando pieghi, apri o ruoti il dispositivo.
+
+Orari dei trasporti integrati
+Sfoglia una selezione di feed GTFS delle principali reti ferroviarie e di autobus del mondo, oppure inserisci l'URL di qualsiasi feed GTFS pubblico. Importa le fermate direttamente dagli orari ufficiali per sveglie precise.
+
+Piani e prezzi
+GeoNap è gratuita da scaricare e usare, con livelli a pagamento opzionali:
+
+Gratis: 1 sveglia attiva, attivazione in base alla distanza e suoni di avviso di sistema.
+Silver (2,99 $/anno): sveglie attive illimitate, avviso automatico ai contatti via SMS all'arrivo, una libreria completa di suoni di sveglia e programmazione in una fascia oraria attiva.
+Gold (6,99 $/anno): tutto Silver, più Sveglie trasporti con orari ufficiali di aziende, linee e fermate, modalità "tempo prima dell'arrivo", sveglie ripetute che si riattivano da sole per il tragitto quotidiano e invio automatico di SMS a mani libere.
+Platinum (12,99 $, acquisto singolo): tutto Gold, più l'esecuzione di un'automazione di Comandi Rapidi quando suona una sveglia, Attività in tempo reale / Dynamic Island, Scansione del calendario per suggerire sveglie per i prossimi viaggi e Navigazione stimata per mantenere precise le sveglie a tempo durante brevi perdite di GPS.
+
+Silver e Gold sono abbonamenti annuali a rinnovo automatico addebitati sul tuo ID Apple; gestiscili o annullali in qualsiasi momento nelle impostazioni Abbonamenti del dispositivo. Platinum è un acquisto singolo con In famiglia incluso. Prezzi in USD, possono variare in base alla regione.
+Condizioni d'uso (EULA): https://www.apple.com/legal/internet-services/itunes/dev/stdeula/
+Informativa sulla privacy: https://mba-labs.com/products/geonap/#pv-sec-privacy
+Consulta le Condizioni d'uso e l'Informativa sulla privacy per tutti i dettagli.
+
+Completamente localizzata
+GeoNap è disponibile in 13 lingue: inglese, spagnolo, francese, tedesco, italiano, portoghese, arabo, hindi, giapponese, cinese semplificato, russo, thailandese e vietnamita, con un selettore di lingua nell'app indipendente dalle impostazioni di sistema.
+
+Personalizzabile
+- Unità metriche o imperiali
+- Coordinate in gradi decimali (DD), gradi minuti secondi (DMS) o gradi minuti decimali (DDM)
+- Diversi suoni di sveglia, tra cui clacson del treno, gong dell'aeroporto, sirena della nave e altri
+- Orologio a 12 o 24 ore
+
+Privacy prima di tutto
+GeoNap non ha server propri, né account, né pubblicità. Il monitoraggio della posizione avviene sul tuo dispositivo; le sveglie si sincronizzano solo tramite il tuo account iCloud privato, e GeoNap non vende né condivide mai i tuoi dati.
+
+Richiede iOS 26.5 o versioni successive.
