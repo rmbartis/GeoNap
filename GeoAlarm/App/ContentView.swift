@@ -5,6 +5,7 @@
 
 import SwiftUI
 import CoreLocation
+import MessageUI
 
 struct ContentView: View {
     @EnvironmentObject var locationManager: LocationManager
@@ -110,7 +111,16 @@ struct ContentView: View {
             }
         }
         .onChange(of: alarmManager.pendingContactMessage) { _, newValue in
-            if newValue != nil { showMessageCompose = true }
+            guard newValue != nil else { return }
+            // MFMessageComposeViewController can't be created on a device that
+            // can't send texts (Simulator, iPad without iMessage, iPhone with
+            // iMessage off and no SIM) — presenting it there crashes the app.
+            guard MFMessageComposeViewController.canSendText() else {
+                DebugLogger.shared.log("Auto-Notify: device can't send texts — compose sheet skipped", category: "AlarmManager")
+                alarmManager.pendingContactMessage = nil
+                return
+            }
+            showMessageCompose = true
         }
         // Spotlight deep link: when the user taps an alarm in Spotlight search,
         // navigate directly to its detail view.
